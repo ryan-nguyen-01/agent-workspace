@@ -12,9 +12,30 @@ description: Meta-agent tạo ra các dev agent phù hợp bằng cách detect t
 - `skill-role-scan-project` — quét cấu trúc project, đọc config files
 - `skill-role-detect-stack` — phát hiện stack từ package.json, pom.xml, go.mod, Dockerfile, v.v.
 - `skill-context-read` — đọc docs/hld.md và context từ .agent/
-- `skill-context-write` — ghi agent definitions mới vào .claude/Agents/
+- `skill-context-write` — ghi agent definitions mới vào .claude/agents/
 
 ---
+
+## QUY TẮC ĐƯỜNG DẪN (CỰC QUAN TRỌNG)
+
+Generated agents là **agent definitions** (instructions), vì vậy **PHẢI** được ghi vào `.claude/agents/` (không bao giờ ghi vào `.agent/`).
+
+### Nơi ghi generated agents
+
+- **Mặc định (khuyến nghị)**: ghi vào **project-local**:
+  - `<project>/.claude/agents/<agent-name>/SKILL.md`
+- **Chỉ ghi global** (`~/.claude/agents/…`) khi user yêu cầu rõ: “cài global cho mọi project”.
+
+### `.agent/` dùng để làm gì?
+
+- `.agent/` chỉ chứa **runtime context** như `summary.md`, `architecture.md`, `available-agents.md`, progress/task-board.
+- Tuyệt đối không tạo thư mục kiểu `.agent/agents/` hoặc `.agent/skills/`.
+
+### Nếu thiếu thư mục đích
+
+Trước khi ghi file agent:
+- đảm bảo `<project>/.claude/agents/` tồn tại
+- nếu không có thì tạo thư mục đó, rồi mới viết SKILL.md
 
 ## PHẦN 1 — NAMING CONVENTION
 
@@ -545,7 +566,7 @@ Tooling (luôn bao gồm cho mọi Coder agent):
 
 ### Bước 4 — Generate Agent Definitions
 
-Tạo file `.claude/Agents/{agent-name}/SKILL.md` cho từng agent:
+Tạo file `.claude/agents/{agent-name}/SKILL.md` cho từng agent:
 
 **Template:**
 ```markdown
@@ -594,14 +615,14 @@ description: {role} cho project {project}. {1 câu mô tả nhiệm vụ chính 
 Agents có sẵn (core), chỉ cần cập nhật stack-skills:
 
 agent-designer:
-  Ghi .claude/Agents/agent-designer/stack-skills.md:
+  Ghi .claude/agents/agent-designer/stack-skills.md:
     ui_library: <detected>
     ui_skills: [skill-ui-{lib}]
     fe_framework: <detected>
     fe_skill: skill-framework-{framework}
 
 agent-tester:
-  Ghi .claude/Agents/agent-tester/stack-skills.md:
+  Ghi .claude/agents/agent-tester/stack-skills.md:
     test_framework: <detected>
     test_skills: [skill-testing-{framework}]
     test_patterns:
@@ -659,9 +680,9 @@ agent-tester:
      agent-tester → Test framework: jest
 
 📁 Files được tạo:
-  .claude/Agents/agent-coder-shopee-api-nestjs/SKILL.md
-  .claude/Agents/agent-coder-shopee-web-react/SKILL.md
-  .claude/Agents/agent-devops-shopee-infra-docker/SKILL.md
+  .claude/agents/agent-coder-shopee-api-nestjs/SKILL.md
+  .claude/agents/agent-coder-shopee-web-react/SKILL.md
+  .claude/agents/agent-devops-shopee-infra-docker/SKILL.md
 
 ▶️ Tiếp theo: agent-orchestrator sẽ tự chọn đúng agent cho mỗi task.
 ```

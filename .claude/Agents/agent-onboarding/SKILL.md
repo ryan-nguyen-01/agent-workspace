@@ -1,6 +1,6 @@
 ---
 name: agent-onboarding
-description: Agent chạy một lần đầu tiên khi vào project. Có 2 mode — Mode A (project mới từ đầu) và Mode B (join project đang phát triển). Quét project, xây dựng .agent/ context, tạo dev agents. Mọi thứ tự động, user chỉ cần gõ lệnh.
+description: Agent chạy một lần đầu tiên khi vào project. Có 2 mode — Mode A (project mới từ đầu) và Mode B (join project đang phát triển). Quét project, xây dựng .agent/ context, **tổng hợp các điểm còn mơ hồ và hỏi user**, sau đó tạo dev agents. Tự động tối đa, chỉ hỏi khi cần.
 ---
 
 # Agent: Onboarding
@@ -16,6 +16,18 @@ description: Agent chạy một lần đầu tiên khi vào project. Có 2 mode 
 - `skill-role-detect-stack` — phát hiện tech stack
 - `skill-context-compress` — nén nội dung thành YAML
 - `skill-context-write` — ghi context vào .agent/
+
+---
+
+## Nguyên tắc “HỎI USER”
+
+- **Chỉ hỏi các điểm mơ hồ ảnh hưởng mạnh đến delivery** (mục tiêu, môi trường, constraints, ownership).
+- **Không hỏi conventions** (naming/import/style/test patterns) — phải **auto-detect từ code**.
+- Nếu đã suy ra được từ code/docs/CI → **không hỏi lại**, chỉ hỏi để **confirm** khi có ambiguity.
+- Câu hỏi phải có:
+  - **default đề xuất** (dựa trên detect)
+  - **options ngắn** để user trả lời nhanh
+  - ghi rõ **ảnh hưởng** (tại sao cần)
 
 ---
 
@@ -69,6 +81,7 @@ Bước A3: Gợi ý next steps
 ```
 B1. Scan project structure        → hiểu tổ chức code
 B2. Detect tech stack             → hiểu công nghệ
+B2.5. Hỏi user (nếu cần)          → chốt ambiguity (KHÔNG hỏi conventions)
 B3. Reverse-engineer architecture → hiểu kiến trúc từ code
 B4. Extract conventions           → hiểu coding style từ code thực tế
 B5. Đọc docs hiện có              → hiểu context business
@@ -264,6 +277,63 @@ Nếu có CI/CD config:
 Output ghi vào: .agent/context/ci-cd.md
 ```
 
+### B2.5 — Hỏi user (chỉ phần mơ hồ, tối đa 6 câu)
+
+Sau khi có kết quả từ B1+B2, hãy kiểm tra các “unknowns” bên dưới. Nếu unknowns rỗng → **skip** bước này.
+
+**Unknowns cần hỏi (theo thứ tự ưu tiên):**
+
+1. **Project slug** (để tạo generated agents đúng tên)
+   - Nếu detect được nhiều ứng viên (monorepo, name scoped, folder name khác) → hỏi confirm.
+
+2. **Môi trường chạy chính** (để onboarding chuẩn bị đúng commands/docs)
+   - dev local: docker-compose? pnpm? turborepo?
+   - staging/prod: k8s? vercel? aws?
+
+3. **Critical constraints** (để tránh thiết kế sai)
+   - multi-tenant? i18n? audit logging bắt buộc? compliance?
+
+4. **Ownership / boundaries** (nếu repo có nhiều apps/services)
+   - user muốn tập trung app/service nào trước?
+
+5. **Độ ưu tiên hiện tại** (để gợi ý next steps đúng)
+   - fix bug? implement feature? setup CI? write tests?
+
+6. **Thiếu dữ liệu quan trọng** (fallback)
+   - không có git history / không có docs / không có CI: hỏi user có link docs hay repo history không.
+
+**Format hỏi user (BẮT BUỘC):**
+
+```markdown
+## Câu hỏi nhanh để chốt onboarding (trả lời ngắn)
+
+1) Project slug (dùng để đặt tên generated agents)  
+   - Tôi detect: `<slug-1>` (alt: `<slug-2>`)  
+   - Chọn 1: `<slug-1>` / `<slug-2>` / `<custom>`
+
+2) Bạn muốn ưu tiên scope nào trước?  
+   - Chọn 1: `api` / `web` / `mobile` / `infra` / `<service-name>`
+
+3) Local dev chạy theo cách nào?  
+   - Chọn 1: `docker-compose` / `native` / `unknown`
+
+4) Deploy target chính là gì?  
+   - Chọn 1: `kubernetes` / `vercel` / `aws` / `unknown`
+
+5) Có constraint bắt buộc không? (multi-tenant / i18n / audit-log / compliance)  
+   - Trả lời: `none` hoặc liệt kê
+
+6) Bạn muốn tôi làm bước tiếp theo gì sau onboarding?  
+   - Chọn 1: `tạo agents (agent-builder)` / `review codebase` / `viết test` / `implement feature`
+```
+
+**Sau khi user trả lời:**
+- Ghi câu trả lời vào:
+  - `.agent/context/summary.md` (slug, scope ưu tiên, env)
+  - `.agent/context/ci-cd.md` (deploy target nếu user cung cấp)
+  - `.agent/changelog.md` (log Q/A)
+- Sau đó mới chạy tiếp B3 → B10 (và B9 auto-run agent-builder).
+
 ### B8 — Tạo .agent/ Context
 
 ```
@@ -302,7 +372,8 @@ Tự động trigger agent-builder:
   agent-devops-{project}-infra-{tech}
   ...
 
-- Cập nhật .agent/context/available-agents.md
+- Agent definitions được ghi vào: <project>/.claude/agents/...
+- Cập nhật .agent/context/available-agents.md (chỉ là DANH SÁCH tham chiếu + skills)
 - Cập nhật agent-tester/stack-skills.md
 - Cập nhật agent-designer/stack-skills.md
 ```

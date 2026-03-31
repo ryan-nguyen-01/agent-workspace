@@ -280,11 +280,12 @@ Skill: `skill-role-blueprints`
 ## Getting Started
 
 ```
-1. Mở project trong IDE
-2. Gõ bất kỳ yêu cầu nào
-3. Hệ thống tự động:
+1. Copy .claude/ vào project (local) hoặc ~/.claude/ (global)
+   Xem chi tiết: SETUP.md
+2. Mở project trong IDE có tích hợp Claude (Cursor, VS Code, Claude Code CLI)
+3. Gõ bất kỳ yêu cầu nào
+4. Hệ thống tự động:
    - Onboarding (nếu lần đầu)
    - Tạo agents phù hợp
    - Phân tích task → breakdown → spawn agents → deliver
-4. Ngồi uống cà phê ☕
 ```
