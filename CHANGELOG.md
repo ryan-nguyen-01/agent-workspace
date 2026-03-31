@@ -6,6 +6,32 @@ Format: `## [version] — YYYY-MM-DD`
 
 ---
 
+## [1.4.0] — 2026-03-31
+
+### Removed (tối giản repo)
+
+- Không còn ship trong tree: `hooks/`, `.githooks/`, thư mục `blueprints/` ở root, skill `skill-role-update-agent-brief` (handoffs).
+
+### Changed
+
+- Tài liệu và SKILL: `SETUP.md`, `GUIDELINES.md`, `README.md`, `docs/team-setup-agent-context.md`, `CLAUDE.md`, `agent-orchestrator`, `agent-analyst`, `agent-context-keeper`, `agent-onboarding`, `skill-role-inject-context`, `skill-role-blueprints`, `.claude/agents/README.md` — đồng bộ mô tả với bản **không hooks / không handoff file / blueprint chỉ inline trong skill**.
+
+> Các mục dưới đây trong changelog là lịch sử; một số tính năng đã gỡ khỏi repo theo hướng tối giản 1.4.0.
+
+---
+
+## [1.3.1] — 2026-03-31
+
+### Added
+- `skill-role-update-agent-brief` — quy ước `.agent/context/handoffs/active.yaml` cho handoff giữa các agent (orchestrator + analyst + inject-context)
+
+### Changed
+- `agent-orchestrator`, `agent-analyst`, `agent-context-keeper`: equip / tham chiếu skill mới
+- `skill-role-inject-context`: merge handoff vào bước inject
+- `GUIDELINES.md`: mô tả thư mục `handoffs/`
+
+---
+
 ## [1.3.0] — 2026-03-31
 
 ### Added

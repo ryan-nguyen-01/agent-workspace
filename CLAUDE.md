@@ -231,7 +231,7 @@ Ví dụ:
 3. **Task phức tạp → dùng orchestrator** — không tự xử lý nhiều bước cùng lúc
 4. **Context-first** — đọc `.agent/context/` theo thứ tự orchestrator định nghĩa; chỉ mở source khi thiếu thông tin
 5. **Progressive disclosure + ngân sách** — tránh quét repo; leo thang từ summary → modules → file cụ thể (xem `agent-orchestrator/SKILL.md`)
-6. **Dirty flags** — nếu `dirty-flags.md` có pending/git trigger → gọi `agent-context-keeper` delta sync trước breakdown lớn
+6. **Dirty flags** — nếu `dirty-flags.md` cần sync (sections bẩn hoặc đánh dấu tay) → gọi `agent-context-keeper` delta sync trước breakdown lớn
 7. **Feedback loop** — sau review/test, ghi patterns vào .agent/context/feedback/
 
 ---

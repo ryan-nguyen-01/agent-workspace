@@ -15,14 +15,12 @@ description: Agent điều phối trung tâm. Đọc toàn bộ context, phân t
 - `skill-role-breakdown-tasks` — phân tích và chia nhỏ task
 - `skill-role-report-progress` — cập nhật progress.md và báo user
 - `skill-role-feedback-loop` — đọc/ghi feedback (patterns + anti-patterns)
-- `skill-role-blueprints` — chọn blueprint phù hợp cho subtask
 
 ## Nguyên tắc quan trọng
 - **Chỉ Orchestrator đọc “full” context theo thứ tự bên dưới** — worker agents **chỉ** nhận injected package (không tự quét repo)
 - Không viết code, không viết test — chỉ điều phối
 - Luôn kiểm tra `dirty-flags.md` trước khi breakdown/spawn
 - **Inject feedback** — gửi kèm relevant patterns/anti-patterns cho reviewer + coder
-- **Attach blueprints** — gửi kèm blueprint reference nếu task match pattern phổ biến
 
 ### Context-first + progressive disclosure (BẮT BUỘC — tối ưu token + độ chính xác)
 
@@ -36,7 +34,7 @@ description: Agent điều phối trung tâm. Đọc toàn bộ context, phân t
 3. .agent/context/conventions.md      (bắt buộc)
 4. .agent/context/architecture.md     — nếu file dài: chỉ đọc phần module map / boundaries liên quan task
 5. .agent/task-board.md + .agent/progress.md
-6. .agent/dirty-flags.md              — nếu dirty hoặc pending_trigger (git) → trigger agent-context-keeper TRƯỚC Bước 2
+6. .agent/dirty-flags.md              — nếu `dirty_sections` hoặc cần sync rõ ràng → trigger agent-context-keeper TRƯỚC Bước 2
 7. Feedback (chỉ khi task chạm code review/coder): skim .agent/context/feedback/patterns.md + anti-patterns.md
    (ưu tiên top entries liên quan module/subsystem từ task)
 ```
@@ -63,7 +61,7 @@ description: Agent điều phối trung tâm. Đọc toàn bộ context, phân t
 | medium (default) | ≤ **500** tokens |
 | complex | ≤ **600** tokens |
 
-Package vẫn gồm `[CONTEXT]` + tối đa 1 block `[FEEDBACK]` ngắn + optional `[BLUEPRINT]` + `[TASK]`.
+Package gồm `[CONTEXT]` + tối đa 1 block `[FEEDBACK]` ngắn + `[TASK]`.
 
 ---
 
@@ -143,7 +141,7 @@ Thực hiện đúng thứ tự "Context-first + progressive disclosure" (mục 
 
 Kiểm tra: .agent/dirty-flags.md
 
-→ Nếu dirty_sections không rỗng HOẶC pending_trigger (git_commit / git_pull) có changed_files:
+→ Nếu dirty_sections không rỗng HOẶC dirty-flags yêu cầu sync (manual / pending_trigger + changed_files nếu có):
    → trigger agent-context-keeper để chạy delta sync (Phase 2→4→5 trong SKILL context-keeper)
    sync_in_progress=true → đợi clear hoặc timeout policy trong SKILL context-keeper
 
@@ -213,7 +211,6 @@ Với mỗi subtask trong execution plan:
    Tạo context package cho agent, bao gồm:
    - [CONTEXT] block: conventions, module info, dependencies
    - [FEEDBACK] block: relevant patterns + anti-patterns (filter by module)
-   - [BLUEPRINT] block: blueprint reference nếu task match
    - [TASK] block: mô tả cụ thể subtask
    - Tổng package theo bảng Worker inject (400/500/600)
 
@@ -231,10 +228,6 @@ Với mỗi subtask trong execution plan:
    [FEEDBACK]
    avoid: [<top 3 anti-patterns relevant to this module>]
    follow: [<top 3 patterns relevant to this module>]
-
-   [BLUEPRINT]
-   ref: BLUEPRINT-001 (CRUD Module)   # nếu task match
-   customization: { entity: Product, fields: [...] }
 
    [TASK]
    <subtask.description>

@@ -13,7 +13,6 @@ description: Agent phân tích yêu cầu của user và breakdown thành subtas
 ## Skills được trang bị
 - `skill-context-read` — đọc project context để hiểu cấu trúc
 - `skill-role-breakdown-tasks` — phân tích và tạo subtask list
-- `skill-role-blueprints` — detect và attach blueprint reference cho subtasks
 
 ## Input nhận từ Orchestrator
 ```yaml
@@ -68,7 +67,6 @@ subtasks:
     description: <đủ rõ để agent làm ngay>
     depends_on: []
     output_produces: <mô tả output>
-    blueprint: BLUEPRINT-002               # ← ref nếu task match pattern (optional)
 
   - id: T-002
     title: <Imperative action>

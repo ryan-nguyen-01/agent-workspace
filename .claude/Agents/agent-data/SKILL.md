@@ -21,6 +21,7 @@ agent-pm (metrics/KPIs) → agent-data (data availability for metrics)
 - `skill-database-postgresql` / `skill-database-mongodb` — operational DB patterns
 - `skill-database-redis` — caching layer
 - `skill-database-elasticsearch` — search + analytics
+- `skill-database-dbt` — transformation layer (staging, marts, lineage, data quality tests)
 - `skill-role-write-docs` — viết data docs
 
 ---

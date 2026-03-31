@@ -136,8 +136,8 @@ YAML subtask list with dependencies.
    - conventions.md → naming, imports
    - modules/<tên>.md → exports, dependencies
 5. Trim bất kỳ field nào không liên quan đến task
-6. Kiểm tra: tổng < 500 tokens?
-   - Nếu vẫn > 500 tokens → cắt thêm, giữ core facts
+6. Kiểm tra tổng theo budget orchestrator (400 / 500 / 600 tokens)
+   - Nếu vượt → cắt thêm, ưu tiên [TASK] + conventions/module facts
 7. Thêm [TASK] và [OUTPUT FORMAT]
 8. Gửi cho agent
 ```

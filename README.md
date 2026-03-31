@@ -29,10 +29,10 @@ User
 │  │   Architecture · DevOps · Security · Observability       │    │
 │  └─────────────────────────────────────────────────────────┘    │
 │                                                                  │
-│  ┌──────────┐  ┌──────────────┐  ┌───────────────────────┐     │
-│  │ .agent/  │  │  Feedback    │  │  Blueprints           │     │
-│  │ Context  │  │  Loop        │  │  (code templates)     │     │
-│  └──────────┘  └──────────────┘  └───────────────────────┘     │
+│  ┌──────────┐  ┌──────────────┐                                  │
+│  │ .agent/  │  │  Feedback    │                                  │
+│  │ Context  │  │  Loop        │                                  │
+│  └──────────┘  └──────────────┘                                  │
 └─────────────────────────────────────────────────────────────────┘
 ```
 
@@ -46,7 +46,6 @@ User
 | Skills | 106 |
 | Generated agents | Unlimited (per project) |
 | Departments | 7 |
-| Blueprints | 7 |
 | Supported languages | 5 (TypeScript, Python, Java, Go, Rust) |
 | Supported frameworks | 16 (BE: 7, FE: 5, Mobile: 2, DB ORM: 3) |
 
@@ -126,7 +125,7 @@ Runtime context (tạo trong từng project khi dùng):
 
 | Agent | Vai trò | Skills chính |
 |-------|---------|-------------|
-| **agent-analyst** | Breakdown task phức tạp → subtasks atomic | breakdown-tasks, blueprints |
+| **agent-analyst** | Breakdown task phức tạp → subtasks atomic | breakdown-tasks |
 | **agent-designer** | UI/UX: design tokens, wireframes, components | ui-figma, ui-accessibility, ui-tailwind/shadcn/mui/antd |
 | **agent-coder-*** | Viết production code (generated per project) | lang-*, framework-*, database-*, api-*, auth-* |
 | **agent-reviewer** | Review code: quality, conventions, correctness | code-review, security-hardening, feedback-loop |
@@ -159,7 +158,7 @@ Runtime context (tạo trong từng project khi dùng):
 
 | Agent | Vai trò | Skills chính |
 |-------|---------|-------------|
-| **agent-orchestrator** | Entry point, điều phối, error handling, retry | inject-context, feedback-loop, blueprints |
+| **agent-orchestrator** | Entry point, điều phối, error handling, retry | inject-context, feedback-loop |
 | **agent-onboarding** | Scan project, tạo .agent/ context | scan-project, detect-stack, context-write |
 | **agent-builder** | Detect stack, tạo generated agents | scan-project, detect-stack, context-write |
 | **agent-context-keeper** | Sync .agent/ context khi code thay đổi | context-sync-delta, context-write |
@@ -354,7 +353,7 @@ Runtime context (tạo trong từng project khi dùng):
 | `skill-role-write-user-stories` | Write user stories with acceptance criteria |
 | `skill-role-report-progress` | Progress tracking and reporting |
 | `skill-role-feedback-loop` | Capture good patterns and anti-patterns |
-| `skill-role-blueprints` | Reusable code templates (CRUD, auth, upload) |
+| `skill-role-blueprints` | Patterns CRUD/auth/upload/… (nội dung inline trong `SKILL.md`, không cần thư mục `blueprints/`) |
 
 ### Tooling (5)
 
@@ -493,7 +492,6 @@ Mỗi project có một `.agent/` directory chứa context được tự động
 │   │   └── stats.md              ← Trends
 │   └── modules/
 │       └── <module>.md           ← Per-module context
-├── blueprints/                   ← Reusable code templates
 ├── task-board.md
 ├── progress.md
 ├── dirty-flags.md
@@ -513,22 +511,6 @@ Code review → Reviewer ghi patterns/issues → feedback/patterns.md + anti-pat
                                                      ↓
                        Coder tránh lỗi cũ, Reviewer check patterns đã biết
 ```
-
----
-
-## Blueprints
-
-Templates cho coding patterns phổ biến, tránh viết từ đầu.
-
-| ID | Blueprint | Complexity |
-|----|-----------|------------|
-| 001 | CRUD Module (entity + validation + pagination) | Medium |
-| 002 | Authentication Flow (login, register, tokens) | Complex |
-| 003 | File Upload (S3 + validation + resize) | Medium |
-| 004 | Payment Integration (Stripe + webhooks) | Complex |
-| 005 | Real-time Features (WebSocket + notifications) | Medium |
-| 006 | Search & Filter (full-text + autocomplete) | Medium |
-| 007 | Caching Strategy (cache-aside + invalidation) | Medium |
 
 ---
 

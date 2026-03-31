@@ -2,7 +2,7 @@
 
 ## Tổng quan
 
-Hệ thống gồm **20 core agents** + **106 skills** + **feedback loop** + **blueprints** + **unlimited generated agents**, hoạt động như một công ty phần mềm hoàn chỉnh. Từ ý tưởng đến production và vận hành.
+Hệ thống gồm **20 core agents** + **106 skills** + **feedback loop** + **unlimited generated agents**, hoạt động như một công ty phần mềm hoàn chỉnh. Từ ý tưởng đến production và vận hành.
 
 > Nếu bạn mới dùng / muốn “đúng khái niệm” (.claude vs .agent, routing, alias `sa:`/`dev:`/...) xem: **[GUIDELINES.md](../../GUIDELINES.md)**
 
@@ -84,7 +84,7 @@ Hệ thống gồm **20 core agents** + **106 skills** + **feedback loop** + **b
 | **agent-orchestrator** | Điều phối, spawn agents, error handling | Entry point mọi task |
 | **agent-onboarding** | Scan project, tạo .agent/ context | Lần đầu vào project |
 | **agent-builder** | Detect stack, tạo generated agents | Sau onboarding |
-| **agent-context-keeper** | Sync .agent/ context khi code thay đổi | Triggered (hook/orchestrator/manual), không daemon |
+| **agent-context-keeper** | Sync .agent/ context khi code thay đổi | Triggered (orchestrator/manual), không daemon |
 | **agent-reporter** | Báo cáo tiến độ, escalate blockers | Triggered bởi orchestrator, không daemon |
 
 ---
@@ -196,10 +196,6 @@ Ví dụ: agent-coder-shopee-api-nestjs, agent-devops-medapp-infra-docker
 │   │   └── anti-patterns.md    ← mistakes to avoid
 │   └── modules/
 │       └── <module>.md         ← per-module context
-├── blueprints/                 ← reusable templates
-│   ├── crud-module.md
-│   ├── auth-flow.md
-│   └── ...
 ├── task-board.md
 ├── progress.md
 ├── dirty-flags.md
@@ -227,7 +223,7 @@ Ví dụ: agent-coder-shopee-api-nestjs, agent-devops-medapp-infra-docker
 | API Design | 4 | rest, graphql, grpc, **openapi** |
 | Architecture | 26 | solution, write-hld, domain-model, microservices, event-driven, transactional, multi-tenancy, feature-flags, notification, audit-log, **background-jobs**, **email-delivery**, **finops**, **disaster-recovery**, scalability, distributed-systems, security, realtime, search, storage, monitoring, + 4 discovery + 1 mvp-scope |
 | Context | 4 | read, write, compress, sync-delta |
-| Role/Workflow | 10 | breakdown-tasks, code-review, inject-context, scan-project, feedback-loop, blueprints, ... |
+| Role/Workflow | (xem `.claude/skills/skill-role-*`) | breakdown-tasks, code-review, inject-context, scan-project, feedback-loop, … |
 | Tooling | 5 | git, linting, env, packagemanager, bundler |
 | Storage | 1 | s3 |
 
@@ -254,28 +250,9 @@ Skill: `skill-role-feedback-loop`
 
 ---
 
-## Blueprints System
+### Gợi ý mở rộng (tuỳ team)
 
-Templates cho coding patterns phổ biến — agents dùng blueprints thay vì viết từ đầu.
-
-| Blueprint | Mô tả | Complexity |
-|-----------|--------|------------|
-| BLUEPRINT-001 | CRUD Module (entity + validation + pagination) | medium |
-| BLUEPRINT-002 | Authentication Flow (login, register, tokens) | complex |
-| BLUEPRINT-003 | File Upload (S3/local + validation + resize) | medium |
-| BLUEPRINT-004 | Payment Integration (Stripe checkout + webhooks) | complex |
-| BLUEPRINT-005 | Real-time Features (WebSocket + notifications) | medium |
-| BLUEPRINT-006 | Search & Filter (full-text + autocomplete) | medium |
-| BLUEPRINT-007 | Caching Strategy (cache-aside + invalidation) | medium |
-
-Workflow:
-```
-analyst: detect task match blueprint → attach ref vào subtask
-orchestrator: inject blueprint vào context cho coder
-coder: đọc blueprint → customize theo project → implement
-```
-
-Skill: `skill-role-blueprints`
+Pattern triển khai lặp lại (CRUD, auth, upload…) có thể đặt trong `docs/` của project hoặc skill riêng. Platform **không** bắt buộc có thư mục `blueprints/` trong repo, git hooks hay handoff files.
 
 ---
 

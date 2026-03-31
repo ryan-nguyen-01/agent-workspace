@@ -23,24 +23,6 @@ Bạn chỉ cần:
 
 Nếu làm theo team (repo shared), xem guide: `docs/team-setup-agent-context.md`.
 
-## Hooks (optional) — team-safe cách dùng
-
-Hooks giúp đánh dấu `.agent/dirty-flags.md` sau `commit/merge` để context không bị stale.
-
-Khuyến nghị cho team: dùng **versioned hooks** (cùng 1 behavior cho mọi người) bằng `core.hooksPath`:
-
-```bash
-# chạy 1 lần cho từng repo trên máy dev
-bash hooks/enable-githooks.sh
-git config core.hooksPath
-```
-
-Fallback (không khuyến nghị cho team): cài vào `.git/hooks/` (per-dev, khó đồng bộ):
-
-```bash
-bash hooks/install-hooks.sh
-```
-
 ---
 
 ## Yêu cầu
@@ -637,12 +619,67 @@ Copy-Item "C:\path\to\agent-platform\CLAUDE.md" .; Copy-Item -Recurse "C:\path\t
 Copy-Item "C:\path\to\agent-platform\CLAUDE.md" "$env:USERPROFILE\.claude\"; Copy-Item -Recurse "C:\path\to\agent-platform\.claude\*" "$env:USERPROFILE\.claude\"
 ```
 
+## Selective Install (nâng cao)
+
+Không cần copy toàn bộ 20 agents + 109 skills. Có thể chỉ copy những gì dùng.
+
+### Skills bắt buộc (không bỏ)
+
+```
+skill-context-read      skill-context-write
+skill-role-blueprints   skill-role-code-review
+skill-role-breakdown-tasks
+```
+
+### Stack templates
+
+**Next.js fullstack**
+```bash
+SKILLS="skill-lang-typescript skill-framework-nextjs skill-api-trpc \
+  skill-database-postgresql skill-database-prisma skill-auth-jwt \
+  skill-ui-tailwind skill-ui-shadcn skill-testing-jest skill-testing-playwright \
+  skill-tooling-git skill-tooling-packagemanager skill-tooling-linting \
+  skill-context-read skill-context-write skill-role-blueprints \
+  skill-role-code-review skill-role-breakdown-tasks skill-security-hardening"
+for s in $SKILLS; do cp -r /path/to/agent-platform/.claude/skills/$s .claude/skills/; done
+```
+
+**NestJS + React**
+```bash
+SKILLS="skill-lang-typescript skill-framework-nestjs skill-framework-react \
+  skill-database-postgresql skill-database-prisma skill-auth-jwt skill-api-rest \
+  skill-ui-tailwind skill-testing-jest skill-tooling-git skill-tooling-packagemanager \
+  skill-context-read skill-context-write skill-role-blueprints \
+  skill-role-code-review skill-role-breakdown-tasks skill-security-hardening"
+for s in $SKILLS; do cp -r /path/to/agent-platform/.claude/skills/$s .claude/skills/; done
+```
+
+**Python FastAPI**
+```bash
+SKILLS="skill-lang-python skill-framework-fastapi skill-database-postgresql \
+  skill-database-sqlalchemy skill-database-migration skill-auth-jwt skill-api-rest \
+  skill-testing-pytest skill-tooling-git skill-tooling-packagemanager \
+  skill-context-read skill-context-write skill-role-blueprints \
+  skill-role-code-review skill-role-breakdown-tasks skill-security-hardening"
+for s in $SKILLS; do cp -r /path/to/agent-platform/.claude/skills/$s .claude/skills/; done
+```
+
+### Agents tối thiểu theo team size
+
+| Team size | Agents cần thiết |
+|-----------|-----------------|
+| Solo dev | orchestrator, onboarding, builder, reviewer, tester, security |
+| Small team | + ba, designer, qa, documenter, reporter |
+| Full team | Copy toàn bộ (khuyến nghị) |
+
+---
+
 ## Checklist
 
 ```
 [ ] CLAUDE.md exists (global: ~/.claude/CLAUDE.md hoặc local: ./CLAUDE.md)
-[ ] .claude/agents/ có 20 folders agent-*
-[ ] .claude/skills/ có 106 folders skill-*
+[ ] .claude/agents/ có ít nhất 6 folders agent-* (hoặc 20 nếu full install)
+[ ] .claude/skills/ có ít nhất 19 folders skill-* bắt buộc (hoặc 109 nếu full install)
 [ ] Mỗi agent folder có SKILL.md bên trong
 [ ] Mỗi skill folder có SKILL.md bên trong
 ```

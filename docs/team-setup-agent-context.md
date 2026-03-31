@@ -72,13 +72,7 @@ Nếu monorepo (turborepo/nx/pnpm workspaces):
 
 1) Mỗi dev cài global `.claude/` (hoặc project local)  
 2) Onboarding chạy 1 lần tạo `.agent/` local  
-3) (Optional) Bật **versioned git hooks** để `.agent/` không stale sau commit/merge:
-
-```
-bash hooks/enable-githooks.sh
-git config core.hooksPath
-```
-
 3) `.agent/` bị ignore → không ảnh hưởng PRs  
-4) Khi cần share, trích xuất summary vào docs chính thức (`docs/architecture.md`)
+4) Khi cần share, trích xuất summary vào docs chính thức (`docs/architecture.md`)  
+5) Khi codebase đổi nhiều: chủ động nhờ **agent-context-keeper** sync (hoặc mở task orchestrator) để `dirty-flags` được xử lý — **không** bắt buộc git hooks trong bản platform tối giản này.
 

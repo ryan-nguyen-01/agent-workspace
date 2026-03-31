@@ -354,7 +354,6 @@ Ghi TẤT CẢ kết quả vào .agent/ directory:
 │   │   └── stats.md            ← tracking stats
 │   └── modules/
 │       └── <tên-module>.md     ← từ B3 (1 file per module)
-├── blueprints/                 ← project-specific blueprints (optional)
 ├── task-board.md               ← template rỗng
 ├── progress.md                 ← template rỗng
 ├── dirty-flags.md              ← template rỗng

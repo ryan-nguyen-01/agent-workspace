@@ -1,5 +1,5 @@
 ---
-name: skill-data-dbt
+name: skill-database-dbt
 description: Best practices dbt — modeling (staging/marts), tests, seeds, snapshots, sources, incremental models, docs, CI, và deployment.
 ---
 

@@ -79,7 +79,7 @@ agent-{role}-{project}-{scope}-{tech}
        │        └─ Project slug (tên ngắn của project, kebab-case)
        │           Lấy từ: package.json name | pyproject.toml name | go.mod module
        │                   | tên thư mục root | user tự đặt
-       │           Ví dụ: shopee, medapp, todo-app, crm, erp-core
+      │           Ví dụ: shopee, medapp, sample-app, crm, erp-core
        │
        └─ Vai trò
           coder  — viết production code
@@ -106,7 +106,7 @@ BƯỚC 1: Tự detect từ config files (theo thứ tự ưu tiên)
      <artifactId>erp-core</artifactId>  → slug: erp-core
 
   5. Tên thư mục root (fallback)
-     /Users/dev/Projects/todo-app  → slug: todo-app
+    /Users/dev/Projects/sample-app  → slug: sample-app
 
 BƯỚC 2: Chuẩn hoá slug
   - Lowercase
@@ -504,6 +504,9 @@ Database Migration:
   TypeORM migration → skill-database-migration
   Alembic        → skill-database-migration
   Flyway         → skill-database-migration
+
+Data Transformation:
+  dbt            → skill-database-dbt  (chỉ gán cho agent-data hoặc data-focused agents)
 
 Auth & Security:
   JWT        → skill-auth-jwt

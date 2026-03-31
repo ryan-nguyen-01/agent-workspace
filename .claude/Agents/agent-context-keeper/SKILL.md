@@ -7,7 +7,7 @@ description: Agent sync context khi được trigger, giữ .agent/ context luô
 
 ## Vai trò
 
-> **Lưu ý về execution model:** Agent-context-keeper KHÔNG chạy nền tự động. Nó được trigger bởi: (1) git hooks (`post-commit` / `post-merge`) — team-safe qua `hooks/enable-githooks.sh` (`.githooks/`) hoặc fallback `hooks/install-hooks.sh`, (2) orchestrator gọi explicit (Bước 1 khi `dirty-flags` / sau task lớn), (3) user gọi thủ công. Hooks **chỉ ghi** `dirty-flags` + `changelog`; **sync thật sự** xảy ra khi context-keeper được invoke. Không có daemon — mỗi sync là một invocation.
+> **Lưu ý về execution model:** Agent-context-keeper KHÔNG chạy nền tự động. Nó được trigger bởi: (1) orchestrator (Bước 1 khi `dirty-flags` cần sync, hoặc sau task lớn), (2) user gọi thủ công. Không có daemon — mỗi sync là một invocation.
 
 "Memory manager" của hệ thống. Mọi agent đọc context từ `.agent/` — nếu context sai/cũ → agents ra quyết định sai. Context Keeper đảm bảo `.agent/` luôn phản ánh đúng trạng thái hiện tại của codebase.
 
@@ -28,7 +28,6 @@ Tất cả agents khác (orchestrator, analyst, coder, reviewer, ...)
 - `skill-context-write` — ghi cập nhật vào .agent/
 - `skill-context-sync-delta` — chỉ sync phần thay đổi (core skill)
 - `skill-context-compress` — nén nội dung mới thành YAML
-
 ---
 
 ## Trigger System
@@ -91,20 +90,18 @@ Dedup: nếu 2 triggers cùng ảnh hưởng file X → chỉ sync X 1 lần
 
 ## Quy trình chính
 
-### Phase 0 — Hook-only dirty flags (bắt buộc xử lý khi Orchestrator gọi)
+### Phase 0 — Dirty-flags có `pending_trigger` + `changed_files` (optional)
 
-Hooks có thể ghi `dirty-flags.md` dạng rút gọn (`pending_trigger` + `changed_files`, không có `dirty_sections` chi tiết).
-
-Khi invoke với trigger này:
+Khi `dirty-flags.md` có block rút gọn (ví dụ user/tool ghi `pending_trigger` + danh sách file đổi) mà chưa có `dirty_sections` chi tiết:
 
 ```
-1. Đọc pending_trigger.source (git_commit | git_pull) và changed_files
-2. Áp mapping Phase 2 (file → section) cho từng file trong list (cap 50 files như hook)
+1. Đọc pending_trigger và changed_files
+2. Áp mapping Phase 2 (file → section) cho từng file (giới hạn hợp lý, ví dụ 50 file)
 3. Chạy Phase 4 delta sync cho từng section affected (không rebuild toàn .agent/)
 4. Phase 5: append changelog, clear dirty_sections + pending_trigger, sync_in_progress: false
 ```
 
-Nếu `changed_files` rỗng → chỉ cập nhật `last_checked`, clear pending stale.
+Nếu `changed_files` rỗng → chỉ cập nhật `last_checked`, clear pending nếu stale.
 
 ### Phase 1 — Detect Changes
 
