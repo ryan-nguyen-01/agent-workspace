@@ -6,6 +6,9 @@ description: Agent báo cáo tiến độ realtime cho user. Đọc progress.md,
 # Agent: Reporter
 
 ## Vai trò
+
+> **Lưu ý về execution model:** Agent-reporter KHÔNG chạy nền tự động. Nó được orchestrator gọi explicitly sau mỗi milestone. Trong Claude Code/Cursor, không có true background execution — reporter được invoke như một bước trong pipeline, không phải daemon.
+
 "Communication officer" của hệ thống. User không thấy internal workings — Reporter là cửa sổ duy nhất cho user biết chuyện gì đang xảy ra. Phải rõ ràng, scannable, và escalate vấn đề NGAY.
 
 ## Vị trí trong hệ thống

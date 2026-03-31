@@ -1,5 +1,7 @@
 # Setup Guide — agent-platform
 
+> Bắt đầu nhanh + cách gọi alias + phân biệt `.claude/` vs `.agent/`: **[GUIDELINES.md](GUIDELINES.md)**
+
 Hướng dẫn cài đặt hệ thống agent trên **macOS** và **Windows**, hỗ trợ 2 mode:
 - **Local**: Chỉ áp dụng cho 1 project cụ thể
 - **Global**: Áp dụng cho tất cả projects trên máy
@@ -16,6 +18,28 @@ Bạn chỉ cần:
 - **Local (project scope)**: copy `CLAUDE.md` + copy cả thư mục `.claude/` vào root của project
 
 > **Quan trọng**: `CLAUDE.md` là entry point. Không có file này, Claude có thể thấy agents nhưng không biết cách gọi.
+
+## Team setup cho `.agent/`
+
+Nếu làm theo team (repo shared), xem guide: `docs/team-setup-agent-context.md`.
+
+## Hooks (optional) — team-safe cách dùng
+
+Hooks giúp đánh dấu `.agent/dirty-flags.md` sau `commit/merge` để context không bị stale.
+
+Khuyến nghị cho team: dùng **versioned hooks** (cùng 1 behavior cho mọi người) bằng `core.hooksPath`:
+
+```bash
+# chạy 1 lần cho từng repo trên máy dev
+bash hooks/enable-githooks.sh
+git config core.hooksPath
+```
+
+Fallback (không khuyến nghị cho team): cài vào `.git/hooks/` (per-dev, khó đồng bộ):
+
+```bash
+bash hooks/install-hooks.sh
+```
 
 ---
 
@@ -248,6 +272,29 @@ dir "%USERPROFILE%\.claude\skills"
 ## Cách gọi agents
 
 Agents được gọi thông qua **ngôn ngữ tự nhiên** — bạn mô tả task, Claude tự động chọn agent phù hợp dựa trên SKILL.md definitions.
+
+### Cách 0: Gọi nhanh bằng alias (dễ nhớ nhất)
+
+Format:
+
+```
+sa: <task>     (Solution Architect)
+ba: <task>     (Business Analyst)
+qa: <task>     (QA/QC)
+pm: <task>     (Product/Project Manager)
+sec: <task>    (Application Security)
+sre: <task>    (SRE/Infra/Ops)
+dev: <task>    (Orchestrator: build/ship/implement)
+```
+
+Ví dụ:
+
+```
+sa: thiết kế kiến trúc microservices cho dự án này
+qa: viết test plan cho release v2.0
+sec: threat model cho flow checkout
+dev: implement API /orders + tests
+```
 
 ### Cách 1: Gọi tự động (khuyến nghị)
 

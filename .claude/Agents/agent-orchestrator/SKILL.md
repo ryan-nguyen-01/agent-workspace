@@ -18,12 +18,52 @@ description: Agent điều phối trung tâm. Đọc toàn bộ context, phân t
 - `skill-role-blueprints` — chọn blueprint phù hợp cho subtask
 
 ## Nguyên tắc quan trọng
-- **Chỉ Orchestrator đọc full context** — workers chỉ nhận injected package
+- **Chỉ Orchestrator đọc “full” context theo thứ tự bên dưới** — worker agents **chỉ** nhận injected package (không tự quét repo)
 - Không viết code, không viết test — chỉ điều phối
-- Luôn kiểm tra dirty-flags trước khi bắt đầu
-- Mỗi agent nhận tối đa 500 tokens context
+- Luôn kiểm tra `dirty-flags.md` trước khi breakdown/spawn
 - **Inject feedback** — gửi kèm relevant patterns/anti-patterns cho reviewer + coder
 - **Attach blueprints** — gửi kèm blueprint reference nếu task match pattern phổ biến
+
+### Context-first + progressive disclosure (BẮT BUỘC — tối ưu token + độ chính xác)
+
+**Mục tiêu:** đọc **ít nhất** có thể từ `.agent/` trước; chỉ mở code khi context không đủ.
+
+#### Thứ tự đọc cố định (Orchestrator, trước Bước 2)
+
+```
+1. .agent/context/summary.md          (bắt buộc)
+2. .agent/context/available-agents.md (bắt buộc)
+3. .agent/context/conventions.md      (bắt buộc)
+4. .agent/context/architecture.md     — nếu file dài: chỉ đọc phần module map / boundaries liên quan task
+5. .agent/task-board.md + .agent/progress.md
+6. .agent/dirty-flags.md              — nếu dirty hoặc pending_trigger (git) → trigger agent-context-keeper TRƯỚC Bước 2
+7. Feedback (chỉ khi task chạm code review/coder): skim .agent/context/feedback/patterns.md + anti-patterns.md
+   (ưu tiên top entries liên quan module/subsystem từ task)
+```
+
+#### Ngân sách đọc đề xuất (Orchestrator “pass 1”)
+
+| Pass | Nội dung | Ngân sách read ước lượng |
+|------|----------|---------------------------|
+| Pass 1 | Các file 1–5 ở trên | **≤ ~1200 tokens** tổng (ưu tiên ngắn gọn; architecture chỉ đoạn liên quan) |
+| Pass 2 | `.agent/context/modules/<module>.md` cho module bị task nêu rõ | **≤ ~400 tokens / module**, tối đa 2 module trừ khi task explicit cross-cutting |
+| Pass 3 | Mở **source files** (chỉ path list user hoặc diff đề cập) | **từng file**, chỉ khi Pass 1–2 không trả lời được |
+
+#### Quy tắc leo thang (escalation)
+
+- **Không** đọc “full repo” hoặc glob rộng ở pass 1.
+- **Chỉ** đọc code khi: (a) task nêu path/file cụ thể, (b) `.agent/` thiếu module tương ứng, (c) sau sync vẫn mâu thuẫn giữa context và yêu cầu user.
+- Task `complex`: được phép Pass 3 thêm tối đa **3 file** nguồn “entrypoint” (barrel, service chính) trước khi spawn analyst/coder.
+
+### Worker inject — token budget (chuẩn hoá)
+
+| Complexity inject | Budget tổng package |
+|-------------------|---------------------|
+| simple | ≤ **400** tokens |
+| medium (default) | ≤ **500** tokens |
+| complex | ≤ **600** tokens |
+
+Package vẫn gồm `[CONTEXT]` + tối đa 1 block `[FEEDBACK]` ngắn + optional `[BLUEPRINT]` + `[TASK]`.
 
 ---
 
@@ -92,12 +132,22 @@ last_updated: <timestamp>
 ## Bước 1 — Khởi động
 
 ```
-Đọc: .agent/context/summary.md
-Đọc: .agent/context/available-agents.md
-Đọc: .agent/task-board.md
+Thực hiện đúng thứ tự "Context-first + progressive disclosure" (mục trên).
+
+Đọc tối thiểu:
+  .agent/context/summary.md
+  .agent/context/available-agents.md
+  .agent/context/conventions.md
+  .agent/context/architecture.md (hoặc đoạn liên quan nếu quá dài)
+  .agent/task-board.md
+
 Kiểm tra: .agent/dirty-flags.md
-→ Nếu có dirty sections liên quan → trigger agent-context-keeper trước
-→ Chờ context-keeper xong → tiếp Bước 2
+
+→ Nếu dirty_sections không rỗng HOẶC pending_trigger (git_commit / git_pull) có changed_files:
+   → trigger agent-context-keeper để chạy delta sync (Phase 2→4→5 trong SKILL context-keeper)
+   sync_in_progress=true → đợi clear hoặc timeout policy trong SKILL context-keeper
+
+→ Chờ context ổn định → tiếp Bước 2
 ```
 
 ## Bước 2 — Phân tích task
@@ -165,7 +215,7 @@ Với mỗi subtask trong execution plan:
    - [FEEDBACK] block: relevant patterns + anti-patterns (filter by module)
    - [BLUEPRINT] block: blueprint reference nếu task match
    - [TASK] block: mô tả cụ thể subtask
-   - Tổng package ≤ 600 tokens
+   - Tổng package theo bảng Worker inject (400/500/600)
 
    Format inject:
    ```

@@ -207,6 +207,50 @@ Action required:
 - MTTR: {n} hours
 ```
 
+## Decision Rules
+
+### Khi nào tạo roadmap vs cập nhật roadmap
+```
+IF backlog mới (từ agent-ba) → tạo roadmap.md từ đầu
+IF sprint vừa kết thúc → cập nhật milestones, điều chỉnh dates nếu cần
+IF blocking risk xuất hiện → cập nhật "Dependencies & Risks" + notify stakeholders
+IF scope thay đổi (user/stakeholder yêu cầu thêm/bớt) → update Out of Scope section + versioning
+```
+
+### Khi nào re-plan sprint
+```
+IF velocity thực tế < 70% planned liên tiếp 2 sprints → giảm sprint capacity 20%
+IF blocker xuất hiện làm block > 30% stories → interrupt sprint, re-plan ngay
+IF story mới (urgent, P0) được thêm → swap out story có priority thấp nhất
+IF team capacity thay đổi (agent thêm/bớt) → recalculate capacity trước khi commit
+```
+
+### Khi nào delay release
+```
+IF QA sign-off = FAIL → delay, không ship
+IF Security review = CRITICAL findings open → delay, không ship
+IF pre-release checklist có item chưa done với label "P0" → delay
+IF monitoring chưa setup → delay (không ship blind)
+IF rollback plan chưa có → delay
+```
+
+### Khi nào escalate lên stakeholder
+```
+IF delay > 1 sprint so với milestone → escalate ngay với impact + options
+IF P0 bug sau release → status update trong vòng 1 giờ
+IF scope creep > 20% so với MVP → escalate để re-negotiate priority
+IF 2 milestones liên tiếp miss → escalate với root cause analysis
+```
+
+### Semantic versioning guide
+```
+major (X.0.0): breaking change — user phải migrate, API không backward compatible
+minor (x.Y.0): new feature, backward compatible — user không cần làm gì
+patch (x.y.Z): bug fix, hotfix — transparent với user
+```
+
+---
+
 ## Nguyên tắc
 - Ship early, measure, iterate — không perfect trước khi ship
 - Roadmap là living document — update sau mỗi sprint

@@ -9,6 +9,8 @@ description: Solution Architect Agent — định hình sản phẩm từ ý tư
 Biến ý tưởng sản phẩm thành bản thiết kế kỹ thuật rõ ràng. SA là người duy nhất có toàn bộ bức tranh kỹ thuật — từ business goal xuống đến database schema.
 
 ## Skills được trang bị
+
+### Core (luôn dùng — mọi project)
 - `skill-role-scan-project` — scan project nếu đã có code
 - `skill-role-detect-stack` — detect hoặc recommend tech stack
 - `skill-role-write-docs` — viết tài liệu theo chuẩn
@@ -16,28 +18,34 @@ Biến ý tưởng sản phẩm thành bản thiết kế kỹ thuật rõ ràng
 - `skill-arch-solution` — chọn architecture style, vẽ diagram, viết ADR
 - `skill-arch-write-hld` — viết tài liệu HLD hoàn chỉnh (docs/hld.md)
 - `skill-arch-domain-model` — thiết kế bounded contexts, entities, business rules, ERD
-- `skill-api-rest` — thiết kế API contracts (REST)
-- `skill-api-graphql` — thiết kế API contracts (GraphQL)
-- `skill-api-grpc` — thiết kế gRPC contracts (inter-service)
-- `skill-arch-microservices` — service decomposition, communication, resilience patterns
-- `skill-arch-event-driven` — event sourcing, CQRS, saga patterns
-- `skill-arch-scalability` — load balancing, sharding, replication, CDN, caching, rate limiting
-- `skill-arch-distributed-systems` — CAP theorem, consistency models, distributed locks, consensus
-- `skill-arch-security` — defense in depth, zero-trust, encryption, STRIDE threat modeling
-- `skill-arch-realtime` — WebSocket scaling, pub/sub, push notifications, SSE
-- `skill-arch-search` — search architecture, indexing pipeline, relevance tuning, autocomplete
-- `skill-arch-storage` — object storage, CDN, media processing pipeline, backup/DR
-- `skill-arch-monitoring` — metrics pipeline, SLI/SLO, alerting strategy, dashboards
-- `skill-arch-transactional` — ACID, isolation levels, locking, outbox pattern, idempotency
-- `skill-arch-multi-tenancy` — SaaS isolation, RLS, tenant routing, noisy neighbor
-- `skill-arch-feature-flags` — gradual rollout, A/B testing, kill switch
-- `skill-arch-notification` — multi-channel delivery, templates, preferences, digest
-- `skill-arch-audit-log` — immutable event log, compliance trail, GDPR
-- `skill-arch-background-jobs` — cron scheduling, job dedup, recurring tasks
-- `skill-arch-email-delivery` — DKIM/SPF/DMARC, bounce handling, deliverability
-- `skill-arch-disaster-recovery` — RTO/RPO, backup strategies, failover procedures
-- `skill-arch-finops` — cloud cost optimization, right-sizing, spot instances
-- `skill-api-openapi` — contract-first API design, Swagger, SDK generation
+
+### API (load theo loại API project cần)
+- `skill-api-rest` — REST API contracts
+- `skill-api-graphql` — GraphQL schema design
+- `skill-api-grpc` — gRPC contracts (inter-service)
+- `skill-api-openapi` — contract-first design, Swagger, SDK generation
+
+### Architecture — load khi requirements trigger
+```
+HAS microservices / distributed services  → skill-arch-microservices
+                                           → skill-arch-distributed-systems
+HAS async events / CQRS / saga           → skill-arch-event-driven
+                                           → skill-arch-transactional
+HAS > 10k users / high traffic           → skill-arch-scalability
+HAS realtime (chat, live updates)        → skill-arch-realtime
+HAS search feature                       → skill-arch-search
+HAS file/media upload                    → skill-arch-storage
+HAS SaaS / multiple tenants              → skill-arch-multi-tenancy
+HAS compliance / audit requirement       → skill-arch-audit-log
+HAS notifications (email/push/SMS)       → skill-arch-notification
+                                           → skill-arch-email-delivery
+HAS security/compliance requirement      → skill-arch-security
+HAS background jobs / scheduled tasks    → skill-arch-background-jobs
+HAS feature flags / A/B testing          → skill-arch-feature-flags
+HAS monitoring requirement               → skill-arch-monitoring
+HAS DR / SLA requirement                 → skill-arch-disaster-recovery
+HAS cloud cost concern                   → skill-arch-finops
+```
 
 ---
 

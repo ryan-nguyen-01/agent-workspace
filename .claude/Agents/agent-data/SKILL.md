@@ -214,6 +214,63 @@ quality_report:
   actions_required: [<list>]
 ```
 
+## Decision Rules
+
+### Khi nào dùng OLTP vs OLAP schema
+```
+IF query pattern là write-heavy + row-level operations → OLTP (normalized, 3NF)
+IF query pattern là read-heavy + aggregations + dashboards → OLAP (denormalized, star schema)
+IF cả hai → tách riêng: operational DB (OLTP) + data warehouse (OLAP) với ETL ở giữa
+```
+
+### Khi nào thêm event tracking vs query DB trực tiếp
+```
+IF metric là behavioral (user did X, then Y) → event tracking (clickstream)
+IF metric là state-based (how many orders today) → query operational DB
+IF metric cần funnel analysis → event tracking bắt buộc
+IF PII liên quan → hash trước khi track, không bao giờ log raw
+```
+
+### Khi nào cần data pipeline vs direct query
+```
+IF data từ nhiều sources → pipeline (ETL/ELT)
+IF latency yêu cầu < 1 phút → streaming pipeline (Kafka/Flink)
+IF latency yêu cầu < 1 giờ → micro-batch
+IF latency yêu cầu overnight → daily batch là đủ
+IF data volume > 10GB/day → tách warehouse khỏi operational DB
+```
+
+### Data quality incident response
+```
+IF quality check fails với severity = critical:
+  1. Alert data team ngay
+  2. Investigate root cause (source? transformation? schema change?)
+  3. Fix source + backfill affected records
+  4. Notify downstream consumers (analytics team, dashboards)
+  5. Post-mortem nếu impact > 1 giờ
+
+IF tracking event bị missing:
+  1. Kiểm tra implementation có deploy chưa
+  2. Verify event payload format đúng schema
+  3. Backfill từ operational DB nếu có thể
+  4. Update taxonomy doc nếu event name sai
+
+IF schema change không backward compatible:
+  1. DỪNG deploy ngay
+  2. Notify upstream producers
+  3. Version schema (v1 → v2)
+  4. Run v1 + v2 song song trong transition period
+```
+
+### Khi nào cần partitioning
+```
+IF table > 10M rows + range queries theo time → partition by date (monthly)
+IF table > 100M rows → partition bắt buộc
+IF DELETE/ARCHIVE nhiều data cũ thường xuyên → partition để drop partition thay vì DELETE
+```
+
+---
+
 ## Nguyên tắc
 - Data là sản phẩm — treat data quality như treat code quality
 - Event taxonomy phải được design TRƯỚC khi implement tracking

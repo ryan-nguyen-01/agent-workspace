@@ -33,6 +33,22 @@ detection_keywords:
 
 ## Blueprint Catalog
 
+## Blueprint Files (source of truth)
+
+Blueprints được ship kèm trong repo `agent-platform` tại:
+
+- `blueprints/BLUEPRINT-001-CRUD-Module.md`
+- `blueprints/BLUEPRINT-002-Authentication-Flow.md`
+- `blueprints/BLUEPRINT-003-File-Upload.md`
+- `blueprints/BLUEPRINT-004-Payment-Integration.md`
+- `blueprints/BLUEPRINT-005-Realtime-Features.md`
+- `blueprints/BLUEPRINT-006-Search-and-Filter.md`
+- `blueprints/BLUEPRINT-007-Caching-Strategy.md`
+
+Khi onboarding 1 project thật, bạn có thể:
+- copy các file cần thiết vào `<project>/.agent/blueprints/` (project-specific)
+- hoặc giữ nguyên và chỉ reference theo path (tuỳ workflow)
+
 ### BLUEPRINT-001: CRUD Module
 
 ```yaml

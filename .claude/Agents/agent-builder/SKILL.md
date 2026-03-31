@@ -447,6 +447,7 @@ Backend language:
 
 Backend framework:
   NestJS      → skill-framework-nestjs
+  Hono        → skill-framework-hono
   Express     → skill-framework-express
   FastAPI     → skill-framework-fastapi
   Django      → skill-framework-django
@@ -532,6 +533,7 @@ API Design:
   GraphQL → skill-api-graphql
   gRPC    → skill-api-grpc
   OpenAPI → skill-api-openapi
+  tRPC    → skill-api-trpc
 
 Architecture (cho SA + microservices projects):
   Microservices    → skill-arch-microservices
@@ -689,129 +691,4 @@ agent-tester:
 
 ---
 
-## Skills Catalog (Reference)
-
-### Languages
-```
-skill-lang-typescript | skill-lang-java
-skill-lang-python     | skill-lang-go | skill-lang-rust
-```
-
-### Frameworks — Backend
-```
-skill-framework-nestjs       | skill-framework-express
-skill-framework-fastapi      | skill-framework-django
-skill-framework-spring-boot  | skill-framework-gin | skill-framework-fiber
-```
-
-### Frameworks — Frontend
-```
-skill-framework-react   | skill-framework-nextjs
-skill-framework-vuejs   | skill-framework-nuxtjs | skill-framework-angular
-```
-
-### Frameworks — Mobile
-```
-skill-framework-react-native | skill-framework-flutter
-```
-
-### Databases — SQL
-```
-skill-database-postgresql | skill-database-mysql
-```
-
-### Databases — NoSQL & Search
-```
-skill-database-mongodb | skill-database-redis | skill-database-elasticsearch
-```
-
-### ORM / ODM
-```
-skill-database-prisma | skill-database-typeorm | skill-database-sqlalchemy
-```
-
-### Database Migration
-```
-skill-database-migration
-```
-
-### Testing
-```
-skill-testing-jest | skill-testing-vitest | skill-testing-pytest
-skill-testing-junit | skill-testing-playwright
-skill-testing-load | skill-testing-fixtures
-```
-
-### Auth & Security
-```
-skill-auth-jwt | skill-auth-oauth2 | skill-auth-rbac
-skill-security-hardening
-```
-
-### API Design
-```
-skill-api-rest | skill-api-graphql | skill-api-grpc
-skill-api-openapi
-```
-
-### UI Libraries
-```
-skill-ui-mui | skill-ui-antd | skill-ui-shadcn | skill-ui-tailwind
-skill-ui-figma | skill-ui-accessibility
-```
-
-### Frontend
-```
-skill-fe-state-management | skill-fe-i18n
-```
-
-### Message Queues
-```
-skill-queue-rabbitmq | skill-queue-kafka | skill-queue-bullmq
-```
-
-### DevOps & Infrastructure
-```
-skill-devops-docker | skill-devops-github-actions | skill-devops-kubernetes
-skill-devops-container-security
-```
-
-### Observability
-```
-skill-observability-logging | skill-observability-tracing
-```
-
-### Storage
-```
-skill-storage-s3
-```
-
-### Tooling
-```
-skill-tooling-git            | skill-tooling-packagemanager
-skill-tooling-linting        | skill-tooling-bundler
-skill-tooling-env
-```
-
-### Architecture & Discovery
-```
-skill-arch-solution             | skill-arch-write-hld
-skill-arch-domain-model         | skill-arch-microservices
-skill-arch-event-driven         | skill-arch-transactional
-skill-arch-multi-tenancy        | skill-arch-feature-flags
-skill-arch-notification         | skill-arch-audit-log
-skill-arch-background-jobs      | skill-arch-email-delivery
-skill-arch-finops               | skill-arch-disaster-recovery
-skill-arch-scalability
-skill-arch-distributed-systems  | skill-arch-security
-skill-arch-realtime             | skill-arch-search
-skill-arch-storage              | skill-arch-monitoring
-skill-discovery-problem-analysis
-skill-discovery-market-analysis | skill-discovery-mvp-scope
-skill-discovery-risk-assessment
-```
-
-### Workflow & Quality
-```
-skill-role-feedback-loop     | skill-role-blueprints
-```
+> **Skills Catalog:** Xem mapping đầy đủ stack → skill trong Bước 3 ở trên.

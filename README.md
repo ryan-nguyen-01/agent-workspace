@@ -57,8 +57,9 @@ User
 ```
 agent-platform/
 ├── CLAUDE.md                          ← Entry point (Claude đọc file này đầu tiên)
+├── GUIDELINES.md                      ← Single source of truth (cách dùng + alias + semantics)
 ├── README.md                          ← file này
-└── .claude/                           ← Claude's config directory
+└── .claude/                           ← Agent/skill definitions (ship kèm repo)
     ├── agents/                        ← 20 core agent definitions
     │   ├── README.md                  ← handbook nội bộ
     │   ├── agent-orchestrator/SKILL.md
@@ -74,6 +75,13 @@ agent-platform/
         ├── skill-arch-microservices/SKILL.md
         ├── skill-security-hardening/SKILL.md
         └── ... (106 skills)
+```
+
+Runtime context (tạo trong từng project khi dùng):
+
+```
+.agent/                                ← runtime context (thường không commit)
+└── context/...
 ```
 
 ---
@@ -562,7 +570,8 @@ Templates cho coding patterns phổ biến, tránh viết từ đầu.
 
 ## Getting Started
 
-> Cài đặt chi tiết + cách gọi agents: **[SETUP.md](SETUP.md)**
+> Bắt đầu nhanh + nguyên tắc “đúng khái niệm”: **[GUIDELINES.md](GUIDELINES.md)**  
+> Cài đặt chi tiết: **[SETUP.md](SETUP.md)**
 
 ### 1. Setup
 
@@ -590,6 +599,11 @@ Mở project trong IDE có tích hợp Claude (Cursor, VS Code, Claude Code CLI)
 Hoặc gọi agent cụ thể:
 
 ```
+"sa: thiết kế microservices cho dự án này"
+"qa: viết test plan cho release v2.0"
+"sec: review bảo mật module payment"
+"dev: implement API /orders + tests"
+
 "agent-sa: thiết kế microservices cho dự án này"
 "agent-perf: load test API /orders với 1000 users"
 ```

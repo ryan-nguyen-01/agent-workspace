@@ -4,6 +4,8 @@
 
 Hệ thống gồm **20 core agents** + **106 skills** + **feedback loop** + **blueprints** + **unlimited generated agents**, hoạt động như một công ty phần mềm hoàn chỉnh. Từ ý tưởng đến production và vận hành.
 
+> Nếu bạn mới dùng / muốn “đúng khái niệm” (.claude vs .agent, routing, alias `sa:`/`dev:`/...) xem: **[GUIDELINES.md](../../GUIDELINES.md)**
+
 ---
 
 ## Sơ đồ tổ chức
@@ -82,8 +84,8 @@ Hệ thống gồm **20 core agents** + **106 skills** + **feedback loop** + **b
 | **agent-orchestrator** | Điều phối, spawn agents, error handling | Entry point mọi task |
 | **agent-onboarding** | Scan project, tạo .agent/ context | Lần đầu vào project |
 | **agent-builder** | Detect stack, tạo generated agents | Sau onboarding |
-| **agent-context-keeper** | Sync .agent/ context khi code thay đổi | Chạy nền |
-| **agent-reporter** | Báo cáo tiến độ, escalate blockers | Chạy nền |
+| **agent-context-keeper** | Sync .agent/ context khi code thay đổi | Triggered (hook/orchestrator/manual), không daemon |
+| **agent-reporter** | Báo cáo tiến độ, escalate blockers | Triggered bởi orchestrator, không daemon |
 
 ---
 
