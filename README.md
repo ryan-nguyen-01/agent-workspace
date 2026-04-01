@@ -1,6 +1,6 @@
 # agent-platform
 
-Multi-agent AI system hoạt động như một **công ty phần mềm hoàn chỉnh**. Từ ý tưởng thô đến production code, testing, security review, deployment và vận hành — tất cả được xử lý bởi 20 agents chuyên biệt với 106 skills.
+Multi-agent AI system hoạt động như một **công ty phần mềm hoàn chỉnh**. Từ ý tưởng thô đến production code, testing, security review, deployment và vận hành — tất cả được xử lý bởi 21 agents chuyên biệt với 127 skills.
 
 ---
 
@@ -24,7 +24,7 @@ User
 │ 4 agents 6 agents   3 agents   1 agent    2 agents  5 agents   │
 │                                                                  │
 │  ┌─────────────────────────────────────────────────────────┐    │
-│  │                    106 SKILLS                            │    │
+│  │                    127 SKILLS                            │    │
 │  │   Languages · Frameworks · DB · Auth · Testing · UI      │    │
 │  │   Architecture · DevOps · Security · Observability       │    │
 │  └─────────────────────────────────────────────────────────┘    │
@@ -42,12 +42,12 @@ User
 
 | Metric | Số lượng |
 |--------|---------|
-| Core agents | 20 |
-| Skills | 106 |
+| Core agents | 21 |
+| Skills | 127 |
 | Generated agents | Unlimited (per project) |
 | Departments | 7 |
-| Supported languages | 5 (TypeScript, Python, Java, Go, Rust) |
-| Supported frameworks | 16 (BE: 7, FE: 5, Mobile: 2, DB ORM: 3) |
+| Supported languages | 13 (TypeScript, Python, Java, Go, Rust, Kotlin, Swift, C#, PHP, Elixir, Ruby, Dart, Scala) |
+| Supported frameworks | 27 (BE: 11, FE: 10, Mobile: 3, DB ORM: 3) |
 
 ---
 
@@ -110,7 +110,7 @@ Runtime context (tạo trong từng project khi dùng):
 
 ---
 
-## 20 Core Agents
+## 21 Core Agents
 
 ### Product (ý tưởng → backlog)
 
@@ -126,7 +126,8 @@ Runtime context (tạo trong từng project khi dùng):
 | Agent | Vai trò | Skills chính |
 |-------|---------|-------------|
 | **agent-analyst** | Breakdown task phức tạp → subtasks atomic | breakdown-tasks |
-| **agent-designer** | UI/UX: design tokens, wireframes, components | ui-figma, ui-accessibility, ui-tailwind/shadcn/mui/antd |
+| **agent-designer** | UI/UX: design tokens, wireframes, components (không có Figma URL) | ui-figma, ui-accessibility, ui-tailwind/shadcn/mui/antd |
+| **agent-figma** | Extract specs từ Figma URL; review UI thực vs Figma sau khi code | ui-figma, role-ui-review, write-docs |
 | **agent-coder-*** | Viết production code (generated per project) | lang-*, framework-*, database-*, api-*, auth-* |
 | **agent-reviewer** | Review code: quality, conventions, correctness | code-review, security-hardening, feedback-loop |
 | **agent-documenter** | Cập nhật docs, API docs, changelog | write-docs, context-write |
@@ -166,9 +167,9 @@ Runtime context (tạo trong từng project khi dùng):
 
 ---
 
-## 106 Skills (Full Catalog)
+## 127 Skills (Full Catalog)
 
-### Languages (5)
+### Languages (13)
 
 | Skill | Mô tả |
 |-------|-------|
@@ -177,20 +178,32 @@ Runtime context (tạo trong từng project khi dùng):
 | `skill-lang-java` | Java patterns, Stream API, records |
 | `skill-lang-go` | Go modules, goroutines, interfaces |
 | `skill-lang-rust` | Ownership, lifetimes, traits, error handling |
+| `skill-lang-kotlin` | Coroutines, sealed classes, data classes, null safety |
+| `skill-lang-swift` | Optionals, actors, async/await, protocols |
+| `skill-lang-csharp` | Records, nullable, LINQ, .NET 8+ patterns |
+| `skill-lang-php` | PHP 8.3+, enums, fibers, match, readonly |
+| `skill-lang-elixir` | Pattern matching, GenServer, OTP, Ecto |
+| `skill-lang-ruby` | Blocks, mixins, Data.define, pattern matching |
+| `skill-lang-dart` | Null safety, streams, sealed classes |
+| `skill-lang-scala` | Case classes, Cats Effect, for-comprehensions, pattern matching |
 
-### Backend Frameworks (7)
+### Backend Frameworks (11)
 
 | Skill | Mô tả |
 |-------|-------|
 | `skill-framework-nestjs` | DI, modules, guards, pipes, interceptors |
 | `skill-framework-express` | Middleware, routing, error handling |
+| `skill-framework-fastify` | Plugins, schema validation, TypeBox, hooks |
+| `skill-framework-elysia` | Bun framework, Eden Treaty, lifecycle hooks |
 | `skill-framework-fastapi` | Pydantic, dependency injection, async |
 | `skill-framework-django` | ORM, views, serializers, admin |
 | `skill-framework-spring-boot` | Beans, JPA, security, actuator |
 | `skill-framework-gin` | Handlers, middleware, binding |
 | `skill-framework-fiber` | Fast HTTP, middleware chain |
+| `skill-framework-axum` | Rust Axum — routing, extractors, Tower middleware |
+| `skill-framework-encore` | Built-in API/PubSub/Cron/Secrets/DB, type-safe service calls |
 
-### Frontend Frameworks (5)
+### Frontend Frameworks (10)
 
 | Skill | Mô tả |
 |-------|-------|
@@ -199,15 +212,21 @@ Runtime context (tạo trong từng project khi dùng):
 | `skill-framework-vuejs` | Composition API, reactivity, composables |
 | `skill-framework-nuxtjs` | Auto-imports, server routes, Nitro |
 | `skill-framework-angular` | Signals, standalone components, OnPush |
+| `skill-framework-solidstart` | SolidJS, routeLoader$, server functions, streaming SSR |
+| `skill-framework-qwik` | Resumability, routeAction$, QwikCity routing |
+| `skill-framework-tanstack-start` | TanStack Router, createServerFn, type-safe loaders |
+| `skill-framework-fresh` | Deno Islands, file-based routing, zero build step |
+| `skill-framework-htmx` | Hypermedia UI, hx-* attributes, server-side patterns |
 
-### Mobile Frameworks (2)
+### Mobile Frameworks (3)
 
 | Skill | Mô tả |
 |-------|-------|
 | `skill-framework-react-native` | Expo Router, SecureStore, FlatList, OTA updates |
+| `skill-framework-expo` | Expo Router, EAS Build, OTA updates, native modules |
 | `skill-framework-flutter` | Dart, Riverpod, GoRouter, platform channels |
 
-### Databases & ORM (9)
+### Databases & ORM (10)
 
 | Skill | Mô tả |
 |-------|-------|
@@ -216,6 +235,7 @@ Runtime context (tạo trong từng project khi dùng):
 | `skill-database-mongodb` | Aggregation, indexes, schema design |
 | `skill-database-redis` | Data structures, pub/sub, Lua scripts |
 | `skill-database-elasticsearch` | Mappings, analyzers, aggregations |
+| `skill-database-turso` | Edge SQLite (LibSQL), Drizzle integration, embedded replicas, Cloudflare Workers |
 | `skill-database-prisma` | Schema, migrations, relations, raw queries |
 | `skill-database-typeorm` | Entities, repositories, query builder |
 | `skill-database-sqlalchemy` | ORM, Core, Alembic integration |
@@ -255,11 +275,12 @@ Runtime context (tạo trong từng project khi dùng):
 | `skill-ui-figma` | Design-to-code, token extraction, component mapping |
 | `skill-ui-accessibility` | WCAG 2.2, ARIA, keyboard nav, contrast |
 
-### Frontend (2)
+### Frontend (3)
 
 | Skill | Mô tả |
 |-------|-------|
 | `skill-fe-state-management` | Redux Toolkit, Zustand, Pinia, TanStack Query |
+| `skill-fe-tanstack-query` | useQuery, useMutation, queryOptions, optimistic updates, SSR |
 | `skill-fe-i18n` | i18next, vue-i18n, Intl API, RTL support |
 
 ### API Design (4)
@@ -355,7 +376,7 @@ Runtime context (tạo trong từng project khi dùng):
 | `skill-role-feedback-loop` | Capture good patterns and anti-patterns |
 | `skill-role-blueprints` | Patterns CRUD/auth/upload/… (nội dung inline trong `SKILL.md`, không cần thư mục `blueprints/`) |
 
-### Tooling (5)
+### Tooling (6)
 
 | Skill | Mô tả |
 |-------|-------|
@@ -364,6 +385,7 @@ Runtime context (tạo trong từng project khi dùng):
 | `skill-tooling-env` | Environment variables, .env management |
 | `skill-tooling-packagemanager` | npm, pnpm, yarn, pip, go modules |
 | `skill-tooling-bundler` | Vite, Webpack, esbuild configuration |
+| `skill-tooling-zod` | Schema validation, z.infer, safeParse, transforms, env validation |
 
 ---
 
@@ -529,10 +551,10 @@ Code review → Reviewer ghi patterns/issues → feedback/patterns.md + anti-pat
 
 | Category | Supported |
 |----------|-----------|
-| Web (SPA, SSR, SSG) | React, Next.js, Vue, Nuxt, Angular |
-| Mobile | React Native, Flutter |
-| Backend API | NestJS, Express, FastAPI, Django, Spring Boot, Gin, Fiber |
-| Database | PostgreSQL, MySQL, MongoDB, Redis, Elasticsearch |
+| Web (SPA, SSR, SSG) | React, Next.js, Vue, Nuxt, Angular, SolidStart, Qwik, TanStack Start, Fresh (Deno), HTMX |
+| Mobile | React Native, Expo, Flutter |
+| Backend API | NestJS, Express, Fastify, Elysia, FastAPI, Django, Spring Boot, Gin, Fiber, Axum (Rust), Encore |
+| Database | PostgreSQL, MySQL, MongoDB, Redis, Elasticsearch, Turso (LibSQL) |
 | Message Queue | BullMQ, RabbitMQ, Kafka |
 | Infrastructure | Docker, Kubernetes, GitHub Actions |
 | Cloud | AWS (S3, SES, RDS, ECS/EKS), GCP, Azure concepts |

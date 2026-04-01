@@ -2,7 +2,7 @@
 
 ## Tổng quan
 
-Hệ thống gồm **20 core agents** + **106 skills** + **feedback loop** + **unlimited generated agents**, hoạt động như một công ty phần mềm hoàn chỉnh. Từ ý tưởng đến production và vận hành.
+Hệ thống gồm **21 core agents** + **127 skills** + **feedback loop** + **unlimited generated agents**, hoạt động như một công ty phần mềm hoàn chỉnh. Từ ý tưởng đến production và vận hành.
 
 > Nếu bạn mới dùng / muốn “đúng khái niệm” (.claude vs .agent, routing, alias `sa:`/`dev:`/...) xem: **[GUIDELINES.md](../../GUIDELINES.md)**
 
@@ -49,7 +49,8 @@ Hệ thống gồm **20 core agents** + **106 skills** + **feedback loop** + **u
 | Agent | Vai trò | Khi nào dùng |
 |-------|---------|-------------|
 | **agent-analyst** | Breakdown task thành subtasks atomic | Task phức tạp cần phân tích |
-| **agent-designer** | UI/UX: design tokens, wireframes, components | Feature có giao diện |
+| **agent-designer** | UI/UX: design tokens, wireframes, components (không có Figma) | Feature có giao diện |
+| **agent-figma** | Đọc Figma URL, extract specs, visual QA sau khi FE code xong | Có Figma URL từ designer |
 | **agent-coder-*** | Viết code (generated, per-project) | Mọi task viết code |
 | **agent-reviewer** | Review code: quality, conventions, correctness | Sau khi code xong |
 | **agent-documenter** | Cập nhật docs + API docs + changelog | Sau review pass |
@@ -204,19 +205,19 @@ Ví dụ: agent-coder-shopee-api-nestjs, agent-devops-medapp-infra-docker
 
 ---
 
-## Skill Categories (106 skills)
+## Skill Categories (127 skills)
 
 | Category | Count | Examples |
 |----------|-------|---------|
-| Languages | 5 | typescript, python, java, go, rust |
-| Frameworks BE | 7 | nestjs, express, fastapi, django, spring, gin, fiber |
-| Frameworks FE | 5 | react, nextjs, vuejs, nuxtjs, angular |
-| Frameworks Mobile | 2 | **react-native**, **flutter** |
-| Databases | 9 | postgresql, mysql, mongodb, redis, elasticsearch, prisma, typeorm, sqlalchemy, **migration** |
+| Languages | 13 | typescript, python, java, go, rust, kotlin, swift, csharp, php, elixir, ruby, dart, scala |
+| Frameworks BE | 11 | nestjs, express, fastapi, django, spring, gin, fiber, fastify, elysia, axum, encore |
+| Frameworks FE | 10 | react, nextjs, vuejs, nuxtjs, angular, solidstart, qwik, tanstack-start, fresh, htmx |
+| Frameworks Mobile | 3 | react-native, flutter, **expo** |
+| Databases | 10 | postgresql, mysql, mongodb, redis, elasticsearch, prisma, typeorm, sqlalchemy, migration, **turso** |
 | Auth & Security | 6 | jwt, oauth2, rbac, hardening, **graphql-security**, **container-security** |
 | Testing | 7 | jest, vitest, pytest, junit, playwright, **load-testing**, **fixtures** |
 | UI Libraries | 6 | tailwind, shadcn, mui, antd, **figma**, **accessibility** |
-| Frontend | 2 | state-management (Redux, Zustand, Pinia), **i18n** (i18next, vue-i18n) |
+| Frontend | 3 | state-management (Redux, Zustand, Pinia), i18n (i18next, vue-i18n), **tanstack-query** |
 | DevOps | 4 | docker, github-actions, kubernetes, **container-security** |
 | Queues | 3 | bullmq, rabbitmq, kafka |
 | Observability | 2 | logging, tracing |
@@ -224,7 +225,7 @@ Ví dụ: agent-coder-shopee-api-nestjs, agent-devops-medapp-infra-docker
 | Architecture | 26 | solution, write-hld, domain-model, microservices, event-driven, transactional, multi-tenancy, feature-flags, notification, audit-log, **background-jobs**, **email-delivery**, **finops**, **disaster-recovery**, scalability, distributed-systems, security, realtime, search, storage, monitoring, + 4 discovery + 1 mvp-scope |
 | Context | 4 | read, write, compress, sync-delta |
 | Role/Workflow | (xem `.claude/skills/skill-role-*`) | breakdown-tasks, code-review, inject-context, scan-project, feedback-loop, … |
-| Tooling | 5 | git, linting, env, packagemanager, bundler |
+| Tooling | 6 | git, linting, env, packagemanager, bundler, **zod** |
 | Storage | 1 | s3 |
 
 ---
