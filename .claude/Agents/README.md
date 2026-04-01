@@ -37,56 +37,56 @@ Hệ thống gồm **21 core agents** + **127 skills** + **feedback loop** + **u
 
 ### Product (ý tưởng → backlog)
 
-| Agent | Vai trò | Khi nào dùng |
-|-------|---------|-------------|
-| **agent-discovery** | Phân tích vấn đề, thị trường, MVP scope | Có ý tưởng mới cần validate |
-| **agent-sa** | Thiết kế kiến trúc, domain model, API | Sau discovery, cần bản thiết kế |
-| **agent-ba** | User stories, acceptance criteria, backlog | Sau SA, cần backlog cho dev |
-| **agent-pm** | Roadmap, sprint planning, release management | Quản lý delivery và đo lường |
+| Agent               | Vai trò                                      | Khi nào dùng                    |
+| ------------------- | -------------------------------------------- | ------------------------------- |
+| **agent-discovery** | Phân tích vấn đề, thị trường, MVP scope      | Có ý tưởng mới cần validate     |
+| **agent-sa**        | Thiết kế kiến trúc, domain model, API        | Sau discovery, cần bản thiết kế |
+| **agent-ba**        | User stories, acceptance criteria, backlog   | Sau SA, cần backlog cho dev     |
+| **agent-pm**        | Roadmap, sprint planning, release management | Quản lý delivery và đo lường    |
 
 ### Engineering (design → code → review)
 
-| Agent | Vai trò | Khi nào dùng |
-|-------|---------|-------------|
-| **agent-analyst** | Breakdown task thành subtasks atomic | Task phức tạp cần phân tích |
-| **agent-designer** | UI/UX: design tokens, wireframes, components (không có Figma) | Feature có giao diện |
-| **agent-figma** | Đọc Figma URL, extract specs, visual QA sau khi FE code xong | Có Figma URL từ designer |
-| **agent-coder-*** | Viết code (generated, per-project) | Mọi task viết code |
-| **agent-reviewer** | Review code: quality, conventions, correctness | Sau khi code xong |
-| **agent-documenter** | Cập nhật docs + API docs + changelog | Sau review pass |
-| **agent-migrator** | Migration, refactor lớn, version upgrade | Đổi stack, nâng version |
+| Agent                | Vai trò                                                       | Khi nào dùng                |
+| -------------------- | ------------------------------------------------------------- | --------------------------- |
+| **agent-analyst**    | Breakdown task thành subtasks atomic                          | Task phức tạp cần phân tích |
+| **agent-designer**   | UI/UX: design tokens, wireframes, components (không có Figma) | Feature có giao diện        |
+| **agent-figma**      | Đọc Figma URL, extract specs, visual QA sau khi FE code xong  | Có Figma URL từ designer    |
+| **agent-coder-\***   | Viết code (generated, per-project)                            | Mọi task viết code          |
+| **agent-reviewer**   | Review code: quality, conventions, correctness                | Sau khi code xong           |
+| **agent-documenter** | Cập nhật docs + API docs + changelog                          | Sau review pass             |
+| **agent-migrator**   | Migration, refactor lớn, version upgrade                      | Đổi stack, nâng version     |
 
 ### Quality & Reliability (test → release)
 
-| Agent | Vai trò | Khi nào dùng |
-|-------|---------|-------------|
-| **agent-tester** | Viết + chạy unit/integration/e2e tests | Sau code, song song reviewer |
-| **agent-qa** | Test strategy, accessibility, release sign-off | Trước release |
-| **agent-perf** | Load testing, profiling, bundle analysis | Trước release hoặc optimization |
-| **agent-security** | OWASP review, threat model, dependency audit | Mọi PR có security concern |
+| Agent              | Vai trò                                        | Khi nào dùng                    |
+| ------------------ | ---------------------------------------------- | ------------------------------- |
+| **agent-tester**   | Viết + chạy unit/integration/e2e tests         | Sau code, song song reviewer    |
+| **agent-qa**       | Test strategy, accessibility, release sign-off | Trước release                   |
+| **agent-perf**     | Load testing, profiling, bundle analysis       | Trước release hoặc optimization |
+| **agent-security** | OWASP review, threat model, dependency audit   | Mọi PR có security concern      |
 
 ### Operations (deploy → monitor → respond)
 
-| Agent | Vai trò | Khi nào dùng |
-|-------|---------|-------------|
-| **agent-sre** | Monitoring, SLI/SLO, incident response | Setup monitoring, incident |
-| **agent-devops-*** | Docker, CI/CD, K8s (generated) | Setup/update infra |
+| Agent               | Vai trò                                | Khi nào dùng               |
+| ------------------- | -------------------------------------- | -------------------------- |
+| **agent-sre**       | Monitoring, SLI/SLO, incident response | Setup monitoring, incident |
+| **agent-devops-\*** | Docker, CI/CD, K8s (generated)         | Setup/update infra         |
 
 ### Data
 
-| Agent | Vai trò | Khi nào dùng |
-|-------|---------|-------------|
+| Agent          | Vai trò                                      | Khi nào dùng              |
+| -------------- | -------------------------------------------- | ------------------------- |
 | **agent-data** | Data pipelines, event taxonomy, data quality | Analytics, tracking setup |
 
 ### Infrastructure (internal)
 
-| Agent | Vai trò | Khi nào dùng |
-|-------|---------|-------------|
-| **agent-orchestrator** | Điều phối, spawn agents, error handling | Entry point mọi task |
-| **agent-onboarding** | Scan project, tạo .agent/ context | Lần đầu vào project |
-| **agent-builder** | Detect stack, tạo generated agents | Sau onboarding |
-| **agent-context-keeper** | Sync .agent/ context khi code thay đổi | Triggered (orchestrator/manual), không daemon |
-| **agent-reporter** | Báo cáo tiến độ, escalate blockers | Triggered bởi orchestrator, không daemon |
+| Agent                    | Vai trò                                 | Khi nào dùng                                  |
+| ------------------------ | --------------------------------------- | --------------------------------------------- |
+| **agent-orchestrator**   | Điều phối, spawn agents, error handling | Entry point mọi task                          |
+| **agent-onboarding**     | Scan project, tạo .agent/ context       | Lần đầu vào project                           |
+| **agent-builder**        | Detect stack, tạo generated agents      | Sau onboarding                                |
+| **agent-context-keeper** | Sync .agent/ context khi code thay đổi  | Triggered (orchestrator/manual), không daemon |
+| **agent-reporter**       | Báo cáo tiến độ, escalate blockers      | Triggered bởi orchestrator, không daemon      |
 
 ---
 
@@ -167,12 +167,14 @@ Alert fires hoặc user report bug
 ## Naming Convention
 
 ### Core agents (cố định)
+
 ```
 agent-{role}
 Ví dụ: agent-orchestrator, agent-reviewer, agent-tester
 ```
 
 ### Generated agents (theo project)
+
 ```
 agent-{role}-{project}-{scope}-{tech}
 Ví dụ: agent-coder-shopee-api-nestjs, agent-devops-medapp-infra-docker
@@ -207,26 +209,26 @@ Ví dụ: agent-coder-shopee-api-nestjs, agent-devops-medapp-infra-docker
 
 ## Skill Categories (127 skills)
 
-| Category | Count | Examples |
-|----------|-------|---------|
-| Languages | 13 | typescript, python, java, go, rust, kotlin, swift, csharp, php, elixir, ruby, dart, scala |
-| Frameworks BE | 11 | nestjs, express, fastapi, django, spring, gin, fiber, fastify, elysia, axum, encore |
-| Frameworks FE | 10 | react, nextjs, vuejs, nuxtjs, angular, solidstart, qwik, tanstack-start, fresh, htmx |
-| Frameworks Mobile | 3 | react-native, flutter, **expo** |
-| Databases | 10 | postgresql, mysql, mongodb, redis, elasticsearch, prisma, typeorm, sqlalchemy, migration, **turso** |
-| Auth & Security | 6 | jwt, oauth2, rbac, hardening, **graphql-security**, **container-security** |
-| Testing | 7 | jest, vitest, pytest, junit, playwright, **load-testing**, **fixtures** |
-| UI Libraries | 6 | tailwind, shadcn, mui, antd, **figma**, **accessibility** |
-| Frontend | 3 | state-management (Redux, Zustand, Pinia), i18n (i18next, vue-i18n), **tanstack-query** |
-| DevOps | 4 | docker, github-actions, kubernetes, **container-security** |
-| Queues | 3 | bullmq, rabbitmq, kafka |
-| Observability | 2 | logging, tracing |
-| API Design | 4 | rest, graphql, grpc, **openapi** |
-| Architecture | 26 | solution, write-hld, domain-model, microservices, event-driven, transactional, multi-tenancy, feature-flags, notification, audit-log, **background-jobs**, **email-delivery**, **finops**, **disaster-recovery**, scalability, distributed-systems, security, realtime, search, storage, monitoring, + 4 discovery + 1 mvp-scope |
-| Context | 4 | read, write, compress, sync-delta |
-| Role/Workflow | (xem `.claude/skills/skill-role-*`) | breakdown-tasks, code-review, inject-context, scan-project, feedback-loop, … |
-| Tooling | 6 | git, linting, env, packagemanager, bundler, **zod** |
-| Storage | 1 | s3 |
+| Category          | Count                               | Examples                                                                                                                                                                                                                                                                                                                         |
+| ----------------- | ----------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Languages         | 13                                  | typescript, python, java, go, rust, kotlin, swift, csharp, php, elixir, ruby, dart, scala                                                                                                                                                                                                                                        |
+| Frameworks BE     | 11                                  | nestjs, express, fastapi, django, spring, gin, fiber, fastify, elysia, axum, encore                                                                                                                                                                                                                                              |
+| Frameworks FE     | 10                                  | react, nextjs, vuejs, nuxtjs, angular, solidstart, qwik, tanstack-start, fresh, htmx                                                                                                                                                                                                                                             |
+| Frameworks Mobile | 3                                   | react-native, flutter, **expo**                                                                                                                                                                                                                                                                                                  |
+| Databases         | 10                                  | postgresql, mysql, mongodb, redis, elasticsearch, prisma, typeorm, sqlalchemy, migration, **turso**                                                                                                                                                                                                                              |
+| Auth & Security   | 6                                   | jwt, oauth2, rbac, hardening, **graphql-security**, **container-security**                                                                                                                                                                                                                                                       |
+| Testing           | 7                                   | jest, vitest, pytest, junit, playwright, **load-testing**, **fixtures**                                                                                                                                                                                                                                                          |
+| UI Libraries      | 6                                   | tailwind, shadcn, mui, antd, **figma**, **accessibility**                                                                                                                                                                                                                                                                        |
+| Frontend          | 3                                   | state-management (Redux, Zustand, Pinia), i18n (i18next, vue-i18n), **tanstack-query**                                                                                                                                                                                                                                           |
+| DevOps            | 4                                   | docker, github-actions, kubernetes, **container-security**                                                                                                                                                                                                                                                                       |
+| Queues            | 3                                   | bullmq, rabbitmq, kafka                                                                                                                                                                                                                                                                                                          |
+| Observability     | 2                                   | logging, tracing                                                                                                                                                                                                                                                                                                                 |
+| API Design        | 4                                   | rest, graphql, grpc, **openapi**                                                                                                                                                                                                                                                                                                 |
+| Architecture      | 26                                  | solution, write-hld, domain-model, microservices, event-driven, transactional, multi-tenancy, feature-flags, notification, audit-log, **background-jobs**, **email-delivery**, **finops**, **disaster-recovery**, scalability, distributed-systems, security, realtime, search, storage, monitoring, + 4 discovery + 1 mvp-scope |
+| Context           | 4                                   | read, write, compress, sync-delta                                                                                                                                                                                                                                                                                                |
+| Role/Workflow     | (xem `.claude/skills/skill-role-*`) | breakdown-tasks, code-review, inject-context, scan-project, feedback-loop, …                                                                                                                                                                                                                                                     |
+| Tooling           | 6                                   | git, linting, env, packagemanager, bundler, **zod**                                                                                                                                                                                                                                                                              |
+| Storage           | 1                                   | s3                                                                                                                                                                                                                                                                                                                               |
 
 ---
 
@@ -243,6 +245,7 @@ Review complete → reviewer ghi praise/issues → feedback/patterns.md + anti-p
 ```
 
 Files:
+
 - `.agent/context/feedback/patterns.md` — good patterns + code examples
 - `.agent/context/feedback/anti-patterns.md` — mistakes + fixes
 - `.agent/context/feedback/stats.md` — top issues, trends

@@ -137,19 +137,39 @@ BƯỚC 3: Xin confirm
 
 ## PHẦN 3 — SKILL BUDGET
 
-### 3.1 — Giới hạn skills per agent
+### 3.1 — Phân bổ skills per agent
+
+Không có giới hạn cứng về số skills. Builder phân tích stack và domain của agent, rồi chọn đúng số skills cần thiết — không thừa, không thiếu.
 
 ```
-Tối đa: 10 skills per agent
-Tối thiểu: 4 skills per agent
-
 Phân bổ:
-  SLOT 1 (bắt buộc): skill-context-read
-  SLOT 2 (bắt buộc): skill-lang-{language}
-  SLOT 3 (bắt buộc): skill-framework-{framework}
-  SLOT 4-5 (bắt buộc): skill-tooling-git + skill-tooling-packagemanager
-  SLOT 6 (bắt buộc): skill-role-debug-fix
-  SLOT 7-10 (tuỳ chọn): domain skills
+  NHÓM BẮT BUỘC (luôn có):
+    - skill-context-read
+    - skill-lang-{language}
+    - skill-framework-{framework}
+    - skill-tooling-git
+    - skill-tooling-packagemanager
+    - skill-role-debug-fix
+
+  NHÓM PHÂN TÍCH (thêm khi cần, dựa trên stack thực tế):
+    - Database skills     → nếu agent tương tác trực tiếp với DB (postgresql, mongodb, redis…)
+    - ORM/Query skills    → nếu dùng Prisma, TypeORM, SQLAlchemy, Drizzle…
+    - API design skills   → nếu agent xây dựng REST / GraphQL / gRPC / tRPC endpoints
+    - Auth skills         → nếu agent implement authentication/authorization (jwt, oauth2, rbac)
+    - Queue/event skills  → nếu agent xử lý jobs, events, messaging (bullmq, kafka, rabbitmq)
+    - Testing skills      → CHỈ thêm nếu project thực sự có tests (detect từ config/test files);
+                            KHÔNG thêm nếu project không viết tests
+    - Observability skills → nếu agent cần logging, tracing (logging, tracing)
+    - Storage skills      → nếu agent xử lý file upload / object storage (s3)
+    - Tooling skills      → nếu dùng Zod, bundler, linting… trong domain của agent
+    - Security skills     → nếu agent expose public API hoặc xử lý auth data (security-hardening)
+    - Architecture skills → nếu agent implement complex patterns (event-driven, multi-tenancy…)
+    - UI/framework skills → nếu FE agent dùng state management, i18n, tanstack-query…
+
+  NGUYÊN TẮC CHỌN:
+    - Chỉ thêm skill nếu agent SẼ THỰC SỰ dùng knowledge đó trong phạm vi của nó
+    - Không thêm skill "phòng hờ" hay "có thể sau này cần"
+    - Nếu 2 skills overlap nhiều, chọn skill chuyên sâu hơn, bỏ skill chung chung
 ```
 
 ---
@@ -347,18 +367,72 @@ tools: Read, Write, Edit, Glob, Grep, Bash, WebFetch
 - Follow conventions đã detect (naming, structure, imports)
 - Không tự thêm dependencies chưa được approve
 
-## Phân công test (BẮT BUỘC)
+## Definition of Done (DoD)
+
+Một task chỉ được coi là **DONE** khi tất cả các điều kiện sau đều pass:
 ```
 
-Coder chịu trách nhiệm UNIT TESTS:
-✅ Viết unit tests CÙNG LÚC với production code (không để sau)
-✅ Mỗi public function/method: happy path + edge case + error case
-✅ Mock external dependencies (DB, HTTP, queue)
-✅ Test file nằm cùng chỗ với source file (colocated) hoặc theo convention project
+1. CODER PASS:
+   - Code implement đúng và đủ tất cả Acceptance Criteria (AC) của task
+   - Không có compile error / lint error
+   - Silent verification hoàn tất (nếu project không có formal tests)
+   - Unit tests pass (nếu project có formal tests)
 
-Tester chịu trách nhiệm INTEGRATION + E2E:
-→ Coder KHÔNG cần viết integration/e2e tests
-→ Sau khi coder done, tester sẽ cover phần còn lại
+2. TESTER PASS (nếu project có formal tests):
+   - Integration tests / E2E tests cover các AC liên quan đều pass
+   - Không có regression từ thay đổi mới
+
+→ Nếu CÒN BẤT KỲ AC nào chưa pass → task vẫn là IN PROGRESS
+→ Coder hoặc tester báo done khi chưa pass AC → orchestrator reject và yêu cầu làm lại
+
+AC nguồn:
+
+- Ưu tiên đọc từ task description do orchestrator/analyst cung cấp
+- Fallback: đọc từ user story trong .agent/context/ hoặc docs/
+- Nếu không có AC rõ ràng → coder phải hỏi trước khi bắt đầu code
+
+```
+
+## Phân công test
+
+Builder xác định chiến lược test dựa trên project thực tế:
+
+```
+
+BƯỚC 1 — Detect xem project có viết tests không:
+Có test config/files? → jest.config._, vitest.config._, pytest.ini, setup.cfg,
+**/**tests**/**, **/_.test._, **/_.spec._, tests/\*\*
+→ CÓ: project dùng tests → áp dụng phân công BƯỚC 2
+→ KHÔNG: project không có formal tests → áp dụng SILENT VERIFICATION (xem bên dưới)
+
+BƯỚC 2 — Nếu project CÓ formal tests, phân công:
+CODER viết UNIT TESTS (cùng lúc với production code): - Mỗi public function/method: happy path + edge case + error case - Mock external dependencies (DB, HTTP, queue) - Test file nằm cùng chỗ với source (colocated) hoặc theo convention project
+
+TESTER viết INTEGRATION + E2E: - Coder KHÔNG cần viết integration/e2e tests - Sau khi coder done, tester cover phần còn lại
+
+SILENT VERIFICATION — Khi project KHÔNG có formal tests:
+Coder KHÔNG tạo test files, KHÔNG thêm test dependencies.
+Nhưng BẮT BUỘC phải tự verify ngầm trước khi báo done:
+
+1. LOGIC CHECK — Đọc lại code vừa viết, tự hỏi:
+   - Happy path có chạy đúng không?
+   - Null/undefined/empty input được xử lý chưa?
+   - Error case có bị bỏ sót không?
+
+2. BOUNDARY CHECK — Kiểm tra các giá trị biên:
+   - Số âm, số 0, số rất lớn
+   - String rỗng, string đặc biệt
+   - Array rỗng, array 1 phần tử
+
+3. INTEGRATION POINT CHECK — Kiểm tra điểm nối với hệ thống:
+   - API response shape có khớp với caller không?
+   - DB query có trả về đúng shape không?
+   - Side effects (emit event, gọi external service) có được trigger đúng không?
+
+4. REGRESSION CHECK — Đọc lại các file liên quan bị ảnh hưởng bởi thay đổi.
+   Nếu phát hiện có thể break đâu đó → fix trước khi báo done.
+
+Coder ghi rõ trong output: "⚠️ Project không có tests — đã verify ngầm: [tóm tắt những gì đã check]"
 
 ```
 
