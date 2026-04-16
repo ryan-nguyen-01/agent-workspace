@@ -342,6 +342,136 @@ Ghi TẤT CẢ kết quả vào .agent/ directory:
 └── changelog.md                ← ghi log onboarding
 ```
 
+### B8.5 — Ghi Brain vào MCP Memory (BẮT BUỘC sau B8)
+
+> Đây là bước khởi tạo "bộ não" cho toàn bộ hệ thống agent của project.
+> Sau bước này, các agents không cần đọc lại file — chỉ query memory.
+
+```
+LẤY project slug: từ package.json "name" hoặc folder name (normalize: lowercase, dấu gạch ngang)
+
+TẠO các entities sau trong MCP Memory:
+
+1. create_entities([
+  {
+    name: "{project}:project",
+    entityType: "project_brain",
+    observations: [
+      "stack: {language} + {framework} + {database}",
+      "type: {monolith|microservices|monorepo}",
+      "description: {tóm tắt từ summary.md}",
+      "entry_points: {main files}",
+      "package_manager: {npm|yarn|pnpm|bun|pip|go}",
+      "deploy_target: {vercel|aws|gcp|k8s|unknown}"
+    ]
+  },
+  {
+    name: "{project}:architecture",
+    entityType: "architecture_brain",
+    observations: [
+      "pattern: {layer-based|feature-based|clean|monorepo|module-based}",
+      "modules: {danh sách modules từ B3}",
+      "api_routes: {số lượng và pattern chính}",
+      "external_deps: {DB, Redis, Queue, ...}"
+    ]
+  },
+  {
+    name: "{project}:conventions",
+    entityType: "conventions_brain",
+    observations: [
+      "naming_files: {kebab-case|camelCase|PascalCase}",
+      "naming_functions: {camelCase|snake_case}",
+      "imports: {absolute|relative|alias @/}",
+      "test_pattern: {*.spec.ts|*.test.ts|test_*.py}",
+      "test_location: {colocated|__tests__/|tests/}",
+      "git_convention: {conventional|freeform}",
+      "validation: {zod|joi|class-validator|none}",
+      "error_handling: {custom-class|native|codes}"
+    ]
+  },
+  {
+    name: "{project}:onboarding",
+    entityType: "agent_brain",
+    observations: [
+      "last_onboarded: {ISO timestamp}",
+      "mode: {A|B}",
+      "hot_files: {top 3 files thay đổi nhiều nhất}",
+      "team_size: {n contributors}",
+      "active_areas: {modules đang active}"
+    ]
+  },
+  {
+    name: "{project}:orchestrator",
+    entityType: "agent_brain",
+    observations: [
+      "initialized: {ISO timestamp}",
+      "tasks_completed: 0",
+      "common_patterns: []"
+    ]
+  },
+  {
+    name: "{project}:reviewer",
+    entityType: "agent_brain",
+    observations: [
+      "initialized: {ISO timestamp}",
+      "reviews_done: 0",
+      "top_issues: []",
+      "top_patterns: []"
+    ]
+  },
+  {
+    name: "{project}:tester",
+    entityType: "agent_brain",
+    observations: [
+      "initialized: {ISO timestamp}",
+      "tests_written: 0",
+      "coverage_baseline: unknown",
+      "flaky_patterns: []"
+    ]
+  },
+  {
+    name: "{project}:coder",
+    entityType: "agent_brain",
+    observations: [
+      "initialized: {ISO timestamp}",
+      "features_built: 0",
+      "common_solutions: []",
+      "gotchas: []"
+    ]
+  },
+  {
+    name: "{project}:security",
+    entityType: "agent_brain",
+    observations: [
+      "initialized: {ISO timestamp}",
+      "audits_done: 0",
+      "known_risks: []",
+      "fixed_vulns: []"
+    ]
+  },
+  {
+    name: "{project}:documenter",
+    entityType: "agent_brain",
+    observations: [
+      "initialized: {ISO timestamp}",
+      "docs_updated: 0",
+      "coverage: unknown"
+    ]
+  }
+])
+
+2. create_relations([
+  { from: "{project}:orchestrator", to: "{project}:project", relationType: "manages" },
+  { from: "{project}:reviewer",     to: "{project}:conventions", relationType: "enforces" },
+  { from: "{project}:tester",       to: "{project}:architecture", relationType: "covers" },
+  { from: "{project}:coder",        to: "{project}:conventions", relationType: "follows" },
+  { from: "{project}:security",     to: "{project}:project", relationType: "audits" },
+  { from: "{project}:documenter",   to: "{project}:architecture", relationType: "documents" }
+])
+
+→ Log: "✅ MCP Memory initialized: {n} entities created for project {project}"
+```
+
 ### B9 — Auto-run Agent Builder
 
 ```

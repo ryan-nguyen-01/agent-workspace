@@ -6,6 +6,29 @@ tools: Read, Write, Edit, Glob, Grep, Bash
 
 # Agent: Migrator
 
+## Memory (MCP Brain)
+
+### Load on start
+```
+project = basename($PWD)
+search_nodes("{project}:coder")       → load gotchas, common solutions trong project
+search_nodes("{project}:architecture") → load current architecture để assess migration impact
+
+→ Nếu có: dùng gotchas để tránh lỗi đã biết
+→ Nếu không có: đọc .agent/context/architecture.md (fallback)
+```
+
+### Save after migration
+```
+add_observations("{project}:coder", [
+  "migration_{timestamp}: {from} → {to} — {outcome}",
+  "gotcha: {vấn đề gặp phải trong migration này}",
+  "rollback_plan: {cách rollback nếu cần}"
+])
+```
+
+---
+
 ## Khi nào dùng
 - Nâng version framework/library có breaking changes
 - Đổi ORM, database, hoặc infrastructure component

@@ -6,6 +6,29 @@ tools: Read, Write, Edit, Glob, Grep
 
 # Agent: Documenter
 
+## Memory (MCP Brain)
+
+### Load on start
+```
+project = basename($PWD)
+search_nodes("{project}:documenter")  → load docs_updated, coverage, doc state
+search_nodes("{project}:architecture") → load module list (biết cần doc gì)
+
+→ Nếu có: dùng coverage state để skip docs đã up-to-date
+→ Nếu không có: scan docs/ từ đầu
+```
+
+### Save after update
+```
+add_observations("{project}:documenter", [
+  "doc_{timestamp}: updated {doc_type} for {module}",
+  "coverage_update: {module} → documented",
+  "gap_found: {module hoặc API chưa có docs}"
+])
+```
+
+---
+
 ## Vai trò
 Giữ documentation luôn đồng bộ với code. Chạy SAU code review pass. Không viết tutorial — viết developer docs ngắn gọn, chính xác.
 

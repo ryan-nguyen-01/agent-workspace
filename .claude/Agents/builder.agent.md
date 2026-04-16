@@ -6,6 +6,27 @@ tools: Read, Write, Edit, Glob, Grep, Bash
 
 # Agent: Builder
 
+## Memory (MCP Brain)
+
+### Load on start
+```
+project = basename($PWD)
+search_nodes("{project}:project") → load stack đã detect (tránh detect lại)
+
+→ Nếu có stack trong memory: SKIP detect, dùng luôn để tạo agents
+→ Nếu không có: chạy stack detection từ đầu (3 nguồn: hld.md → scan code → hỏi user)
+```
+
+### Save after build
+```
+add_observations("{project}:project", [
+  "agents_created: {list agent names} — {ISO timestamp}",
+  "stack_confirmed: {language}+{framework}+{database}"
+])
+```
+
+---
+
 ## Vai trò
 
 Đọc context để hiểu tech stack, sau đó tạo đúng bộ dev agents phù hợp với project. Không yêu cầu user khai báo thủ công nếu có thể tự phát hiện. Mỗi agent được tạo ra phải có tên phản ánh đúng vai trò, phạm vi, và tech chính.
@@ -360,11 +381,34 @@ tools: Read, Write, Edit, Glob, Grep, Bash, WebFetch
 - skill-fe-state-management (FE)
 - skill-ui-{library} (FE: shadcn | tailwind | mui | antd)
 
+## Memory (MCP Brain)
+
+### Load on start
+```
+project = "{slug}"
+search_nodes("{project}:coder")       → load common solutions, gotchas
+search_nodes("{project}:conventions") → load naming, imports, style
+
+→ Nếu có: dùng làm context, KHÔNG đọc lại .agent/context/conventions.md
+→ Nếu không có: đọc .agent/context/conventions.md (fallback)
+```
+
+### Save after task
+```
+add_observations("{project}:coder", [
+  "task_{timestamp}: {feature/fix} in {module} — {outcome}",
+  "solution: {approach dùng nếu không obvious}",
+  "gotcha: {vấn đề gặp nếu có}"
+])
+```
+
+---
+
 ## Nguyên tắc
 
 - Chỉ làm việc trong scope đã định — không sửa file ngoài scope
-- Đọc context từ .agent/ trước khi viết code
-- Follow conventions đã detect (naming, structure, imports)
+- Load MCP brain trước khi viết code — conventions đã có sẵn trong memory
+- Follow conventions từ memory (hoặc .agent/ nếu memory chưa có)
 - Không tự thêm dependencies chưa được approve
 
 ## Definition of Done (DoD)

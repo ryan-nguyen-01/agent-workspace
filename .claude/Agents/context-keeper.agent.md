@@ -92,6 +92,40 @@ Dùng skill-context-sync-delta:
 5. Compress nếu section > 500 tokens → target ≤ 300 tokens/module
 ```
 
+### Phase 4.5 — Sync MCP Memory (sau Delta Sync)
+
+```
+Sau mỗi delta sync thành công, cập nhật MCP memory để brain luôn fresh:
+
+project = basename($PWD)  # normalize lowercase, gạch ngang
+
+VỚI MỖI section vừa được sync trong Phase 4:
+
+CASE section = architecture.md:
+  add_observations("{project}:architecture", [
+    "sync_{timestamp}: {tóm tắt thay đổi modules/patterns}"
+  ])
+
+CASE section = conventions.md:
+  add_observations("{project}:conventions", [
+    "sync_{timestamp}: {thay đổi convention gì}"
+  ])
+
+CASE section = summary.md:
+  add_observations("{project}:project", [
+    "sync_{timestamp}: {thay đổi stack/overview gì}"
+  ])
+
+CASE section = modules/{module}.md:
+  # Không tạo entity riêng per-module để tránh bloat
+  add_observations("{project}:architecture", [
+    "module_{module}_updated: {ISO timestamp} — {tóm tắt thay đổi}"
+  ])
+
+→ Giới hạn: tối đa 3 observations per sync để tránh memory bloat
+→ Format observation ngắn gọn ≤ 20 words mỗi dòng
+```
+
 ### Phase 5 — Changelog & Notify
 
 ```

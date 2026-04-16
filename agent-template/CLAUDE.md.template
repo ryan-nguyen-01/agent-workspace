@@ -1,0 +1,109 @@
+# Project — Agentic Dev + Testing Workflow
+
+Project này dùng multi-agent workflow. Định nghĩa agents nằm trong `.agent/agents/_core/` và `.agent/agents/generated/`. Workflow chi tiết trong `.agent/workflow.md`.
+
+---
+
+## Nguyên tắc Autonomy
+
+**Hành động trước, báo cáo sau — không hỏi để xin phép.**
+
+```
+✅ LÀM NGAY (không hỏi):
+  - Đọc file, scan codebase, chạy lệnh đọc
+  - Viết/sửa file trong project scope
+  - Chạy tests, lint, build
+  - Chọn approach hợp lý và implement
+
+❌ CHỈ HỎI KHI:
+  - Credentials / API keys thật
+  - 2 hướng đi hoàn toàn khác với trade-off rõ ràng
+  - Action không thể revert (xóa data, deploy production)
+  - QC cần key env để test (exception: được phép hỏi)
+```
+
+---
+
+## Bootstrap (BẮT BUỘC chạy đầu tiên)
+
+```
+IF .agent/context/summary.md KHÔNG tồn tại hoặc rỗng:
+  → Đọc .agent/agents/_core/onboarding.agent.md
+  → Chạy onboarding: scan project, fill brain
+  → Sau đó đọc .agent/agents/_core/builder.agent.md → tạo agent-coder per service
+
+IF .agent/ đầy đủ:
+  → Đọc .agent/workflow.md (SOP)
+  → Đọc .agent/context/summary.md
+  → Tiếp tục routing task
+```
+
+---
+
+## Task routing
+
+Priority: alias → keyword → default orchestrator.
+
+```yaml
+aliases:
+  "dev:"       → orchestrator     (điều phối full pipeline)
+  "scan:"      → onboarding
+  "build:"     → builder
+  "qc:"        → qc-runner
+  "review:"    → reviewer
+  "test:"      → tester
+  "handover:"  → handover
+  "sync:"      → context-keeper
+  "docs:"      → documenter
+  "sec:"       → security
+
+keyword_routing:
+  - [scan project, onboarding, phân tích dự án]    → onboarding
+  - [build agents, tạo agent]                       → builder
+  - [implement, viết code, fix bug, add feature]   → orchestrator
+  - [review code, check code]                      → reviewer
+  - [viết test, unit test, integration test]       → tester
+  - [QC test, test multi env, test sit, test dev]  → qc-runner
+  - [bug block, blocker bug]                        → orchestrator (sẽ route về coder fix)
+  - [handover, bàn giao]                            → handover
+  - [sync context, cập nhật brain]                  → context-keeper
+  - [security, bảo mật, OWASP]                      → security
+
+default: orchestrator
+```
+
+---
+
+## Nguyên tắc cốt lõi
+
+1. **Mọi agent đọc `.agent/workflow.md` TRƯỚC khi action** — không đoán
+2. **Scope isolation** — agent-coder-<service> CHỈ sửa file trong scope
+3. **Handover mandatory** — dev done → tạo handover doc → QC mới nhận
+4. **Bug classification** — blocker dừng test + fix ngay; non-blocker test song song
+5. **Brain sync** — sau shipped, context-keeper update services/ + generics
+
+---
+
+## Thư mục context
+
+```
+.agent/
+├── workflow.md                  ← SOP (ĐỌC ĐẦU TIÊN)
+├── agents/_core/                ← Agent definitions
+├── agents/generated/            ← Builder ghi coder-<service>
+├── templates/                   ← Templates cho task/handover/bug
+├── context/                     ← Brain
+│   ├── summary.md
+│   ├── architecture.md
+│   ├── conventions.md
+│   ├── environments.md
+│   ├── services/<service>.md
+│   └── common/generics.md
+├── handover/                    ← Dev → QC docs
+├── bugs/{blockers,non-blockers}/
+├── tasks/                       ← Task state machine
+├── progress.md
+└── changelog.md
+```
+
+Không tạo file ngoài `.agent/` cho brain/workflow. Code vẫn nằm trong source thường (src/, app/, packages/...).

@@ -6,6 +6,28 @@ tools: Read, Glob, Grep
 
 # Agent: Analyst
 
+## Memory (MCP Brain)
+
+### Load on start
+```
+project = basename($PWD)
+search_nodes("{project}:architecture") → load modules, patterns để breakdown chính xác
+search_nodes("{project}:orchestrator") → load task history, tránh lặp approach cũ
+
+→ Nếu có: dùng module map từ memory để xác định affected modules
+→ Nếu không có: đọc .agent/context/architecture.md (fallback)
+```
+
+### Save after breakdown
+```
+# Analyst không ghi nhiều — chỉ save khi phát hiện module mới chưa có trong memory
+add_observations("{project}:architecture", [
+  "new_module_discovered: {module} — {mô tả ngắn}"
+])
+```
+
+---
+
 ## Khi nào dùng
 - Orchestrator cần phân tích task trước khi spawn workers
 - Task phức tạp (medium/complex) cần breakdown rõ ràng

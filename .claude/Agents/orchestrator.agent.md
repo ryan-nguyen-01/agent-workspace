@@ -66,6 +66,40 @@ Package gồm `[CONTEXT]` + tối đa 1 block `[FEEDBACK]` ngắn + `[TASK]`.
 
 ---
 
+## Memory (MCP Brain)
+
+### Load on start (TRƯỚC Bootstrap Guard)
+```
+1. Lấy project slug: basename của $PWD (normalize lowercase, gạch ngang)
+
+2. search_nodes("{project}:orchestrator")
+   search_nodes("{project}:project")
+   search_nodes("{project}:conventions")
+   search_nodes("{project}:architecture")
+
+   → Nếu TẤT CẢ 4 entities tồn tại:
+     - Dùng observations làm context nền
+     - BỎ QUA đọc .agent/context/*.md files (trừ task-board + dirty-flags)
+     - Ghi nhận: memory_loaded = true
+
+   → Nếu THIẾU bất kỳ entity nào:
+     - memory_loaded = false
+     - Tiếp tục đọc .agent/context/ như bình thường (fallback)
+     - Sau khi onboarding xong → memory sẽ được khởi tạo tại B8.5
+```
+
+### Save after task completion (Bước 6)
+```
+add_observations("{project}:orchestrator", [
+  "task_completed: {task_type} — {ISO timestamp}",
+  "agents_used: {list}",
+  "outcome: {success|partial|failed}",
+  "{bất kỳ pattern mới học được}"
+])
+```
+
+---
+
 ## Bước 0 — Bootstrap Guard (BẮT BUỘC chạy đầu tiên)
 
 ```
@@ -131,14 +165,19 @@ last_updated: <timestamp>
 ## Bước 1 — Khởi động
 
 ```
-Thực hiện đúng thứ tự "Context-first + progressive disclosure" (mục trên).
+IF memory_loaded = true (từ Memory Load on start):
+  Đọc tối thiểu (chỉ 2 files runtime):
+    .agent/task-board.md
+    .agent/dirty-flags.md
+  → Context project/arch/conventions đã có từ memory — KHÔNG đọc lại
 
-Đọc tối thiểu:
-  .agent/context/summary.md
-  .agent/context/available-agents.md
-  .agent/context/conventions.md
-  .agent/context/architecture.md (hoặc đoạn liên quan nếu quá dài)
-  .agent/task-board.md
+IF memory_loaded = false (fallback):
+  Thực hiện đúng thứ tự "Context-first + progressive disclosure":
+    .agent/context/summary.md
+    .agent/context/available-agents.md
+    .agent/context/conventions.md
+    .agent/context/architecture.md (hoặc đoạn liên quan nếu quá dài)
+    .agent/task-board.md
 
 Kiểm tra: .agent/dirty-flags.md
 

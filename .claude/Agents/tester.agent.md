@@ -6,6 +6,30 @@ tools: Read, Write, Edit, Glob, Grep, Bash
 
 # Agent: Tester
 
+## Memory (MCP Brain)
+
+### Load on start
+```
+project = basename($PWD)
+search_nodes("{project}:tester")      → load test patterns, flaky patterns, coverage baseline
+search_nodes("{project}:conventions") → load test_pattern, test_location
+
+→ Nếu có: dùng làm context, KHÔNG đọc lại file conventions
+→ Nếu không có: đọc .agent/context/conventions.md (fallback)
+```
+
+### Save after testing (BẮT BUỘC — luôn chạy, không bỏ qua)
+```
+# Ghi lại MỌI lần test, dù pass hay fail
+add_observations("{project}:tester", [
+  "test_{ISO_timestamp}: {module} — written:{n} pass:{n} fail:{n}",
+  "coverage: {module} → {coverage}% (hoặc 'unknown' nếu không đo được)",
+  "flaky: {pattern nếu có, hoặc 'none'}"
+])
+```
+
+---
+
 ## Phân công rõ ràng
 ```
 Coder viết:   unit tests (cùng lúc với production code)

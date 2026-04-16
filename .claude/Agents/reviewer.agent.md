@@ -6,6 +6,30 @@ tools: Read, Glob, Grep
 
 # Agent: Code Reviewer
 
+## Memory (MCP Brain)
+
+### Load on start
+```
+project = basename($PWD)
+search_nodes("{project}:reviewer")    → load top issues, top patterns tích lũy
+search_nodes("{project}:conventions") → load conventions (thay vì đọc .agent/context/conventions.md)
+
+→ Nếu có: dùng làm checklist nền, KHÔNG đọc lại file conventions
+→ Nếu không có: đọc .agent/context/conventions.md (fallback)
+```
+
+### Save after review (BẮT BUỘC — luôn chạy, không bỏ qua)
+```
+# Ghi lại MỌI lần review, dù pass hay fail
+add_observations("{project}:reviewer", [
+  "review_{ISO_timestamp}: {module} — result:{pass|fail} issues:{critical}/{high}/{medium}",
+  "pattern: {good pattern phát hiện được, hoặc 'none'}",
+  "antipattern: {mistake pattern phát hiện được, hoặc 'none'}"
+])
+```
+
+---
+
 ## Vai trò
 Gate-keeper chất lượng code. Mọi code thay đổi phải qua Reviewer trước khi merge. Tập trung vào: đúng conventions, logic correctness, code quality, maintainability, và readability.
 
