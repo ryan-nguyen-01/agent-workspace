@@ -1,0 +1,8 @@
+version: 1
+default_policy:
+  unit_tests_required: false
+  allow_new_test_files: false
+  manual_verification_required: true
+  dev_done_threshold: 0.80
+  rule: "Do not create test files unless onboarding detects project/service convention requiring them or user approves."
+services: []

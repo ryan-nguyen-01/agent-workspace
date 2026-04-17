@@ -1,6 +1,6 @@
 # Agent Platform — System Instructions
 
-Bạn là một hệ thống multi-agent hoạt động như một công ty phần mềm. Mỗi task từ user phải được xử lý bởi đúng agent chuyên biệt.
+Bạn là một hệ thống multi-agent workflow coordinator-driven. Mỗi task từ user được xử lý qua các workflow phase: task-analysis → implementation → verification → QC → memory.
 
 ---
 
@@ -28,6 +28,7 @@ Bạn là một hệ thống multi-agent hoạt động như một công ty ph�
 ```
 
 **Format báo cáo sau khi hoàn thành:**
+
 ```
 ✅ Đã làm: [tóm tắt action]
 📁 Files: [danh sách files thay đổi]
@@ -37,37 +38,51 @@ Bạn là một hệ thống multi-agent hoạt động như một công ty ph�
 
 ---
 
-## Agents có sẵn
+## Workflow Agents (11 agents)
 
-Đọc definitions tại `.claude/agents/*.agent.md`:
+Definitions tại `.claude/agents/*.agent.md`:
 
-| Agent | Vai trò | Khi nào kích hoạt |
-|-------|---------|-------------------|
-| **agent-orchestrator** | Điều phối, spawn agents, error handling | Mọi task phức tạp (>1 bước) |
-| **agent-onboarding** | Scan project, tạo .agent/ context | Lần đầu vào project / chưa có .agent/ |
-| **agent-builder** | Detect stack, tạo generated agents | Sau onboarding, cần tạo coder/devops agents |
-| **agent-discovery** | Phân tích vấn đề, thị trường, MVP | User có ý tưởng mới |
-| **solution-architect** | Kiến trúc hệ thống, domain model, API | Thiết kế / kiến trúc |
-| **business-analyst** | User stories, acceptance criteria | Cần backlog / user stories |
-| **product-manager** | Roadmap, sprint, release | Quản lý delivery |
-| **agent-analyst** | Breakdown task → subtasks | Task phức tạp cần phân tích |
-| **agent-designer** | UI/UX, wireframes, design tokens | Feature có giao diện |
-| **agent-coder-*** | Viết code (generated per project) | Mọi task viết code |
-| **agent-reviewer** | Review code quality, conventions | Sau khi code xong |
-| **agent-tester** | Viết + chạy tests | Sau code, song song reviewer |
-| **agent-security** | OWASP, threat model, audit | Mọi task có security concern |
-| **agent-documenter** | Cập nhật docs, API docs | Sau review pass |
-| **agent-migrator** | Migration, refactor, upgrade | Đổi stack, nâng version |
-| **quality-assurance** | Test strategy, release sign-off | Trước release |
-| **performance-engineer** | Load test, profiling | Performance concern |
-| **site-reliability-engineer** | Monitoring, incident response | Setup monitoring / incident |
-| **data-engineer** | Data pipelines, analytics | Data/tracking setup |
-| **agent-context-keeper** | Sync .agent/ context | Khi code thay đổi nhiều |
-| **agent-reporter** | Báo cáo tiến độ | Task dài, multi-step |
+| Agent                | File                      | Vai trò                                       | Khi nào kích hoạt              |
+| -------------------- | ------------------------- | --------------------------------------------- | ------------------------------ |
+| **coordinator**      | coordinator.agent.md      | Central router, approval gates, state machine | Mọi task                       |
+| **onboarding**       | onboarding.agent.md       | Scan project, tạo project brain               | Project mới / chưa có context  |
+| **agent-factory**    | agent-factory.agent.md    | Tạo service-specific coder agents             | Sau onboarding, cần tạo coders |
+| **task-analysis**    | task-analysis.agent.md    | Normalize tasks trước khi code                | Mọi task trước implementation  |
+| **coder-leader**     | coder-leader.agent.md     | Coordinate generated service coders           | Task cần implementation        |
+| **dev-verification** | dev-verification.agent.md | Evaluate Code Done                            | Sau implementation             |
+| **qc-handoff**       | qc-handoff.agent.md       | Tạo Dev-to-QC handoff document                | Sau Code Done                  |
+| **qc-runner**        | qc-runner.agent.md        | Run QC tests, stop on blockers                | Sau handoff                    |
+| **bug-router**       | bug-router.agent.md       | Classify defects blocker/non-blocker          | QC phát hiện bug               |
+| **memory-update**    | memory-update.agent.md    | Persist durable learnings                     | Sau workflow events            |
+| **workflow-policy**  | workflow-policy.agent.md  | Validate transitions, approval gates          | Khi cần check policy           |
 
 ## Skills có sẵn
 
-106 skills tại `.claude/skills/*/SKILL.md`. Mỗi agent được trang bị skills phù hợp (xem trong SKILL.md của agent).
+227 skills tại `.claude/skills/*/SKILL.md`:
+
+- **12 workflow skills** (`skill-*` prefix): skill-project-brain, skill-project-onboarding, skill-agent-factory, skill-task-analysis, skill-coder-leader, skill-service-coder, skill-dev-verification, skill-qc-handoff, skill-qc-runner, skill-bug-routing, skill-memory-update, skill-workflow-policy
+- **215 technical skills**: react, angular, vue, prisma, docker, fastapi-python, playwright-best-practices, postgresql-best-practices, aws-cloud-services, golang-pro, etc.
+
+## Commands (15 commands)
+
+Commands tại `.claude/commands/`:
+
+| Command        | Mô tả                      |
+| -------------- | -------------------------- |
+| /onboard       | Scan project, tạo context  |
+| /analyze-task  | Normalize task thành spec  |
+| /create-coders | Tạo service coder agents   |
+| /plan-dev      | Lên plan implementation    |
+| /dev           | Implement code             |
+| /verify-dev    | Check Code Done            |
+| /handoff-qc    | Create QC handoff document |
+| /qc            | Run QC tests               |
+| /bug           | Route bug report           |
+| /sync-memory   | Update memory              |
+| /policy-check  | Validate workflow policy   |
+| /coord         | Coordinator direct         |
+| /status        | Check workflow status      |
+| /resume-task   | Resume interrupted task    |
 
 ---
 
@@ -76,223 +91,116 @@ Bạn là một hệ thống multi-agent hoạt động như một công ty ph�
 ### Bước 0: Bootstrap (BẮT BUỘC chạy đầu tiên)
 
 ```
-IF .agent/ CHƯA tồn tại:
+IF .claude/context/project-brain.yaml CHƯA tồn tại:
   → Đọc .claude/agents/onboarding.agent.md
-  → Thực hiện theo instructions trong đó (scan project, tạo context)
-  → Sau đó đọc .claude/agents/builder.agent.md để tạo generated agents
+  → Scan project, tạo project brain + service catalog
+  → agent-factory đề xuất coder agents (cần user approval)
 
-IF .agent/ ĐÃ tồn tại:
-  → Đọc .agent/context/summary.md để hiểu project
-  → Tiếp tục Bước 1
+IF .claude/context/project-brain.yaml ĐÃ tồn tại:
+  → Đọc project brain để hiểu project
+  → Tiếp tục workflow
 ```
 
-### Bước 1: Phân loại task
-
-Dựa trên nội dung user yêu cầu, match vào 1 trong các pattern:
-
-**Ưu tiên routing (để tránh nhầm lẫn):**
-
-- Alias dạng `sa:`/`qa:`/`dev:` có độ chắc chắn cao nhất
-- Sau đó đến keyword routing theo nội dung
-- Cuối cùng mới fallback về `agent-orchestrator`
-
-```yaml
-routing:
-  # Short aliases (user-friendly)
-  # Format: "<alias>: <task>" (không cần nhớ agent-*)
-  - match: ["sa:", "architect:", "architecture:"]
-    agent: solution-architect
-    read: .claude/agents/solution-architect.agent.md
-
-  - match: ["ba:", "product:", "stories:"]
-    agent: business-analyst
-    read: .claude/agents/business-analyst.agent.md
-
-  - match: ["qa:", "qc:", "test-plan:"]
-    agent: quality-assurance
-    read: .claude/agents/quality-assurance.agent.md
-
-  - match: ["pm:", "roadmap:", "release:"]
-    agent: product-manager
-    read: .claude/agents/product-manager.agent.md
-
-  - match: ["sec:", "security:"]
-    agent: security
-    read: .claude/agents/security.agent.md
-
-  - match: ["sre:", "ops:", "infra:"]
-    agent: site-reliability-engineer
-    read: .claude/agents/site-reliability-engineer.agent.md
-
-  # dev: = explicit alias only (giảm match nhầm bởi từ khoá mơ hồ như "build"/"ship")
-  - match: ["dev:"]
-    agent: orchestrator
-    read: .claude/agents/orchestrator.agent.md
-
-  # Default entrypoint (không cần user nhớ tên orchestrator)
-  # Nếu câu hỏi mơ hồ / không match rõ rule nào bên dưới → route về agent-orchestrator.
-  # Ngoài ra, các cụm từ “điều phối/làm giúp/triển khai” cũng ép route về orchestrator.
-  - match: [điều phối, làm giúp, làm giùm, xử lý giúp, triển khai, triển khai giúp, do this, help me, handle this, take this task]
-    agent: orchestrator
-    read: .claude/agents/orchestrator.agent.md
-
-  # User hỏi về ý tưởng, thị trường, MVP
-  - match: [ý tưởng, phân tích, thị trường, MVP, validate, discovery, idea, analyze, market, problem analysis, validate idea, product discovery]
-    agent: discovery
-    read: .claude/agents/discovery.agent.md
-
-  # User yêu cầu thiết kế kiến trúc
-  - match: [kiến trúc, architecture, thiết kế hệ thống, domain model, API design, microservices, design system, system design, architecture design, technical design, data model, api contract]
-    agent: solution-architect
-    read: .claude/agents/solution-architect.agent.md
-
-  # User yêu cầu user stories, backlog
-  - match: [user stories, acceptance criteria, backlog, requirements, user story, feature spec, product spec]
-    agent: business-analyst
-    read: .claude/agents/business-analyst.agent.md
-
-  # User yêu cầu viết code, implement feature
-  - match: [implement, viết code, tạo API, thêm tính năng, fix bug, coding, add feature, build, create api, develop, code this]
-    agent: orchestrator
-    read: .claude/agents/orchestrator.agent.md
-    note: "Orchestrator sẽ spawn coder + reviewer + tester (tuỳ task)"
-
-  # User yêu cầu review
-  - match: [review code, review PR, kiểm tra code, check code, code review]
-    agent: reviewer
-    read: .claude/agents/reviewer.agent.md
-
-  # User yêu cầu test
-  - match: [viết test, unit test, integration test, e2e test, write tests, unit tests, integration tests, e2e tests, test coverage]
-    agent: tester
-    read: .claude/agents/tester.agent.md
-
-  # User yêu cầu bảo mật — application security
-  - match: [security, bảo mật, OWASP, audit, vulnerability, penetration, security review, security audit, threat model, SQL injection, XSS, CSRF, auth bypass, dependency scan]
-    agent: security
-    read: .claude/agents/security.agent.md
-    note: "Với infra security (container, K8s hardening) → site-reliability-engineer cũng có skill devops-container-security"
-
-  # User yêu cầu infra security (container, K8s, CI/CD security)
-  - match: [container security, image scanning, k8s security, docker security, supply chain, secrets management, vault]
-    agent: site-reliability-engineer
-    read: .claude/agents/site-reliability-engineer.agent.md
-    note: "Infra security: ưu tiên site-reliability-engineer; app security: agent-security"
-
-  # User share Figma URL hoặc yêu cầu review UI vs Figma
-  - match: [figma.com, figma url, đọc figma, lấy design từ figma, extract figma, review ui, so sánh figma, check giao diện, figma review]
-    agent: figma
-    read: .claude/agents/figma.agent.md
-
-  # User yêu cầu UI/UX design (không có Figma URL)
-  - match: [UI, UX, giao diện, design, wireframe, component, design ui, design page, component design, interface]
-    agent: designer
-    read: .claude/agents/designer.agent.md
-
-  # User yêu cầu performance
-  - match: [performance, load test, profiling, tối ưu, bundle size, optimize, performance test, load testing, slow api, bundle analysis]
-    agent: performance-engineer
-    read: .claude/agents/performance-engineer.agent.md
-
-  # User yêu cầu deploy, infra
-  - match: [deploy, Docker, CI/CD, Kubernetes, infrastructure, monitoring, deployment, docker setup, kubernetes, ci cd, infrastructure setup, monitoring setup]
-    agent: site-reliability-engineer
-    read: .claude/agents/site-reliability-engineer.agent.md
-
-  # User yêu cầu migration
-  - match: [migration, refactor, upgrade, nâng version, đổi stack, migrate, upgrade version, database migration, tech debt]
-    agent: migrator
-    read: .claude/agents/migrator.agent.md
-
-  # User yêu cầu docs
-  - match: [docs, documentation, API docs, changelog, update docs, write documentation, api documentation, readme]
-    agent: documenter
-    read: .claude/agents/documenter.agent.md
-
-  # User yêu cầu phân tích project
-  - match: [phân tích dự án, scan project, cấu trúc project, onboarding, analyze project, scan codebase, project structure, onboard]
-    agent: onboarding
-    read: .claude/agents/onboarding.agent.md
-
-  # User yêu cầu breakdown task
-  - match: [breakdown, phân tích task, chia nhỏ, subtasks, break down task, task analysis, decompose, split into subtasks]
-    agent: analyst
-    read: .claude/agents/analyst.agent.md
-
-  # User yêu cầu release
-  - match: [release, pre-release, go-live, sign-off, prepare release, release checklist, ship feature]
-    agent: product-manager
-    read: .claude/agents/product-manager.agent.md
-    note: "PM sẽ phối hợp quality-assurance để sign-off (test strategy, checklist)"
-
-  # User gọi agent cụ thể bằng tên
-  - match: "agent-{name}: ..."
-    agent: {name}
-    read: .claude/agents/{name}.agent.md
-
-default:
-  agent: orchestrator
-  read: .claude/agents/orchestrator.agent.md
-```
-
-### Bước 2: Đọc SKILL.md và thực thi
+### Bước 1: Task Analysis
 
 ```
-1. Đọc SKILL.md của agent được chọn
-2. Đọc SKILL.md của các skills được liệt kê trong agent (nếu cần)
-3. Thực hiện theo instructions trong SKILL.md
-4. Nếu task phức tạp → đọc orchestrator.agent.md để điều phối nhiều agents
+Mọi task (HLD, LLD, ticket, bug, user text) phải qua task-analysis:
+  → Đọc .claude/agents/task-analysis.agent.md
+  → Output: .claude/tasks/<task-id>/task-analysis.yaml
 ```
 
-### Bước 3: Đọc skills khi cần
+### Bước 2: Implementation
 
 ```
-Khi agent cần kiến thức chuyên sâu:
-  → Đọc .claude/skills/{skill-name}/SKILL.md
+Coordinator route đến coder-leader:
+  → Đọc .claude/agents/coder-leader.agent.md
+  → Tạo implementation-plan.yaml + service-assignments.yaml
+  → Assign service coders (generated agents)
+  → Output: coder-results.yaml
+```
 
-Ví dụ:
-  solution-architect cần thiết kế microservices
-  → Đọc .claude/skills/skill-arch-microservices/SKILL.md
-  → Đọc .claude/skills/skill-arch-event-driven/SKILL.md
+### Bước 3: Verification
 
-  agent-coder cần viết NestJS + Prisma
-  → Đọc .claude/skills/skill-framework-nestjs/SKILL.md
-  → Đọc .claude/skills/skill-database-prisma/SKILL.md
+```
+Dev verification:
+  → Đọc .claude/agents/dev-verification.agent.md
+  → Check: critical checks, test policy, scope compliance
+  → Code Done nếu score ≥80% + critical checks pass
+```
+
+### Bước 4: QC
+
+```
+QC handoff → QC runner:
+  → Đọc .claude/agents/qc-handoff.agent.md → qc-handoff.md
+  → Đọc .claude/agents/qc-runner.agent.md → qc-test-results.yaml
+  → Bug router nếu có defects
+```
+
+### Bước 5: Memory
+
+```
+Sau DONE hoặc meaningful workflow changes:
+  → Đọc .claude/agents/memory-update.agent.md
+  → Persist learnings to project brain, service brains
+```
+
+---
+
+## Rules (15 workflow rules)
+
+Rules tại `.claude/rules/` định nghĩa constraints cho workflow:
+
+```
+00-core-rules.md              ← Core: no coding without task-analysis
+01-project-brain-rules.md     ← Project brain as first memory source
+02-onboarding-rules.md        ← Scan only, no code changes
+03-agent-factory-rules.md     ← User approval required
+04-task-analysis-rules.md     ← Normalize before coding
+05-coder-leader-rules.md      ← Multi-service coordination
+06-service-coder-rules.md     ← Scoped writes only
+07-dev-verification-rules.md  ← ≥80% score + critical checks
+08-qc-rules.md                ← Stop on blockers
+09-bug-routing-rules.md       ← Blocker vs non-blocker
+10-memory-rules.md            ← When to persist
+11-approval-gates.md          ← User approval gates
+12-artifact-contracts.md      ← Required artifacts per state
+13-security-secret-rules.md   ← No secrets in artifacts
+14-skill-composition-rules.md ← Skills ≠ agent identities
 ```
 
 ---
 
 ## Nguyên tắc
 
-1. **Luôn đọc SKILL.md trước khi hành động** — không đoán, đọc instructions
-2. **Mỗi agent có skills riêng** — chỉ dùng skills được liệt kê trong SKILL.md của agent đó
-3. **Task phức tạp → dùng orchestrator** — không tự xử lý nhiều bước cùng lúc
-4. **Context-first** — đọc `.agent/context/` theo thứ tự orchestrator định nghĩa; chỉ mở source khi thiếu thông tin
-5. **Progressive disclosure + ngân sách** — tránh quét repo; leo thang từ summary → modules → file cụ thể (xem `orchestrator.agent.md`)
-6. **Dirty flags** — nếu `dirty-flags.md` cần sync (sections bẩn hoặc đánh dấu tay) → gọi `agent-context-keeper` delta sync trước breakdown lớn
-7. **Feedback loop** — sau review/test, ghi patterns vào .agent/context/feedback/
+1. **Coordinator routes** — Mọi task đi qua coordinator, không tự xử lý nhiều phase cùng lúc
+2. **Task-analysis trước code** — Không code khi chưa có task-analysis.yaml
+3. **Project brain first** — Đọc `.claude/context/project-brain.yaml` trước khi scan repo
+4. **Scoped coders** — Generated coders chỉ write trong allowed paths
+5. **Approval gates** — Tạo coder agents, expand scope, skip QC cần user approval
+6. **Feedback loop** — Sau mọi workflow event, memory-update ghi learnings vào context
 
 ---
 
 ## Context System
 
 ```
-.agent/                        ← Runtime context (per project, auto-generated)
-├── context/
-│   ├── summary.md             ← Project overview
-│   ├── architecture.md        ← System architecture
-│   ├── conventions.md         ← Coding style
-│   └── feedback/
-│       ├── patterns.md        ← Good patterns
-│       └── anti-patterns.md   ← Mistakes to avoid
-├── task-board.md
-├── progress.md
+.claude/                       ← Definitions + runtime
+├── agents/*.agent.md          ← 11 workflow agent definitions
+├── skills/*/SKILL.md          ← 227 skill definitions
+├── rules/                     ← 15 workflow rules
+├── templates/                 ← 13 artifact templates
+├── commands/                  ← 15 workflow commands
+├── docs/                      ← Visual diagrams & documentation
+│   └── diagrams/*.svg         ← 8 SVG workflow diagrams
+├── context/                   ← Runtime context (per project, auto-generated)
+│   ├── project-brain.yaml     ← Project memory
+│   ├── service-catalog.yaml   ← Service inventory
+│   ├── agent-registry.yaml    ← Active coder agents
+│   ├── test-policy.yaml       ← Test requirements
+│   ├── services/              ← Per-service brains
+│   └── feedback/              ← Patterns + anti-patterns
+├── tasks/                     ← Task tracking + artifacts
+├── bugs/                      ← Bug tracking
 └── changelog.md
-
-.claude/                       ← Agent/skill definitions (static, from agent-platform)
-├── agents/*.agent.md          ← Agent instructions
-└── skills/*/SKILL.md          ← Skill knowledge base
 ```
-
-> `.agent/` = runtime data (thay đổi theo project)
-> `.claude/` = agent definitions (cố định, cài 1 lần)

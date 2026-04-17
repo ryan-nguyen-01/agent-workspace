@@ -1,0 +1,46 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1700" height="720" viewBox="0 0 1700 720" role="img" aria-labelledby="title desc">
+  <title id="title">QC and bug routing</title>
+  <desc id="desc">QC flow with blocker and non-blocker bug behavior, plus QC delivery report.</desc>
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0 0L10 5L0 10Z" fill="#9ca3af"/></marker>
+    <marker id="arrow-red" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0 0L10 5L0 10Z" fill="#fca5a5"/></marker>
+    <marker id="arrow-green" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0 0L10 5L0 10Z" fill="#86efac"/></marker>
+    <style>
+      .bg{fill:#111827}.panel{fill:#172033;stroke:#374151;stroke-width:2;rx:18}.title{fill:#f9fafb;font:700 26px Arial}.box{stroke-width:1.5;rx:10}.agent{fill:#1e3a5f;stroke:#60a5fa}.memory{fill:#14532d;stroke:#86efac}.gate{fill:#78350f;stroke:#fbbf24}.stop{fill:#7f1d1d;stroke:#fca5a5}.warn{fill:#78350f;stroke:#fbbf24}.text{fill:#f8fafc;font:700 15px Arial;text-anchor:middle;dominant-baseline:middle}.small{fill:#d1d5db;font:600 12px Arial;text-anchor:middle;dominant-baseline:middle}.edge{fill:none;stroke:#9ca3af;stroke-width:2.2;marker-end:url(#arrow)}.edge-red{fill:none;stroke:#fca5a5;stroke-width:2.2;marker-end:url(#arrow-red)}.edge-green{fill:none;stroke:#86efac;stroke-width:2.2;marker-end:url(#arrow-green)}.label{fill:#e5e7eb;font:700 13px Arial}.label-red{fill:#fecaca;font:700 13px Arial}.label-green{fill:#bbf7d0;font:700 13px Arial}
+    </style>
+  </defs>
+  <rect class="bg" width="1700" height="720"/>
+  <rect class="panel" x="30" y="30" width="1640" height="660"/>
+  <text class="title" x="70" y="78">QC and Bug Routing</text>
+
+  <rect class="box memory" x="90" y="300" width="210" height="70"/><text class="text" x="195" y="328">QC Handoff</text><text class="small" x="195" y="352">qc-handoff.md</text>
+  <rect class="box agent" x="370" y="300" width="210" height="70"/><text class="text" x="475" y="335">QC Runner</text>
+  <rect class="box gate" x="650" y="300" width="210" height="70"/><text class="text" x="755" y="328">QC Result</text><text class="small" x="755" y="352">pass / blocker / non-blocker</text>
+
+  <rect class="box stop" x="930" y="130" width="230" height="80"/><text class="text" x="1045" y="160">Blocking Bug</text><text class="small" x="1045" y="184">stop QC immediately</text>
+  <rect class="box memory" x="1220" y="130" width="170" height="80"/><text class="text" x="1305" y="160">Fix Task</text><text class="small" x="1305" y="184">to Coder Leader</text>
+
+  <rect class="box warn" x="930" y="300" width="230" height="80"/><text class="text" x="1045" y="330">Non-blocking Bug</text><text class="small" x="1045" y="354">continue QC</text>
+  <rect class="box memory" x="1220" y="300" width="170" height="80"/><text class="text" x="1305" y="330">Bug Task</text><text class="small" x="1305" y="354">parallel fix</text>
+
+  <rect class="box memory" x="930" y="495" width="230" height="80"/><text class="text" x="1045" y="525">Task Done</text><text class="small" x="1045" y="549">zero open blockers</text>
+  <rect class="box gate" x="1190" y="495" width="220" height="80"/><text class="text" x="1300" y="525">QC Delivery Report</text><text class="small" x="1300" y="549">qc-delivery-report.md</text>
+  <rect class="box memory" x="1440" y="495" width="170" height="80"/><text class="text" x="1525" y="525">Memory</text><text class="small" x="1525" y="549">Update</text>
+
+  <path class="edge" d="M300 335H370"/>
+  <path class="edge" d="M580 335H650"/>
+  <path class="edge-red" d="M860 335C900 275 915 210 930 170"/>
+  <text class="label-red" x="875" y="245">blocking</text>
+  <path class="edge-red" d="M1160 170H1220"/>
+  <path class="edge-red" d="M1305 210C1250 250 1180 275 1120 300"/>
+
+  <path class="edge" d="M860 335H930"/>
+  <text class="label" x="875" y="320">non-blocking</text>
+  <path class="edge" d="M1160 340H1220"/>
+  <path class="edge" d="M1045 380C980 430 890 420 755 370"/>
+
+  <path class="edge-green" d="M755 370C830 455 900 500 930 535"/>
+  <text class="label-green" x="830" y="470">pass</text>
+  <path class="edge-green" d="M1160 535H1190"/>
+  <path class="edge-green" d="M1410 535H1440"/>
+</svg>

@@ -1,0 +1,57 @@
+task_id: TASK-example
+version: 1
+status: analyzed
+
+intent: "Thêm REST API endpoint để lấy thông tin user theo ID"
+summary: "Tạo GET /api/users/:id endpoint trả về user profile từ database"
+business_goal: "Cho phép frontend hiển thị trang profile user"
+
+acceptance_criteria:
+  - "GET /api/users/:id trả về 200 với user data khi ID tồn tại"
+  - "GET /api/users/:id trả về 404 khi ID không tồn tại"
+  - "Response bao gồm: id, name, email, avatar, createdAt"
+  - "Không trả về password hoặc sensitive fields"
+  - "Response time < 200ms"
+
+impacted_services:
+  - service_id: "api"
+    reason: "Thêm endpoint mới vào REST API layer"
+  - service_id: "database"
+    reason: "Query user table"
+
+risks:
+  - "N+1 query nếu có relations"
+  - "Data leakage nếu không filter sensitive fields"
+
+blockers: []
+
+critical_checks:
+  - "Không expose password/hash trong response"
+  - "Validate ID format trước khi query"
+  - "Proper error handling cho database errors"
+
+dev_verification_checklist:
+  - "Endpoint trả đúng status codes (200, 404, 400)"
+  - "Response schema match acceptance criteria"
+  - "Sensitive fields filtered"
+  - "Input validation hoạt động"
+
+qc_focus:
+  - "Security: không leak sensitive data"
+  - "Edge cases: invalid ID, non-existent ID, SQL injection"
+  - "Performance: response time"
+
+reuse_and_convention_analysis:
+  reusable_assets:
+    - asset: "Base controller pattern"
+      location: "src/controllers/"
+      confidence: "inferred"
+    - asset: "User model/entity"
+      location: "src/models/user"
+      confidence: "inferred"
+  conventions:
+    - "RESTful naming: GET /api/{resource}/:id"
+    - "Error response format: { error: string, statusCode: number }"
+  anti_patterns_to_avoid:
+    - "Không return toàn bộ user object — phải filter fields"
+    - "Không catch-all errors — handle specific database errors"

@@ -1,0 +1,120 @@
+# Screen Map — Fashion Ecommerce Home Page
+# Extracted from Figma MCP | File: 7xrPkquBzkRr2HLgTMKqr8 | Frame: Home (2:63)
+
+page: "Home"
+viewport: "1440x3998"
+total_sections: 8
+
+flows:
+  - id: flow-1-home
+    name: "Home Page — Full Scroll"
+    description: "Single-page fashion e-commerce landing with 8 sections"
+    screens:
+      - id: screen-1-header
+        name: "Header + Navigation"
+        type: primary
+        y_range: "0-100px"
+        components:
+          - nav-links (Home, Collections, New)
+          - icon-group (search, user, wishlist)
+          - cart-button (pill, black bg)
+        data_source: "static"
+
+      - id: screen-2-sidebar
+        name: "Category Sidebar + Search"
+        type: primary
+        y_range: "100-300px"
+        components:
+          - category-menu (MEN, WOMEN, KIDS)
+          - search-bar (367x50, placeholder)
+        data_source: "static"
+
+      - id: screen-3-hero
+        name: "Hero — New Collection"
+        type: primary
+        y_range: "300-800px"
+        components:
+          - hero-title ("New Collection")
+          - season-label ("Summer 2024")
+          - cta-button ("Go To Shop")
+          - product-cards-large (2x, 366x376)
+          - nav-arrows (prev/next)
+        data_source: "api — featured products"
+
+      - id: screen-4-new-week
+        name: "New This Week"
+        type: primary
+        y_range: "800-1500px"
+        components:
+          - section-title ("New This Week")
+          - item-count ("(50)" in accent blue)
+          - product-grid (4 columns, 304x313 cards)
+          - wishlist-icons (overlay on cards)
+          - product-info (category + title + price)
+          - nav-arrows (prev/next)
+        data_source: "api — new arrivals"
+
+      - id: screen-5-collections
+        name: "XIV Collections 23-24"
+        type: primary
+        y_range: "1500-2300px"
+        components:
+          - section-title ("XIV Collections 23-24")
+          - filter-tabs (All, Men, Women, KID)
+          - sort-controls (Filters+, Sorts-)
+          - product-grid (3 columns, cards with prices)
+          - "See More" link
+          - "More" pagination
+        data_source: "api — collections with filter/sort"
+
+      - id: screen-6-approach
+        name: "Our Approach"
+        type: primary
+        y_range: "2300-3370px"
+        components:
+          - section-title ("Our Approach to fashion design")
+          - image-gallery (4 overlapping bordered images)
+        data_source: "static / CMS content"
+
+      - id: screen-7-footer
+        name: "Footer"
+        type: primary
+        y_range: "3370-3998px"
+        components:
+          - info-nav (Pricing, About, Contacts)
+          - languages (Eng, Esp, Sve)
+          - technologies (VR, XIV/NFC, QR)
+          - social-icon
+          - copyright-bar
+          - scroll-to-top button
+        data_source: "static"
+
+    states:
+      - name: "loading"
+        description: "Skeleton cards in product grids (sections 4, 5). Header + footer render immediately."
+      - name: "empty"
+        description: "Show 'No products found' placeholder in sections 4 and 5 if API returns empty."
+      - name: "filter-active"
+        description: "Section 5 filter tabs highlighted, grid updates via API. Sort dropdown shows current selection."
+
+shared_components:
+  - name: "ProductCard"
+    variants:
+      - small (304x313)
+      - large (366x376)
+    used_in: [screen-3-hero, screen-4-new-week, screen-5-collections]
+
+  - name: "NavArrow"
+    variants:
+      - left (opacity-66)
+      - right (full opacity)
+    used_in: [screen-3-hero, screen-4-new-week]
+
+  - name: "SectionTitle"
+    variants:
+      - extrabold-48 (sections 3, 4, 5)
+      - regular-48 (section 6)
+    used_in: [screen-3-hero, screen-4-new-week, screen-5-collections, screen-6-approach]
+
+design_tokens_file: "./design-tokens.json"
+design_context_file: "./design-context.md"

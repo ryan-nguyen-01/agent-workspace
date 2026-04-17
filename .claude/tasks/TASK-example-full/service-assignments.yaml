@@ -1,0 +1,59 @@
+task_id: TASK-example-full
+version: 1
+
+assignments:
+  - coder: "coder-database"
+    service: "database"
+    steps: [1]
+    scope:
+      allowed_write_paths:
+        - "src/database/migrations/"
+        - "src/database/schema/"
+      forbidden_paths:
+        - "src/api/"
+        - "frontend/"
+    notes: "Chỉ tạo migration, không touch API code"
+
+  - coder: "coder-api"
+    service: "api"
+    steps: [2, 3, 4, 5]
+    scope:
+      allowed_write_paths:
+        - "src/api/auth/"
+        - "src/api/middleware/"
+        - "src/utils/jwt.ts"
+        - "src/config/auth.ts"
+      forbidden_paths:
+        - "frontend/"
+        - "src/database/migrations/"
+    notes: "Core auth logic. Phải dùng async bcrypt. JWT secret từ env var."
+
+  - coder: "coder-frontend"
+    service: "frontend"
+    steps: [6, 7, 8]
+    scope:
+      allowed_write_paths:
+        - "frontend/src/contexts/"
+        - "frontend/src/pages/auth/"
+        - "frontend/src/lib/api/"
+        - "frontend/src/components/auth/"
+      forbidden_paths:
+        - "src/api/"
+        - "src/database/"
+    notes: "Frontend auth. Depends on API contract từ step 5."
+
+execution_order:
+  - phase: 1
+    coders: ["coder-database"]
+    reason: "Database schema trước"
+  - phase: 2
+    coders: ["coder-api"]
+    reason: "API auth logic, depends on users table"
+  - phase: 3
+    coders: ["coder-frontend"]
+    reason: "Frontend integration, depends on API contract"
+
+cross_service_risks:
+  - "API response format phải match frontend expectations"
+  - "CORS config phải allow Authorization header"
+  - "Token format/expiry phải consistent giữa sign (API) và verify (API middleware)"

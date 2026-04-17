@@ -1,40 +1,28 @@
 {
-  "permissions": {
-    "additionalDirectories": ["/Users/nguyenvanduy/.claude"],
-    "allow": [
-      "Bash(git status*)",
-      "Bash(git diff*)",
-      "Bash(git log*)",
-      "Bash(git add*)",
-      "Bash(git commit*)",
-      "Bash(git branch*)",
-      "Bash(git checkout*)",
-      "Bash(git pull*)",
-      "Bash(git push*)",
-      "Bash(ls*)",
-      "Bash(mkdir*)",
-      "Bash(mv*)",
-      "Bash(cp*)",
-      "Bash(echo*)",
-      "Bash(cat*)",
-      "Bash(grep*)",
-      "Bash(find*)",
-      "Bash(sed*)",
-      "Bash(awk*)",
-      "Bash(python3*)",
-      "Bash(node*)",
-      "Bash(npm*)",
-      "Bash(npx*)",
-      "Bash(pnpm*)",
-      "Bash(yarn*)",
-      "Bash(bun*)",
-      "Bash(go *)",
-      "Bash(docker*)",
-      "Bash(curl*)",
-      "Bash(lsof*)",
-      "Bash(kill*)",
-      "Bash(chmod*)",
-      "Bash(touch*)"
-    ]
+  "framework": {
+    "version": "1.5.0",
+    "name": "agent-platform"
+  },
+  "workflow": {
+    "code_done_threshold": 0.8,
+    "qc_handoff_required": true,
+    "blocker_stops_qc": true,
+    "coder_creation_requires_approval": true,
+    "memory_updates_enabled": true
+  },
+  "agents": {
+    "max_generated_coders": 10,
+    "default_test_policy": "follow_project_conventions"
+  },
+  "context": {
+    "project_brain_path": ".claude/context/project-brain.yaml",
+    "service_catalog_path": ".claude/context/service-catalog.yaml",
+    "agent_registry_path": ".claude/context/agent-registry.yaml",
+    "git_ignore_context": true
+  },
+  "conventions": {
+    "task_id_format": "TASK-{number}",
+    "bug_id_format": "BUG-{number}",
+    "commit_format": "conventional"
   }
 }

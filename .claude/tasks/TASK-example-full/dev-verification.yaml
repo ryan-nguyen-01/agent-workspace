@@ -1,0 +1,146 @@
+task_id: TASK-example-full
+state: "DEV_DONE"
+result: "DEV_DONE"
+verified_at: "2025-04-17T15:30:00Z"
+verified_by: "dev-verification"
+
+summary: "Auth implementation hoàn chỉnh cho 3 services. Tất cả critical checks pass. Score 92%."
+
+score:
+  passed_checks: 11
+  total_applicable_checks: 12
+  value: 0.92
+  threshold: 0.80
+
+critical_checks:
+  - id: CC-1
+    description: "Password KHÔNG được log hoặc return trong API response"
+    status: "pass"
+    evidence: "auth.service.ts dùng UserDto exclude password_hash. Không có console.log(password) trong codebase."
+
+  - id: CC-2
+    description: "JWT secret KHÔNG hardcode trong source code"
+    status: "pass"
+    evidence: "auth.ts config đọc từ process.env.JWT_SECRET. Throw error nếu missing."
+
+  - id: CC-3
+    description: "Bcrypt dùng salt rounds >= 10"
+    status: "pass"
+    evidence: "auth.service.ts: bcrypt.hash(password, 12) — salt rounds = 12."
+
+  - id: CC-4
+    description: "Token validation check expiry, signature, và issuer"
+    status: "pass"
+    evidence: "jwt.ts verify() checks exp, iat, iss. Middleware rejects expired tokens."
+
+scope_compliance:
+  status: "pass"
+  allowed_write_paths:
+    - "src/database/migrations/"
+    - "src/api/auth/"
+    - "src/api/middleware/"
+    - "src/utils/jwt.ts"
+    - "src/config/auth.ts"
+    - "frontend/src/contexts/"
+    - "frontend/src/pages/auth/"
+    - "frontend/src/lib/api/"
+    - "frontend/src/components/auth/"
+  changed_files:
+    - "src/database/migrations/20250417_create_users.ts"
+    - "src/database/schema/users.ts"
+    - "src/utils/jwt.ts"
+    - "src/config/auth.ts"
+    - "src/api/auth/auth.service.ts"
+    - "src/api/auth/auth.controller.ts"
+    - "src/api/auth/auth.dto.ts"
+    - "src/api/middleware/auth.middleware.ts"
+    - "src/api/routes.ts"
+    - "frontend/src/contexts/AuthContext.tsx"
+    - "frontend/src/lib/api/client.ts"
+    - "frontend/src/pages/auth/LoginPage.tsx"
+    - "frontend/src/pages/auth/RegisterPage.tsx"
+    - "frontend/src/components/auth/ProtectedRoute.tsx"
+  violations: []
+
+test_policy_compliance:
+  unit_tests_required: true
+  allow_new_test_files: true
+  tests_added_or_updated:
+    - "src/api/auth/__tests__/auth.service.test.ts"
+    - "src/api/middleware/__tests__/auth.middleware.test.ts"
+  tests_run:
+    - test: "auth.service.test.ts"
+      result: "pass"
+      coverage: "85%"
+    - test: "auth.middleware.test.ts"
+      result: "pass"
+      coverage: "90%"
+  manual_verification:
+    required: false
+    checks: []
+
+acceptance_criteria:
+  - id: AC-1
+    status: "pass"
+    evidence: "Register endpoint tạo user, hash password, trả JWT token. Verified với curl."
+
+  - id: AC-2
+    status: "pass"
+    evidence: "Login endpoint verify bcrypt, trả JWT token. Wrong password → 401."
+
+  - id: AC-3
+    status: "pass"
+    evidence: "Middleware reject requests không có token → 401. Invalid token → 401."
+
+  - id: AC-4
+    status: "pass"
+    evidence: "HTTP client interceptor auto-attach Bearer token từ AuthContext."
+
+  - id: AC-5
+    status: "pass"
+    evidence: "401 response → AuthContext clear token → redirect /login."
+
+  - id: AC-6
+    status: "pass"
+    evidence: "bcrypt.hash(password, 12) trong auth.service.ts."
+
+  - id: AC-7
+    status: "partial"
+    evidence: "Access token 24h implemented. Refresh token chưa implement (deferred)."
+
+blockers: []
+
+risks:
+  - "Refresh token chưa implement — AC-7 partial. Acceptable cho MVP."
+
+handoff_ready: true
+
+required_fixes: []
+
+reuse_and_convention_check:
+  reusable_assets_used:
+    - "Error response format"
+    - "Base controller pattern"
+    - "HTTP client wrapper"
+  conventions_followed:
+    - "RESTful naming"
+    - "Env vars cho secrets"
+    - "Async bcrypt"
+    - "React Context pattern"
+  anti_patterns_avoided:
+    - "No localStorage token storage"
+    - "No hardcoded secrets"
+    - "No password in responses"
+  duplicate_helper_risk: "none"
+  new_reusable_assets_created:
+    - asset: "JWT utility module"
+      location: "src/utils/jwt.ts"
+      reusable_by: ["api"]
+    - asset: "Auth middleware"
+      location: "src/api/middleware/auth.middleware.ts"
+      reusable_by: ["api"]
+    - asset: "AuthContext"
+      location: "frontend/src/contexts/AuthContext.tsx"
+      reusable_by: ["frontend"]
+  shared_asset_scope_compliance: true
+  notes: "jwt.ts và auth.middleware.ts có thể reuse cho tất cả authenticated endpoints"

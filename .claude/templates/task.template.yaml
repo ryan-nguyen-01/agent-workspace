@@ -1,0 +1,27 @@
+task_id: "{{TASK_ID}}"
+state: "NEW"
+created_at: "{{CREATED_AT}}"
+updated_at: "{{UPDATED_AT}}"
+owner: "coordinator"
+
+source:
+  type: "HLD|LLD|ticket|text|bug-report|incident|other"
+  artifact: ".claude/tasks/{{TASK_ID}}/task-input.md"
+
+artifacts:
+  task_analysis: ".claude/tasks/{{TASK_ID}}/task-analysis.yaml"
+  implementation_plan: ".claude/tasks/{{TASK_ID}}/implementation-plan.yaml"
+  service_assignments: ".claude/tasks/{{TASK_ID}}/service-assignments.yaml"
+  coder_results: ".claude/tasks/{{TASK_ID}}/coder-results.yaml"
+  dev_verification: ".claude/tasks/{{TASK_ID}}/dev-verification.yaml"
+  qc_handoff: ".claude/tasks/{{TASK_ID}}/qc-handoff.md"
+  qc_results: ".claude/tasks/{{TASK_ID}}/qc-test-results.yaml"
+  bugs: ".claude/tasks/{{TASK_ID}}/bugs.yaml"
+  memory_updates: ".claude/tasks/{{TASK_ID}}/memory-updates.yaml"
+
+history:
+  - at: "{{CREATED_AT}}"
+    by: "coordinator"
+    from: null
+    to: "NEW"
+    note: "Task created"

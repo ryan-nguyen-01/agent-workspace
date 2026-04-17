@@ -1,0 +1,52 @@
+# Template: Coder-to-Leader Handoff
+# Mỗi service coder tạo file này sau khi hoàn thành steps được assign.
+# Coder Leader dùng các handoff để tổng hợp coder-results.yaml.
+
+task_id: "{{TASK_ID}}"
+coder: "{{CODER_ID}}"
+service: "{{SERVICE}}"
+handoff_time: "{{TIMESTAMP}}"
+
+# Steps hoàn thành
+steps_completed: []
+
+# Trạng thái
+status: "done"  # done | blocked | needs_leader | partial
+
+# Files đã thay đổi
+files_changed:
+  - path: "{{FILE_PATH}}"
+    action: "created"  # created | modified | deleted
+
+# Tóm tắt implementation
+summary: "{{WHAT_WAS_DONE}}"
+
+# Decisions đã tự quyết định (và lý do)
+decisions:
+  - decision: "{{DECISION}}"
+    reason: "{{REASON}}"
+
+# Integration notes cho Coder Leader
+integration_notes:
+  contracts_provided: []   # API endpoints, schemas, events mà service này expose
+  contracts_consumed: []   # API, schemas từ service khác mà đã consume
+  env_vars_needed: []      # Environment variables cần thiết
+
+# Cross-service requests (nếu cần service khác thay đổi)
+cross_service_requests: []
+
+# Risks & concerns
+risks: []
+
+# Reuse report
+reuse_report:
+  assets_used: []
+  conventions_followed: []
+  anti_patterns_avoided: []
+  new_assets_created: []
+
+# Verification evidence (test output, manual check)
+verification:
+  type: "{{manual | unit_test | integration_test}}"
+  evidence: "{{EVIDENCE}}"
+  passing: true

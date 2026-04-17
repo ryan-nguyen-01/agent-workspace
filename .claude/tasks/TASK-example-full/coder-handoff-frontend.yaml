@@ -1,0 +1,103 @@
+task_id: "TASK-example-full"
+coder: "coder-frontend"
+service: "frontend"
+handoff_time: "2026-04-17T13:00:00+07:00"
+
+steps_completed: [6, 7, 8]
+status: "done"
+
+files_changed:
+  - path: "frontend/src/contexts/AuthContext.tsx"
+    action: "created"
+  - path: "frontend/src/lib/api/client.ts"
+    action: "modified"
+  - path: "frontend/src/pages/auth/LoginPage.tsx"
+    action: "created"
+  - path: "frontend/src/pages/auth/RegisterPage.tsx"
+    action: "created"
+  - path: "frontend/src/components/auth/ProtectedRoute.tsx"
+    action: "created"
+
+summary: |
+  Implement frontend auth: AuthContext, Login/Register pages, ProtectedRoute component.
+  - AuthContext: quản lý auth state (user, token, isAuthenticated), provide login/register/logout methods
+  - Token stored in React state (memory), không localStorage (XSS protection)
+  - HTTP client auto-attach Authorization: Bearer header
+  - 401 response → auto logout và redirect /login
+  - ProtectedRoute wrapper: redirect /login nếu chưa authenticated
+
+decisions:
+  - decision: "Token stored in memory (React state), không localStorage"
+    reason: "XSS protection — localStorage accessible by any JS on page. Task analysis CC-04."
+  - decision: "Login/Register dùng controlled form, không third-party form library"
+    reason: "Simple form, 2-3 fields, không cần Formik/react-hook-form overhead."
+  - decision: "Redirect /login sau logout thay vì show modal"
+    reason: "Clean UX, consistent với convention project (page-based navigation)"
+  - decision: "Loading state hiển thị spinner khi auth check đang pending"
+    reason: "Tránh flash of protected content trước khi auth state resolved"
+
+integration_notes:
+  contracts_provided:
+    - type: "component"
+      name: "AuthContext"
+      details: "useAuth() hook returns {user, token, isAuthenticated, login, register, logout, isLoading}"
+    - type: "component"
+      name: "ProtectedRoute"
+      details: "<ProtectedRoute><Children/></ProtectedRoute> — redirect /login nếu chưa auth"
+  contracts_consumed:
+    - type: "api"
+      name: "POST /api/auth/register"
+      from_service: "api"
+      details: "Body: {email, password, name}"
+    - type: "api"
+      name: "POST /api/auth/login"
+      from_service: "api"
+      details: "Body: {email, password}"
+    - type: "api"
+      name: "GET /api/auth/me"
+      from_service: "api"
+      details: "Bearer token in header"
+  env_vars_needed:
+    - "VITE_API_URL (API base URL)"
+
+cross_service_requests: []
+
+risks:
+  - "Token mất khi refresh page (memory-only storage). Cần refresh token flow cho UX tốt hơn (deferred)."
+  - "Không có 'Remember me' option."
+
+reuse_report:
+  assets_used:
+    - "HTTP client wrapper từ frontend/src/lib/api/client.ts"
+    - "Error handling patterns từ existing components"
+  conventions_followed:
+    - "React Context cho auth state"
+    - "Token trong memory, không localStorage"
+    - "Functional components + hooks only"
+    - "TypeScript strict mode"
+  anti_patterns_avoided:
+    - "Không lưu token trong localStorage (XSS risk)"
+    - "Không expose token trong URL params"
+    - "Không dùng class components"
+  new_assets_created:
+    - name: "frontend/src/contexts/AuthContext.tsx"
+      reason: "Auth context chưa tồn tại. Cung cấp auth state cho toàn bộ app."
+      reusable_by: ["frontend"]
+    - name: "frontend/src/components/auth/ProtectedRoute.tsx"
+      reason: "Route guard pattern cho authenticated pages."
+      reusable_by: ["frontend"]
+
+verification:
+  type: "manual"
+  evidence: |
+    Browser testing:
+    1. /register → form hiển thị, submit → redirect dashboard ✓
+    2. /register duplicate email → error message hiển thị ✓
+    3. /login → form hiển thị, submit valid → redirect dashboard ✓
+    4. /login wrong password → error message, không reveal thông tin ✓
+    5. Dashboard (protected) → shows user info ✓
+    6. Logout → redirect /login, dashboard không accessible ✓
+    7. Direct navigate /dashboard khi chưa login → redirect /login ✓
+    8. 401 from API → auto logout ✓
+    9. Refresh page → token mất, redirect login (expected with memory-only) ✓
+  passing: true
