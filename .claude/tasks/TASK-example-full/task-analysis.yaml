@@ -1,0 +1,87 @@
+task_id: TASK-example-full
+version: 1
+status: analyzed
+
+intent: "Thêm JWT authentication cho hệ thống gồm backend API, frontend, và database"
+summary: "Implement đầy đủ auth flow: user register/login → JWT token → authenticated API requests → frontend token management"
+business_goal: "Bảo vệ API endpoints khỏi truy cập trái phép, cho phép user đăng ký và đăng nhập"
+
+acceptance_criteria:
+  - id: AC-1
+    text: "POST /api/auth/register tạo user mới, trả về JWT token"
+  - id: AC-2
+    text: "POST /api/auth/login xác thực credentials, trả về JWT token"
+  - id: AC-3
+    text: "Auth middleware reject requests không có valid token với 401"
+  - id: AC-4
+    text: "Frontend gửi JWT token trong Authorization header cho mọi authenticated request"
+  - id: AC-5
+    text: "Frontend redirect về login page khi token hết hạn hoặc invalid"
+  - id: AC-6
+    text: "Password được hash bằng bcrypt trước khi lưu database"
+  - id: AC-7
+    text: "Token expiry 24h, refresh token 7 ngày"
+
+impacted_services:
+  - service_id: "api"
+    reason: "Thêm auth middleware, login/register endpoints, JWT utils"
+  - service_id: "frontend"
+    reason: "Thêm auth context, login/register pages, HTTP interceptor"
+  - service_id: "database"
+    reason: "Thêm users table với password hash"
+
+risks:
+  - "Token leakage qua logs hoặc error messages"
+  - "Timing attack trên password comparison"
+  - "JWT secret key management"
+  - "CORS issues khi frontend gửi Authorization header"
+
+blockers: []
+
+requires_user_clarification: []
+
+critical_checks:
+  - id: CC-1
+    text: "Password KHÔNG được log hoặc return trong API response"
+  - id: CC-2
+    text: "JWT secret KHÔNG hardcode trong source code"
+  - id: CC-3
+    text: "Bcrypt dùng salt rounds >= 10"
+  - id: CC-4
+    text: "Token validation check expiry, signature, và issuer"
+
+dev_verification_checklist:
+  - "Register endpoint tạo user và trả token"
+  - "Login endpoint xác thực đúng/sai credentials"
+  - "Middleware block unauthenticated requests"
+  - "Frontend gửi token tự động"
+  - "Token refresh hoạt động"
+  - "Error handling cho expired/invalid tokens"
+
+qc_focus:
+  - "Security: không leak password, token trong logs"
+  - "Edge cases: duplicate email register, wrong password, expired token, malformed token"
+  - "Cross-service: frontend nhận và xử lý 401 từ API"
+  - "Performance: bcrypt không block event loop"
+
+reuse_and_convention_analysis:
+  reusable_assets:
+    - asset: "Base middleware pattern"
+      location: "src/middleware/"
+      confidence: "inferred"
+    - asset: "Error response format"
+      location: "src/utils/errors"
+      confidence: "known"
+    - asset: "HTTP client wrapper"
+      location: "frontend/src/lib/api"
+      confidence: "inferred"
+  conventions:
+    - "RESTful naming: POST /api/auth/{action}"
+    - "Error response format: { error: string, statusCode: number }"
+    - "Environment variables for secrets: JWT_SECRET, JWT_EXPIRY"
+    - "Frontend state management: React Context pattern"
+  anti_patterns_to_avoid:
+    - "Không lưu token trong localStorage (dùng httpOnly cookie hoặc memory)"
+    - "Không dùng synchronous bcrypt — dùng async version"
+    - "Không trả plain text password trong bất kỳ response nào"
+    - "Không hardcode JWT secret"

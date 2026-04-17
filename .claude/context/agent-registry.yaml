@@ -1,0 +1,7 @@
+version: 1
+generated_at: null
+status: "no_generated_coder_agents"
+agents: []
+approval_required: true
+notes:
+  - "Run onboarding first, then ask user approval before creating service coder agents."

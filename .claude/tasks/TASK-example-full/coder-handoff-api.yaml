@@ -1,0 +1,107 @@
+task_id: "TASK-example-full"
+coder: "coder-api"
+service: "api"
+handoff_time: "2026-04-17T11:30:00+07:00"
+
+steps_completed: [2, 3, 4, 5]
+status: "done"
+
+files_changed:
+  - path: "src/utils/jwt.ts"
+    action: "created"
+  - path: "src/config/auth.ts"
+    action: "created"
+  - path: "src/api/auth/auth.service.ts"
+    action: "created"
+  - path: "src/api/auth/auth.controller.ts"
+    action: "created"
+  - path: "src/api/auth/auth.dto.ts"
+    action: "created"
+  - path: "src/api/middleware/auth.middleware.ts"
+    action: "created"
+  - path: "src/api/routes.ts"
+    action: "modified"
+
+summary: |
+  Implement full JWT auth flow: register, login, auth middleware, protected routes.
+  - POST /api/auth/register: validate input → hash password (bcrypt 12 rounds) → insert user → return JWT
+  - POST /api/auth/login: lookup by email → verify bcrypt → return JWT (24h expiry)
+  - Auth middleware: extract Bearer token → verify JWT → attach user to request
+  - GET /api/auth/me: protected endpoint returning current user profile
+
+decisions:
+  - decision: "Bcrypt salt rounds = 12"
+    reason: "Balance giữa security và performance. OWASP recommends 10+."
+  - decision: "JWT expiry 24 giờ (không có refresh token)"
+    reason: "Task analysis AC-7 marked refresh token as deferred (P2). Chỉ implement access token."
+  - decision: "Password validation: min 8 chars, uppercase, lowercase, number"
+    reason: "OWASP password guidelines. Không quá strict để tránh user friction."
+  - decision: "Trả 401 generic message cho cả wrong email và wrong password"
+    reason: "Tránh user enumeration attack (critical check CC-02)"
+  - decision: "Dùng async bcrypt.compare thay vì sync"
+    reason: "Không blocking event loop — project convention"
+
+integration_notes:
+  contracts_provided:
+    - type: "api"
+      name: "POST /api/auth/register"
+      details: "Body: {email, password, name}. Response: {user, token}"
+    - type: "api"
+      name: "POST /api/auth/login"
+      details: "Body: {email, password}. Response: {user, token}"
+    - type: "api"
+      name: "GET /api/auth/me"
+      details: "Header: Authorization: Bearer <token>. Response: {user}"
+    - type: "middleware"
+      name: "authMiddleware"
+      details: "Import từ src/api/middleware/auth.middleware.ts. Attach req.user."
+  contracts_consumed:
+    - type: "schema"
+      name: "users table"
+      from_service: "database"
+      details: "Query by email, insert new user"
+  env_vars_needed:
+    - "JWT_SECRET (required, min 32 chars)"
+    - "JWT_EXPIRY (optional, default '24h')"
+    - "BCRYPT_ROUNDS (optional, default 12)"
+
+cross_service_requests: []
+
+risks:
+  - "JWT_SECRET phải đủ dài và random. Nếu weak → toàn bộ auth bị compromise."
+  - "Chưa có refresh token → user bị force re-login mỗi 24h."
+  - "Rate limiting chưa implement → brute force risk trên login endpoint."
+
+reuse_report:
+  assets_used:
+    - "Error response format từ src/utils/errors"
+    - "Base controller pattern từ src/api/base/"
+    - "Request validation middleware pattern"
+  conventions_followed:
+    - "Async bcrypt (không blocking event loop)"
+    - "Environment variables cho secrets"
+    - "RESTful POST /api/auth/{action}"
+    - "Generic error messages cho auth failures"
+  anti_patterns_avoided:
+    - "Không hardcode JWT secret"
+    - "Không log password hoặc password_hash"
+    - "Không return password_hash trong response"
+    - "Không dùng sync bcrypt"
+  new_assets_created:
+    - name: "src/utils/jwt.ts"
+      reason: "JWT utility chưa tồn tại. Wrap jsonwebtoken library với typed interface."
+      reusable_by: ["api"]
+
+verification:
+  type: "manual"
+  evidence: |
+    curl tests:
+    1. POST /api/auth/register → 201, returns {user, token}, password not in response ✓
+    2. POST /api/auth/register duplicate email → 409 Conflict ✓
+    3. POST /api/auth/login valid → 200, returns JWT ✓
+    4. POST /api/auth/login wrong password → 401 generic message ✓
+    5. POST /api/auth/login wrong email → 401 same generic message ✓
+    6. GET /api/auth/me with valid token → 200 user profile ✓
+    7. GET /api/auth/me without token → 401 ✓
+    8. GET /api/auth/me with expired token → 401 ✓
+  passing: true

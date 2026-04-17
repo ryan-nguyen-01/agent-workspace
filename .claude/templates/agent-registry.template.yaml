@@ -1,0 +1,28 @@
+version: 1
+project: "{{PROJECT_NAME}}"
+generated_at: "{{GENERATED_AT}}"
+source: ".claude/context/project-brain.yaml"
+
+agents:
+  - id: "coder-{{SERVICE_SLUG}}"
+    type: "service-coder"
+    status: "candidate|active|disabled"
+    service_id: "{{SERVICE_ID}}"
+    service_name: "{{SERVICE_NAME}}"
+    agent_file: ".claude/agents/coder-{{SERVICE_SLUG}}.agent.md"
+    scope_file: ".claude/context/services/{{SERVICE_ID}}.yaml"
+    approval:
+      required: true
+      approved_by: "{{APPROVED_BY}}"
+      approved_at: "{{APPROVED_AT}}"
+    permissions:
+      allowed_read_paths: []
+      allowed_write_paths: []
+      forbidden_paths: []
+      requires_leader_approval: []
+    test_policy:
+      unit_tests_required: false
+      allow_new_test_files: false
+      manual_verification_required: true
+      dev_done_threshold: 0.80
+    handoff_required: true

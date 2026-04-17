@@ -1,0 +1,32 @@
+bug_id: "BUG-{{ID}}"
+source_task: "{{TASK_ID}}"
+severity: "blocker|non-blocker"
+status: "open|assigned|fixed|retest|closed"
+found_by: "qc-runner"
+found_at: "{{FOUND_AT}}"
+
+title: "{{TITLE}}"
+summary: "{{SUMMARY}}"
+
+classification_reason: "{{WHY_BLOCKER_OR_NON_BLOCKER}}"
+impacted_services: []
+assigned_leader: "coder-leader"
+assigned_coder_agent: "coder-{{SERVICE_SLUG}}"
+
+steps_to_reproduce:
+  - "{{STEP_1}}"
+
+expected_result: "{{EXPECTED}}"
+actual_result: "{{ACTUAL}}"
+impact: "{{IMPACT}}"
+
+evidence:
+  environment: "local|dev|sit|other"
+  logs: []
+  screenshots: []
+  request_response_notes: []
+
+routing:
+  qc_action: "stop_immediately|continue_unaffected_cases"
+  dev_action: "fix_before_qc_continues|fix_in_parallel"
+  retest_scope: []

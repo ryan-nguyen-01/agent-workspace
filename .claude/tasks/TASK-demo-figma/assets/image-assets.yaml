@@ -1,0 +1,214 @@
+# Image & Icon Asset Inventory
+# Extracted from Figma: Fashion E-commerce Home (node 2:63)
+# fileKey: 7xrPkquBzkRr2HLgTMKqr8
+
+# ──────────────────────────────────────────────────────────
+# FIGMA TIER determines image handling strategy:
+#   high = 200 calls/day → coders can call get_screenshot live
+#   low  = 6 calls/month → everything pre-extracted, coders read local only
+# ──────────────────────────────────────────────────────────
+figma_tier: low
+figma_plan: "Starter (6 MCP calls/month)"
+tier_strategy: |
+  LOW TIER mode: All icons must be pre-exported or matched to icon library.
+  Product images use placeholder_spec with exact dimensions so real images
+  swap in pixel-perfect. Coders NEVER call Figma MCP.
+
+export_instructions:
+  svg_icons: |
+    Use Figma REST API to export as SVG:
+    GET https://api.figma.com/v1/images/7xrPkquBzkRr2HLgTMKqr8?ids={node_id}&format=svg
+    Header: X-FIGMA-TOKEN: <your-token>
+    Response: { images: { "node_id": "https://..." } }
+    Download the URL and save locally.
+  png_images: |
+    Use Figma REST API to export as PNG:
+    GET https://api.figma.com/v1/images/7xrPkquBzkRr2HLgTMKqr8?ids={node_id}&format=png&scale=2
+    Or use MCP get_screenshot on the specific node.
+  icon_library_alternative: |
+    Many icons match standard icon libraries (Lucide, Heroicons, Phosphor).
+    Prefer library icons over exported SVGs for smaller bundle size.
+
+icons:
+  - node_id: "Group6"
+    name: "logo"
+    type: icon
+    size: "120x40"
+    format_hint: svg
+    usage: "Header - brand logo (top-left)"
+    export_priority: required
+    library_alternative: null  # Custom brand logo, must export
+
+  - node_id: "Vector"  # search icon in header
+    name: "search"
+    type: icon
+    size: "24x24"
+    format_hint: svg
+    usage: "Header - search bar icon"
+    export_priority: required
+    library_alternative: "lucide:Search | heroicons:MagnifyingGlassIcon"
+
+  - node_id: "Group8"
+    name: "user-account"
+    type: icon
+    size: "24x24"
+    format_hint: svg
+    usage: "Header - user account link"
+    export_priority: required
+    library_alternative: "lucide:User | heroicons:UserIcon"
+
+  - node_id: "Group9"
+    name: "wishlist"
+    type: icon
+    size: "24x24"
+    format_hint: svg
+    usage: "Header - wishlist link"
+    export_priority: required
+    library_alternative: "lucide:Heart | heroicons:HeartIcon"
+
+  - node_id: "Group45"
+    name: "wishlist-overlay"
+    type: icon
+    size: "34x34"
+    format_hint: svg
+    usage: "ProductCard - wishlist toggle button (top-right of image)"
+    export_priority: required
+    library_alternative: "lucide:Heart | heroicons:HeartIcon"
+    notes: "Two states: outlined (default), filled (active/wishlisted)"
+
+  - node_id: "Group46"
+    name: "wishlist-overlay-alt-1"
+    type: icon
+    size: "34x34"
+    format_hint: svg
+    usage: "ProductCard variant - wishlist toggle"
+    export_priority: nice-to-have
+    library_alternative: "Same as Group45"
+
+  - node_id: "Group47"
+    name: "wishlist-overlay-alt-2"
+    type: icon
+    size: "34x34"
+    format_hint: svg
+    usage: "ProductCard variant - wishlist toggle"
+    export_priority: nice-to-have
+    library_alternative: "Same as Group45"
+
+  - node_id: "Vector"  # navigation arrows
+    name: "nav-arrow-left"
+    type: icon
+    size: "40x40"
+    format_hint: svg
+    usage: "XIV Collections carousel - previous"
+    export_priority: required
+    library_alternative: "lucide:ChevronLeft | heroicons:ChevronLeftIcon"
+
+  - node_id: "Vector"  # right arrow
+    name: "nav-arrow-right"
+    type: icon
+    size: "40x40"
+    format_hint: svg
+    usage: "XIV Collections carousel - next"
+    export_priority: required
+    library_alternative: "lucide:ChevronRight | heroicons:ChevronRightIcon"
+
+  - node_id: "ToTop"
+    name: "scroll-to-top"
+    type: icon
+    size: "48x48"
+    format_hint: svg
+    usage: "Fixed bottom-right - scroll to top button"
+    export_priority: nice-to-have
+    library_alternative: "lucide:ArrowUp | heroicons:ArrowUpIcon"
+
+decorative_elements:
+  - node_id: "Line6"
+    name: "divider-horizontal"
+    type: decorative
+    usage: "Section separator"
+    css_alternative: "border-bottom: 1px solid #d7d7d7"
+    export_priority: skip  # Use CSS
+
+  - node_id: "Line7"
+    name: "divider-horizontal-2"
+    type: decorative
+    usage: "Section separator"
+    css_alternative: "border-bottom: 1px solid #d7d7d7"
+    export_priority: skip  # Use CSS
+
+product_images:
+  note: |
+    Product images in Figma are PLACEHOLDERS (stock photos).
+    In production, these should come from your CMS/product API.
+    Do NOT export these from Figma — use real product images instead.
+    Implement with: <img src={product.imageUrl} alt={product.name} loading="lazy" />
+
+  # placeholder_spec: EXACT container specs from Figma so real images fit 100%
+  # Coders must implement image containers with these EXACT dimensions.
+  # When CMS/API provides real images → they swap in pixel-perfect.
+
+  placeholders:
+    - node_ids: ["Rectangle12", "Rectangle13", "Rectangle14", "Rectangle15"]
+      section: "New This Week grid"
+      placeholder_spec:
+        width: 304
+        height: 313
+        aspect_ratio: "304:313"
+        object_fit: cover
+        border: "1px solid #d7d7d7"
+        border_radius: "0px"
+        background_color: "#f5f5f5"
+        alt_text_pattern: "${product.name} - ${product.category}"
+        loading: lazy
+
+    - node_ids: ["Rectangle16", "Rectangle17"]
+      section: "XIV Collections carousel"
+      placeholder_spec:
+        width: 366
+        height: 376
+        aspect_ratio: "366:376"
+        object_fit: cover
+        border: "none"
+        border_radius: "0px"
+        background_color: "#e8e8e8"
+        alt_text_pattern: "${collection.name} collection"
+        loading: lazy
+
+    - node_ids: ["Rectangle18", "Rectangle19", "Rectangle20", "Rectangle21", "Rectangle22"]
+      section: "Our Approach section"
+      placeholder_spec:
+        width: mixed  # editorial layout, sizes vary per item
+        height: mixed
+        aspect_ratio: "varies"
+        object_fit: cover
+        border: "none"
+        border_radius: "0px"
+        background_color: "#f5f5f5"
+        alt_text_pattern: "${approach.title}"
+        loading: lazy
+      notes: "Editorial layout — see design-context.md Section 7 for individual sizing"
+
+summary:
+  figma_tier: low
+  total_icons: 10
+  required_icons: 7
+  nice_to_have_icons: 3
+  icons_with_library_match: 6  # search, user, wishlist, wishlist-overlay, arrows, scroll-top
+  icons_need_export: 1         # logo only (custom)
+  decorative_skip: 2
+  product_placeholders: 11
+  placeholders_with_spec: 11   # all have placeholder_spec for pixel-perfect swap
+  recommended_approach: |
+    LOW TIER (6 calls/month):
+    1. Use icon library (Lucide/Heroicons) for 6 standard icons — zero API calls
+    2. Export ONLY logo (Group6) via Figma REST API — 1 API call
+    3. Skip decorative elements — use CSS borders/dividers
+    4. Product images: implement containers with EXACT placeholder_spec
+       → When real images from CMS are plugged in, they fit 100%
+    5. Total Figma API calls needed: 1 (logo export only)
+    
+    HIGH TIER (200 calls/day):
+    1. Same icon library approach (still preferred for bundle size)
+    2. Can call get_screenshot on any node for visual verification
+    3. Can export icons live during coding without budget worry
+    4. Product images still from CMS (never export Figma placeholders)

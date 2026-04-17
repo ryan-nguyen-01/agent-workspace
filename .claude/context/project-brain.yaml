@@ -1,0 +1,81 @@
+version: 1
+project:
+  name: "agent-platform"
+  slug: "agent-platform"
+  repository_type: "unknown"
+  primary_languages: []
+  frameworks: []
+  package_managers: []
+  generated_at: null
+  generated_by: null
+
+freshness:
+  stale: true
+  stale_reasons:
+    - "Onboarding has not been run for the new dynamic agent architecture."
+  partial_rescan_targets: []
+
+architecture:
+  summary: "Project brain placeholder. Run onboarding to populate real project details."
+  services: []
+  shared_libraries: []
+  databases: []
+  queues: []
+  external_integrations: []
+
+deep_project_intelligence:
+  status: "needs_onboarding"
+  reusable_assets:
+    utilities: []
+    shared_components: []
+    base_classes: []
+    hooks: []
+    middleware: []
+    validators: []
+    mappers_serializers: []
+    error_handling: []
+    logging: []
+    auth_helpers: []
+    db_transaction_helpers: []
+    event_queue_helpers: []
+    payment_helpers: []
+    notification_helpers: []
+    test_helpers: []
+  coding_conventions:
+    folder_structure: []
+    naming_rules: []
+    layering_rules: []
+    api_patterns: []
+    validation_patterns: []
+    error_handling_patterns: []
+    logging_patterns: []
+    transaction_patterns: []
+    async_job_patterns: []
+    migration_patterns: []
+    testing_patterns: []
+    configuration_patterns: []
+  business_flows: []
+  reuse_rules: []
+  anti_patterns: []
+  evidence_index: []
+
+policies:
+  workflow: "end-to-end"
+  coder_creation_requires_user_approval: true
+  code_done_threshold: 0.80
+  qc_handoff_required: true
+  blocker_stops_qc: true
+  non_blocker_allows_parallel_fix: true
+
+memory_rules:
+  never_store:
+    - secrets
+    - passwords
+    - raw tokens
+    - long logs
+  store_when:
+    - architecture decision
+    - service boundary change
+    - test policy change
+    - bug root cause pattern
+    - user approved exception

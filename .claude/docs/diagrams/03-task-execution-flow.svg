@@ -1,0 +1,53 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1700" height="760" viewBox="0 0 1700 760" role="img" aria-labelledby="title desc">
+  <title id="title">Task execution flow</title>
+  <desc id="desc">Task analysis, user approval, coder leader, service coders, and dev verification.</desc>
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0 0L10 5L0 10Z" fill="#9ca3af"/></marker>
+    <marker id="arrow-red" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0 0L10 5L0 10Z" fill="#fca5a5"/></marker>
+    <marker id="arrow-figma" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0 0L10 5L0 10Z" fill="#A259FF"/></marker>
+    <style>
+      .bg{fill:#111827}.panel{fill:#172033;stroke:#374151;stroke-width:2;rx:18}.title{fill:#f9fafb;font:700 26px Arial}.box{stroke-width:1.5;rx:10}.agent{fill:#1e3a5f;stroke:#60a5fa}.memory{fill:#14532d;stroke:#86efac}.gate{fill:#78350f;stroke:#fbbf24}.neutral{fill:#374151;stroke:#9ca3af}.stop{fill:#7f1d1d;stroke:#fca5a5}.text{fill:#f8fafc;font:700 15px Arial;text-anchor:middle;dominant-baseline:middle}.small{fill:#d1d5db;font:600 12px Arial;text-anchor:middle;dominant-baseline:middle}.edge{fill:none;stroke:#9ca3af;stroke-width:2.2;marker-end:url(#arrow)}.edge-red{fill:none;stroke:#fca5a5;stroke-width:2.2;marker-end:url(#arrow-red)}.edge-figma{fill:none;stroke:#A259FF;stroke-width:1.5;marker-end:url(#arrow-figma);stroke-dasharray:6,3}.figma{fill:#2d1654;stroke:#A259FF}.label{fill:#e5e7eb;font:700 13px Arial}.label-red{fill:#fecaca;font:700 13px Arial}.label-figma{fill:#A259FF;font:600 11px Arial}
+    </style>
+  </defs>
+  <rect class="bg" width="1700" height="760"/>
+  <rect class="panel" x="30" y="30" width="1640" height="700"/>
+  <text class="title" x="70" y="78">Task Execution: Analysis, Coding, Dev Verification</text>
+
+  <rect class="box neutral" x="70" y="165" width="170" height="70"/><text class="text" x="155" y="193">Task Input</text><text class="small" x="155" y="217">HLD / LLD / text</text>
+  <rect class="box agent" x="300" y="165" width="220" height="70"/><text class="text" x="410" y="200">Task Analysis Agent</text>
+  <rect class="box memory" x="580" y="165" width="220" height="70"/><text class="text" x="690" y="193">Normalized</text><text class="small" x="690" y="217">task-analysis.yaml</text>
+  <rect class="box gate" x="830" y="165" width="180" height="70"/><text class="text" x="920" y="193">User Approval</text><text class="small" x="920" y="217">R-011-10</text>
+  <rect class="box agent" x="1060" y="165" width="220" height="70"/><text class="text" x="1170" y="200">Coder Leader</text>
+  <rect class="box memory" x="1340" y="165" width="220" height="70"/><text class="text" x="1450" y="193">Implementation</text><text class="small" x="1450" y="217">plan + assignments</text>
+
+  <rect class="box agent" x="260" y="390" width="230" height="70"/><text class="text" x="375" y="425">Service Coder A</text>
+  <rect class="box agent" x="635" y="390" width="230" height="70"/><text class="text" x="750" y="425">Service Coder B</text>
+  <rect class="box agent" x="1010" y="390" width="230" height="70"/><text class="text" x="1125" y="425">Service Coder C</text>
+
+  <rect class="box memory" x="505" y="555" width="250" height="70"/><text class="text" x="630" y="583">Coder Results</text><text class="small" x="630" y="607">changed files, risks, checks</text>
+  <rect class="box gate" x="830" y="555" width="250" height="70"/><text class="text" x="955" y="583">Dev Verification</text><text class="small" x="955" y="607">score >= 80%, critical pass</text>
+  <rect class="box memory" x="1160" y="555" width="220" height="70"/><text class="text" x="1270" y="583">DEV_DONE</text><text class="small" x="1270" y="607">ready for QC handoff</text>
+
+  <path class="edge" d="M240 200H300"/>
+  <path class="edge" d="M520 200H580"/>
+  <path class="edge" d="M800 200H830"/>
+  <path class="edge" d="M1010 200H1060"/>
+  <path class="edge" d="M1280 200H1340"/>
+  <path class="edge" d="M1450 235C1350 315 1250 360 1125 390"/>
+  <path class="edge" d="M1450 235C1200 330 950 350 750 390"/>
+  <path class="edge" d="M1450 235C1050 335 600 350 375 390"/>
+  <path class="edge" d="M375 460C430 515 525 545 630 555"/>
+  <path class="edge" d="M750 460C730 510 685 540 630 555"/>
+  <path class="edge" d="M1125 460C1015 520 835 550 755 590"/>
+  <path class="edge" d="M755 590H830"/>
+  <path class="edge" d="M1080 590H1160"/>
+  <path class="edge-red" d="M955 555C945 490 1100 310 1170 235"/>
+  <text class="label-red" x="1080" y="490">Not done / fix required</text>
+
+  <!-- Figma MCP (optional external service) -->
+  <rect class="box figma" x="80" y="285" width="155" height="55"/>
+  <text class="text" style="font-size:13px" x="157" y="306">Figma MCP</text>
+  <text class="small" style="fill:#c4b5fd" x="157" y="324">if UI task</text>
+  <path class="edge-figma" d="M235 305 H310 V235"/>
+  <text class="label-figma" x="280" y="295">extract</text>
+</svg>

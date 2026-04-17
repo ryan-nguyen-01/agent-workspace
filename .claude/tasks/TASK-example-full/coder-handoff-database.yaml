@@ -1,0 +1,60 @@
+task_id: "TASK-example-full"
+coder: "coder-database"
+service: "database"
+handoff_time: "2026-04-17T10:15:00+07:00"
+
+steps_completed: [1]
+status: "done"
+
+files_changed:
+  - path: "src/database/migrations/20250417_create_users.ts"
+    action: "created"
+  - path: "src/database/schema/users.ts"
+    action: "created"
+
+summary: |
+  Tạo Users table cho JWT Authentication.
+  Schema: id (UUID PK), email (UNIQUE NOT NULL), password_hash (VARCHAR 255),
+  name (VARCHAR 100), created_at (TIMESTAMP DEFAULT NOW), updated_at (TIMESTAMP).
+  Index trên email column cho login lookup.
+
+decisions:
+  - decision: "UUID thay vì auto-increment cho PK"
+    reason: "Project convention, tránh enumeration attacks, safe cho distributed systems"
+  - decision: "password_hash VARCHAR(255) thay vì VARCHAR(60)"
+    reason: "Bcrypt output 60 chars nhưng để room cho algorithm upgrade (argon2 dài hơn)"
+  - decision: "Thêm index trên email"
+    reason: "Login endpoint sẽ query by email, cần fast lookup"
+
+integration_notes:
+  contracts_provided:
+    - type: "schema"
+      name: "users table"
+      details: "id UUID PK, email UNIQUE, password_hash, name, created_at, updated_at"
+  contracts_consumed: []
+  env_vars_needed:
+    - "DATABASE_URL"
+
+cross_service_requests: []
+
+risks:
+  - "Migration cần chạy trước khi API service start. Deployment order quan trọng."
+
+reuse_report:
+  assets_used:
+    - "Migration runner pattern từ src/database/migrations/"
+  conventions_followed:
+    - "UUID primary key convention"
+    - "created_at/updated_at timestamps"
+    - "Snake_case column names"
+  anti_patterns_avoided:
+    - "Không dùng auto-increment ID (enumeration risk)"
+    - "Không store plaintext password column"
+  new_assets_created: []
+
+verification:
+  type: "manual"
+  evidence: |
+    Migration dry-run passed. Schema validated against Prisma schema.
+    Rollback migration tested successfully.
+  passing: true
