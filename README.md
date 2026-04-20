@@ -22,13 +22,13 @@ Khi sử dụng AI assistant (Claude, GPT, Copilot…) để viết code trong t
 
 `agent-platform` được thiết kế để giải quyết đúng các vấn đề trên:
 
-| Vấn đề | Giải pháp |
-|--------|-----------|
-| AI không nhớ context | **Project Brain** — memory file được build một lần, tái sử dụng mọi conversation |
-| AI không có quy trình | **11 workflow agents** với role rõ ràng, không agent nào làm việc của agent khác |
+| Vấn đề                 | Giải pháp                                                                                       |
+| ---------------------- | ----------------------------------------------------------------------------------------------- |
+| AI không nhớ context   | **Project Brain** — memory file được build một lần, tái sử dụng mọi conversation                |
+| AI không có quy trình  | **11 workflow agents** với role rõ ràng, không agent nào làm việc của agent khác                |
 | AI không biết giới hạn | **Generated service coders** với `allowed_write_paths` và `forbidden_paths` scoped theo service |
-| Không có quality gate | **Dev Verification** (≥80% score + critical checks) và **QC Runner** bắt buộc trước DONE |
-| Không học từ sai lầm | **Memory Update** ghi pattern, anti-pattern, bug root cause sau mỗi workflow event |
+| Không có quality gate  | **Dev Verification** (≥80% score + critical checks) và **QC Runner** bắt buộc trước DONE        |
+| Không học từ sai lầm   | **Memory Update** ghi pattern, anti-pattern, bug root cause sau mỗi workflow event              |
 
 ### Mục tiêu thiết kế
 
@@ -389,6 +389,21 @@ Mỗi task tạo ra folder artifacts theo workflow:
 
 ---
 
+## Prerequisites
+
+Trước khi dùng agent-platform, bạn cần một trong các IDE/tool sau hỗ trợ Claude:
+
+| Tool | Cách tích hợp |
+| ---- | ------------- |
+| **Claude Code** (khuyên dùng) | Đặt `CLAUDE.md` + `.claude/` vào root project, Claude Code đọc tự động |
+| **VS Code + GitHub Copilot** | Đặt `CLAUDE.md` vào `.github/copilot-instructions.md` hoặc dùng custom instructions |
+| **Cursor** | Đặt `CLAUDE.md` vào `.cursorrules` hoặc project rules |
+| **Windsurf** | Đặt `CLAUDE.md` vào `.windsurfrules` |
+
+> Không cần cài package hay server riêng — agent-platform là tập hợp markdown files mà AI đọc và tuân theo.
+
+---
+
 ## Getting Started
 
 > Cài đặt chi tiết: **[SETUP.md](SETUP.md)**
@@ -410,7 +425,31 @@ cp -r agent-platform/.claude/* ~/.claude/
 cp agent-platform/CLAUDE.md ~/.claude/
 ```
 
-### 2. Sử dụng
+### 2. Ví dụ nhanh
+
+**Trước** (AI thuần túy, không có platform):
+```
+User: "Thêm API tạo order"
+AI:   → Viết code ngay, không hỏi, không phân tích, không test
+      → Side effects: sửa cả file không liên quan
+      → Không verify, không QC
+```
+
+**Sau** (với agent-platform):
+```
+User:          "Thêm API tạo order"
+coordinator:   → đọc project brain, route đến task-analysis
+task-analysis: → phân tích impact, risks, acceptance criteria
+               → [chờ user approve]
+coder-leader:  → assign coder-order (chỉ write src/orders/**)
+coder-order:   → implement, theo conventions đã học
+dev-verif.:    → check critical checks, test policy, score ≥80%
+qc-runner:     → chạy test cases, stop nếu blocker
+memory-update: → ghi learnings vào project brain
+               → DONE ✅
+```
+
+### 3. Sử dụng
 
 Mở project trong IDE tích hợp Claude và gõ bằng ngôn ngữ tự nhiên:
 
@@ -467,3 +506,15 @@ coordinator → onboarding (nếu project mới)
 ---
 
 _Built with 11 workflow agents, 227 skills, 15 rules, and a coordinator-driven workflow._
+
+---
+
+## License
+
+MIT License — xem [LICENSE](LICENSE) để biết thêm chi tiết.
+
+Project này là **open framework** — bạn có thể:
+- ✅ Dùng trong dự án thương mại
+- ✅ Fork và tùy chỉnh cho team
+- ✅ Thêm skills/agents riêng
+- ✅ Đóng góp ngược lại qua Pull Request
