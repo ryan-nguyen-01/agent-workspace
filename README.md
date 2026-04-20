@@ -6,6 +6,41 @@ Hệ thống multi-agent AI hoạt động theo **workflow coordinator-driven**.
 
 ---
 
+## Vì sao project này ra đời
+
+### Vấn đề với AI coding hiện tại
+
+Khi sử dụng AI assistant (Claude, GPT, Copilot…) để viết code trong thực tế, có một số vấn đề lặp đi lặp lại:
+
+- **AI không nhớ context** — Mỗi conversation là một tờ giấy trắng. AI không biết project bạn đang làm gì, quy ước code ra sao, team đã quyết định gì trước đó.
+- **AI không có quy trình** — AI trả lời ngay lập tức mà không phân tích yêu cầu, không kiểm tra impact, không verify kết quả. Kết quả là code không nhất quán, thiếu test, bỏ qua edge case.
+- **AI không biết giới hạn** — AI sẵn sàng sửa bất kỳ file nào trong project, kể cả những file không liên quan. Điều này dẫn đến side effects khó kiểm soát.
+- **Không có gate kiểm soát chất lượng** — Không có verification bắt buộc trước khi "xong", không có QC pass trước khi giao, không có bug classification rõ ràng.
+- **Không học được từ sai lầm** — AI không ghi nhớ pattern nào đã fail, anti-pattern nào cần tránh trong project của bạn.
+
+### Giải pháp: Workflow coordinator-driven
+
+`agent-platform` được thiết kế để giải quyết đúng các vấn đề trên:
+
+| Vấn đề | Giải pháp |
+|--------|-----------|
+| AI không nhớ context | **Project Brain** — memory file được build một lần, tái sử dụng mọi conversation |
+| AI không có quy trình | **11 workflow agents** với role rõ ràng, không agent nào làm việc của agent khác |
+| AI không biết giới hạn | **Generated service coders** với `allowed_write_paths` và `forbidden_paths` scoped theo service |
+| Không có quality gate | **Dev Verification** (≥80% score + critical checks) và **QC Runner** bắt buộc trước DONE |
+| Không học từ sai lầm | **Memory Update** ghi pattern, anti-pattern, bug root cause sau mỗi workflow event |
+
+### Mục tiêu thiết kế
+
+```
+Không phải "AI viết code nhanh hơn"
+Mà là "AI viết code đúng quy trình, có kiểm soát, có thể audit"
+```
+
+Project này không dành cho prototype nhanh. Nó dành cho **team** cần consistency, **codebase** cần maintainability, và **AI workflow** cần governance.
+
+---
+
 ## Kiến trúc hệ thống
 
 ![System overview](.claude/docs/diagrams/01-system-overview.svg)
