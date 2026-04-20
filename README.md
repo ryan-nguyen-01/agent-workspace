@@ -1,5 +1,10 @@
 # agent-platform
 
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+[![Agents](https://img.shields.io/badge/Agents-11-blue)](#11-workflow-agents)
+[![Skills](https://img.shields.io/badge/Skills-227-green)](#227-skills)
+[![Stars](https://img.shields.io/github/stars/ryan-nguyen-01/agent-platform?style=social)](https://github.com/ryan-nguyen-01/agent-platform)
+
 > **Language / Ngôn ngữ**: Tài liệu framework viết bằng **tiếng Việt**, dành cho teams Việt Nam. Agents và skills hoạt động với cả prompt tiếng Việt lẫn tiếng Anh.
 
 Hệ thống multi-agent AI hoạt động theo **workflow coordinator-driven**. Từ task analysis đến implementation, verification, QC, và memory — tất cả được điều phối bởi 11 workflow agents với 227 skills.
@@ -393,12 +398,12 @@ Mỗi task tạo ra folder artifacts theo workflow:
 
 Trước khi dùng agent-platform, bạn cần một trong các IDE/tool sau hỗ trợ Claude:
 
-| Tool | Cách tích hợp |
-| ---- | ------------- |
-| **Claude Code** (khuyên dùng) | Đặt `CLAUDE.md` + `.claude/` vào root project, Claude Code đọc tự động |
-| **VS Code + GitHub Copilot** | Đặt `CLAUDE.md` vào `.github/copilot-instructions.md` hoặc dùng custom instructions |
-| **Cursor** | Đặt `CLAUDE.md` vào `.cursorrules` hoặc project rules |
-| **Windsurf** | Đặt `CLAUDE.md` vào `.windsurfrules` |
+| Tool                          | Cách tích hợp                                                                       |
+| ----------------------------- | ----------------------------------------------------------------------------------- |
+| **Claude Code** (khuyên dùng) | Đặt `CLAUDE.md` + `.claude/` vào root project, Claude Code đọc tự động              |
+| **VS Code + GitHub Copilot**  | Đặt `CLAUDE.md` vào `.github/copilot-instructions.md` hoặc dùng custom instructions |
+| **Cursor**                    | Đặt `CLAUDE.md` vào `.cursorrules` hoặc project rules                               |
+| **Windsurf**                  | Đặt `CLAUDE.md` vào `.windsurfrules`                                                |
 
 > Không cần cài package hay server riêng — agent-platform là tập hợp markdown files mà AI đọc và tuân theo.
 
@@ -428,6 +433,7 @@ cp agent-platform/CLAUDE.md ~/.claude/
 ### 2. Ví dụ nhanh
 
 **Trước** (AI thuần túy, không có platform):
+
 ```
 User: "Thêm API tạo order"
 AI:   → Viết code ngay, không hỏi, không phân tích, không test
@@ -436,6 +442,7 @@ AI:   → Viết code ngay, không hỏi, không phân tích, không test
 ```
 
 **Sau** (với agent-platform):
+
 ```
 User:          "Thêm API tạo order"
 coordinator:   → đọc project brain, route đến task-analysis
@@ -514,6 +521,7 @@ _Built with 11 workflow agents, 227 skills, 15 rules, and a coordinator-driven w
 MIT License — xem [LICENSE](LICENSE) để biết thêm chi tiết.
 
 Project này là **open framework** — bạn có thể:
+
 - ✅ Dùng trong dự án thương mại
 - ✅ Fork và tùy chỉnh cho team
 - ✅ Thêm skills/agents riêng
