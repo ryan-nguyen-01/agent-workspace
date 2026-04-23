@@ -230,7 +230,7 @@ See also: [folder-guide.md](folder-guide.md) for detailed folder descriptions.
 ├── agents/         ← 11 workflow agent definitions
 ├── skills/         ← 227 skill definitions (12 workflow + 215 technical)
 ├── rules/          ← 15 workflow rules (constraints and governance)
-├── templates/      ← 13 artifact templates
+├── templates/      ← 15 artifact templates
 ├── commands/       ← 15 workflow commands (user entry points)
 ├── docs/           ← Documentation and visual diagrams
 ├── context/        ← Runtime context (project brain, service catalog, etc.)

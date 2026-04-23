@@ -32,7 +32,12 @@
   <path class="edge-red" d="M860 335C900 275 915 210 930 170"/>
   <text class="label-red" x="875" y="245">blocking</text>
   <path class="edge-red" d="M1160 170H1220"/>
-  <path class="edge-red" d="M1305 210C1250 250 1180 275 1120 300"/>
+  <rect class="box warn" x="600" y="215" width="230" height="70"/>
+  <text class="text" x="715" y="243">QC_RETESTING</text>
+  <text class="small" x="715" y="265">retest after fix</text>
+  <path class="edge-red" d="M1305 210C1250 235 920 245 830 250"/>
+  <text class="label-red" x="1065" y="228">via dev-verify</text>
+  <path class="edge" d="M715 285C660 297 550 300 475 300"/>
 
   <path class="edge" d="M860 335H930"/>
   <text class="label" x="875" y="320">non-blocking</text>

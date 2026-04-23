@@ -29,7 +29,7 @@
   <text class="small" x="505" y="293">policy constraints</text>
 
   <rect class="box neutral" x="90" y="325" width="150" height="55"/><text class="text" x="165" y="352">templates/</text>
-  <text class="small" x="165" y="395">13 artifact templates</text>
+  <text class="small" x="165" y="395">15 artifact templates</text>
 
   <rect class="box neutral" x="260" y="325" width="150" height="55"/><text class="text" x="335" y="352">commands/</text>
   <text class="small" x="335" y="395">15 slash commands</text>

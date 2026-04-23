@@ -61,7 +61,7 @@ Purpose: show blocker and non-blocker behavior.
 ```text
 QC Handoff
 -> QC Runner
--> Blocking bug: stop QC and return to dev
+-> Blocking bug: stop QC → fix (via dev-verification) → QC_RETESTING → QC Runner
 -> Non-blocking bug: create task and continue QC
 -> Pass: QC Delivery Report to user, then memory update
 ```
