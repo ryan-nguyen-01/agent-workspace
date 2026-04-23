@@ -54,6 +54,20 @@ Do not mark Code Done; dev-verification owns that decision.
 Do not send to QC without qc-handoff.
 ```
 
+## DEV_BLOCKED handling
+
+When dev-verification returns `DEV_BLOCKED` or a coder reports it cannot proceed:
+
+```text
+1. Identify the blocker: missing info, scope conflict, external dependency, or cross-service contract gap.
+2. If blocker is a cross-service dependency: escalate to Coordinator with a cross_service_request.
+3. If blocker is missing user info: surface to Coordinator to ask user.
+4. If blocker is a scope expansion: do not proceed — route to Coordinator for user approval.
+5. Record the blocker in coder-results.yaml with status: "blocked" and blocker_reason.
+6. Do not reassign the blocked task until blocker is resolved.
+7. Once resolved: re-assign the coder, update service-assignments.yaml, and resume from IN_DEV.
+```
+
 ## Rule bindings
 
 ```text

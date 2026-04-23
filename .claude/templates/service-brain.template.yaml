@@ -3,7 +3,9 @@ service:
   id: "{{SERVICE_ID}}"
   name: "{{SERVICE_NAME}}"
   type: "backend|frontend|worker|library|database|infrastructure|unknown"
-  path: "{{SERVICE_PATH}}"
+  path: "{{SERVICE_PATH}}"            # relative path từ agent-platform root (vd: ../service-a)
+                                      # agent-platform luôn được deploy cùng cấp với các service,
+                                      # nên "../service-name" luôn hợp lệ.
   responsibilities: []
   owners: []
 
@@ -15,7 +17,10 @@ stack:
   package_manager: "{{PACKAGE_MANAGER}}"
 
 boundaries:
-  allowed_write_paths_for_coder: []
+  allowed_write_paths_for_coder:
+    # Dùng relative path từ agent-platform root (../service-a/src)
+    # agent-platform luôn cùng cấp với service nên relative path luôn resolve đúng.
+    []
   shared_read_paths: []
   forbidden_paths: []
   public_apis: []

@@ -168,4 +168,4 @@ Chi tiết: `.claude/agents/coordinator.agent.md`, `.claude/agents/coder-leader.
 ### Khi đổi counts (thêm/xóa resources)
 
 - Sync counts across: `README.md`, `CLAUDE.md`, `SETUP.md`, `GUIDELINES.md`
-- Hiện tại: 11 agents, 227 skills, 15 rules (16 files including README), 13 templates, 15 commands
+- Hiện tại: 11 agents, 227 skills, 15 rules (16 files including README), 15 templates, 15 commands

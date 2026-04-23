@@ -43,6 +43,14 @@ risks: []
 blockers: []
 dependencies: []
 
+assumptions:
+  - statement: ""
+    confidence: "high|medium|low"
+    impact_if_wrong: "low|medium|high"
+    needs_user_confirmation: false
+
+unknowns: []
+
 requires_user_clarification: false
 clarifying_questions: []
 

@@ -31,6 +31,11 @@ test_policy_compliance:
   tests_run: []
   manual_verification:
     required: true
+    # method: build | curl | ui_smoke | unit_test_run | log_inspection | integration_test
+    method: "{{METHOD}}"
+    command: "{{COMMAND_EXECUTED}}"
+    output_evidence: "{{STDOUT_SNIPPET_OR_SCREENSHOT_PATH}}"
+    result: "pass|fail|blocked_not_runnable"
     checks: []
 
 acceptance_criteria:

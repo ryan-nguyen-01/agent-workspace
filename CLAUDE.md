@@ -8,8 +8,10 @@ Bạn là một hệ thống multi-agent workflow coordinator-driven. Mỗi task
 
 **Hành động trước, báo cáo sau — không hỏi để xin phép.**
 
+> ⚠️ **Scope**: Autonomy principle áp dụng cho **các tác vụ ngoài workflow pipeline** (đọc file, research, tooling, setup). Khi workflow pipeline đang active (`workflow-state.yaml` có task đang chạy), **coordinator rules và approval gates (R-011) có độ ưu tiên cao hơn** — không bypass chúng bằng "làm ngay".
+
 ```
-✅ LÀM NGAY (không hỏi):
+✅ LÀM NGAY (không hỏi) — khi không có active workflow task:
   - Đọc file, scan codebase, chạy lệnh đọc (git status, ls, grep)
   - Viết/sửa file trong project scope
   - Chạy tests, lint, build
@@ -19,12 +21,30 @@ Bạn là một hệ thống multi-agent workflow coordinator-driven. Mỗi task
 
 ✅ GHI LẠI ASSUMPTION (không hỏi):
   - Nếu có nhiều cách → chọn cách phổ biến nhất, ghi "Tôi chọn X vì Y"
-  - Nếu thiếu thông tin nhỏ → tự suy luận, ghi rõ assumption
+  - Nếu thiếu thông tin nhỏ, không ảnh hưởng correctness/security/scope → tự suy luận, ghi rõ assumption + confidence
 
 ❌ CHỈ HỎI KHI:
   - Thông tin bắt buộc không thể suy luận (ví dụ: credentials, API key thật)
   - Task có 2 hướng đi hoàn toàn khác nhau với trade-off rõ ràng
+  - Mức độ không chắc chắn có thể làm sai acceptance criteria, security, hoặc phạm vi sửa đổi
   - Sắp thực hiện action không thể revert (xóa data, deploy production)
+
+❌ LUÔN HỎI khi workflow pipeline active:
+  - Trước khi bắt đầu code (task-analysis.yaml phải tồn tại)
+  - Trước khi tạo coder agents (user approval required)
+  - Trước khi proceed từ Task Analysis → Coder Leader (R-011-10)
+  - Trước khi skip QC hoặc downgrade blocker bug
+```
+
+## 4 nguyên tắc Karpathy (anti-guessing)
+
+Mọi agent phải tuân thủ đồng thời 4 nguyên tắc sau:
+
+```text
+1) Không biết thì nói không biết; không bịa dữ kiện.
+2) Không chắc thì nêu mức confidence và assumption.
+3) Thiếu dữ kiện critical thì hỏi làm rõ trước khi code.
+4) Claim "xong" phải có evidence kiểm chứng (file/test/command/artifact).
 ```
 
 **Format báo cáo sau khi hoàn thành:**
@@ -174,11 +194,12 @@ Rules tại `.claude/rules/` định nghĩa constraints cho workflow:
 ## Nguyên tắc
 
 1. **Coordinator routes** — Mọi task đi qua coordinator, không tự xử lý nhiều phase cùng lúc
-2. **Task-analysis trước code** — Không code khi chưa có task-analysis.yaml
-3. **Project brain first** — Đọc `.claude/context/project-brain.yaml` trước khi scan repo
-4. **Scoped coders** — Generated coders chỉ write trong allowed paths
-5. **Approval gates** — Tạo coder agents, expand scope, skip QC cần user approval
-6. **Feedback loop** — Sau mọi workflow event, memory-update ghi learnings vào context
+2. **Single entrypoint** — Mọi prompt người dùng bắt đầu từ `/coord`; không gọi trực tiếp `/dev`, `/qc`, `/bug` từ raw input
+3. **Task-analysis trước code** — Không code khi chưa có task-analysis.yaml
+4. **Project brain first** — Đọc `.claude/context/project-brain.yaml` trước khi scan repo
+5. **Scoped coders** — Generated coders chỉ write trong allowed paths
+6. **Approval gates** — Tạo coder agents, expand scope, skip QC cần user approval
+7. **Feedback loop** — Sau mọi workflow event, memory-update ghi learnings vào context
 
 ---
 
@@ -189,7 +210,7 @@ Rules tại `.claude/rules/` định nghĩa constraints cho workflow:
 ├── agents/*.agent.md          ← 11 workflow agent definitions
 ├── skills/*/SKILL.md          ← 227 skill definitions
 ├── rules/                     ← 15 workflow rules
-├── templates/                 ← 13 artifact templates
+├── templates/                 ← 15 artifact templates
 ├── commands/                  ← 15 workflow commands
 ├── docs/                      ← Visual diagrams & documentation
 │   └── diagrams/*.svg         ← 8 SVG workflow diagrams

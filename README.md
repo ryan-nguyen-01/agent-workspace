@@ -101,7 +101,7 @@ agent-platform/
     │   ├── 01-project-brain-rules.md
     │   └── ...
     │
-    ├── templates/                     ← 13 artifact templates
+    ├── templates/                     ← 15 artifact templates
     │   ├── task-analysis.template.yaml
     │   ├── dev-verification.template.yaml
     │   └── ...

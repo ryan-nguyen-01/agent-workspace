@@ -29,8 +29,11 @@ allowed_transitions:
     - DEV_DONE
     - DEV_BLOCKED
     - IN_DEV
+  DEV_BLOCKED:
+    - IN_DEV
   DEV_DONE:
     - QC_READY
+    - QC_RETESTING
   QC_READY:
     - QC_TESTING
   QC_TESTING:
@@ -40,6 +43,9 @@ allowed_transitions:
     - FIXING
   FIXING:
     - DEV_VERIFYING
+  QC_RETESTING:
+    - BLOCKED_BY_BUG
+    - QC_DONE
   QC_DONE:
     - MEMORY_SYNCING
   MEMORY_SYNCING:
@@ -52,3 +58,4 @@ approval_gates:
   - skip_blocker_bug
   - expand_coder_write_scope
   - create_tests_when_policy_forbids
+  - proceed_task_analysis_to_coder_leader

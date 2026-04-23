@@ -26,8 +26,9 @@ task-analysis
 4. Define business goal and acceptance criteria.
 5. Identify impacted services.
 6. Identify contract changes, risks, blockers, critical checks, dev verification checklist, and QC focus.
-7. If critical ambiguity exists, mark requires_user_clarification and stop.
-8. Write task-analysis.yaml.
+7. Capture assumptions and unknowns with confidence markers.
+8. If critical ambiguity exists, mark requires_user_clarification, add clarifying questions, and stop.
+9. Write task-analysis.yaml.
 ```
 
 ## Stop conditions

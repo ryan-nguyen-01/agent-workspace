@@ -523,6 +523,6 @@ git config --global core.autocrlf input
 - [ ] Clone agent-platform repo
 - [ ] Copy `.claude/` folder vào project (hoặc `~/.claude/`)
 - [ ] Copy `CLAUDE.md` vào project root (hoặc `~/.claude/`)
-- [ ] Verify: 11 agents, 227 skills, 16 rules, 13 templates, 15 commands
+- [ ] Verify: 11 agents, 227 skills, 16 rules, 15 templates, 15 commands
 - [ ] Mở project trong IDE có Claude
 - [ ] Test: gõ "Phân tích dự án này" hoặc `/onboard`

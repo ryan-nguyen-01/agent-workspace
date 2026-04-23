@@ -32,8 +32,30 @@ Acceptance criteria implemented
 Write scopes respected
 Required tests exist/pass when policy requires tests
 No test files created when policy forbids test creation
-Manual verification documented when tests are not required
+At least one runtime verification method executed with evidence recorded
 QC handoff has enough evidence to be created
+```
+
+## Runtime verification requirement
+
+Code review is static analysis only. Dev Verification must also confirm the code **runs correctly**.
+
+When `unit_tests_required: false`, perform the most appropriate method:
+
+```text
+Endpoint added/changed   → curl or HTTP client test (record command + response)
+Frontend feature changed → UI smoke test (record steps or screenshot path)
+Background job / worker  → Run job, record log output showing expected behavior
+CLI / script            → Run command, record stdout/exit code
+Build-only change        → Build verification (zero errors/warnings)
+```
+
+If the service cannot be started (missing env vars, DB not available):
+
+```text
+→ Record DEV_BLOCKED with blocker_reason: "not_runnable: <reason>"
+→ Do NOT claim DEV_DONE
+→ Coordinator surfaces to user to resolve environment gap
 ```
 
 ## Output

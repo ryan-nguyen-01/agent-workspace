@@ -60,6 +60,38 @@ agent_candidates:
     requires_user_approval: true
 ```
 
+## Multi-service (sibling project) support
+
+**Deployment model:** Agent-platform is copied once and placed at the **same directory level** as the service projects it manages.
+
+```
+parent-folder/
+  agent-platform/     ← brain & engine (this repo)
+  service-a/          ← service project
+  service-b/          ← another service project
+```
+
+Because agent-platform is always a sibling, `../service-name` relative paths are always valid and preferred.
+
+When the user wants to add a sibling service (`/onboard ../service-a` or just service name):
+
+```text
+1. Confirm the sibling folder exists (../service-a from agent-platform root).
+2. Scan that directory for stack, entry points, APIs, test policy.
+3. Write the service brain to .claude/context/services/<service-id>.yaml.
+4. Set service.path = "../service-a"  (relative from agent-platform root)
+5. Set boundaries.allowed_write_paths_for_coder using ../service-a as prefix.
+6. Add service to project-brain.yaml and service-catalog.yaml.
+```
+
+If the sibling folder does NOT exist at `../service-name`, ask the user:
+
+```
+"Folder ../service-a not found. Has agent-platform been placed in the same parent directory as your services?"
+```
+
+Never invent a path. Never assume a service lives inside the agent-platform folder.
+
 ## Must not
 
 ```text

@@ -46,6 +46,18 @@ files_changed: []
 
 {{USER_VERIFY_STEPS}}
 
+## Postman Collection
+
+{{POSTMAN_COLLECTION_NOTE}}
+
+<!-- Nếu có API thay đổi: -->
+<!-- File: .claude/tasks/{{TASK_ID}}/postman-collection.json -->
+<!-- Cách dùng: -->
+<!--   1. Mở Postman → Import → chọn file postman-collection.json -->
+<!--   2. Tạo environment, set BASE_URL = http://localhost:<port> -->
+<!--   3. Set AUTH_TOKEN nếu endpoint cần auth -->
+<!--   4. Chạy từng request hoặc dùng Collection Runner để chạy toàn bộ -->
+
 ## Đề xuất tiếp theo
 
 {{NEXT_STEPS}}

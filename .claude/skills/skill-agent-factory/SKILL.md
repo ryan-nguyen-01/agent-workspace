@@ -74,6 +74,24 @@ Coder generation is not complete until the generated agent states its service sc
 
 ---
 
+## Sibling service write path rule
+
+**Deployment model:** agent-platform is copied to the **same parent directory** as the service projects. `../service-name` relative paths always resolve correctly.
+
+```text
+1. Read service.path (e.g. ../service-a) from services/<service-id>.yaml.
+2. Prefix all allowed_write_paths with service.path.
+   Good: ../service-a/src, ../service-a/tests
+   Bad:  src  (ambiguous — resolves inside agent-platform, not the service)
+3. If service.path is empty or missing → stop, raise to Coordinator.
+4. Record the resolved paths in agent-registry.yaml alongside the coder entry.
+5. Never default to agent-platform sub-directories for sibling services.
+```
+
+The path recorded in the service brain during onboarding is the single source of truth.
+
+---
+
 ## Language and UI stack selection extension
 
 When generating coder agents, Agent Factory must detect language and framework evidence before assigning these skills.

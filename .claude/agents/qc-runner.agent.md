@@ -30,6 +30,33 @@ Use the QC handoff to produce test cases, execute or record QC testing, and clas
 5. On non-blocker: create bug and continue unaffected tests.
 6. Record results in qc-test-results.yaml.
 7. QC_DONE requires zero open blockers.
+8. After QC_DONE: generate Postman collection from API changes in qc-handoff.md.
+9. Write qc-delivery-report.md with link to the collection file.
+```
+
+## Postman Collection Export
+
+After QC_DONE, read the API changes section from `qc-handoff.md` and generate a Postman 2.1 collection.
+
+```text
+Output: .claude/tasks/<task-id>/postman-collection.json
+
+Collection structure:
+  - info.name:    <task-id> — <task summary>
+  - info.schema:  https://schema.getpostman.com/json/collection/v2.1.0/collection.json
+  - item[]:       One item per endpoint that was added or changed
+    - name:       <METHOD> <path> — <short description>
+    - request.method:  GET | POST | PUT | PATCH | DELETE
+    - request.url:     {{BASE_URL}}<path>
+    - request.header:  Content-Type: application/json + Authorization if auth required
+    - request.body:    raw JSON — use minimal valid example from handoff or coder-results.yaml
+    - response[]:      Saved example response from QC testing (if evidence exists)
+
+Variables:
+  - BASE_URL:  default to http://localhost:<port> (read from handoff or env hints)
+  - AUTH_TOKEN: placeholder string — do not put real tokens
+
+If no API changes in handoff: skip collection generation and note in delivery report.
 ```
 
 ## Blocking bug response

@@ -72,6 +72,27 @@ Required rules: 00-core-rules, 03-agent-factory-rules, 11-approval-gates, 12-art
 
 ---
 
+## Service path resolution
+
+**Deployment model:** agent-platform is always placed at the **same directory level** as the service projects it manages. Therefore `../service-name` relative paths from agent-platform root are always valid and are the standard addressing method.
+
+When creating a coder agent, the factory MUST read the service brain before generating any agent contract:
+
+```text
+1. Read .claude/context/services/<service-id>.yaml
+2. Use service.path (relative, e.g. ../service-a) as the base for allowed_write_paths.
+   Example: ../service-a/src, ../service-a/tests
+3. If service.path is missing, STOP and ask Coordinator to re-run onboarding for that service.
+4. Never invent or assume a path. Only use the recorded service.path.
+5. Write the resolved paths into both:
+   - the generated coder agent (allowed_write_paths section)
+   - agent-registry.yaml (allowed_write_paths for that agent)
+```
+
+Do NOT use agent-platform sub-directories as write paths for sibling services.
+
+---
+
 ## Stack skill selection rule
 
 When building service coder agents, use `.claude/context/skill-registry.yaml` as the machine-readable stack skill registry. Use `.claude/docs/external-skills.md` only as human-readable background and installation notes. The factory must not preload every installed stack skill into every coder. It must select only the skills matching the detected service stack, framework, database, cloud provider, and task type.

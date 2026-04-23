@@ -43,6 +43,15 @@ MEMORY_SYNCING
 DONE
 ```
 
+## 2.1. Single-entry coordinator gate
+
+```text
+Every user request enters through coordinator (/coord).
+No direct routing from raw user input to onboarding, task-analysis, coder-leader, service coders, dev-verification, qc, or bug-router.
+Coordinator must validate state transition legality, required artifacts, and approval gates before routing.
+If validation fails, coordinator returns deny/needs_user_approval and does not advance state.
+```
+
 ## 3. Agent responsibilities
 
 | Agent | Responsibility | Must not do |
@@ -106,11 +115,24 @@ Task sources may be HLD, LLD, ticket text, bug report, production incident, or d
 1. Coordinator stores original input as tasks/<task-id>/task-input.md.
 2. Task Analysis creates task-analysis.yaml.
 3. Task Analysis identifies intent, acceptance criteria, impacted services, risks, dependencies, and critical checks.
-4. If blocked by missing business or technical facts, Task Analysis asks through Coordinator.
+4. If blocked by missing business or technical facts, Task Analysis asks through Coordinator and marks requires_user_clarification.
 5. Coder Leader receives only analyzed tasks.
 ```
 
 No coder starts before `task-analysis.yaml` exists.
+
+## 6.1. Uncertainty and anti-guessing protocol (Karpathy-aligned)
+
+All agents must follow these operating principles:
+
+```text
+1. State uncertainty explicitly (high/medium/low confidence).
+2. Ask clarification when unknown facts can change behavior, scope, security, or acceptance criteria.
+3. Do not fabricate facts or outputs; use unknown + evidence-needed instead.
+4. Verify critical claims with concrete evidence before declaring completion.
+```
+
+When any principle is violated, stop execution and route back to Coordinator or Workflow Policy.
 
 ## 7. Coder Leader workflow
 
