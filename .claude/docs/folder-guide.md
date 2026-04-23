@@ -649,6 +649,7 @@ Folder tài liệu giải thích và visual.
     06-folder-structure.svg
     07-deep-onboarding.svg
     08-skill-composition.svg
+    09-principle-flow.svg
 ```
 
 ### Khi nào dùng?

@@ -118,6 +118,25 @@ Example: coder-payment-service combines workflow, language, framework, database,
 
 See also: [skill-composition.md](skill-composition.md)
 
+## 9. Principle flow
+
+![Principle flow](diagrams/09-principle-flow.svg)
+
+Purpose: show non-negotiable governance rules that must hold across all workflow phases.
+
+```text
+User Request
+-> Coordinator only entrypoint
+-> Project Brain first
+-> Task analysis before coding
+-> Approval gates enforced
+-> Scoped coding + dev verification
+-> Blocker stops QC and returns through fix cycle
+-> Evidence before done
+-> Memory update
+-> DONE
+```
+
 ## Visual conventions
 
 ```text
@@ -143,6 +162,7 @@ State machine: what transitions are legal
 Folder structure: how .claude is organized
 Deep onboarding: how project knowledge is extracted
 Skill composition: how skills are selected and attached to agents
+Principle flow: non-negotiable operating rules across the pipeline
 ```
 
 ## Command layer
@@ -171,7 +191,7 @@ Skill composition: how skills are selected and attached to agents
 
 ![Legacy full flow](diagrams/legacy-full-flow.svg)
 
-The original single-canvas workflow diagram before the split into 8 focused diagrams. Kept for historical reference.
+The original single-canvas workflow diagram before the split into 9 focused diagrams. Kept for historical reference.
 
 ## Related documents
 
