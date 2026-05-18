@@ -1,5 +1,0 @@
-version: 1
-current_state: "NEED_ONBOARDING"
-updated_at: null
-updated_by: null
-reason: "Dynamic project-aware workflow installed; onboarding has not populated project brain yet."

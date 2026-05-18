@@ -1,5 +1,7 @@
 # Commands Index
 
+Canonical root index: [../../COMMAND.md](../../COMMAND.md)
+
 Commands are user-facing entrypoints. They describe which agent owns the action, which rules apply, which artifacts are required, and when to stop.
 
 ## Commands
@@ -17,6 +19,7 @@ Commands are user-facing entrypoints. They describe which agent owns the action,
 /qc             Run QC and classify bugs
 /bug            Create or route blocker/non-blocker bug
 /sync-memory    Persist durable memory updates
+/skills         Maintain installed skills and skill registry metadata
 /resume-task    Continue a task from its current state
 /policy-check   Validate transition, gate, or exception
 ```

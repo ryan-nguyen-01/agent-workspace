@@ -1,0 +1,90 @@
+task_id: "{{TASK_ID}}"
+source_type: "HLD|LLD|ticket|text|bug-report|incident|other"
+created_at: "{{CREATED_AT}}"
+analyzed_by: "task-analysis"
+
+intent: "feature|bugfix|refactor|migration|security|docs|test|ops|typo|comment|format|rename-local|docs-only|dependency-version-bump|config-value-tweak|unknown"
+summary: "{{SUMMARY}}"
+business_goal: "{{BUSINESS_GOAL}}"
+
+# Fast-track lane (workflow.md §6.2). Default false. When true, Coordinator skips
+# the R-011-10 user approval gate, and Coder Leader skips implementation-plan.yaml
+# and service-assignments.yaml. Dev verification, scope, and secrets rules still apply.
+fast_track: false
+fast_track_reason: ""
+
+acceptance_criteria:
+  - id: "AC-1"
+    description: "{{DESCRIPTION}}"
+    critical: true
+
+out_of_scope: []
+impacted_services: []
+
+technical_requirements: []
+contract_changes:
+  apis: []
+  events: []
+  schemas: []
+  ui: []
+  config: []
+
+# Optional architecture gate. Required for cross-service/API/data/event/security/
+# infra boundary changes before Coder Leader plans implementation.
+architecture_review:
+  required: false
+  reason: ""
+  triggers: []
+  output_required: ".runtime/tasks/{{TASK_ID}}/architecture-review.yaml"
+
+# Design references for UI/frontend tasks (optional — omit for non-UI tasks)
+design_references:
+  figma_urls: []
+    # - url: "https://figma.com/design/..."
+    #   node_id: ""
+    #   description: ""
+  screenshots: []
+    # - path: ".runtime/tasks/{{TASK_ID}}/assets/mockup.png"
+    #   description: ""
+  design_notes: ""
+  component_specs: []
+    # - component: ""
+    #   states: []
+    #   responsive_breakpoints: []
+    #   interactions: []
+
+risks: []
+blockers: []
+dependencies: []
+
+assumptions:
+  - statement: ""
+    confidence: "high|medium|low"
+    impact_if_wrong: "low|medium|high"
+    needs_user_confirmation: false
+
+unknowns: []
+
+requires_user_clarification: false
+clarifying_questions: []
+
+critical_checks:
+  - id: "{{CHECK_ID}}"
+    description: "{{DESCRIPTION}}"
+    reason: "{{WHY_CRITICAL}}"
+
+dev_verification_checklist: []
+qc_focus: []
+
+# Reuse and convention analysis required before implementation.
+reuse_and_convention_analysis:
+  project_flows_relevant: []
+  service_flows_relevant: []
+  reusable_assets_to_use: []
+  coding_conventions_to_follow: []
+  anti_patterns_to_avoid: []
+  new_reusable_asset_needed:
+    required: false
+    reason: ""
+    approval_or_leader_review_required: true
+  evidence: []

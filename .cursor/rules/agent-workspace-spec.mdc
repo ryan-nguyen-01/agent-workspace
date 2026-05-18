@@ -1,0 +1,35 @@
+---
+description: Framework engine editing rules (rules, templates, workflow.md, agents)
+globs: .agent/**, .claude/agents/**, .claude/commands/**, .claude/skills/**
+alwaysApply: false
+---
+
+# Engine editing rules
+
+These rules apply when editing the framework engine: workflow rules, templates, workflow spec, agent definitions, slash commands, or skills.
+
+## Scope
+
+- `.agent/rules/`, `.agent/templates/`, `.agent/docs/`, `.agent/workflow.md` are **framework spec** — change cascades to every project using this framework.
+- `.claude/agents/<workflow>.agent.md` (coordinator, onboarding, task-analysis, coder-leader, dev-verification, qc-handoff, qc-runner, bug-router, memory-update, workflow-policy, agent-factory, solution-architect) are **workflow agent definitions** — owned by framework.
+- `.claude/agents/coder-*.agent.md` are **generated coders** — created by `agent-factory` after user approval.
+
+## Editing policy
+
+- Workflow rule changes require explicit user approval (R-011-08) and a CHANGELOG entry.
+- Template additions/changes must keep backward compatibility (or bump a major version + migration note).
+- Slash command changes must preserve the contract documented in `COMMAND.md`.
+- Skill changes route through `/skills` command; do not mutate `skills-lock.json` or installed `SKILL.md` directly from implementation tasks (R-014-15).
+
+## Cross-tool consistency
+
+When changing engine files, also update:
+- `AGENTS.md` (root, tool-agnostic) — if user-facing contract changed.
+- `.codex/AGENTS.md`, `.cursor/rules/`, `.gemini/GEMINI.md`, `.github/copilot-instructions.md` — if tool-specific path references changed.
+- `.agent/changelog.md` and `CHANGELOG.md`.
+
+## Never
+
+- Do not delete workflow agents from `.claude/agents/`.
+- Do not move framework engine paths without updating all references (the moves are tracked in CHANGELOG).
+- Do not bypass approval gates by editing rules to remove the check (R-011-08).

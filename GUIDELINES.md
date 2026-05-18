@@ -1,8 +1,10 @@
-# Guidelines — agent-platform (Single Source of Truth)
+# Guidelines — agent-workspace (Single Source of Truth)
 
-Mục tiêu của file này: **giảm nhầm lẫn khi dùng thực tế** và thống nhất cách hiểu giữa:
+Mục tiêu của file này: **giảm nhầm lẫn khi dùng thực tế** và thống nhất cách hiểu giữa các lớp chính:
 
-- `.claude/` (definitions: agents, skills, rules, templates, commands + runtime context)
+- `.agent/` (workflow source: workflow, rules, templates, docs)
+- `.runtime/` (runtime memory, task artifacts, bug records)
+- `.claude/` (Claude adapter: agents, skills, commands, settings)
 - `CLAUDE.md` (entrypoint + workflow routing)
 
 ---
@@ -13,7 +15,7 @@ Bạn có 2 cách gọi:
 
 ### 1) Slash commands (khuyến nghị nhất)
 
-Dùng commands tại `.claude/commands/`:
+Dùng commands tại [COMMAND.md](COMMAND.md):
 
 ```
 /onboard           → Scan project, tạo project brain
@@ -26,6 +28,7 @@ Dùng commands tại `.claude/commands/`:
 /qc                → Run QC tests
 /bug               → Route bug report
 /sync-memory       → Update memory
+/skills            → Maintain installed skills
 /policy-check      → Validate workflow policy
 /coord             → Coordinator direct
 /status            → Check workflow status
@@ -50,69 +53,108 @@ Coordinator tự route đến đúng workflow agent:
 
 ## File/folder semantics (đúng khái niệm)
 
-### `.claude/` — definitions (ship kèm repo / có thể cài global)
+### `.agent/` — workflow source
 
 ```
-.claude/
-├── agents/*.agent.md          ← 11 workflow agent definitions
-├── skills/*/SKILL.md          ← 227 skill definitions
+.agent/
+├── workflow.md                ← End-to-end workflow policy
 ├── rules/{nn}-{name}.md       ← 15 workflow rules
-├── templates/*.template.*     ← 13 artifact templates
-├── commands/*.md              ← 15 workflow commands
-├── docs/                      ← Documentation + 8 SVG workflow diagrams
-├── context/                   ← Runtime context (per project, auto-generated)
+├── templates/*.template.*     ← 16 artifact templates
+└── docs/                      ← Documentation + SVG workflow diagrams
+```
+
+### `.runtime/` — runtime memory + artifacts
+
+```
+.runtime/
+├── context/                   ← Project brain, service contracts, workflow state
 ├── tasks/                     ← Task tracking + artifacts
 └── bugs/                      ← Bug tracking
 ```
 
-- Có thể:
-  - **Local**: copy vào project để mọi người dùng chung
-  - **Global**: copy vào `~/.claude/` (hoặc `C:\Users\<user>\.claude\`)
+### `.claude/` — Claude adapter
+
+```
+.claude/
+├── agents/*.agent.md          ← 12 workflow agents + built-in/generated coders
+├── skills/*/SKILL.md          ← 227 skill definitions
+├── commands/*.md              ← 15 workflow commands
+└── settings.json              ← Claude Code settings
+```
+
+- Không copy `.claude/`, `.agent/`, hoặc `.runtime/` sang từng service repo.
+- Mở chính workspace `agent-workspace`; clone application repositories vào `services/<service-name>/`.
+- `.runtime/` chứa context/task artifacts của workspace điều phối, không phải `.claude/`.
 
 ### `CLAUDE.md` — entrypoint + routing
 
 - Claude đọc file này trước để hiểu workflow, routing, và nguyên tắc autonomy.
 - Chứa: bảng agents, workflow phases, commands, rules, context system.
 
-### `.claude/context/` — runtime context (per project, tự sinh)
+### Tool-specific entrypoints
+
+- `AGENTS.md` — entrypoint chung cho Codex, Cursor, Gemini, Aider, Continue, Cody.
+- `.codex/AGENTS.md` — Codex-specific routing and task contract.
+- `.cursor/rules/agent-workspace.mdc` — Cursor always-on rule.
+- `.gemini/GEMINI.md` — Gemini-specific routing and task contract.
+- `.github/copilot-instructions.md` — GitHub Copilot instructions.
+
+### `.runtime/context/` — agent brain + service control plane
 
 - **Tự sinh ra** khi onboarding agent scan project.
-- Chứa context giúp agents làm việc:
+- Chứa memory và registry giúp agents làm việc:
+  - `index.yaml` — đọc trước để chọn đúng memory file, tránh đọc toàn bộ
   - `project-brain.yaml` — Project memory
-  - `service-catalog.yaml` — Service inventory
+  - `service-catalog.yaml` — service.path, boundaries, agent candidates
   - `agent-registry.yaml` — Active coder agents
   - `test-policy.yaml` — Test requirements
-  - `services/` — Per-service brains
+  - `skill-registry.yaml` — Skill selection registry
+  - `workflow-state.yaml` — Current workflow state
+  - `services/<service>.yaml` — Per-service brains
   - `feedback/` — Patterns + anti-patterns
-- Khuyến nghị: ignore trong git.
+
+### `inputs/` — user-provided reference docs
+
+- User drop tài liệu project-level (PRD, HLD, ADR, OpenAPI specs, domain glossary, runbooks) vào đây.
+- Onboarding scan recursively, cite source vào `.runtime/context/project-brain.yaml` + `inputs-index.yaml`.
+- Subdirs: `product/`, `architecture/`, `api/`, `domain/`, `runbooks/`, `misc/`. Có thể để rỗng.
+- Khi nội dung thay đổi: chạy `/sync-memory --refresh-index` để agent re-scan.
+- **Khác với** `.runtime/tasks/<id>/task-input.md` (input theo từng task).
+
+### `services/` — local clone workspace
+
+- Thư mục rỗng/ignored để user `cd services` rồi clone source service vào.
+- Không lưu memory, registry, hoặc workflow state ở đây.
+- Không đẩy source code service lên repo `agent-workspace`.
 
 ---
 
 ## Routing — nguyên tắc
 
 - **Coordinator là central router** — mọi task đi qua coordinator
-- Coordinator đọc project brain → xác định workflow phase → route đến agent phù hợp
+- Coordinator đọc memory index + project brain khi cần → xác định workflow phase → route đến agent phù hợp
 - Workflow tuần tự: task-analysis → coder-leader → dev-verification → QC → memory-update
+- **Không chắc thì hỏi, không đoán** — nếu thiếu dữ kiện ảnh hưởng correctness/security/scope thì hỏi user, không bịa facts/evidence
 - **Approval gates**: tạo coder agents, expand scope, skip QC cần user approval
 - **Task-analysis trước code**: không có task-analysis.yaml = không code
 
 ---
 
-## Token & context policy (context-first)
+## Token & memory policy (memory-first)
 
-Mục tiêu: **ít token, vẫn đúng** — đọc `.claude/context/` trước khi scan repo.
+Mục tiêu: **ít token, vẫn đúng** — đọc `.runtime/context/index.yaml` trước khi mở memory chi tiết hoặc scan repo.
 
 ### Coordinator
 
-- Đọc theo thứ tự: `project-brain.yaml` → `service-catalog.yaml` → `agent-registry.yaml`
-- Chỉ scan source code khi context files không đủ thông tin
+- Đọc theo thứ tự: `.runtime/context/index.yaml` → `.runtime/context/workflow-state.yaml` → `.runtime/context/project-brain.yaml` khi cần → `.runtime/context/service-catalog.yaml` / `.runtime/context/agent-registry.yaml` khi task cần code
+- Chỉ scan source code khi memory/service files không đủ thông tin hoặc bị stale
 - Route đến đúng agent dựa trên task type
 
 ### Service coders (generated)
 
-- Chỉ nhận scoped context từ coder-leader
+- Chỉ nhận scoped memory/task context từ coder-leader
 - Chỉ write trong allowed paths (scoped per service)
-- Đọc service brain trước khi implement
+- Đọc service brain trước khi implement, nhưng chỉ service liên quan
 
 Chi tiết: `.claude/agents/coordinator.agent.md`, `.claude/agents/coder-leader.agent.md`
 
@@ -123,7 +165,8 @@ Chi tiết: `.claude/agents/coordinator.agent.md`, `.claude/agents/coder-leader.
 - Chỉ **agent-factory** được quyền tạo generated coder agents
 - Cần **user approval** trước khi tạo
 - Generated coders ghi vào `.claude/agents/coder-{service}.agent.md`
-- Service brains ghi vào `.claude/context/services/{service}-brain.yaml`
+- Service brains ghi vào `.runtime/context/services/{service}.yaml`
+- Service coding contracts ghi vào `.runtime/context/`
 - Mỗi coder scoped: chỉ write trong allowed paths của service đó
 
 ---
@@ -132,8 +175,8 @@ Chi tiết: `.claude/agents/coordinator.agent.md`, `.claude/agents/coder-leader.
 
 - **Muốn đổi workflow routing / nguyên tắc** → sửa `CLAUDE.md`
 - **Muốn đổi vai trò agent** → sửa `.claude/agents/{role}.agent.md`
-- **Muốn đổi workflow rules** → sửa `.claude/rules/{nn}-{name}.md`
-- **Muốn đổi best practices chuyên môn** → sửa `.claude/skills/{skill}/SKILL.md`
+- **Muốn đổi workflow rules** → sửa `.agent/rules/{nn}-{name}.md`
+- **Muốn đổi best practices chuyên môn** → dùng `/skills update <skill>` để sửa skill + lock/registry liên quan
 - **Muốn đổi cách setup cho người dùng** → sửa `SETUP.md`
 - **Muốn overview ngắn** → sửa `README.md`
 
@@ -146,26 +189,28 @@ Chi tiết: `.claude/agents/coordinator.agent.md`, `.claude/agents/coder-leader.
 - Thêm/sửa `.claude/agents/{role}.agent.md`
 - Cập nhật bảng agents trong `CLAUDE.md`
 - Nếu có command mới → thêm `.claude/commands/{name}.md`
-- Nếu có rule mới → thêm `.claude/rules/{nn}-{name}.md`
+- Nếu có rule mới → thêm `.agent/rules/{nn}-{name}.md`
 
 ### Khi thêm/sửa skill
 
-- Thêm/sửa `.claude/skills/{skill}/SKILL.md`
+- Dùng `/skills status` hoặc `/skills audit` trước khi sửa
+- Dùng `/skills update <skill>` cho skill hiện có, hoặc `/skills refresh-registry` sau khi thêm skill mới
+- Cập nhật `skills-lock.json`, `.runtime/context/skill-registry.yaml`, `.agent/docs/external-skills.md`, và `CHANGELOG.md` nếu behavior/risk thay đổi
 - Workflow skills dùng prefix `skill-`, technical skills dùng tên gốc
 
 ### Khi thêm/sửa rule
 
-- Thêm/sửa `.claude/rules/{nn}-{name}.md`
+- Thêm/sửa `.agent/rules/{nn}-{name}.md`
 - Đảm bảo numbered prefix liên tục (00-14)
 - Cập nhật rules table trong `CLAUDE.md`
 
-### Khi thay đổi context system
+### Khi thay đổi .runtime/context/ system
 
 - Cập nhật `.claude/agents/onboarding.agent.md` (nếu đổi cách scan)
-- Cập nhật templates tương ứng trong `.claude/templates/`
-- Cập nhật context tree trong `CLAUDE.md` và `GUIDELINES.md`
+- Cập nhật templates tương ứng trong `.agent/templates/`
+- Cập nhật runtime tree trong `CLAUDE.md` và `GUIDELINES.md`
 
 ### Khi đổi counts (thêm/xóa resources)
 
 - Sync counts across: `README.md`, `CLAUDE.md`, `SETUP.md`, `GUIDELINES.md`
-- Hiện tại: 11 agents, 227 skills, 15 rules (16 files including README), 13 templates, 15 commands
+- Hiện tại: 12 workflow agents + 2 built-in coders, 227 skills, 15 rules (16 files including README), 16 templates, 15 commands

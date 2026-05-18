@@ -1,7 +1,7 @@
 {
   "framework": {
-    "version": "1.5.0",
-    "name": "agent-platform"
+    "version": "1.7.0",
+    "name": "agent-workspace"
   },
   "workflow": {
     "code_done_threshold": 0.8,
@@ -14,11 +14,20 @@
     "max_generated_coders": 10,
     "default_test_policy": "follow_project_conventions"
   },
-  "context": {
-    "project_brain_path": ".claude/context/project-brain.yaml",
-    "service_catalog_path": ".claude/context/service-catalog.yaml",
-    "agent_registry_path": ".claude/context/agent-registry.yaml",
-    "git_ignore_context": true
+  "memory": {
+    "memory_index_path": ".runtime/context/index.yaml",
+    "project_brain_path": ".runtime/context/project-brain.yaml",
+    "service_memory_dir": ".runtime/context/services",
+    "git_ignore_memory": true
+  },
+  "services": {
+    "service_catalog_path": ".runtime/context/service-catalog.yaml",
+    "agent_registry_path": ".runtime/context/agent-registry.yaml",
+    "test_policy_path": ".runtime/context/test-policy.yaml",
+    "skill_registry_path": ".runtime/context/skill-registry.yaml"
+  },
+  "state": {
+    "workflow_state_path": ".runtime/context/workflow-state.yaml"
   },
   "conventions": {
     "task_id_format": "TASK-{number}",

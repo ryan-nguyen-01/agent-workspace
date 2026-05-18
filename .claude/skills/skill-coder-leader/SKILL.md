@@ -17,6 +17,7 @@ Sequence dependency-sensitive changes
 Resolve cross-service requests
 Collect coder handoff files (coder-handoff-<service>.yaml)
 Review integration points across handoffs
+Review code quality and architecture alignment across coder outputs
 Consolidate into coder-results.yaml
 Send to dev verification
 ```
@@ -26,7 +27,7 @@ Send to dev verification
 Mỗi service coder sau khi hoàn thành sẽ bàn giao qua file:
 
 ```text
-.claude/tasks/<task-id>/coder-handoff-<service>.yaml
+.runtime/tasks/<task-id>/coder-handoff-<service>.yaml
 ```
 
 Coder Leader phải:
@@ -35,15 +36,16 @@ Coder Leader phải:
 2. **Cross-check contracts**: Contracts provided bởi service A phải match contracts consumed bởi service B
 3. **Phát hiện gaps**: Env vars thiếu, schema mismatch, API contract conflicts
 4. **Resolve cross_service_requests**: Nếu coder X request thay đổi từ service Y
-5. **Tổng hợp coder-results.yaml**: Aggregate status từ tất cả handoffs
-6. **Quyết định readiness**: Tất cả coders done + contracts aligned → ready cho Dev Verification
+5. **Review code quality + architecture**: Kiểm tra maintainability, layering, conventions, reuse
+6. **Tổng hợp coder-results.yaml**: Aggregate status từ tất cả handoffs
+7. **Quyết định readiness**: Tất cả coders done + contracts aligned + quality review pass → ready cho Dev Verification
 
 ## Design Assets for UI Tasks
 
 When task-analysis.yaml contains design_references:
 
 ```text
-1. CHECK assets exist: .claude/tasks/<task-id>/assets/
+1. CHECK assets exist: .runtime/tasks/<task-id>/assets/
    - design-context.md, mockup screenshots, screen-map.yaml
    - If missing → request Task Analysis to extract first
 
@@ -67,7 +69,7 @@ When task-analysis.yaml contains design_references:
 # task-analysis.yaml đã chứa design_references với local_assets
 
 # 1. CHECK assets
-ls .claude/tasks/TASK-demo-figma/assets/
+ls .runtime/tasks/TASK-demo-figma/assets/
 → design-context.md, design-tokens.json, screen-map.yaml  ✓
 
 # 2. service-assignments.yaml
@@ -79,9 +81,9 @@ assignments:
       - ProductCard (2 variants: small + large)
       - NavArrow, SectionTitle
     design_assets:
-      tokens: ".claude/tasks/TASK-demo-figma/assets/design-tokens.json"
-      context: ".claude/tasks/TASK-demo-figma/assets/design-context.md"
-      screen_map: ".claude/tasks/TASK-demo-figma/assets/screen-map.yaml"
+      tokens: ".runtime/tasks/TASK-demo-figma/assets/design-tokens.json"
+      context: ".runtime/tasks/TASK-demo-figma/assets/design-context.md"
+      screen_map: ".runtime/tasks/TASK-demo-figma/assets/screen-map.yaml"
     notes: |
       - Implement design tokens first (tailwind.config extend)
       - ProductCard reused across 3 sections — build once
@@ -95,13 +97,14 @@ assignments:
   ✓ ProductCard reused (not duplicated)
 ```
 
-See full example at `.claude/tasks/TASK-demo-figma/`.
+See full example at `.runtime/tasks/TASK-demo-figma/`.
 
 ## Rules
 
 ```text
 Service coders do not coordinate directly.
 Coder Leader owns integration consistency.
+Coder Leader owns code-quality and architecture review before Dev Verification.
 Shared code changes require explicit scope or approval.
 Do not mark Code Done.
 ```

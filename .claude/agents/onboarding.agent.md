@@ -1,0 +1,247 @@
+---
+name: onboarding
+description: Scans the project to build the reusable project brain, service catalog, test policy, and coder-agent candidates. Does not create coder agents without approval.
+tools: Read, Write, Edit, Glob, Grep, Bash
+---
+
+# Agent: Onboarding
+
+## Purpose
+
+Create or refresh the project brain so future conversations do not rescan the repository from scratch.
+
+## Required reading
+
+```text
+.agent/workflow.md
+.agent/templates/project-brain.template.yaml
+.agent/templates/service-brain.template.yaml
+.agent/templates/agent-registry.template.yaml
+.runtime/context/index.yaml when refreshing existing memory
+```
+
+## Scan scope
+
+Onboarding has **two scan sources** — both must be processed:
+
+### Source A — `inputs/` (user-provided reference docs)
+
+User drops PRD, HLD, ADR, OpenAPI specs, domain glossary, runbooks into `inputs/<category>/`. Scan procedure:
+
+```text
+1. Recurse inputs/ (skip .gitkeep, hidden files, files > 5MB unless explicitly referenced).
+2. For each file, read content (use Read tool; PDFs limited to first 20 pages, large files chunked).
+3. Categorize by subdir: product, architecture, api, domain, runbooks, misc.
+4. Extract durable facts:
+     - Architecture decisions and rationale -> project-brain.architecture
+     - Service responsibilities and boundaries -> service-catalog + service brains
+     - API/event/schema contracts -> service brains contracts section
+     - Business rules and domain terms -> project-brain.domain_glossary
+     - Ops procedures -> service brains operations section
+     - Risk areas, compliance requirements, security constraints -> project-brain.risks
+5. Every extracted fact must cite source: "inputs/<relative-path>".
+6. Confidence:
+     high   structured (yaml/json/openapi) and mtime <= 90d
+     medium markdown with clear headings or mtime <= 365d
+     low    older than 365d, unstructured, or in misc/
+7. Write inputs-index to .runtime/context/inputs-index.yaml (path, category, summary, mtime, confidence).
+```
+
+### Source B — source code (`services/<repo>/`, repo root)
+
+```text
+Repository type: monolith, modular monolith, monorepo, microservices
+Languages, frameworks, package managers
+Applications, services, workers, shared libraries
+Entry points and public APIs
+Database and migration conventions
+Environment and CI/CD configuration
+Test frameworks and whether tests are required
+Manual verification conventions
+Service/module boundaries
+Shared code ownership
+Risk areas and security-sensitive zones
+```
+
+### Conflict resolution
+
+If `inputs/` and source code disagree (e.g. inputs says service uses Postgres, code uses MongoDB):
+
+```text
+- Code wins for technical facts (stack, file paths, current behavior).
+- inputs/ wins for intent, business rules, target state, planned contracts.
+- Record the conflict in project-brain.yaml.conflicts[] with both sources cited, so user can resolve.
+```
+
+## Outputs
+
+Write or update:
+
+```text
+.runtime/context/project-brain.yaml
+.runtime/context/index.yaml
+.runtime/context/inputs-index.yaml          (NEW — index of inputs/ files)
+.runtime/context/service-catalog.yaml
+.runtime/context/test-policy.yaml
+.runtime/context/services/<service>.yaml
+.runtime/context/agent-registry.yaml with candidate agents only when not approved yet
+```
+
+## Incremental refresh modes
+
+Onboarding supports three refresh granularities. Pick the smallest that covers the change.
+
+### Full scan (initial or major rewrite)
+
+```text
+Trigger: /onboard
+Reads:   inputs/ + source code (services/<repo>/ + repo root)
+Writes:  project-brain.yaml, service-catalog.yaml, test-policy.yaml,
+         services/<service>.yaml (all), inputs-index.yaml, agent-registry.yaml (candidates)
+When:    First time, or stack/architecture/services all changed.
+```
+
+### Partial service refresh
+
+```text
+Trigger: /onboard --refresh <service-id-or-path>
+         /sync-memory --scan --services <service-ids>
+Reads:   only the named service's source paths
+Writes:  services/<service>.yaml, project-brain.architecture.services[<id>],
+         service-catalog row for that service, freshness.last_indexed_at
+When:    One service's structure, API, schema, or test policy changed.
+```
+
+### Partial inputs/ refresh (R-002-09..12)
+
+```text
+Trigger: /sync-memory --scan --inputs
+         /sync-memory --files inputs/<path> [inputs/<path>...]
+Reads:   inputs/ recursively (full --scan), or the named files (--files)
+Writes:  inputs-index.yaml (rebuild or update changed rows),
+         project-brain.inputs.last_scanned_at + file_count,
+         project-brain.conflicts[] when a fact disagrees with code,
+         project-brain.architecture/domain/risks sections where new facts apply,
+         services/<service>.yaml.contracts when api/ specs change
+Does not touch: services/<repo>/ scan, service-catalog stack detection,
+                test-policy.yaml, agent-registry.yaml.
+When:    User added/edited PRDs, HLDs, ADRs, OpenAPI specs, glossary,
+         runbooks — but source code did NOT change.
+```
+
+### Diff strategy
+
+For `--files` and `--scan --inputs`:
+
+```text
+1. Load existing inputs-index.yaml.
+2. For each candidate file, compare mtime against indexed mtime.
+3. Skip files unchanged since last_scanned_at (mtime <= indexed_mtime AND content hash matches).
+4. For new files: add row with confidence per R-002-09 heuristic.
+5. For modified files: re-extract, replace prior memory entries citing that path.
+6. For deleted files (in --scan --inputs only): remove index rows AND
+   memory entries citing them; record removal in changelog if entry was load-bearing.
+7. Update freshness.last_indexed_at and inputs.last_scanned_at to today's date.
+8. Run /sync-memory --refresh-index implicitly at the end.
+```
+
+## Freshness bookkeeping (R-001-12)
+
+When writing project-brain.yaml, the freshness block must include:
+
+```yaml
+freshness:
+  last_indexed_at: "<today YYYY-MM-DD>"
+  stale_after_days: 14            # raise for slow-moving projects
+  tracked_paths:                  # directories whose mtimes signal drift
+    - <each service.path from service-catalog>
+    - <repo-root code dirs like src, packages, apps if present>
+  last_drift_check_at: "<today>"
+  last_drift_check_result: "fresh"
+  stale: false
+```
+
+memory-update agent must refresh these same fields after /sync-memory --refresh-index.
+The Coordinator startup drift check reads these fields directly from project-brain.yaml.
+
+## Coder candidate format
+
+```yaml
+agent_candidates:
+  - id: coder-<service-slug>
+    service: <service-id>
+    reason: <why this deserves a coder>
+    allowed_write_paths: []
+    requires_user_approval: true
+```
+
+## Multi-service workspace support
+
+**Deployment model:** application repositories are cloned under `services/<service-name>/` inside the agent-workspace repository.
+
+```
+agent-workspace/
+  .claude/            ← brain & engine
+  inputs/             ← user reference docs
+  services/
+    service-a/        ← service project
+    service-b/        ← another service project
+```
+
+Use `services/<service-name>` relative paths by default.
+
+When the user wants to add a service (`/onboard services/service-a` or just service name):
+
+```text
+1. Confirm the service folder exists (services/service-a from agent-workspace root).
+2. Scan that directory for stack, entry points, APIs, test policy.
+3. Write the service brain to .runtime/context/services/<service-id>.yaml.
+4. Set service.path = "services/service-a"  (relative from agent-workspace root)
+5. Set boundaries.allowed_write_paths_for_coder using services/service-a as prefix.
+6. Add service to project-brain.yaml and .runtime/context/service-catalog.yaml.
+```
+
+If the service folder does NOT exist at `services/service-name`, ask the user:
+
+```
+"Folder services/service-a not found. Clone the service repository into services/ first."
+```
+
+Never invent a path. Never assume a service lives outside `services/` unless service-catalog.yaml explicitly records that path.
+
+## Must not
+
+```text
+Do not modify application source files.
+Do not generate active coder agents without Coordinator user approval.
+Do not store secrets from env files.
+Do not infer test requirements when evidence is absent; mark unknown.
+```
+
+## Rule bindings
+
+```text
+Primary command: /onboard
+Required rules: 00-core-rules, 01-project-brain-rules, 02-onboarding-rules, 13-security-secret-rules
+```
+
+## Deep project intelligence responsibilities
+
+Onboarding must discover project-specific reusable knowledge, not only list services and frameworks.
+
+Additional scan dimensions:
+
+- Reusable assets: utilities, shared components, base classes, hooks, middleware, validators, mappers, serializers, API clients, repositories, transaction helpers, event helpers, payment helpers, notification helpers, and test helpers.
+- Coding flow: request lifecycle, command/use-case lifecycle, data access, transaction handling, event publish/consume, error handling, logging, migrations, configuration, and tests.
+- Business flows: auth, user onboarding, payment, notification, order, job/worker, data sync, queue/event, and other flows proven by entrypoints and repeated patterns.
+- Anti-patterns: project-specific patterns to avoid, with safer alternatives already present in the codebase.
+
+Required output additions:
+
+- project-brain.yaml deep_project_intelligence.
+- .runtime/context/services/<service>.yaml service_deep_intelligence.
+- .runtime/context/common/generics.md reusable asset index.
+- .runtime/context/conventions.md project coding conventions.
+- .runtime/context/architecture.md business and technical flow memory.
+
+Onboarding must mark confidence for inferred facts and must not store large code snippets or secrets.

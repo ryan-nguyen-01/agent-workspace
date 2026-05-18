@@ -26,11 +26,11 @@ When the task folder contains design assets:
 
 ```text
 1. READ local files only — never call Figma API directly:
-   - .claude/tasks/<task-id>/assets/design-context.md     ← Code reference
-   - .claude/tasks/<task-id>/assets/mockup-*.png           ← Visual reference
-   - .claude/tasks/<task-id>/assets/design-tokens.json     ← Colors, spacing, typography
-   - .claude/tasks/<task-id>/assets/image-assets.yaml      ← Icon/image inventory
-   - .claude/tasks/<task-id>/screen-map.yaml               ← Screen inventory
+   - .runtime/tasks/<task-id>/assets/design-context.md     ← Code reference
+   - .runtime/tasks/<task-id>/assets/mockup-*.png           ← Visual reference
+   - .runtime/tasks/<task-id>/assets/design-tokens.json     ← Colors, spacing, typography
+   - .runtime/tasks/<task-id>/assets/image-assets.yaml      ← Icon/image inventory
+   - .runtime/tasks/<task-id>/screen-map.yaml               ← Screen inventory
 
 2. FOR assigned flow folder (e.g., assets/flow-1-cart/):
    - design-context.md → Use code snippets as implementation reference
@@ -96,13 +96,13 @@ When the task folder contains design assets:
 
 ```text
 # 1. Read design tokens first → set up theme
-cat .claude/tasks/TASK-demo-figma/assets/design-tokens.json
+cat .runtime/tasks/TASK-demo-figma/assets/design-tokens.json
 → colors.accent = "#000e8a"
 → typography.h1 = { font: "Beatrice Deck Trial", size: "48px", weight: "800" }
 → component_specs.product_card_small = { width: "304px", height: "313px" }
 
 # 2. Read image-assets.yaml → check figma_tier + icon strategy
-cat .claude/tasks/TASK-demo-figma/assets/image-assets.yaml
+cat .runtime/tasks/TASK-demo-figma/assets/image-assets.yaml
 → figma_tier: low
 → Group6 (logo): custom, must use pre-exported SVG from assets/icons/logo.svg
 → Group45 (wishlist): library_alternative = "lucide:Heart" → use Lucide
@@ -112,11 +112,11 @@ cat .claude/tasks/TASK-demo-figma/assets/image-assets.yaml
   images swap in pixel-perfect
 
 # 3. Read screen-map for assigned screens
-cat .claude/tasks/TASK-demo-figma/assets/screen-map.yaml
+cat .runtime/tasks/TASK-demo-figma/assets/screen-map.yaml
 → flow-1-home: 7 screens, shared components: ProductCard, NavArrow, SectionTitle
 
 # 4. Read design-context for code reference per section
-cat .claude/tasks/TASK-demo-figma/assets/design-context.md
+cat .runtime/tasks/TASK-demo-figma/assets/design-context.md
 → Section 4 "New This Week": 4-col grid, ProductCard with:
   - Image 304x313, border #d7d7d7
   - Category label (Inter Medium 12px #8a8a8a)
@@ -141,15 +141,15 @@ cat .claude/tasks/TASK-demo-figma/assets/design-context.md
   screens_implemented: [header, sidebar, hero, new-this-week, xiv-collections, our-approach, footer]
 ```
 
-See full example at `.claude/tasks/TASK-demo-figma/`.
+See full example at `.runtime/tasks/TASK-demo-figma/`.
 
 ## Coder-to-Leader Handoff
 
 Sau khi hoàn thành implementation, mỗi service coder **bắt buộc** tạo file handoff:
 
 ```text
-Path: .claude/tasks/<task-id>/coder-handoff-<service>.yaml
-Template: .claude/templates/coder-handoff.template.yaml
+Path: .runtime/tasks/<task-id>/coder-handoff-<service>.yaml
+Template: .agent/templates/coder-handoff.template.yaml
 ```
 
 File handoff phải bao gồm:
@@ -194,8 +194,8 @@ A blocker prevents safe implementation
 Before creating new helper code, wrappers, validators, mappers, serializers, repositories, API clients, transaction helpers, event helpers, payment helpers, notification helpers, or test utilities, a service coder must check:
 
 - The assigned service brain under service_deep_intelligence.
-- The project reusable asset index in context/common/generics.md.
-- The project conventions in context/conventions.md.
+- The project reusable asset index in .runtime/context/common/generics.md.
+- The project conventions in .runtime/context/conventions.md.
 - The relevant task reuse_and_convention_analysis section.
 
 If an existing reusable asset fits, reuse it. If a new reusable asset is needed, report it to Coder Leader with reason, proposed ownership, affected services, and migration impact before broad usage.

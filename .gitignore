@@ -1,0 +1,6 @@
+/services/*
+!/services/README.md
+!/services/.gitignore
+
+# Local Cursor hook/runtime diagnostics
+.agent/dirty-flags.log

@@ -1,0 +1,36 @@
+---
+description: Coder scope and editing rules for application source code
+globs: services/**, src/**, app/**, packages/**, apps/**
+alwaysApply: false
+---
+
+# Source editing rules
+
+These rules apply when editing application source code (services, packages, apps).
+
+## Pre-edit gate
+
+- Do not modify application source before `.runtime/tasks/<task_id>/task-analysis.yaml` exists.
+- If `architecture_review.required: true` in `task-analysis.yaml`, do not plan or code until `.runtime/tasks/<task_id>/architecture-review.yaml` has decision `approved`.
+
+## Scope enforcement (R-006)
+
+- Generated service coders write only inside `allowed_write_paths` from `.runtime/context/agent-registry.yaml`.
+- Never write outside the assigned service scope; raise `cross_service_request` to Coder Leader instead.
+- Cross-cutting coders (`coder-infra`, `coder-database`) do not touch application source code.
+
+## Code quality (R-005-09)
+
+- Reuse existing helpers from the project before writing new ones (check `.runtime/context/common/generics.md` and `conventions.md`).
+- Coder Leader reviews architecture/layer boundaries, dependency direction, reuse, and contract changes BEFORE Dev Verification.
+
+## Tests
+
+- Follow `.runtime/context/test-policy.yaml` per service.
+- Do not create test files if `unit_tests_required: false`.
+- If tests required, update tests using existing project conventions — do not introduce new test frameworks without approval.
+
+## Anti-guessing
+
+- Do not invent APIs, file paths, or library versions. If unknown, mark `unknown` and ask.
+- Verify critical claims (build passes, test passes) with concrete commands before claiming done.

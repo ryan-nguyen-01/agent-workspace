@@ -1,0 +1,113 @@
+version: 1
+generated_at: "2026-05-17"
+generated_by: "memory-structure-migration"
+memory_epoch: 1
+memory_root: ".runtime/context"
+
+purpose: "Small routing index so agents can decide which memory files to open without rereading the whole brain."
+
+read_policy:
+  startup:
+    - ".agent/workflow.md"
+    - ".runtime/context/workflow-state.yaml"
+    - ".runtime/context/index.yaml"
+  then_read_only_if_relevant:
+    - ".runtime/context/project-brain.yaml"
+    - ".runtime/context/summary.md"
+    - ".runtime/context/architecture.md"
+    - ".runtime/context/conventions.md"
+    - ".runtime/context/common/generics.md"
+    - ".runtime/context/services/<service>.yaml"
+    - ".runtime/context/feedback/*.md"
+    - ".runtime/context/inputs-index.yaml"
+  service_control_files:
+    - ".runtime/context/service-catalog.yaml"
+    - ".runtime/context/agent-registry.yaml"
+    - ".runtime/context/test-policy.yaml"
+    - ".runtime/context/skill-registry.yaml"
+  user_inputs_root: "inputs"
+  user_inputs_index: ".runtime/context/inputs-index.yaml"
+  rule: "Do not open every file under memory by default. Use task intent, impacted services, and this index first. For user-provided reference docs (PRD/HLD/ADR/OpenAPI/glossary), open inputs-index.yaml first then read only relevant files under inputs/."
+
+commands:
+  initial_fetch: "/onboard <service-path-or-repo-root>"
+  refresh_by_rescan: "/sync-memory --scan --services <service-ids>"
+  refresh_by_files: "/sync-memory --files <paths> --services <service-ids>"
+  refresh_index_only: "/sync-memory --refresh-index"
+  partial_service_refresh: "/onboard --refresh <service-id-or-path>"
+  skill_maintenance: "/skills status|audit|update|refresh-registry"
+
+documents:
+  - path: ".runtime/context/project-brain.yaml"
+    role: "project_brain"
+    scope: "project"
+    tags: ["architecture", "policies", "memory-rules", "workflow"]
+    service_ids: []
+    read_when: ["routing", "onboarding", "planning", "memory-update"]
+  - path: ".runtime/context/summary.md"
+    role: "human_summary"
+    scope: "project"
+    tags: ["summary"]
+    service_ids: []
+    read_when: ["quick-orientation", "status"]
+  - path: ".runtime/context/architecture.md"
+    role: "architecture_notes"
+    scope: "project"
+    tags: ["architecture", "flows"]
+    service_ids: []
+    read_when: ["task-analysis", "architecture-review", "planning", "cross-service-impact"]
+  - path: ".runtime/context/conventions.md"
+    role: "coding_conventions"
+    scope: "project"
+    tags: ["conventions", "style", "reuse"]
+    service_ids: []
+    read_when: ["planning", "coding", "review"]
+  - path: ".runtime/context/common/generics.md"
+    role: "reusable_asset_index"
+    scope: "project"
+    tags: ["reuse", "shared-assets"]
+    service_ids: []
+    read_when: ["before-creating-helper", "coding", "review"]
+  - path: ".runtime/context/environments.md"
+    role: "environment_notes"
+    scope: "project"
+    tags: ["environment", "verification", "qc"]
+    service_ids: []
+    read_when: ["dev-verification", "qc"]
+  - path: ".runtime/context/feedback/patterns.md"
+    role: "positive_feedback_patterns"
+    scope: "project"
+    tags: ["feedback", "patterns"]
+    service_ids: []
+    read_when: ["planning", "coding", "review"]
+  - path: ".runtime/context/feedback/anti-patterns.md"
+    role: "negative_feedback_patterns"
+    scope: "project"
+    tags: ["feedback", "anti-patterns"]
+    service_ids: []
+    read_when: ["planning", "coding", "review"]
+
+service_memory:
+  directory: ".runtime/context/services"
+  pattern: ".runtime/context/services/<service>.yaml"
+  read_when:
+    - "Task impacts that service."
+    - "Coder Leader assigns that service."
+    - "Agent Factory creates or updates that service coder."
+
+service_control:
+  catalog: ".runtime/context/service-catalog.yaml"
+  agent_registry: ".runtime/context/agent-registry.yaml"
+  test_policy: ".runtime/context/test-policy.yaml"
+  skill_registry: ".runtime/context/skill-registry.yaml"
+  rule: "Use these files to find where coding is allowed; do not treat them as durable project brain."
+
+staleness:
+  stale_if:
+    - "project-brain.yaml freshness.stale is true."
+    - "memory_epoch differs between index.yaml and project-brain.yaml."
+    - "A service path changed but .runtime/context/service-catalog.yaml was not updated."
+    - "A durable decision was made but /sync-memory was not run."
+  recovery:
+    - "Run /sync-memory --changed <paths> for known changes."
+    - "Run /onboard --refresh <service> when service boundaries, stack, or tests changed."

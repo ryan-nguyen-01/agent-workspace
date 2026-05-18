@@ -46,7 +46,7 @@ When the task involves UI implementation and Figma URLs are provided:
    - Prefer 1 call on the parent frame over many calls on individual screens
    - If user provides a single large frame URL → use "Fast Mode" (1 call)
 
-2. SAVE locally to .claude/tasks/<task-id>/assets/:
+2. SAVE locally to .runtime/tasks/<task-id>/assets/:
    - design-context.md        ← Code reference from get_design_context
    - mockup-overview.png      ← Screenshot from get_screenshot
    - design-tokens.json       ← Extracted tokens (colors, spacing, typography)
@@ -127,7 +127,7 @@ Fast Mode (1 MCP call):
   → Returns React + Tailwind reference code for full page (1440x3998px)
 
 Assets created:
-  .claude/tasks/TASK-demo-figma/assets/
+  .runtime/tasks/TASK-demo-figma/assets/
   ├── design-context.md       ← 8 sections breakdown (Header, Hero, Grid, etc.)
   ├── design-tokens.json      ← Colors (#000e8a accent, #f5f5f5 bg), fonts (Beatrice family),
   │                              spacing (32/16/12/8px), component specs (ProductCard 304x313)
@@ -144,12 +144,12 @@ task-analysis.yaml design_references:
     - FilterTabs: states [active (bold), inactive (#8a8a8a)]
     - SearchBar: states [default, focused]
   local_assets:
-    design_context: ".claude/tasks/TASK-demo-figma/assets/design-context.md"
-    design_tokens: ".claude/tasks/TASK-demo-figma/assets/design-tokens.json"
-    screen_map: ".claude/tasks/TASK-demo-figma/assets/screen-map.yaml"
+    design_context: ".runtime/tasks/TASK-demo-figma/assets/design-context.md"
+    design_tokens: ".runtime/tasks/TASK-demo-figma/assets/design-tokens.json"
+    screen_map: ".runtime/tasks/TASK-demo-figma/assets/screen-map.yaml"
 ```
 
-See full example at `.claude/tasks/TASK-demo-figma/`.
+See full example at `.runtime/tasks/TASK-demo-figma/`.
 
 ## Rules
 

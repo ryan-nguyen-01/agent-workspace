@@ -30,8 +30,8 @@ dev-verification.yaml result is DEV_DONE
 2. Read implementation-plan.yaml.
 3. Read coder-results.yaml.
 4. Read dev-verification.yaml.
-5. Write tasks/<task-id>/qc-handoff.md.
-6. Optionally mirror handoff to .claude/handover/<task-id>-handoff.md.
+5. Write .runtime/tasks/<task-id>/qc-handoff.md.
+6. Append task-updates.yaml with QC_READY transition.
 7. Return QC_READY.
 ```
 

@@ -397,7 +397,7 @@ CELERY_SECURITY_CERT_STORE = '/path/to/certs/'
 ### Rate Limiting
 
 ```python
-# Global rate limit (tasks/second)
+# Global rate limit (.runtime/tasks/second)
 CELERY_TASK_DEFAULT_RATE_LIMIT = '100/s'
 
 # Per-task rate limit

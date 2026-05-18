@@ -1,0 +1,79 @@
+version: 1
+service:
+  id: "{{SERVICE_ID}}"
+  name: "{{SERVICE_NAME}}"
+  type: "backend|frontend|worker|library|database|infrastructure|unknown"
+  path: "{{SERVICE_PATH}}"            # relative path từ workspace root (vd: services/service-a)
+                                      # service repositories are cloned under services/.
+                                      # Đây là nơi coder làm việc; service brain chỉ mô tả nó.
+  responsibilities: []
+  owners: []
+
+stack:
+  languages: []
+  frameworks: []
+  databases: []
+  queues: []
+  package_manager: "{{PACKAGE_MANAGER}}"
+
+boundaries:
+  allowed_write_paths_for_coder:
+    # Dùng relative path từ workspace root (vd: services/service-a/src).
+    []
+  shared_read_paths: []
+  forbidden_paths: []
+  public_apis: []
+  events: []
+  schemas: []
+  dependencies: []
+
+test_policy:
+  unit_tests_required: false
+  allow_new_test_files: false
+  manual_verification_required: true
+  test_commands: []
+  dev_done_threshold: 0.80
+  critical_checks: []
+
+risks: []
+known_patterns: []
+last_updated: "{{UPDATED_AT}}"
+memory_index_tags: []
+
+# Service-level reusable knowledge populated by onboarding and memory updates.
+service_deep_intelligence:
+  status: "needs_onboarding|partial|complete"
+  reusable_assets:
+    owned_assets: []
+    consumed_shared_assets: []
+    test_helpers: []
+  coding_flow:
+    request_lifecycle: []
+    command_or_usecase_lifecycle: []
+    data_access_flow: []
+    transaction_flow: []
+    event_publish_flow: []
+    event_consume_flow: []
+    error_flow: []
+    logging_flow: []
+  conventions:
+    folder_structure: []
+    naming_rules: []
+    layering_rules: []
+    api_rules: []
+    validation_rules: []
+    error_handling_rules: []
+    test_rules: []
+  service_flows:
+    - id: ""
+      name: ""
+      trigger: ""
+      entrypoints: []
+      steps: []
+      dependencies: []
+      reusable_assets: []
+      critical_checks: []
+      evidence: []
+      confidence: "low|medium|high"
+  reuse_before_create_rules:
+    - "Check owned_assets and consumed_shared_assets before creating new helper, wrapper, mapper, validator, API client, repository, or test utility."

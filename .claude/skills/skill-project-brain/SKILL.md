@@ -5,24 +5,27 @@ description: Manage reusable project brain files so agents can resume work acros
 
 # Skill: Project Brain
 
-Use when checking, creating, refreshing, or querying `.claude/context` memory.
+Use when checking, creating, refreshing, or querying `memory` memory.
 
 ## Core files
 
 ```text
-.claude/context/project-brain.yaml
-.claude/context/service-catalog.yaml
-.claude/context/agent-registry.yaml
-.claude/context/test-policy.yaml
-.claude/context/workflow-state.yaml
-.claude/context/services/<service>.yaml
+.runtime/context/project-brain.yaml
+.runtime/context/index.yaml
+.runtime/context/service-catalog.yaml
+.runtime/context/agent-registry.yaml
+.runtime/context/test-policy.yaml
+.runtime/context/workflow-state.yaml
+.runtime/context/services/<service>.yaml
 ```
 
 ## Rules
 
 ```text
+Read memory index before opening detailed memory files.
 Read project brain before scanning source.
 Prefer partial refresh over full rescan when stale areas are known.
+Refresh .runtime/context/index.yaml after durable memory changes.
 Record confidence for inferred facts.
 Never store secrets, raw tokens, passwords, or long logs.
 Link durable facts to source task or onboarding evidence.

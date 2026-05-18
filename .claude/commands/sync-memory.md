@@ -21,13 +21,55 @@ memory-update
 ## Workflow
 
 ```text
-1. Read task artifacts and changed decisions.
-2. Identify durable facts worth storing.
-3. Redact sensitive content.
-4. Write memory-updates.yaml.
-5. Update project-brain.yaml, service brain, test policy, or agent registry only where relevant.
-6. Append changelog when workflow-level behavior changes.
+1. Read .runtime/context/index.yaml first.
+2. Choose refresh mode:
+   - --scan: rescan the requested service/repo scope.
+   - --files: read only explicitly provided files/paths.
+3. Read only task artifacts and memory files relevant to the changed paths/services.
+4. Identify durable facts worth storing.
+5. Redact sensitive content.
+6. Write memory-updates.yaml when a task is involved.
+7. Update project-brain.yaml, service brain, test policy, service catalog, or agent registry only where relevant.
+8. Refresh .runtime/context/index.yaml so future sessions can skip full memory rereads.
+9. Append changelog when workflow-level behavior changes.
 ```
+
+## Usage
+
+```text
+/sync-memory --scan --services <service-ids>
+  Rescan the requested service/repo scope and update memory from current source evidence.
+
+/sync-memory --scan --inputs
+  Rescan inputs/ recursively. Re-builds .runtime/context/inputs-index.yaml and re-extracts
+  facts from changed files into project-brain.yaml / service brains. Does NOT touch services/.
+
+/sync-memory --files <paths> [--services <service-ids>]
+  Read only the specified files or folders and update the matching memory section.
+  --services is OPTIONAL when all paths are under inputs/ (refresh resolves automatically
+  to inputs-index.yaml + project-brain.inputs.last_scanned_at).
+  --services is REQUIRED when paths touch source code under services/<repo>/.
+
+/sync-memory --refresh-index
+  Use after manual memory edits. Rebuilds .runtime/context/index.yaml without rescanning source code.
+
+/sync-memory <task-id>
+  Use after a completed workflow task to persist durable learnings from task artifacts.
+```
+
+### Picking the right mode after adding inputs
+
+```text
+Scenario                                     | Recommended command
+---------------------------------------------|------------------------------------------------
+Added 1-3 specific files to inputs/          | /sync-memory --files inputs/api/orders.yaml ...
+Added many files / new subdir in inputs/     | /sync-memory --scan --inputs
+Replaced PRD or product pivot                | /sync-memory --scan --inputs
+Source code structure also changed           | /onboard --refresh <service>   (heavier)
+Stack/services/test-policy all changed       | /onboard                       (full rescan)
+```
+
+If source structure, stack, service boundary, or test policy changed, prefer `/sync-memory --scan --services <service>` or `/onboard --refresh <service>`. For small updates, prefer `/sync-memory --files <paths>` to avoid token-heavy scans.
 
 ## Stop conditions
 
@@ -35,4 +77,7 @@ memory-update
 Proposed memory contains secrets
 Fact is speculative without confidence
 Source artifact is missing for a critical decision
+Change affects service boundaries but no service id/path is provided
+Neither --scan nor --files is provided for a source refresh request
+--files paths span both inputs/ and services/<repo>/ without --services specified
 ```

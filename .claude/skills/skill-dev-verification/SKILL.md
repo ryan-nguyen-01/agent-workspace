@@ -46,3 +46,28 @@ Check:
 - Project conventions and anti-patterns were addressed in coder-results.yaml.
 
 If duplicate helper risk is high or shared asset scope is violated, return NEEDS_FIX or DEV_BLOCKED depending on severity.
+
+## Runtime verification
+
+Code review alone is NOT sufficient for Code Done. At least one runtime method must be executed and evidence recorded.
+
+### Accepted verification methods
+
+| Method                            | When required                     | Minimum evidence                            |
+| --------------------------------- | --------------------------------- | ------------------------------------------- |
+| **Build / compile**               | Always                            | Build command + zero-error output           |
+| **Unit test run**                 | When test files exist             | Command + pass/fail count                   |
+| **API test (curl / HTTP client)** | HTTP endpoints added or changed   | curl command + response body / status code  |
+| **UI smoke test**                 | Frontend feature changed          | Step-by-step walkthrough or screenshot path |
+| **Log / output inspection**       | Background job, CLI, queue worker | Log snippet showing expected behavior       |
+| **Integration test**              | Cross-service interaction changed | Request trace or integration output         |
+
+### Rules
+
+```text
+Build check is always required; it alone does not count when runtime behavior changed.
+At least one method must produce concrete evidence (command output, log snippet, screenshot).
+If service is not runnable (missing env, DB not up), record DEV_BLOCKED with
+  blocker_reason: "not_runnable" — do not claim DEV_DONE.
+Never claim DEV_DONE on code review alone when any runtime behavior changed.
+```

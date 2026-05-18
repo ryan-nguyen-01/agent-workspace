@@ -1,0 +1,22 @@
+environments:
+  local:
+    enabled: true
+    base_url: "http://localhost:3000"
+    notes: "Local developer environment"
+    required_variables: []
+    secret_policy: "Never store real secret values in .runtime artifacts or tool adapter files"
+  dev:
+    enabled: false
+    base_url: "{{DEV_BASE_URL}}"
+    required_variables: []
+    secret_policy: "Use external env files or secret manager"
+  sit:
+    enabled: false
+    base_url: "{{SIT_BASE_URL}}"
+    required_variables: []
+    secret_policy: "Use external env files or secret manager"
+
+qc_order:
+  - local
+  - dev
+  - sit
