@@ -13,11 +13,11 @@ Turn any task source into a precise implementation spec that service coders can 
 ## Required reading
 
 ```text
-.claude/workflow.md
-.claude/context/project-brain.yaml
-.claude/context/service-catalog.yaml
-.claude/context/agent-registry.yaml
-.claude/templates/task-analysis.template.yaml
+.agent/workflow.md
+.runtime/context/project-brain.yaml
+.runtime/context/service-catalog.yaml
+.runtime/context/agent-registry.yaml
+.agent/templates/task-analysis.template.yaml
 ```
 
 ## Analysis dimensions
@@ -33,6 +33,7 @@ API/data/event contracts
 Dependencies and sequencing
 Risks and blockers
 Critical checks
+Architecture review trigger decision
 Dev verification checklist
 QC focus areas
 Clarifying questions if blocked
@@ -41,8 +42,8 @@ Clarifying questions if blocked
 ## Output
 
 ```text
-.claude/tasks/<task-id>/task-input.md
-.claude/tasks/<task-id>/task-analysis.yaml
+.runtime/tasks/<task-id>/task-input.md
+.runtime/tasks/<task-id>/task-analysis.yaml
 ```
 
 ## Must not
@@ -74,3 +75,9 @@ Required analysis additions:
 - Whether the task needs a new reusable asset and why Coder Leader must review it.
 
 The output task-analysis.yaml must include reuse_and_convention_analysis.
+
+## Architecture review decision
+
+Task Analysis must populate `architecture_review` in task-analysis.yaml.
+
+Set `architecture_review.required: true` when the task changes cross-service flows, public APIs, events, schemas, shared packages, runtime topology, security-sensitive surfaces, or migration/rollback strategy. Include the reason and trigger list so Coordinator can route to Solution Architect before Coder Leader.

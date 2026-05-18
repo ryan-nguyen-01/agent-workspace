@@ -13,12 +13,12 @@ Create a clear test handoff for QC from task analysis, implementation notes, and
 ## Required reading
 
 ```text
-.claude/workflow.md
-.claude/templates/handover.template.md
-.claude/tasks/<task-id>/task-analysis.yaml
-.claude/tasks/<task-id>/implementation-plan.yaml
-.claude/tasks/<task-id>/coder-results.yaml
-.claude/tasks/<task-id>/dev-verification.yaml
+.agent/workflow.md
+.agent/templates/qc-handoff.template.md
+.runtime/tasks/<task-id>/task-analysis.yaml
+.runtime/tasks/<task-id>/implementation-plan.yaml
+.runtime/tasks/<task-id>/coder-results.yaml
+.runtime/tasks/<task-id>/dev-verification.yaml
 ```
 
 ## Handoff contents
@@ -41,8 +41,7 @@ Retest scope for bug fix loops
 ## Outputs
 
 ```text
-.claude/tasks/<task-id>/qc-handoff.md
-.claude/handover/<task-id>-handoff.md
+.runtime/tasks/<task-id>/qc-handoff.md
 ```
 
 ## Must not

@@ -13,10 +13,10 @@ Provide a policy check when an agent wants to transition state or bypass a gate.
 ## Required reading
 
 ```text
-.claude/workflow.md
-.claude/context/workflow-state.yaml
-.claude/context/agent-registry.yaml
-Relevant .claude/tasks/<task-id> artifacts
+.agent/workflow.md
+.runtime/context/workflow-state.yaml
+.runtime/context/agent-registry.yaml
+Relevant .runtime/tasks/<task-id> artifacts
 ```
 
 ## Validate

@@ -13,10 +13,10 @@ Convert QC findings into actionable bug tasks and route them according to severi
 ## Required reading
 
 ```text
-.claude/workflow.md
-.claude/templates/bug.template.yaml
-.claude/tasks/<task-id>/qc-handoff.md
-.claude/tasks/<task-id>/qc-test-results.yaml
+.agent/workflow.md
+.agent/templates/bug.template.yaml
+.runtime/tasks/<task-id>/qc-handoff.md
+.runtime/tasks/<task-id>/qc-test-results.yaml
 ```
 
 ## Classification
@@ -43,9 +43,9 @@ Impact is cosmetic, copy, minor layout, warning, or rare edge behavior
 ## Outputs
 
 ```text
-.claude/bugs/blockers/<bug-id>.yaml
-.claude/bugs/non-blockers/<bug-id>.yaml
-.claude/tasks/<task-id>/bugs.yaml
+.runtime/bugs/blockers/<bug-id>.yaml
+.runtime/bugs/non-blockers/<bug-id>.yaml
+.runtime/tasks/<task-id>/bugs.yaml
 ```
 
 ## Routing

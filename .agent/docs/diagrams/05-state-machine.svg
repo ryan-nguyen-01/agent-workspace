@@ -1,0 +1,67 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1500" height="760" viewBox="0 0 1500 760" role="img" aria-labelledby="title desc">
+  <title id="title">Workflow state machine</title>
+  <desc id="desc">Legal workflow states and transitions.</desc>
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0 0L10 5L0 10Z" fill="#9ca3af"/></marker>
+    <marker id="arrow-red" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0 0L10 5L0 10Z" fill="#fca5a5"/></marker>
+    <style>
+      .bg{fill:#111827}.panel{fill:#172033;stroke:#374151;stroke-width:2;rx:18}.title{fill:#f9fafb;font:700 26px Arial}.state{fill:#1f2937;stroke:#9ca3af;stroke-width:1.5;rx:18}.good{fill:#14532d;stroke:#86efac}.warn{fill:#78350f;stroke:#fbbf24}.bad{fill:#7f1d1d;stroke:#fca5a5}.text{fill:#f8fafc;font:700 13px Arial;text-anchor:middle;dominant-baseline:middle}.edge{fill:none;stroke:#9ca3af;stroke-width:2;marker-end:url(#arrow)}.edge-red{fill:none;stroke:#fca5a5;stroke-width:2;marker-end:url(#arrow-red)}.label{fill:#d1d5db;font:700 12px Arial}
+    </style>
+  </defs>
+  <rect class="bg" width="1500" height="760"/>
+  <rect class="panel" x="30" y="30" width="1440" height="700"/>
+  <text class="title" x="70" y="78">Workflow State Machine</text>
+
+  <rect class="state" x="70" y="135" width="130" height="52"/><text class="text" x="135" y="161">NEW</text>
+  <rect class="state warn" x="250" y="135" width="170" height="52"/><text class="text" x="335" y="161">NEED_ONBOARDING</text>
+  <rect class="state good" x="470" y="135" width="140" height="52"/><text class="text" x="540" y="161">ONBOARDED</text>
+  <rect class="state warn" x="660" y="135" width="250" height="52"/><text class="text" x="785" y="161" style="font-size:11px">NEED_AGENT_CREATION_APPROVAL</text>
+  <rect class="state good" x="960" y="135" width="150" height="52"/><text class="text" x="1035" y="161">AGENTS_READY</text>
+  <rect class="state" x="1160" y="135" width="210" height="52"/><text class="text" x="1265" y="161">READY_FOR_ANALYSIS</text>
+
+  <rect class="state" x="70" y="310" width="130" height="52"/><text class="text" x="135" y="336">ANALYZED</text>
+  <rect class="state warn" x="240" y="310" width="210" height="52"/><text class="text" x="345" y="336" style="font-size:11px">ARCHITECTURE_REVIEWING</text>
+  <rect class="state" x="500" y="310" width="130" height="52"/><text class="text" x="565" y="336">PLANNED</text>
+  <rect class="state" x="680" y="310" width="130" height="52"/><text class="text" x="745" y="336">IN_DEV</text>
+  <rect class="state warn" x="850" y="310" width="170" height="52"/><text class="text" x="935" y="336">DEV_VERIFYING</text>
+  <rect class="state bad" x="1060" y="250" width="150" height="52"/><text class="text" x="1135" y="276">DEV_BLOCKED</text>
+  <rect class="state good" x="1060" y="370" width="150" height="52"/><text class="text" x="1135" y="396">DEV_DONE</text>
+  <rect class="state good" x="1240" y="370" width="120" height="52"/><text class="text" x="1300" y="396">QC_READY</text>
+  <rect class="state warn" x="1390" y="370" width="70" height="52"/><text class="text" x="1425" y="396" style="font-size:10px">QC_TESTING</text>
+
+  <rect class="state bad" x="70" y="545" width="180" height="52"/><text class="text" x="160" y="571">BLOCKED_BY_BUG</text>
+  <rect class="state bad" x="300" y="545" width="130" height="52"/><text class="text" x="365" y="571">FIXING</text>
+  <rect class="state warn" x="445" y="545" width="145" height="52"/><text class="text" x="517" y="571" style="font-size:12px">QC_RETESTING</text>
+  <rect class="state good" x="610" y="545" width="130" height="52"/><text class="text" x="675" y="571">QC_DONE</text>
+  <rect class="state good" x="790" y="545" width="180" height="52"/><text class="text" x="880" y="571">MEMORY_SYNCING</text>
+  <rect class="state good" x="1020" y="545" width="130" height="52"/><text class="text" x="1085" y="571">DONE</text>
+
+  <path class="edge" d="M200 161H250"/>
+  <path class="edge" d="M420 161H470"/>
+  <path class="edge" d="M610 161H660"/>
+  <path class="edge" d="M910 161H960"/>
+  <path class="edge" d="M1110 161H1160"/>
+  <path class="edge" d="M1265 187C1265 250 190 250 135 310"/>
+  <path class="edge" d="M200 336H240"/>
+  <text class="label" x="220" y="325" text-anchor="middle">if required</text>
+  <path class="edge" d="M200 348C300 395 455 395 500 348"/>
+  <text class="label" x="345" y="394" text-anchor="middle">fast path</text>
+  <path class="edge" d="M450 336H500"/>
+  <path class="edge" d="M630 336H680"/>
+  <path class="edge" d="M810 336H850"/>
+  <path class="edge-red" d="M1020 325C1045 300 1055 280 1060 276"/>
+  <path class="edge-red" d="M1135 250C1040 210 790 235 750 310"/>
+  <path class="edge" d="M1020 350C1045 375 1055 395 1060 396"/>
+  <path class="edge" d="M1210 396H1240"/>
+  <path class="edge" d="M1360 396H1390"/>
+  <path class="edge-red" d="M1425 422C1260 520 300 505 250 571"/>
+  <path class="edge-red" d="M250 571H300"/>
+  <path class="edge-red" d="M365 545C390 465 760 420 935 362"/>
+  <path class="edge-red" d="M1135 422C1010 490 560 500 517 545"/>
+  <text class="label" x="700" y="480" text-anchor="middle">fix cycle</text>
+  <path class="edge" d="M590 571H610"/>
+  <path class="edge" d="M1425 422C1295 520 775 520 740 571"/>
+  <path class="edge" d="M740 571H790"/>
+  <text class="label" x="765" y="560" text-anchor="middle">delivery report</text>
+  <path class="edge" d="M970 571H1020"/>
+</svg>

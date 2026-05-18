@@ -13,11 +13,11 @@ Use the QC handoff to produce test cases, execute or record QC testing, and clas
 ## Required reading
 
 ```text
-.claude/workflow.md
-.claude/context/environments.md
-.claude/templates/qc-test-result.template.yaml
-.claude/templates/bug.template.yaml
-.claude/tasks/<task-id>/qc-handoff.md
+.agent/workflow.md
+.runtime/context/environments.md
+.agent/templates/qc-test-result.template.yaml
+.agent/templates/bug.template.yaml
+.runtime/tasks/<task-id>/qc-handoff.md
 ```
 
 ## QC flow
@@ -39,7 +39,7 @@ Use the QC handoff to produce test cases, execute or record QC testing, and clas
 After QC_DONE, read the API changes section from `qc-handoff.md` and generate a Postman 2.1 collection.
 
 ```text
-Output: .claude/tasks/<task-id>/postman-collection.json
+Output: .runtime/tasks/<task-id>/postman-collection.json
 
 Collection structure:
   - info.name:    <task-id> — <task summary>
@@ -63,7 +63,7 @@ If no API changes in handoff: skip collection generation and note in delivery re
 
 ```text
 Stop current QC run
-Create .claude/bugs/blockers/<bug-id>.yaml
+Create .runtime/bugs/blockers/<bug-id>.yaml
 Set task state BLOCKED_BY_BUG
 Return to Coder Leader through Coordinator
 ```
@@ -71,7 +71,7 @@ Return to Coder Leader through Coordinator
 ## Non-blocking bug response
 
 ```text
-Create .claude/bugs/non-blockers/<bug-id>.yaml
+Create .runtime/bugs/non-blockers/<bug-id>.yaml
 Keep task in QC_TESTING
 Continue cases that are not blocked by the bug
 ```

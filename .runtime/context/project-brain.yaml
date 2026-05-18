@@ -1,0 +1,258 @@
+version: 2
+distribution:
+  mode: "framework-template"
+  instance_status: "not_applied"
+  onboarding_expected: "workspace-services"
+  notes:
+    - "This project-brain is a seed for the reusable framework distribution."
+    - "Workspace onboarding refreshes this brain after services are cloned into services/."
+    - "Empty service catalog and stale seed freshness are acceptable before services are cloned and onboarding runs."
+project:
+  name: "agent-workspace"
+  slug: "agent-workspace"
+  repository_type: "workflow-framework"
+  primary_languages:
+    - "Markdown"
+    - "YAML"
+    - "JSON"
+    - "Shell"
+  frameworks: []
+  package_managers:
+    - "npm"
+  generated_at: "2026-05-17"
+  generated_by: "memory-structure-migration"
+
+memory:
+  role: "agent-brain"
+  root: ".runtime/context"
+  index: ".runtime/context/index.yaml"
+  service_memory_root: ".runtime/context/services"
+  service_workspace_root: "services"
+  state_file: ".runtime/context/workflow-state.yaml"
+  read_policy:
+    - "Read .runtime/context/index.yaml before opening large memory files."
+    - "Read only memory files whose tags, service_ids, or paths match the current task."
+    - "Do not full-rescan services when the index and service brain are fresh enough."
+    - "Run /sync-memory after meaningful changes so the index and brain stay current."
+
+freshness:
+  repo_reference: "unknown"
+  memory_epoch: 1
+  stale: true
+  stale_reasons:
+    - "Runtime workspace documents live under .runtime/context, .runtime/tasks, and .runtime/bugs. Do not create a separate handoff folder; Dev-to-QC handoff lives inside the task folder as qc-handoff.md."
+    - "Run /onboard or /sync-memory --refresh-index after adding real service projects."
+  partial_rescan_targets:
+    - ".agent"
+    - ".runtime/context"
+    - ".claude/agents"
+    - ".claude/skills"
+    - ".claude/commands"
+  # Drift detection fields consumed by Coordinator startup.
+  last_indexed_at: ""
+  stale_after_days: 14
+  tracked_paths:
+    - "services"
+    - "inputs"
+    - ".claude/agents"
+    - ".agent/rules"
+    - ".agent/templates"
+  last_drift_check_at: ""
+  last_drift_check_result: "unknown"
+
+# User-provided reference docs scanned by Onboarding (R-002-09..12).
+inputs:
+  root: "inputs"
+  index: ".runtime/context/inputs-index.yaml"
+  categories: ["product", "architecture", "api", "domain", "runbooks", "misc"]
+  last_scanned_at: ""
+  file_count: 0
+
+# Conflicts between inputs/ and source code (R-002-11).
+conflicts: []
+
+architecture:
+  summary: "Coordinator-driven workflow framework with static agent definitions, durable memory, service coding contracts, workflow state, task artifacts, and QC/bug loops."
+  services:
+    - "agent-workspace"
+  shared_libraries: []
+  databases: []
+  queues: []
+  external_integrations: []
+
+service_boundaries:
+  catalog: ".runtime/context/service-catalog.yaml"
+  agent_registry: ".runtime/context/agent-registry.yaml"
+  test_policy: ".runtime/context/test-policy.yaml"
+  rule: "Actual application code lives in each service.path from .runtime/context/service-catalog.yaml; services is the control plane, not a source-code dumping ground."
+
+policies:
+  workflow: "end-to-end"
+  coder_creation_requires_user_approval: true
+  code_done_threshold: 0.80
+  qc_handoff_required: true
+  blocker_stops_qc: true
+  non_blocker_allows_parallel_fix: true
+
+memory_rules:
+  never_store:
+    - secrets
+    - passwords
+    - raw tokens
+    - long logs
+    - temporary noisy output
+  store_when:
+    - architecture decision
+    - service boundary change
+    - test policy change
+    - bug root cause pattern
+    - user approved exception
+    - reusable coding convention
+    - durable user feedback
+
+deep_project_intelligence:
+  status: "partial"
+  reusable_assets:
+    utilities:
+      - path: ".agent/templates/agent-coder.template.md"
+        note: "Generated coder contract template."
+      - path: ".agent/templates/task-analysis.template.yaml"
+        note: "Task analysis artifact template."
+      - path: ".agent/templates/dev-verification.template.yaml"
+        note: "Dev verification artifact template."
+    shared_components: []
+    base_classes: []
+    hooks: []
+    middleware: []
+    validators: []
+    mappers_serializers: []
+    error_handling: []
+    logging: []
+    auth_helpers: []
+    db_transaction_helpers: []
+    event_queue_helpers: []
+    payment_helpers: []
+    notification_helpers: []
+    test_helpers: []
+  coding_conventions:
+    folder_structure:
+      - "memory is durable agent brain."
+      - "services is service control plane and coder scope registry."
+      - "state is transient workflow state."
+      - "tasks is per-task evidence and artifacts."
+      - ".claude/agents, .claude/skills, .agent/rules, .agent/templates, and .claude/commands are static workflow definitions."
+    naming_rules:
+      - "Agent files use *.agent.md."
+      - "Rules use nn-name.md."
+      - "Templates use *.template.(yaml|md)."
+      - "Service brains live in .runtime/context/services/<service>.yaml."
+      - "Service source paths must be recorded explicitly in .runtime/context/service-catalog.yaml."
+    layering_rules:
+      - "Memory describes what the agent knows; services describe where the agent may code; state describes where the workflow currently is."
+    api_patterns: []
+    validation_patterns: []
+    error_handling_patterns: []
+    logging_patterns: []
+    transaction_patterns: []
+    async_job_patterns: []
+    migration_patterns: []
+    testing_patterns: []
+    configuration_patterns: []
+  business_flows:
+    - id: "flow-onboarding"
+      name: "Project onboarding"
+      description: "Coordinator detects missing or stale brain, runs onboarding, writes memory and service contracts, then requests approval for coder generation."
+      entrypoints:
+        - ".claude/commands/onboard.md"
+        - ".claude/agents/onboarding.agent.md"
+      services:
+        - "agent-workspace"
+      steps:
+        - "Coordinator checks .runtime/context/index.yaml and project-brain.yaml freshness."
+        - "Onboarding scans approved project/service paths."
+        - "Onboarding writes memory and services artifacts."
+        - "Coordinator requests coder approval when service candidates exist."
+      data_entities:
+        - ".runtime/context/project-brain.yaml"
+        - ".runtime/context/index.yaml"
+        - ".runtime/context/service-catalog.yaml"
+        - ".runtime/context/agent-registry.yaml"
+      external_integrations: []
+      events_emitted: []
+      events_consumed: []
+      reusable_assets:
+        - ".agent/templates/project-brain.template.yaml"
+        - ".agent/templates/service-brain.template.yaml"
+      critical_checks:
+        - "Do not store secrets."
+        - "Do not invent service paths."
+      evidence:
+        - "README.md"
+        - ".agent/workflow.md"
+      confidence: "high"
+    - id: "flow-task-execution"
+      name: "Task execution flow"
+      description: "Coordinator routes tasks through analysis, planning, scoped service coding, verification, QC, and memory update."
+      entrypoints:
+        - ".claude/commands/coord.md"
+      services:
+        - "agent-workspace"
+      steps:
+        - "Task Analysis creates task-analysis.yaml."
+        - "Coder Leader plans and assigns scoped service coders."
+        - "Service coders implement only allowed service paths."
+        - "Dev Verification checks readiness."
+        - "QC Handoff and QC Runner execute handoff/testing."
+        - "Memory Update persists durable learnings and refreshes memory index."
+      data_entities:
+        - ".runtime/tasks/<task-id>/*"
+      external_integrations: []
+      events_emitted: []
+      events_consumed: []
+      reusable_assets:
+        - ".agent/templates/task-analysis.template.yaml"
+        - ".agent/templates/dev-verification.template.yaml"
+        - ".agent/templates/qc-test-result.template.yaml"
+      critical_checks:
+        - "No coding before task-analysis.yaml."
+        - "No QC before qc-handoff.md."
+      evidence:
+        - "README.md"
+        - ".agent/README.md"
+      confidence: "high"
+  reuse_rules:
+    - rule: "Use .agent/templates for workflow artifacts before creating new formats."
+      existing_asset: "Artifact templates"
+      existing_path: ".agent/templates"
+      applies_to:
+        - "task artifacts"
+        - "workflow handoffs"
+      must_reuse: true
+      evidence:
+        - "README.md"
+        - ".agent/README.md"
+      confidence: "high"
+  anti_patterns:
+    - rule: "Do not create coder agents without user approval."
+      reason: "Approval gate is mandatory for scoped coder creation."
+      examples_to_avoid:
+        - "Creating coder-*.agent.md directly"
+      safer_alternative: "Use /create-coders after Coordinator approval."
+      evidence:
+        - ".agent/workflow.md"
+        - ".agent/rules/11-approval-gates.md"
+      confidence: "high"
+  evidence_index:
+    - topic: "Folder semantics and workflow overview"
+      paths:
+        - "README.md"
+        - "GUIDELINES.md"
+        - ".agent/docs/folder-guide.md"
+      reason: "Defines memory, service, state, and task artifact boundaries."
+      confidence: "high"
+    - topic: "Workflow policy and agent responsibilities"
+      paths:
+        - ".agent/workflow.md"
+        - ".claude/agents/*.agent.md"
+      reason: "Defines coordinator-driven workflow and agent roles."
+      confidence: "high"

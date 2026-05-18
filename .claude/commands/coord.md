@@ -23,7 +23,7 @@ coordinator
 ## Workflow
 
 ```text
-1. Read .claude/workflow.md.
+1. Read .agent/workflow.md.
 2. Check Project Brain and Agent Registry.
 3. Validate current state transition and required artifacts.
 4. If Project Brain is missing or stale, route to /onboard.
@@ -31,7 +31,7 @@ coordinator
 6. If input is a task, route to /analyze-task.
 7. If task is analyzed but not planned, route to /plan-dev.
 8. If task is planned, route to /dev.
-9. If task is DEV_DONE, route to /handoff-qc.
+9. If task is DEV_DONE, route to /handoff-qc. The canonical handoff stays inside .runtime/tasks/<task_id>/qc-handoff.md.
 10. If task is QC_READY or QC_TESTING, route to /qc.
 11. If bug exists, route to /bug.
 12. If task is done, route to /sync-memory.

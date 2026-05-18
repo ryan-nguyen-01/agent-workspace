@@ -1,262 +1,241 @@
-# Agent Platform — Hướng dẫn cài đặt
+# Agent Workspace — Hướng dẫn cài đặt
+
+## Documentation entry points
+
+| Need | File |
+| --- | --- |
+| Khởi tạo workspace nhanh | [QUICKSTART.md](QUICKSTART.md) |
+| Slash commands | [COMMAND.md](COMMAND.md) |
+| Tổng quan framework | [README.md](README.md) |
+| Cài đặt/upgrade/validation chi tiết | [SETUP.md](SETUP.md) |
+| Entry point cho AI agents | [AGENTS.md](AGENTS.md) |
+| Entry point cho Claude Code | [CLAUDE.md](CLAUDE.md) |
+| Workflow source of truth | [.agent/workflow.md](.agent/workflow.md) |
 
 ## Yêu cầu
 
-- Claude (Sonnet/Opus) tích hợp trong IDE (VS Code, Cursor, Windsurf, hoặc Claude Desktop)
+- Một AI coding tool có thể đọc instruction files: Claude Code, Codex, Cursor, Gemini, GitHub Copilot, Aider, Continue, Cody, hoặc tương đương
 - Git (để clone repo)
 
 ---
 
-## Cấu trúc Agent Platform
+## Cấu trúc Agent Workspace
 
 ```
-agent-platform/
+agent-workspace/
 ├── CLAUDE.md                      ← Entry point (Claude đọc file này đầu tiên)
-├── CLAUDE.local.md                ← Project-specific overrides (template)
+├── AGENTS.md                      ← Entry point chung cho AI coding agents
+├── COMMAND.md                     ← Slash command index
 ├── GUIDELINES.md                  ← Cách dùng nhanh
 ├── SETUP.md                       ← File này
 ├── README.md                      ← Tổng quan dự án
-└── .claude/
-    ├── agents/                    ← 11 workflow agent definitions
-    │   ├── coordinator.agent.md
-    │   ├── onboarding.agent.md
-    │   ├── agent-factory.agent.md
-    │   ├── task-analysis.agent.md
-    │   ├── coder-leader.agent.md
-    │   ├── dev-verification.agent.md
-    │   ├── qc-handoff.agent.md
-    │   ├── qc-runner.agent.md
-    │   ├── bug-router.agent.md
-    │   ├── memory-update.agent.md
-    │   └── workflow-policy.agent.md
-    │
-    ├── skills/                    ← 227 skill definitions
-    │   ├── skill-project-brain/SKILL.md      (12 workflow skills)
-    │   ├── skill-task-analysis/SKILL.md
-    │   ├── react/SKILL.md                    (215 technical skills)
-    │   ├── prisma/SKILL.md
-    │   └── ...
-    │
-    ├── rules/                     ← 15 workflow rules
-    │   ├── 00-core-rules.md
-    │   ├── 01-project-brain-rules.md
-    │   └── ... (00-14)
-    │
-    ├── templates/                 ← 13 artifact templates
-    │   ├── task-analysis.template.yaml
-    │   ├── dev-verification.template.yaml
-    │   └── ...
-    │
-    ├── commands/                  ← 15 workflow commands
-    │   ├── onboard.md
-    │   ├── dev.md
-    │   └── ...
-    │
-    ├── docs/                      ← Documentation + visual diagrams
-    │   ├── visual-flow.md         ← All workflow diagrams (entry point)
-    │   ├── folder-guide.md        ← Full .claude folder reference
-    │   ├── deep-onboarding.md
-    │   ├── skill-composition.md
-    │   ├── external-skills.md
-    │   └── diagrams/              ← 8 SVG workflow diagrams
-    │
-    └── context/                   ← Runtime (auto-generated per project)
-        ├── project-brain.yaml
-        ├── service-catalog.yaml
-        └── ...
+├── .codex/                        ← Codex instructions
+├── .cursor/                       ← Cursor rules
+├── .gemini/                       ← Gemini instructions
+├── .agent/                        ← Tool-neutral workflow source
+│   ├── workflow.md
+│   ├── rules/                     ← 15 workflow rules
+│   ├── templates/                 ← 16 artifact templates
+│   └── docs/                      ← Documentation + visual diagrams
+├── .runtime/                      ← Runtime memory and workflow artifacts
+│   ├── context/                   ← Project brain + service contracts + workflow state
+│   ├── tasks/                     ← Task artifacts
+│   └── bugs/                      ← Bug reports
+├── .claude/                       ← Claude adapter
+│   ├── agents/                    ← 12 workflow agents + built-in/generated coders
+│   │   ├── coordinator.agent.md
+│   │   ├── onboarding.agent.md
+│   │   ├── agent-factory.agent.md
+│   │   ├── task-analysis.agent.md
+│   │   ├── solution-architect.agent.md
+│   │   ├── coder-leader.agent.md
+│   │   ├── dev-verification.agent.md
+│   │   ├── qc-handoff.agent.md
+│   │   ├── qc-runner.agent.md
+│   │   ├── bug-router.agent.md
+│   │   ├── memory-update.agent.md
+│   │   └── workflow-policy.agent.md
+│   │
+│   ├── skills/                    ← 227 skill definitions
+│   │   ├── skill-project-brain/SKILL.md      (12 workflow skills)
+│   │   ├── skill-task-analysis/SKILL.md
+│   │   ├── react/SKILL.md                    (215 technical skills)
+│   │   ├── prisma/SKILL.md
+│   │   └── ...
+│   │
+│   ├── commands/                  ← 15 workflow commands
+│   │   ├── onboard.md
+│   │   ├── dev.md
+│   │   └── ...
+│   └── settings.json
+├── inputs/                        ← User-provided reference docs (PRD, HLD, ADR, OpenAPI…)
+│   ├── product/                   PRD, business specs, user stories
+│   ├── architecture/              HLD, LLD, ADRs, system diagrams
+│   ├── api/                       OpenAPI/Swagger specs, contracts
+│   ├── domain/                    Domain models, glossary, business rules
+│   ├── runbooks/                  Ops playbooks, incident response
+│   └── misc/                      Uncategorized
+└── services/                      ← Ignored workspace for cloned application repos
 ```
 
 ---
 
-## Cài đặt
+## Cài Đặt Workspace
 
-### Option A: Local (per project)
+`agent-workspace` là workspace điều phối. User clone repo này về, sau đó clone các application/service repositories vào `services/`. Không copy `.claude/` sang từng service repo, không cài global vào `~/.claude/`, và không dùng subtree/submodule để nhúng framework vào project khác.
 
-Cài agent-platform vào dự án cụ thể. Claude chỉ sử dụng khi mở project đó.
-
-#### macOS / Linux
+### 1. Clone agent-workspace
 
 ```bash
-# 1. Clone agent-platform
-git clone <repo-url> ~/Downloads/agent-platform
+git clone <repo-url> ~/Downloads/agent-workspace
+cd ~/Downloads/agent-workspace
+```
 
-# 2. Copy vào project
-cd <your-project>
-cp -r ~/Downloads/agent-platform/.claude .
-cp ~/Downloads/agent-platform/CLAUDE.md .
-cp ~/Downloads/agent-platform/CLAUDE.local.md .
+Expected distribution shape:
 
-# 3. Verify
+```bash
 echo "Agents: $(ls .claude/agents/*.agent.md 2>/dev/null | wc -l | tr -d ' ')"
 echo "Skills: $(ls -d .claude/skills/*/SKILL.md 2>/dev/null | wc -l | tr -d ' ')"
-echo "Rules:  $(ls .claude/rules/*.md 2>/dev/null | wc -l | tr -d ' ')"
+echo "Rules:  $(find .agent/rules -name '[0-9][0-9]-*.md' 2>/dev/null | wc -l | tr -d ' ')"
 ```
 
-Expected output:
-
-```
-Agents: 11
+```text
+Agents: 14
 Skills: 227
-Rules:  16
+Rules:  15
 ```
 
-#### Windows (PowerShell)
+### 2. Add user inputs
 
-```powershell
-# 1. Clone
-git clone <repo-url> $HOME\Downloads\agent-platform
+Đặt tài liệu tham chiếu của dự án vào `inputs/`:
 
-# 2. Copy vào project
-cd <your-project>
-Copy-Item -Recurse "$HOME\Downloads\agent-platform\.claude" .
-Copy-Item "$HOME\Downloads\agent-platform\CLAUDE.md" .
-Copy-Item "$HOME\Downloads\agent-platform\CLAUDE.local.md" .
-
-# 3. Verify
-Write-Host "Agents: $((Get-ChildItem .claude\agents\*.agent.md).Count)"
-Write-Host "Skills: $((Get-ChildItem .claude\skills\*\SKILL.md).Count)"
-Write-Host "Rules:  $((Get-ChildItem .claude\rules\*.md).Count)"
+```text
+inputs/product/       PRD, business specs, user stories
+inputs/architecture/  HLD, LLD, ADRs, system diagrams
+inputs/api/           OpenAPI/Swagger specs, contracts
+inputs/domain/        Domain models, glossary, business rules
+inputs/runbooks/      Ops playbooks, incident response
+inputs/misc/          Uncategorized docs
 ```
 
-### Option B: Global (tất cả projects)
+### 3. Clone services
 
-Cài một lần, mọi project đều sử dụng.
-
-#### macOS / Linux
+Clone hoặc đặt source repositories vào `services/<service-name>/`:
 
 ```bash
-# 1. Clone
-git clone <repo-url> ~/Downloads/agent-platform
-
-# 2. Setup global
-mkdir -p ~/.claude
-cp -r ~/Downloads/agent-platform/.claude/* ~/.claude/
-cp ~/Downloads/agent-platform/CLAUDE.md ~/.claude/
-
-# 3. Verify
-echo "Agents: $(ls ~/.claude/agents/*.agent.md 2>/dev/null | wc -l | tr -d ' ')"
-echo "Skills: $(ls -d ~/.claude/skills/*/SKILL.md 2>/dev/null | wc -l | tr -d ' ')"
-echo "Rules:  $(ls ~/.claude/rules/*.md 2>/dev/null | wc -l | tr -d ' ')"
+git clone <api-repo-url> services/api
+git clone <web-repo-url> services/web
+git clone <worker-repo-url> services/worker
 ```
 
-#### Windows (PowerShell)
+`services/` được gitignored trong repo `agent-workspace`, nên source code của app không bị commit vào framework.
 
-```powershell
-# 1. Clone
-git clone <repo-url> $HOME\Downloads\agent-platform
+### 4. Onboard workspace
 
-# 2. Setup global
-New-Item -ItemType Directory -Force "$HOME\.claude"
-Copy-Item -Recurse "$HOME\Downloads\agent-platform\.claude\*" "$HOME\.claude\"
-Copy-Item "$HOME\Downloads\agent-platform\CLAUDE.md" "$HOME\.claude\"
+Mở chính repo `agent-workspace` trong IDE/Claude Code rồi chạy:
 
-# 3. Verify
-Write-Host "Agents: $((Get-ChildItem $HOME\.claude\agents\*.agent.md).Count)"
-Write-Host "Skills: $((Get-ChildItem $HOME\.claude\skills\*\SKILL.md).Count)"
-Write-Host "Rules:  $((Get-ChildItem $HOME\.claude\rules\*.md).Count)"
+```text
+/coord
 ```
 
----
+hoặc:
 
-## Post-install Validation
-
-Sau khi cài đặt, chạy script kiểm tra tính toàn vẹn:
-
-```bash
-bash scripts/validate-install.sh
-# hoặc nếu cài ở thư mục khác:
-bash scripts/validate-install.sh /path/to/project
+```text
+/onboard
 ```
 
-Script kiểm tra: core files, directory structure, agent/skill/rule/template/command counts, context placeholders, settings, và docs. Output có màu (pass/fail/warn) và exit code 0 (OK) hoặc 1 (errors).
+Recommended flow:
 
----
+```text
+1. Clone agent-workspace.
+2. Put reference docs into inputs/.
+3. Clone application repositories into services/.
+4. Run /coord or /onboard from agent-workspace.
+5. Review project brain, service catalog, test policy, and coder candidates.
+6. Approve /create-coders only for services that should receive generated service coders.
+7. Start implementation requests through /coord.
+```
+
+Built-in cross-cutting coders are available before service-specific coder generation:
+
+- `coder-infra`: Terraform/IaC, Kubernetes, Docker, CI/CD.
+- `coder-database`: schema, migrations, queries, indexes.
+
+They are marked `origin: "built-in"` in `.runtime/context/agent-registry.yaml` and do not mean the workspace has already been onboarded.
+
+### 5. Per-tool setup (optional)
+
+Agent Workspace ship sẵn entrypoints cho 5 AI tools. Mỗi tool có convention riêng — phần này nói rõ những step **tool-specific** cần làm thủ công.
+
+#### Claude Code
+
+Không cần setup thêm. Claude Code tự discover:
+
+- `.claude/agents/*.agent.md` — 12 workflow agents + 2 built-in coders qua Agent tool
+- `.claude/skills/*/SKILL.md` — 227 skills qua Skill tool
+- `.claude/commands/*.md` — 15 slash commands (`/coord`, `/onboard`, …)
+- `CLAUDE.md` ở root — system instructions
+
+#### Codex CLI
+
+`.codex/AGENTS.md` được Codex đọc tự động.
+
+Tuy nhiên **`.codex/config.toml` (project-level) BỊ IGNORE mặc định** vì Codex yêu cầu user phải trust project trước khi load config. Để kích hoạt:
+
+```toml
+# Thêm vào ~/.codex/config.toml của bạn:
+[projects."/absolute/path/to/agent-workspace"]
+trust_level = "trusted"
+```
+
+Hoặc đơn giản hơn: chạy `codex` lần đầu trong workspace và accept trust prompt khi Codex hỏi. Sau đó các lần sau Codex sẽ load `.codex/config.toml` (sandbox mode, project doc fallback, approval policy).
+
+Nếu không trust, Codex vẫn dùng `.codex/AGENTS.md` (luôn đọc) nhưng bỏ qua `.codex/config.toml`. Workflow vẫn chạy được, chỉ mất phần sandbox/approval tinh chỉnh.
+
+Lưu ý: Codex sandbox là lớp hỗ trợ, không phải hard gate theo từng service. Source of truth cho write scope vẫn là `.runtime/context/workflow-state.yaml.active_task_id` và `.runtime/context/agent-registry.yaml.allowed_write_paths`.
+
+Verify project-level config schema tại [`developers.openai.com/codex/config-reference`](https://developers.openai.com/codex/config-reference).
+
+#### Cursor
+
+Cursor tự discover:
+
+- `.cursor/rules/*.mdc` — 4 glob-targeted rule files (auto-apply theo file type bạn đang edit)
+- `.cursor/hooks.json` — lifecycle hooks (gating edits + shell commands)
+
+Hooks scripts dùng `bash` + `grep`/`sed` (BSD/GNU portable), không yêu cầu `jq`. Nếu hệ thống có `jq`, scripts dùng `jq` cho JSON parsing robust hơn — không có cũng OK.
+
+Hooks chỉ chạy trong **Cursor IDE**. Claude Code / Codex / Gemini KHÔNG respect `.cursor/hooks.json` — workflow gates ở các tool khác đến từ AGENTS.md / CLAUDE.md / `.codex/AGENTS.md` / `.gemini/GEMINI.md`.
+
+Schema verify tại [`cursor.com/docs/agent/hooks`](https://cursor.com/docs/agent/hooks).
+
+#### Gemini Code Assist
+
+`.gemini/GEMINI.md` được Gemini đọc tự động. Không config thêm.
+
+#### GitHub Copilot
+
+`.github/copilot-instructions.md` được Copilot Chat đọc tự động. Không config thêm.
 
 ## Upgrade
 
-### Option 1: Manual copy (đơn giản)
+Upgrade framework bằng cách pull version mới trong chính workspace `agent-workspace`.
 
 ```bash
-# 1. Pull version mới
-cd ~/Downloads/agent-platform
+cd ~/Downloads/agent-workspace
 git pull origin main
-
-# 2. Backup custom files (nếu có)
-cd <your-project>
-cp -r .claude/agents/coder-*.agent.md /tmp/backup/     # generated coders
-cp -r .claude/context/ /tmp/backup/context/             # runtime context
-cp -r .claude/tasks/ /tmp/backup/tasks/                 # task history
-cp -r .claude/bugs/ /tmp/backup/bugs/                   # bug history
-
-# 3. Update framework files
-cp -r ~/Downloads/agent-platform/.claude/agents/ .claude/agents/
-cp -r ~/Downloads/agent-platform/.claude/skills/ .claude/skills/
-cp -r ~/Downloads/agent-platform/.claude/rules/ .claude/rules/
-cp -r ~/Downloads/agent-platform/.claude/templates/ .claude/templates/
-cp -r ~/Downloads/agent-platform/.claude/commands/ .claude/commands/
-cp -r ~/Downloads/agent-platform/.claude/docs/ .claude/docs/
-cp ~/Downloads/agent-platform/.claude/settings.json .claude/
-cp ~/Downloads/agent-platform/CLAUDE.md .
-cp ~/Downloads/agent-platform/SETUP.md .
-cp ~/Downloads/agent-platform/GUIDELINES.md .
-
-# 4. Restore custom files
-cp /tmp/backup/coder-*.agent.md .claude/agents/ 2>/dev/null || true
-cp -r /tmp/backup/context/ .claude/
-cp -r /tmp/backup/tasks/ .claude/
-cp -r /tmp/backup/bugs/ .claude/
-
-# 5. Validate
-bash scripts/validate-install.sh
 ```
 
-**Không ghi đè khi upgrade:**
+Nếu workspace đã onboard và có generated coders/task history, kiểm tra các folder runtime này khi resolve conflict:
 
-| File/Folder                       | Lý do                                        |
-| --------------------------------- | -------------------------------------------- |
-| `CLAUDE.local.md`                 | Project-specific overrides                   |
-| `.claude/context/`                | Runtime data (project brain, service brains) |
-| `.claude/tasks/`                  | Task history                                 |
-| `.claude/bugs/`                   | Bug history                                  |
-| `.claude/agents/coder-*.agent.md` | Generated service coders                     |
-| `.claude/rules/15-*.md` trở lên   | Custom rules                                 |
-
-### Option 2: Git subtree (tự động hơn)
-
-Dùng git subtree để quản lý framework như dependency:
-
-```bash
-# ─── Lần đầu: thêm subtree ───
-cd <your-project>
-git remote add agent-platform <repo-url>
-git subtree add --prefix=.claude agent-platform main --squash
-
-# ─── Upgrade: pull version mới ───
-git subtree pull --prefix=.claude agent-platform main --squash
-
-# Resolve conflicts nếu có (thường là custom rules hoặc settings)
-# Sau đó validate:
-bash scripts/validate-install.sh
-```
-
-> **Lưu ý**: Với subtree, CLAUDE.md và các file root-level (SETUP.md, GUIDELINES.md) không được quản lý tự động. Copy chúng thủ công khi upgrade.
-
-### Option 3: Git submodule
-
-```bash
-# ─── Lần đầu ───
-cd <your-project>
-git submodule add <repo-url> .agent-platform
-ln -s .agent-platform/.claude .claude
-cp .agent-platform/CLAUDE.md .
-
-# ─── Upgrade ───
-cd .agent-platform
-git pull origin main
-cd ..
-git add .agent-platform
-git commit -m "chore: upgrade agent-platform"
-```
+| File/Folder                       | Lý do                                              |
+| --------------------------------- | -------------------------------------------------- |
+| `.runtime/context/`                | Brain, service contracts, workflow state, feedback |
+| `.runtime/tasks/`                  | Task history                                       |
+| `.runtime/bugs/`                   | Bug history                                        |
+| `.claude/agents/coder-*.agent.md` | Generated service coders                           |
+| `.agent/rules/15-*.md` trở lên   | Custom rules                                       |
+| `inputs/`                         | User-provided reference docs (PRD/HLD/ADR/specs)   |
 
 ### Kiểm tra version
 
@@ -273,7 +252,7 @@ head -5 CHANGELOG.md
 
 ### Cách gọi workflow
 
-Agent-platform sử dụng **coordinator-driven workflow**. Bạn có thể giao tiếp bằng:
+Agent Workspace sử dụng **coordinator-driven workflow**. Bạn có thể giao tiếp bằng:
 
 #### 1. Ngôn ngữ tự nhiên (khuyến nghị)
 
@@ -301,6 +280,7 @@ Dùng commands để gọi trực tiếp workflow phase:
 /qc                         → Run QC tests
 /bug                        → Route bug report
 /sync-memory                → Update memory
+/skills                     → Maintain installed skills
 /policy-check               → Validate workflow policy
 /coord                      → Coordinator direct
 /status                     → Check workflow status
@@ -314,13 +294,14 @@ Khi giao task, coordinator tự động chạy workflow đầy đủ:
 ```
 1. coordinator        → Route task, check project brain
 2. task-analysis      → Normalize → task-analysis.yaml
-3. coder-leader       → Plan, assign service coders
-4. [service coders]   → Implement (scoped per service)
-5. dev-verification   → Check Code Done (≥80% + critical checks)
-6. qc-handoff         → Handoff document
-7. qc-runner          → Run QC tests
-8. bug-router         → Route defects (nếu có)
-9. memory-update      → Persist learnings
+3. solution-architect → Review architecture khi task yêu cầu
+4. coder-leader       → Plan, assign service coders
+5. [service coders]   → Implement (scoped per service)
+6. dev-verification   → Check Code Done (≥80% + critical checks)
+7. qc-handoff         → Handoff document
+8. qc-runner          → Run QC tests
+9. bug-router         → Route defects (nếu có)
+10. memory-update     → Persist learnings
 ```
 
 ---
@@ -336,6 +317,7 @@ Khi giao task, coordinator tự động chạy workflow đầy đủ:
 | Kiểm tra code đã sẵn sàng chưa | `/verify-dev`      |
 | Chạy QC tests                  | `/qc`              |
 | Báo bug                        | `/bug`             |
+| Quản lý/update skills          | `/skills`          |
 | Xem trạng thái workflow        | `/status`          |
 | Tiếp tục task bị gián đoạn     | `/resume-task`     |
 
@@ -352,22 +334,20 @@ Khi giao task, coordinator tự động chạy workflow đầy đủ:
 | Template         | `{name}.template.{ext}`             | `task-analysis.template.yaml`        |
 | Command          | `{name}.md`                         | `dev.md`                             |
 | Generated coder  | `coder-{service}.agent.md`          | `coder-api.agent.md`                 |
-| Task folder      | `.claude/tasks/{task-id}/`          | `.claude/tasks/TASK-001/`            |
-| Bug file         | `.claude/bugs/{type}/{bug-id}.yaml` | `.claude/bugs/blockers/BUG-001.yaml` |
+| Task folder      | `.runtime/tasks/{task_id}/`          | `.runtime/tasks/TASK-20260518-001-login/` |
+| Bug file         | `.runtime/bugs/{type}/{bug-id}.yaml` | `.runtime/bugs/blockers/BUG-001.yaml` |
 
 ---
 
 ## Troubleshooting
 
-### Claude không nhận agent-platform
+### Claude không nhận agent-workspace
 
 1. Kiểm tra file entry point:
 
 ```bash
-# CLAUDE.md phải có ở root project hoặc ~/.claude/
+# CLAUDE.md phải có ở root workspace agent-workspace
 ls CLAUDE.md
-# hoặc
-ls ~/.claude/CLAUDE.md
 ```
 
 2. Kiểm tra cấu trúc:
@@ -376,26 +356,27 @@ ls ~/.claude/CLAUDE.md
 # Verify tất cả resources
 echo "Agents: $(ls .claude/agents/*.agent.md 2>/dev/null | wc -l | tr -d ' ')"
 echo "Skills: $(ls -d .claude/skills/*/SKILL.md 2>/dev/null | wc -l | tr -d ' ')"
-echo "Rules:  $(ls .claude/rules/*.md 2>/dev/null | wc -l | tr -d ' ')"
-echo "Templates: $(ls .claude/templates/* 2>/dev/null | wc -l | tr -d ' ')"
+echo "Rules:  $(find .agent/rules -name '[0-9][0-9]-*.md' 2>/dev/null | wc -l | tr -d ' ')"
+echo "Templates: $(ls .agent/templates/* 2>/dev/null | wc -l | tr -d ' ')"
 echo "Commands: $(ls .claude/commands/*.md 2>/dev/null | wc -l | tr -d ' ')"
 ```
 
 Expected:
 
 ```
-Agents: 11
+Agents: 14
 Skills: 227
-Rules:  16
-Templates: 13
-Commands: 15
+Rules:  15
+Templates: 16
+Commands: 16
 ```
 
 ### Workflow không chạy đúng
 
-1. Check project brain: `.claude/context/project-brain.yaml` phải tồn tại
-2. Nếu chưa có → chạy `/onboard` hoặc gõ "Phân tích dự án này"
-3. Check agent registry: `.claude/context/agent-registry.yaml` phải list active coders
+1. Check memory index: `.runtime/context/index.yaml` phải tồn tại
+2. Check project brain: `.runtime/context/project-brain.yaml` phải tồn tại
+3. Nếu chưa có → chạy `/onboard` hoặc gõ "Phân tích dự án này"
+4. Check agent registry: `.runtime/context/agent-registry.yaml` phải list active coders
 
 ### Lỗi "service coder không tồn tại"
 
@@ -407,18 +388,8 @@ Chạy `/create-coders` để tạo coder agents cho project hiện tại.
 ## Cập nhật
 
 ```bash
-# Pull bản mới
-cd ~/Downloads/agent-platform
+cd ~/Downloads/agent-workspace
 git pull
-
-# Copy lại vào project (local)
-cd <your-project>
-cp -r ~/Downloads/agent-platform/.claude .
-cp ~/Downloads/agent-platform/CLAUDE.md .
-
-# Hoặc cập nhật global
-cp -r ~/Downloads/agent-platform/.claude/* ~/.claude/
-cp ~/Downloads/agent-platform/CLAUDE.md ~/.claude/
 ```
 
 ### Verify sau khi cập nhật
@@ -427,8 +398,8 @@ cp ~/Downloads/agent-platform/CLAUDE.md ~/.claude/
 echo "=== Verification ==="
 echo "Agents: $(ls .claude/agents/*.agent.md 2>/dev/null | wc -l | tr -d ' ')"
 echo "Skills: $(ls -d .claude/skills/*/SKILL.md 2>/dev/null | wc -l | tr -d ' ')"
-echo "Rules:  $(ls .claude/rules/*.md 2>/dev/null | wc -l | tr -d ' ')"
-echo "Templates: $(ls .claude/templates/* 2>/dev/null | wc -l | tr -d ' ')"
+echo "Rules:  $(find .agent/rules -name '[0-9][0-9]-*.md' 2>/dev/null | wc -l | tr -d ' ')"
+echo "Templates: $(ls .agent/templates/* 2>/dev/null | wc -l | tr -d ' ')"
 echo "Commands: $(ls .claude/commands/*.md 2>/dev/null | wc -l | tr -d ' ')"
 ```
 
@@ -436,24 +407,16 @@ echo "Commands: $(ls .claude/commands/*.md 2>/dev/null | wc -l | tr -d ' ')"
 
 ## FAQ & Troubleshooting
 
-### Git subtree conflict khi upgrade
+### Git conflict khi upgrade
 
 ```bash
-# Lỗi thường gặp:
-# "refusing to merge unrelated histories" hoặc conflict ở custom rules
-
-# Cách xử lý:
-git subtree pull --prefix=.claude agent-platform main --squash
-
-# Nếu conflict:
-git status                         # xem files conflict
-git checkout --theirs .claude/skills/   # giữ version mới cho skills
-git checkout --ours .claude/rules/15-*  # giữ custom rules của bạn
+git status
+# Resolve conflicts carefully. Do not overwrite runtime context/task history blindly.
 git add .
-git commit -m "chore: resolve subtree upgrade conflicts"
+git commit -m "chore: resolve agent-workspace upgrade conflicts"
 ```
 
-### Permission denied khi copy files
+### Permission denied
 
 ```bash
 # macOS / Linux: .claude/ folder bị read-only
@@ -465,24 +428,18 @@ sudo chown -R $(whoami) .claude/
 
 ### Skills / agents count không đúng expected
 
-```bash
-# Chạy validation script để xem chi tiết
-bash scripts/validate-install.sh
+Nguyên nhân phổ biến:
 
-# Nguyên nhân phổ biến:
-# 1. Copy thiếu files (dùng cp -r, không phải cp)
-# 2. .gitignore exclude .claude/ → thêm !.claude/ vào .gitignore
-# 3. Git subtree chưa pull hết → chạy lại subtree pull
+```text
+1. Pull/merge chưa đầy đủ.
+2. .claude/ bị xóa hoặc conflict chưa resolve.
+3. Skill/template/rule count thay đổi nhưng docs/config chưa cập nhật.
 ```
 
 ### CLAUDE.md không được Claude đọc
 
 ```bash
-# Kiểm tra file tồn tại ở đúng vị trí:
-# - Local install: CLAUDE.md ở root project
-# - Global install: ~/.claude/CLAUDE.md
-
-# Kiểm tra IDE đang mở đúng folder:
+# Kiểm tra IDE đang mở đúng folder agent-workspace:
 pwd
 ls CLAUDE.md
 
@@ -495,13 +452,15 @@ Project brain đã tồn tại nhưng coordinator vẫn trigger onboarding:
 
 ```bash
 # Kiểm tra project brain
-cat .claude/context/project-brain.yaml | head -5
+cat .runtime/context/project-brain.yaml | head -5
 
-# Nếu file rỗng hoặc corrupt → chạy lại onboarding:
-# Gõ: /onboard
+# Kiểm tra memory index
+cat .runtime/context/index.yaml | head -5
 
-# Nếu file tồn tại và valid → kiểm tra CLAUDE.md có bị sửa đổi
-diff CLAUDE.md ~/Downloads/agent-platform/CLAUDE.md
+# Nếu file rỗng hoặc corrupt → refresh:
+# Gõ: /sync-memory --refresh-index
+# Nếu service structure thay đổi → /onboard --refresh <service>
+
 ```
 
 ### Windows: Line ending issues
@@ -520,9 +479,9 @@ git config --global core.autocrlf input
 
 ## Checklist cài đặt
 
-- [ ] Clone agent-platform repo
-- [ ] Copy `.claude/` folder vào project (hoặc `~/.claude/`)
-- [ ] Copy `CLAUDE.md` vào project root (hoặc `~/.claude/`)
-- [ ] Verify: 11 agents, 227 skills, 16 rules, 15 templates, 15 commands
-- [ ] Mở project trong IDE có Claude
+- [ ] Clone agent-workspace repo
+- [ ] Đặt reference docs vào `inputs/`
+- [ ] Clone service repositories vào `services/<service-name>/`
+- [ ] Verify: 12 workflow agents + 2 built-in coders, 227 skills, 15 workflow rules, 16 templates, 15 commands
+- [ ] Mở repo `agent-workspace` trong IDE có Claude
 - [ ] Test: gõ "Phân tích dự án này" hoặc `/onboard`

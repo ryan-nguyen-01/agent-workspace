@@ -19,10 +19,11 @@ coordinator
 ## Workflow
 
 ```text
-1. Read workflow-state.yaml.
-2. Read project-brain.yaml freshness.
-3. Read service-catalog.yaml summary.
-4. Read agent-registry.yaml summary.
+1. Read .runtime/context/workflow-state.yaml.
+2. Read .runtime/context/index.yaml freshness.
+3. Read .runtime/context/project-brain.yaml freshness only if needed.
+4. Read .runtime/context/service-catalog.yaml summary.
+5. Read .runtime/context/agent-registry.yaml summary.
 5. If task id is provided, read task artifacts status.
 6. Report next recommended command.
 ```

@@ -1,0 +1,63 @@
+---
+description: Agent Workspace core workflow policy (always applied)
+alwaysApply: true
+---
+
+# Cursor Rules — agent-workspace (core)
+
+This repository is `agent-workspace`: a coordinator-driven AI workflow workspace, not an application repository.
+
+Application repositories are cloned under `services/<service-name>/`. User reference docs go under `inputs/`.
+
+> See also: `agent-workspace-source.mdc` (when editing `services/**` or `src/**`), `agent-workspace-runtime.mdc` (when editing `.runtime/**`), `agent-workspace-spec.mdc` (when editing `.agent/**`).
+
+## Read First
+
+- `AGENTS.md`
+- `CLAUDE.md`
+- `COMMAND.md`
+- `.agent/workflow.md`
+- `.runtime/context/workflow-state.yaml`
+
+## Core workflow rules (always)
+
+- Route every natural-language request through `/coord`.
+- Do not jump directly to workflow agents or generated coders from raw user input.
+- If a required fact is missing, mark `unknown`, cite the evidence gap, and ask through Coordinator. Do not fabricate.
+- Claims of "done" must include evidence (file path, command output, or artifact).
+
+## Task Folder Contract
+
+Task IDs use `TASK-YYYYMMDD-NNN-slug`.
+
+All task artifacts stay in `.runtime/tasks/<task_id>/`.
+
+Required baseline artifacts:
+
+- `task-input.md`
+- `task.yaml`
+- `task-updates.yaml`
+- `task-analysis.yaml`
+
+Implementation/QC artifacts are created only by the matching workflow phase:
+
+- `architecture-review.yaml`
+- `implementation-plan.yaml`
+- `service-assignments.yaml`
+- `coder-results.yaml`
+- `dev-verification.yaml`
+- `qc-handoff.md`
+- `qc-test-results.yaml`
+- `qc-delivery-report.md`
+- `bugs.yaml`
+- `memory-updates.yaml`
+
+The canonical Dev-to-QC handoff is `.runtime/tasks/<task_id>/qc-handoff.md`.
+
+## Commands
+
+Use `COMMAND.md` for the canonical command list. Start with `/coord` unless the user intentionally invokes a specific command.
+
+## Anti-Guessing
+
+If a required fact is missing, use `unknown`, state the evidence gap, and ask through Coordinator. Do not fabricate project facts.

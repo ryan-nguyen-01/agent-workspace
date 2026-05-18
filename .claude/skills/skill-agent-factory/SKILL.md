@@ -60,7 +60,7 @@ Layer 2: coordination skills when the service participates in a multi-service ta
 - `skill-qc-handoff`
 - `skill-bug-routing`
 
-Layer 3: stack-specific skills from `.claude/context/skill-registry.yaml`.
+Layer 3: stack-specific skills from `.runtime/context/skill-registry.yaml`.
 
 - Select stack skills from Project Brain, Service Brain, task evidence, and skill-registry.yaml selection rules.
 - Prefer the minimum useful set, not all installed skills.
@@ -74,18 +74,18 @@ Coder generation is not complete until the generated agent states its service sc
 
 ---
 
-## Sibling service write path rule
+## Workspace service write path rule
 
-**Deployment model:** agent-platform is copied to the **same parent directory** as the service projects. `../service-name` relative paths always resolve correctly.
+**Deployment model:** application repositories are cloned under `services/<service-name>/` inside the agent-workspace repository.
 
 ```text
-1. Read service.path (e.g. ../service-a) from services/<service-id>.yaml.
+1. Read service.path (e.g. services/service-a) from services/<service-id>.yaml.
 2. Prefix all allowed_write_paths with service.path.
-   Good: ../service-a/src, ../service-a/tests
-   Bad:  src  (ambiguous — resolves inside agent-platform, not the service)
+   Good: services/service-a/src, services/service-a/tests
+   Bad:  src  (ambiguous — resolves inside agent-workspace, not the service)
 3. If service.path is empty or missing → stop, raise to Coordinator.
 4. Record the resolved paths in agent-registry.yaml alongside the coder entry.
-5. Never default to agent-platform sub-directories for sibling services.
+5. Never default to unrecorded directories for services.
 ```
 
 The path recorded in the service brain during onboarding is the single source of truth.
@@ -135,7 +135,7 @@ Selection rules:
 - Angular, Svelte, SvelteKit, and Astro services get their matching framework skill only when framework config or dependency evidence exists.
 - Mobile/native services get Flutter, Android/Kotlin, or Swift skills only when native project files prove the stack.
 - ORM/database skills are added by dependency evidence and task scope; do not add every database skill to every backend coder.
-- Skills with visible risk notes in <code>.claude/docs/external-skills.md</code> require explicit mention in the generated coder agent before use.
+- Skills with visible risk notes in <code>.agent/docs/external-skills.md</code> require explicit mention in the generated coder agent before use.
 
 Generated coder agents must list selected Batch 3 skills under <code>Selected skills</code> with a one-line reason for each.
 

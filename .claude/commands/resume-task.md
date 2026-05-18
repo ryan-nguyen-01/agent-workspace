@@ -20,11 +20,13 @@ coordinator
 ## Workflow
 
 ```text
-1. Read task.yaml or available task artifacts.
-2. Determine current state.
-3. Check required artifact for the next transition.
-4. Route to the next command.
-5. If artifacts are missing, route to the responsible command to recreate them.
+1. Resolve task_id and task folder under .runtime/tasks/<task_id>/.
+2. Read task.yaml first; if missing, reconstruct only from artifacts in that same folder.
+3. Read task-updates.yaml when present for state/artifact history.
+4. Determine current state.
+5. Check required artifact for the next transition.
+6. Route to the next command.
+7. If artifacts are missing, route to the responsible command to recreate them.
 ```
 
 ## Output format

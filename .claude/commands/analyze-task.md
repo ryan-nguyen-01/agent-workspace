@@ -20,15 +20,18 @@ task-analysis
 ## Workflow
 
 ```text
-1. Store original input as task-input.md.
-2. Create task.yaml if missing.
-3. Identify source type and intent.
-4. Define business goal and acceptance criteria.
-5. Identify impacted services.
-6. Identify contract changes, risks, blockers, critical checks, dev verification checklist, and QC focus.
-7. Capture assumptions and unknowns with confidence markers.
-8. If critical ambiguity exists, mark requires_user_clarification, add clarifying questions, and stop.
-9. Write task-analysis.yaml.
+1. Coordinator assigns a unique task_id: TASK-YYYYMMDD-NNN-slug.
+2. Create .runtime/tasks/<task_id>/.
+3. Store original input as task-input.md.
+4. Create task.yaml from task.template.yaml if missing.
+5. Append task-updates.yaml with task creation/update event.
+6. Identify source type and intent.
+7. Define business goal and acceptance criteria.
+8. Identify impacted services.
+9. Identify contract changes, risks, blockers, critical checks, dev verification checklist, and QC focus.
+10. Capture assumptions and unknowns with confidence markers.
+11. If critical ambiguity exists, mark requires_user_clarification, add clarifying questions, and stop.
+12. Write task-analysis.yaml in the same task folder.
 ```
 
 ## Stop conditions
@@ -43,8 +46,8 @@ Security-sensitive requirement lacks enough detail
 
 Task Analysis must populate reuse_and_convention_analysis in task-analysis.yaml:
 
-- Relevant project flows from project-brain.yaml and architecture.md.
-- Relevant service flows from services/<service>.yaml.
+- Relevant project flows from .runtime/context/project-brain.yaml and .runtime/context/architecture.md.
+- Relevant service flows from .runtime/context/services/<service>.yaml.
 - Reusable assets that service coders should use.
 - Coding conventions that affect the implementation.
 - Anti-patterns to avoid.

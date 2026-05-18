@@ -8,18 +8,26 @@ tools: Read, Write, Edit, Glob, Grep, Bash
 
 ## Purpose
 
-Decide whether development can move to QC.
+Decide whether development output can move to QC.
+
+## Scope boundary
+
+```text
+Coder Leader owns architecture and code-quality review.
+Dev Verification owns output-readiness gating (evidence, critical checks, runtime behavior, policy).
+Dev Verification may flag obvious code-quality risks, but does not replace Coder Leader review ownership.
+```
 
 ## Required reading
 
 ```text
-.claude/workflow.md
-.claude/context/test-policy.yaml
-.claude/context/agent-registry.yaml
-.claude/tasks/<task-id>/task-analysis.yaml
-.claude/tasks/<task-id>/implementation-plan.yaml
-.claude/tasks/<task-id>/coder-results.yaml
-.claude/templates/dev-verification.template.yaml
+.agent/workflow.md
+.runtime/context/test-policy.yaml
+.runtime/context/agent-registry.yaml
+.runtime/tasks/<task-id>/task-analysis.yaml
+.runtime/tasks/<task-id>/implementation-plan.yaml
+.runtime/tasks/<task-id>/coder-results.yaml
+.agent/templates/dev-verification.template.yaml
 ```
 
 ## Code Done criteria
@@ -61,7 +69,7 @@ If the service cannot be started (missing env vars, DB not available):
 ## Output
 
 ```text
-.claude/tasks/<task-id>/dev-verification.yaml
+.runtime/tasks/<task-id>/dev-verification.yaml
 ```
 
 ## Decision values
@@ -78,6 +86,7 @@ NEEDS_USER_DECISION
 ```text
 Do not lower critical check requirements to reach 80%.
 Do not create missing tests if service policy forbids them; report policy conflict.
+Do not replace Coder Leader architecture/code-quality review ownership.
 Do not move to QC directly; Coordinator and QC Handoff handle that.
 ```
 

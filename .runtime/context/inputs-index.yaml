@@ -1,0 +1,9 @@
+version: 1
+generated_at: null
+generated_by: null
+status: "not_scanned"
+root: "inputs"
+files: []
+notes:
+  - "Placeholder index shipped with the framework distribution."
+  - "Onboarding replaces this file after scanning workspace inputs/."

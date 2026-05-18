@@ -5,7 +5,7 @@ description: Build the initial project brain by scanning architecture, services,
 
 # Skill: Project Onboarding
 
-Use when `.claude/context/project-brain.yaml` is missing, stale, or incomplete.
+Use when `.runtime/context/project-brain.yaml` is missing, stale, or incomplete.
 
 ## Scan order
 
@@ -25,9 +25,10 @@ Coding conventions from repeated patterns
 
 ```text
 project-brain.yaml
-service-catalog.yaml
-test-policy.yaml
-services/<service>.yaml
+.runtime/context/index.yaml
+.runtime/context/service-catalog.yaml
+.runtime/context/test-policy.yaml
+.runtime/context/services/<service>.yaml
 agent candidates requiring user approval
 ```
 
@@ -61,8 +62,10 @@ Evidence requirement:
 
 Output targets:
 
-- Structured summary in project-brain.yaml under deep_project_intelligence.
-- Service-specific details in services/<service>.yaml under service_deep_intelligence.
-- Human-readable reusable assets in context/common/generics.md.
-- Human-readable conventions in context/conventions.md.
-- Business/technical flows in context/architecture.md.
+- Structured summary in .runtime/context/project-brain.yaml under deep_project_intelligence.
+- Service-specific details in .runtime/context/services/<service>.yaml under service_deep_intelligence.
+- Service path and coding boundary contracts in .runtime/context/service-catalog.yaml.
+- Human-readable reusable assets in .runtime/context/common/generics.md.
+- Human-readable conventions in .runtime/context/conventions.md.
+- Business/technical flows in .runtime/context/architecture.md.
+- Selective-read routing metadata in .runtime/context/index.yaml.

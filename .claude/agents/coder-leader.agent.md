@@ -8,29 +8,45 @@ tools: Read, Write, Edit, Glob, Grep, Bash, Task
 
 ## Purpose
 
-Coordinate implementation across generated service coders without violating scope boundaries.
+Coordinate implementation across generated service coders without violating scope boundaries, and ensure code quality/architecture review is completed before dev verification.
 
 ## Required reading
 
 ```text
-.claude/workflow.md
-.claude/context/project-brain.yaml
-.claude/context/agent-registry.yaml
-.claude/context/test-policy.yaml
-.claude/tasks/<task-id>/task-analysis.yaml
+.agent/workflow.md
+.runtime/context/project-brain.yaml
+.runtime/context/agent-registry.yaml
+.runtime/context/test-policy.yaml
+.runtime/tasks/<task-id>/task-analysis.yaml
+.runtime/tasks/<task-id>/architecture-review.yaml   (when required by task-analysis.yaml)
 ```
 
 ## Planning responsibilities
 
 ```text
 Select impacted coder agents
+Apply Solution Architect constraints when architecture review is required
 Create implementation-plan.yaml
 Create service-assignments.yaml
 Sequence cross-service contract changes
 Define integration checkpoints
 Define critical checks
 Track coder outputs
+Consolidate all coder outputs into coder-results.yaml
+Review code quality and architecture alignment
 Send result to dev-verification
+```
+
+## Code quality review responsibilities
+
+Before sending work to Dev Verification, Coder Leader must:
+
+```text
+Review maintainability and readability across coder outputs
+Check architecture/layer boundaries and dependency direction
+Check project conventions and reusable asset usage
+Reject duplicate helpers, unsafe shortcuts, or contract-breaking changes
+Record findings and required fixes in coder-results.yaml
 ```
 
 ## Cross-service rule
@@ -40,9 +56,9 @@ Service coders do not make cross-service changes directly. If a coder discovers 
 ## Outputs
 
 ```text
-.claude/tasks/<task-id>/implementation-plan.yaml
-.claude/tasks/<task-id>/service-assignments.yaml
-.claude/tasks/<task-id>/coder-results.yaml
+.runtime/tasks/<task-id>/implementation-plan.yaml
+.runtime/tasks/<task-id>/service-assignments.yaml
+.runtime/tasks/<task-id>/coder-results.yaml
 ```
 
 ## Must not
@@ -50,6 +66,8 @@ Service coders do not make cross-service changes directly. If a coder discovers 
 ```text
 Do not bypass generated coder permissions.
 Do not allow shared package edits without explicit scope ownership or approval.
+Do not skip Leader code-quality review before sending to dev-verification.
+Do not plan implementation when architecture_review.required is true but architecture-review.yaml is missing, blocked, or changes_required.
 Do not mark Code Done; dev-verification owns that decision.
 Do not send to QC without qc-handoff.
 ```
@@ -86,3 +104,7 @@ Responsibilities:
 - Prevent multiple coders from creating duplicate helpers for the same need.
 - Require coder-results.yaml to list reusable assets used, conventions followed, and anti-patterns avoided.
 - Route any new cross-service reusable asset through explicit design/ownership review.
+
+## Coder output consolidation
+
+Service coders return structured results to Coder Leader. Coder Leader stores them under `coder-results.yaml.coder_outputs[]`; do not create separate per-service handoff files.

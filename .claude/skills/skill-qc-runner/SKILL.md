@@ -26,9 +26,9 @@ After QC_DONE, write qc-delivery-report.md with link to Postman collection
 Generate after QC_DONE so the user can replay API tests independently.
 
 ```text
-Read:  .claude/tasks/<task-id>/qc-handoff.md  (section: API changes)
-Read:  .claude/tasks/<task-id>/coder-results.yaml  (endpoint details if handoff is thin)
-Write: .claude/tasks/<task-id>/postman-collection.json
+Read:  .runtime/tasks/<task-id>/qc-handoff.md  (section: API changes)
+Read:  .runtime/tasks/<task-id>/coder-results.yaml  (endpoint details if handoff is thin)
+Write: .runtime/tasks/<task-id>/postman-collection.json
 
 Format: Postman Collection v2.1
   info.schema: https://schema.getpostman.com/json/collection/v2.1.0/collection.json
@@ -70,7 +70,7 @@ Include:
   - Hướng dẫn verify cho User: concrete steps user can run to verify
   - Đề xuất tiếp theo: recommendations for future work
 
-Template: .claude/templates/qc-delivery-report.template.md
+Template: .agent/templates/qc-delivery-report.template.md
 Target audience: the USER (not other agents)
 ```
 

@@ -1,0 +1,74 @@
+version: 1
+distribution_mode: "framework-template"
+instance_status: "not_applied"
+current_state: "NEED_ONBOARDING"
+active_task_id: null
+updated_at: "2026-04-22"
+updated_by: "coordinator"
+reason: "Framework workspace seed. Onboarding is expected after service repositories are cloned into services/."
+notes:
+  - "This repository is the reusable agent-workspace framework, not an onboarded application project."
+  - "NEED_ONBOARDING is the correct seed state before services are cloned and onboarding runs."
+  - "Built-in cross-cutting coders may exist before service-specific generated coders."
+
+allowed_transitions:
+  NEW:
+    - NEED_ONBOARDING
+    - READY_FOR_ANALYSIS
+  NEED_ONBOARDING:
+    - ONBOARDED
+  ONBOARDED:
+    - NEED_AGENT_CREATION_APPROVAL
+  NEED_AGENT_CREATION_APPROVAL:
+    - AGENTS_READY
+    - READY_FOR_ANALYSIS
+  AGENTS_READY:
+    - READY_FOR_ANALYSIS
+  READY_FOR_ANALYSIS:
+    - ANALYZED
+  ANALYZED:
+    - ARCHITECTURE_REVIEWING
+    - PLANNED
+  ARCHITECTURE_REVIEWING:
+    - ANALYZED
+    - PLANNED
+  PLANNED:
+    - IN_DEV
+  IN_DEV:
+    - DEV_VERIFYING
+    - DEV_BLOCKED
+  DEV_VERIFYING:
+    - DEV_DONE
+    - DEV_BLOCKED
+    - IN_DEV
+  DEV_BLOCKED:
+    - IN_DEV
+  DEV_DONE:
+    - QC_READY
+    - QC_RETESTING
+  QC_READY:
+    - QC_TESTING
+  QC_TESTING:
+    - BLOCKED_BY_BUG
+    - QC_DONE
+  BLOCKED_BY_BUG:
+    - FIXING
+  FIXING:
+    - DEV_VERIFYING
+  QC_RETESTING:
+    - BLOCKED_BY_BUG
+    - QC_DONE
+  QC_DONE:
+    - MEMORY_SYNCING
+  MEMORY_SYNCING:
+    - DONE
+
+approval_gates:
+  - create_generated_coder_agents
+  - skip_onboarding
+  - skip_qc
+  - skip_blocker_bug
+  - expand_coder_write_scope
+  - create_tests_when_policy_forbids
+  - proceed_task_analysis_to_coder_leader
+  - update_installed_skills

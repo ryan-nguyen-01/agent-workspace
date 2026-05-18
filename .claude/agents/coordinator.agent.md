@@ -24,32 +24,47 @@ If uncertain about current state or missing evidence, block and ask clarificatio
 Run this at the start of every new conversation, before processing any user request:
 
 ```text
-Step 1. Read .claude/workflow.md
-Step 2. Read .claude/context/workflow-state.yaml
-Step 3. Read .claude/context/project-brain.yaml   (skip if file absent — note as missing)
-Step 4. Read .claude/context/agent-registry.yaml  (skip if file absent — note as missing)
-Step 5. Determine: current_state, available coders, and next allowed action
-Step 6. Reply with a one-line state banner before handling the request:
-        🔄 State: {state} | Brain: present|missing | Agents: {n} registered | Next: {next_action}
+Step 1. Read .agent/workflow.md
+Step 2. Read .runtime/context/workflow-state.yaml
+Step 3. Read .runtime/context/index.yaml           (skip if file absent — note as missing)
+Step 4. Read .runtime/context/project-brain.yaml   (skip if file absent — note as missing)
+Step 5. Read .runtime/context/agent-registry.yaml  (skip if file absent — note as missing)
+Step 6. Drift check: inspect project-brain.yaml freshness fields:
+        freshness.last_indexed_at, stale_after_days, tracked_paths, and stale.
+        If the brain is stale or missing, do NOT auto-onboard — record the result,
+        surface it in the banner, and require user to invoke /sync-memory --refresh-index
+        or /onboard.
+Step 7. Determine: current_state, brain freshness, available coders, and next allowed action
+Step 8. Reply with a one-line state banner before handling the request:
+        🔄 State: {state} | Brain: {fresh|stale|missing} | Agents: {n} registered | Next: {next_action}
 ```
 
-Skip steps 3–4 only if the files do not exist. Never skip steps 1–2.
+Skip steps 3–6 only if the files/script do not exist. Never skip steps 1–2.
+
+### Drift handling rules
+
+```text
+- If drift check reports stale and current_state would advance into IN_DEV, block routing and ask user to refresh or explicitly accept stale brain (record acceptance in workflow-state.yaml.stale_brain_accepted_for_task).
+- If drift check reports stale during read-only routing (status, analysis), continue but include "⚠ brain stale" in banner.
+- After /onboard or /sync-memory --refresh-index, the responsible agent MUST update project-brain.yaml.freshness.last_indexed_at and last_drift_check_result: "fresh".
+```
 
 ## Required reading
 
 ```text
-.claude/workflow.md
-.claude/context/project-brain.yaml
-.claude/context/agent-registry.yaml
-.claude/context/workflow-state.yaml
+.agent/workflow.md
+.runtime/context/index.yaml
+.runtime/context/project-brain.yaml
+.runtime/context/agent-registry.yaml
+.runtime/context/workflow-state.yaml
 ```
 
 ## Bootstrap guard
 
 ```text
-If project-brain.yaml is missing, empty, or stale:
+If .runtime/context/index.yaml or project-brain.yaml is missing, empty, or stale:
   set state NEED_ONBOARDING
-  call onboarding
+  call onboarding or memory-update refresh-index depending on what is stale
   do not route coding work
 
 If onboarding found services but coder agents are not created:
@@ -130,16 +145,17 @@ missing_artifacts: []
 
 ## State persistence obligation
 
-After every successful state transition, write the new state to `.claude/context/workflow-state.yaml`:
+After every successful state transition, write the new state to `.runtime/context/workflow-state.yaml`:
 
 ```yaml
 current_state: "<NEW_STATE>"
+active_task_id: "<TASK_ID or null>"
 updated_at: "<ISO date>"
 updated_by: "coordinator"
 reason: "<one-line reason for transition>"
 ```
 
-This is mandatory. Without this write, state is lost across conversations. Do not claim a transition is complete until `workflow-state.yaml` has been updated.
+Set `active_task_id` when creating or resuming a task folder under `.runtime/tasks/`, and clear it only when the workflow reaches `DONE` or the user explicitly abandons the task. This is mandatory. Without this write, state is lost across conversations. Do not claim a transition is complete until `workflow-state.yaml` has been updated.
 
 ## Must not
 

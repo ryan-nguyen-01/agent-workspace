@@ -1,0 +1,16 @@
+version: 1
+role: "service-control-plane"
+generated_at: null
+generated_by: null
+status: "needs_onboarding"
+
+description: "Defines coding targets. Actual source code lives in each service.path; services stores contracts and registries only."
+
+path_rules:
+  preferred_layout: "Application repositories are cloned under services/<service-name>/ inside the agent-workspace workspace."
+  preferred_relative_path: "services/<service-name>"
+  do_not_assume: "Never assume service code lives outside services/ unless service.path explicitly says so."
+  write_rule: "Generated coders may write only inside allowed_write_paths approved for their service."
+
+services: []
+agent_candidates: []
