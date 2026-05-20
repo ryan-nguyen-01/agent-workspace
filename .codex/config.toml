@@ -41,8 +41,8 @@ sandbox_mode = "workspace-write"
 # services/<repo>/ is intentionally not listed here; generated coders manage
 # their own scopes via .runtime/context/agent-registry.yaml.
 writable_roots = [
-  "../.runtime",
-  "../inputs",
+  ".runtime",
+  "inputs",
 ]
 # Outbound network requires explicit approval per session.
 network_access = false

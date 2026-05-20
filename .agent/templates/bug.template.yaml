@@ -2,8 +2,10 @@ bug_id: "BUG-{{ID}}"
 source_task: "{{TASK_ID}}"
 severity: "blocker|non-blocker"
 status: "open|assigned|fixed|retest|closed"
-found_by: "qc-runner"
+found_by: "qc-runner|user|manual|dev-verification|coordinator"
 found_at: "{{FOUND_AT}}"
+canonical_path: ".runtime/bugs/{{blockers_or_non-blockers}}/BUG-{{ID}}.yaml"
+task_index_path: ".runtime/tasks/{{TASK_ID}}/bugs.yaml"
 
 title: "{{TITLE}}"
 summary: "{{SUMMARY}}"
@@ -25,6 +27,15 @@ evidence:
   logs: []
   screenshots: []
   request_response_notes: []
+
+prevention:
+  root_cause: "{{ROOT_CAUSE}}"
+  recurrence_key: "{{SERVICE_OR_STACK}}|{{SYMPTOM}}|{{ROOT_CAUSE_CATEGORY}}"
+  prevention_rule: "{{WHAT_AGENT_MUST_DO_NEXT_TIME}}"
+  regression_check: "{{TEST_OR_MANUAL_STEP_THAT_CATCHES_THIS}}"
+  promote_to_feedback: true
+  feedback_target: ".runtime/context/feedback/inbox.md"
+  memory_update_required: true
 
 routing:
   qc_action: "stop_immediately|continue_unaffected_cases"

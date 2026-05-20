@@ -67,5 +67,11 @@ approval_gates:
   - skip_blocker_bug
   - expand_coder_write_scope
   - create_tests_when_policy_forbids
+  - run_destructive_environment_database_deployment_or_data_action
+  - change_workflow_policy_or_state_machine_rules
+  - touch_files_outside_coder_scope
   - proceed_task_analysis_to_coder_leader
+  - disable_fast_track_through_test_policy
   - update_installed_skills
+  - switch_distribution_mode
+  - workspace_mode_repair_write

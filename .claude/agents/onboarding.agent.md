@@ -10,10 +10,15 @@ tools: Read, Write, Edit, Glob, Grep, Bash
 
 Create or refresh the project brain so future conversations do not rescan the repository from scratch.
 
+## Model routing
+
+Use `model_profile=deep_reasoning` from `.runtime/context/model-routing.yaml`. Onboarding does broad project classification and context-economy indexing, so Claude adapters prefer Opus and Codex adapters prefer GPT-5.5 when available.
+
 ## Required reading
 
 ```text
 .agent/workflow.md
+.runtime/context/model-routing.yaml
 .agent/templates/project-brain.template.yaml
 .agent/templates/service-brain.template.yaml
 .agent/templates/agent-registry.template.yaml
@@ -63,6 +68,50 @@ Shared code ownership
 Risk areas and security-sensitive zones
 ```
 
+## Universal project profiling
+
+Onboarding must work for any project type without a token-heavy full read. Start with a signature scan, then classify one or more archetypes:
+
+```text
+backend-api, frontend-web, mobile-app, desktop-app, cli-tool, library-sdk,
+data-pipeline, ml-model, infra-iac, embedded-firmware, docs-site,
+docs-and-templates, plugin-extension, monorepo-platform, workflow-framework, unknown
+```
+
+Record the result in:
+
+```text
+project-brain.yaml.project_profile
+.runtime/context/services/<service>.yaml.profile
+.runtime/context/index.yaml.context_economy
+```
+
+Each archetype and boundary decision must include evidence paths and confidence. Mixed projects are normal; do not collapse a monorepo into one category if multiple archetypes are present.
+
+### Signature scan first
+
+Before deep reads, inspect only:
+
+```text
+file tree shape
+service-catalog paths when refreshing
+package/build manifests and lockfiles
+route/API/schema/model files
+test config and CI/deploy config
+inputs-index.yaml rows
+```
+
+Use manifest semantics when available. Examples: `package.json`, `pyproject.toml`, `go.mod`, `pom.xml`, `build.gradle`, `Cargo.toml`, `pubspec.yaml`, `Package.swift`, `*.csproj`, `Dockerfile`, Terraform files, OpenAPI files, db migration folders, and CI workflow files.
+
+Skip by default:
+
+```text
+node_modules, vendor, dist, build, .next, coverage, .git, generated files,
+large binary assets, lockfile bodies unless dependency evidence is required
+```
+
+After the signature scan, choose the smallest deep-read set that can answer service boundaries, test policy, reusable assets, and coder candidates. If evidence is weak, mark `unknown` and `partial`; do not guess.
+
 ### Conflict resolution
 
 If `inputs/` and source code disagree (e.g. inputs says service uses Postgres, code uses MongoDB):
@@ -86,6 +135,21 @@ Write or update:
 .runtime/context/services/<service>.yaml
 .runtime/context/agent-registry.yaml with candidate agents only when not approved yet
 ```
+
+The Project Brain output must include:
+
+```text
+project_profile.archetypes
+project_profile.source_layout
+project_profile.critical_manifests
+project_profile.boundary_strategy
+project_profile.onboarding_scan_profile
+context_economy.default_context_budget
+context_economy.expansion_triggers
+context_economy.never_read_by_default
+```
+
+Each service brain must include `profile.context_hints` so later agents can find entrypoints, manifests, API/schema files, config, and tests without broad scans.
 
 ## Incremental refresh modes
 
@@ -222,7 +286,7 @@ Do not infer test requirements when evidence is absent; mark unknown.
 
 ```text
 Primary command: /onboard
-Required rules: 00-core-rules, 01-project-brain-rules, 02-onboarding-rules, 13-security-secret-rules
+Required rules: 00-core-rules, 01-project-brain-rules, 02-onboarding-rules, 13-security-secret-rules, 15-model-routing-observability-rules
 ```
 
 ## Deep project intelligence responsibilities

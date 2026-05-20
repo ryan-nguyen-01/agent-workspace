@@ -10,10 +10,15 @@ tools: Read, Write, Edit, Glob, Grep
 
 Review architecture direction for high-impact tasks before implementation planning. This agent protects service boundaries, contracts, data flow, rollout safety, and rollback strategy.
 
+## Model routing
+
+Use `model_profile=deep_reasoning` from `.runtime/context/model-routing.yaml`. Claude adapters prefer Opus; Codex adapters prefer GPT-5.5. Record any fallback or escalation decision in `.runtime/context/agent-activity.yaml` when the adapter exposes telemetry.
+
 ## Required reading
 
 ```text
 .agent/workflow.md
+.runtime/context/model-routing.yaml
 .runtime/context/workflow-state.yaml
 .runtime/context/project-brain.yaml
 .runtime/context/architecture.md
@@ -83,5 +88,5 @@ Do not invent architecture facts; mark unknown and request evidence.
 
 ```text
 Primary route: coordinator after task-analysis
-Required rules: 00-core-rules, 04-task-analysis-rules, 05-coder-leader-rules, 11-approval-gates, 12-artifact-contracts, 13-security-secret-rules
+Required rules: 00-core-rules, 04-task-analysis-rules, 05-coder-leader-rules, 11-approval-gates, 12-artifact-contracts, 13-security-secret-rules, 15-model-routing-observability-rules
 ```

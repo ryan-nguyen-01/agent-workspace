@@ -16,12 +16,20 @@ service_type: cross-cutting-concern
 owner: coder-leader
 created_from: .agent/templates/agent-coder.template.md
 scope_class: cross-cutting   # Not service-bound. Applies to schemas, migrations, queries, and indexes.
+model_profile: coding
+model_routing_source: .runtime/context/model-routing.yaml
 ```
+
+## Model routing
+
+Use `model_profile=coding` from `.runtime/context/model-routing.yaml`. Claude adapters prefer Sonnet for this agent; Codex adapters prefer the configured Codex coding model (`gpt-5.3-codex` by default). Escalate to `deep_reasoning` for destructive migrations, production data changes, compatibility risk, or unclear ownership, and record the reason in `.runtime/context/agent-activity.yaml`.
 
 ## Required reading
 
 ```text
 .agent/workflow.md
+.runtime/context/model-routing.yaml
+.runtime/context/agent-activity.yaml
 .runtime/context/project-brain.yaml
 .runtime/context/services/<service>.yaml   (only services whose data model is changing)
 .runtime/context/test-policy.yaml
@@ -226,6 +234,10 @@ risks:
   - blast_radius: "<tables, services, environments, or API contracts affected>"
   - rollback_plan: "<how to undo if it fails>"
 decisions: []
+model_usage:
+  model_profile: "coding"
+  model_id: "unknown"
+  token_usage: "unknown"
 cross_service_requests: []
 critical_checks_passed: []
 critical_checks_failed: []
@@ -270,5 +282,5 @@ Record blocker_reason in coder-results.yaml.
 
 ```text
 Primary commands: /dev (when assigned)
-Required rules: 00-core-rules, 06-service-coder-rules, 11-approval-gates, 12-artifact-contracts, 13-security-secret-rules, 14-skill-composition-rules
+Required rules: 00-core-rules, 06-service-coder-rules, 11-approval-gates, 12-artifact-contracts, 13-security-secret-rules, 14-skill-composition-rules, 15-model-routing-observability-rules
 ```

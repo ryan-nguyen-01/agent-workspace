@@ -34,8 +34,11 @@ Task state is QC_READY, QC_TESTING, or QC_RETESTING
 4. On blocker, stop immediately and route to /bug.
 5. On non-blocker, create bug and continue unaffected cases.
 6. Write qc-test-results.yaml.
-7. Return QC_DONE only with zero open blockers.
+7. Generate Postman collection only when qc-handoff.md records API endpoint changes.
+8. Return QC_DONE only with zero open blockers.
 ```
+
+Skip /qc for framework-maintenance fast-track unless the task explicitly changes QC policy, test behavior, or a runnable helper script with user-facing risk.
 
 ## Stop conditions
 

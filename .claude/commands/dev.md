@@ -4,6 +4,8 @@
 
 Run implementation flow through Coder Leader and generated service coders.
 
+This command is for applied-service implementation. Standard tasks require implementation-plan.yaml; applied-service fast-track requires only lightweight service-assignments.yaml. Framework-maintenance fast-track skips /dev and records changed files plus verification evidence directly.
+
 ## Responsible agent
 
 coder-leader
@@ -24,7 +26,7 @@ coder-leader
 
 ```text
 task-analysis.yaml exists
-implementation-plan.yaml exists
+implementation-plan.yaml exists unless applied-service fast_track: true
 service-assignments.yaml exists
 active generated coder agents exist
 ```

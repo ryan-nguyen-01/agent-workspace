@@ -21,15 +21,16 @@ onboarding
 
 ```text
 1. Read .runtime/context/index.yaml if it exists.
-2. Scan project structure.
-3. Detect repository type, stack, services, modules, shared code, APIs, DB, CI, environments, and test policy.
-4. Write .runtime/context/project-brain.yaml.
-5. Write .runtime/context/service-catalog.yaml.
-6. Write .runtime/context/test-policy.yaml.
-7. Write .runtime/context/services/<service>.yaml.
-8. Refresh .runtime/context/index.yaml.
-9. Produce agent candidates requiring approval.
-10. Return to Coordinator for create-coders approval.
+2. Run a signature scan first: tree shape, manifests, lockfiles, service roots, API/schema/test/CI/deploy config, and inputs-index.
+3. Classify project_profile archetypes and source_layout with evidence/confidence.
+4. Deep-read only the smallest source/doc set needed to detect services, modules, shared code, APIs, DB, CI, environments, and test policy.
+5. Write .runtime/context/project-brain.yaml including context_economy.
+6. Write .runtime/context/service-catalog.yaml.
+7. Write .runtime/context/test-policy.yaml.
+8. Write .runtime/context/services/<service>.yaml including profile.context_hints.
+9. Refresh .runtime/context/index.yaml including context_economy routing rows.
+10. Produce agent candidates requiring approval.
+11. Return to Coordinator for create-coders approval.
 ```
 
 ## Usage
@@ -80,12 +81,14 @@ Do not store secrets.
 
 In addition to service and stack detection, /onboard must build deep project intelligence:
 
-1. Detect reusable assets and where they are used.
-2. Detect coding conventions and flow patterns from repeated evidence.
-3. Detect business and technical flows from entrypoints, service calls, events, jobs, and integrations.
-4. Detect anti-patterns and existing safer alternatives.
-5. Write structured data into .runtime/context/project-brain.yaml and service brain files.
-6. Write human-readable indexes into .runtime/context/common/generics.md, .runtime/context/conventions.md, and .runtime/context/architecture.md.
-7. Update .runtime/context/service-catalog.yaml with explicit service.path and allowed write boundary candidates.
+1. Classify project/service archetypes and source layout.
+2. Detect reusable assets and where they are used.
+3. Detect coding conventions and flow patterns from repeated evidence.
+4. Detect business and technical flows from entrypoints, service calls, events, jobs, and integrations.
+5. Detect anti-patterns and existing safer alternatives.
+6. Write structured data into .runtime/context/project-brain.yaml and service brain files.
+7. Write context hints so later agents avoid broad reads.
+8. Write human-readable indexes into .runtime/context/common/generics.md, .runtime/context/conventions.md, and .runtime/context/architecture.md.
+9. Update .runtime/context/service-catalog.yaml with explicit service.path and allowed write boundary candidates.
 
 Stop or mark partial when evidence is insufficient. Do not invent conventions.

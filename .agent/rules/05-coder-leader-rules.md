@@ -9,8 +9,9 @@ Coder Leader, Coordinator, generated service coders.
 ```text
 R-005-01: Coder Leader owns all multi-service implementation coordination.
 R-005-02: Service coders must not coordinate cross-service changes directly.
-R-005-03: Coder Leader must create implementation-plan.yaml before assigning coders.
-R-005-04: Coder Leader must create service-assignments.yaml before coder work starts.
+R-005-03: In the standard applied-service pipeline, Coder Leader must create implementation-plan.yaml before assigning coders.
+R-005-04: In the standard applied-service pipeline, Coder Leader must create service-assignments.yaml before coder work starts.
+R-005-04b: In applied-service fast-track, Coder Leader may skip implementation-plan.yaml but must still create a lightweight service-assignments.yaml before coder work starts.
 R-005-05: Coder Leader must select coders from agent-registry.yaml.
 R-005-06: Coder Leader must reject tasks when no active coder exists for an impacted service.
 R-005-07: Coder Leader must protect API, event, schema, and shared package contracts.
@@ -19,14 +20,21 @@ R-005-09: Coder Leader must complete code quality and architecture review before
 R-005-10: If quality review fails, Coder Leader must return NEEDS_FIX to assigned coders and record findings in coder-results.yaml.
 R-005-11: If task-analysis.yaml has architecture_review.required: true, Coder Leader must not create implementation-plan.yaml until architecture-review.yaml exists and its decision is approved.
 R-005-12: Coder Leader must copy applicable constraints_for_coder_leader from architecture-review.yaml into implementation-plan.yaml and service-assignments.yaml.
+R-005-13: Framework-maintenance fast-track skips Coder Leader unless the task changes workflow rules, command contracts, generated coder templates, service scope contracts, or other high-risk framework behavior.
+R-005-14: Coder Leader must read and follow task-analysis.yaml.context_plan before opening source files or assigning coders.
+R-005-15: Coder Leader may expand beyond the context_plan budget only when a recorded expansion trigger fires; it must record the trigger and files opened in implementation-plan.yaml or coder-results.yaml.
+R-005-16: Coder Leader must reject planning when context_plan.confidence is low or unresolved_context contains service boundary, contract ownership, or test policy gaps.
+R-005-17: Service assignments must include only the source/memory context each coder needs, not the whole project brain or all service brains.
+R-005-18: Service assignments must include relevant feedback patterns, known error anti-patterns, and regression checks when task-analysis identifies them.
+R-005-19: Coder Leader must route `coding_error_feedback` from coder-results or dev-verification to Memory Update before closing the task.
 ```
 
 ## Required artifacts
 
 ```text
-.runtime/tasks/<task-id>/implementation-plan.yaml
-.runtime/tasks/<task-id>/service-assignments.yaml
-.runtime/tasks/<task-id>/coder-results.yaml
+.runtime/tasks/<task-id>/implementation-plan.yaml   (standard pipeline)
+.runtime/tasks/<task-id>/service-assignments.yaml   (standard pipeline or lightweight applied-service fast-track)
+.runtime/tasks/<task-id>/coder-results.yaml         (standard pipeline or applied-service fast-track)
 .runtime/tasks/<task-id>/architecture-review.yaml   (when task-analysis.yaml requires it)
 ```
 

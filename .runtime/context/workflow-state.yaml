@@ -3,9 +3,9 @@ distribution_mode: "framework-template"
 instance_status: "not_applied"
 current_state: "NEED_ONBOARDING"
 active_task_id: null
-updated_at: "2026-04-22"
+updated_at: "2026-05-19"
 updated_by: "coordinator"
-reason: "Framework workspace seed. Onboarding is expected after service repositories are cloned into services/."
+reason: "Framework workspace seed with complete R-011 approval gate list. Onboarding is expected after service repositories are cloned into services/."
 notes:
   - "This repository is the reusable agent-workspace framework, not an onboarded application project."
   - "NEED_ONBOARDING is the correct seed state before services are cloned and onboarding runs."
@@ -70,5 +70,11 @@ approval_gates:
   - skip_blocker_bug
   - expand_coder_write_scope
   - create_tests_when_policy_forbids
+  - run_destructive_environment_database_deployment_or_data_action
+  - change_workflow_policy_or_state_machine_rules
+  - touch_files_outside_coder_scope
   - proceed_task_analysis_to_coder_leader
+  - disable_fast_track_through_test_policy
   - update_installed_skills
+  - switch_distribution_mode
+  - workspace_mode_repair_write

@@ -1,0 +1,17 @@
+{
+  "counts": {
+    "agents": 14,
+    "commands": 16,
+    "rules": 16,
+    "skills": 231,
+    "templates": 20
+  },
+  "error_count": 0,
+  "findings": [],
+  "generated_at": "2026-05-20T06:14:19Z",
+  "purpose": "Optional deterministic drift check; does not replace agent-native /policy-check.",
+  "result": "pass",
+  "score": 10.0,
+  "tool": "scripts/architecture-health-check.py",
+  "warning_count": 0
+}

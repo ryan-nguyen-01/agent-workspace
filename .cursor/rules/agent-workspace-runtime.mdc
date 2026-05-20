@@ -36,3 +36,10 @@ These rules apply when editing `.runtime/context/`, `.runtime/tasks/`, or `.runt
 
 - `.runtime/context/workflow-state.yaml` is mutated only by Coordinator.
 - Every state transition records `updated_at`, `updated_by`, `reason`.
+
+## Model, activity, and response UI
+
+- `.runtime/context/model-routing.yaml` controls agent-to-model profile routing.
+- `.runtime/context/agent-activity.yaml` backs `/status` activity, elapsed/ETA, token, and cost reporting.
+- `.runtime/context/response-ui.yaml` controls markdown/text response layout modes; it does not control native Cursor UI chrome.
+- Do not record exact token/cost/ETA values unless the tool exposes reliable metrics.

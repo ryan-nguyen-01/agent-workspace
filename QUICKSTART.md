@@ -21,6 +21,16 @@ git clone <repo-url> ~/Downloads/agent-workspace
 cd ~/Downloads/agent-workspace
 ```
 
+Optional: if you do not want to push or pull the `agent-workspace`
+framework repo itself, detach only the workspace root from Git:
+
+```bash
+scripts/remove-workspace-git.sh
+```
+
+This keeps Git metadata inside `services/<service-name>/` untouched, so service
+repos can still be committed and pushed normally.
+
 ## 2. Add Project Inputs
 
 Put reference docs under `inputs/`:
@@ -42,6 +52,8 @@ git clone <api-repo-url> services/api
 git clone <web-repo-url> services/web
 git clone <worker-repo-url> services/worker
 ```
+
+`services/` can be empty in the framework template. No placeholder files are required inside it; each cloned service repository keeps its own Git metadata.
 
 ## 4. Onboard
 
@@ -91,4 +103,12 @@ coordinator
 → qc-handoff
 → qc-runner
 → memory-update
+```
+
+Check status and model routing from any terminal:
+
+```bash
+python3 scripts/status-dashboard.py --mode <compact|concise|dashboard|models|json>
+python3 scripts/status-dashboard.py --mode dashboard --write
+python3 scripts/architecture-health-check.py --strict
 ```

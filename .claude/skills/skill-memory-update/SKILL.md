@@ -52,9 +52,10 @@ Update only durable knowledge. Do not store speculative patterns without confide
 When user/team reports AI mistakes or omissions:
 
 1. Capture raw feedback in `.runtime/context/feedback/inbox.md`.
-2. During `/sync-memory`, triage feedback:
+2. For coding errors, require `root_cause`, `prevention_rule`, `regression_check`, and `recurrence_key`.
+3. During `/sync-memory`, triage feedback:
    - recurring mistakes -> `feedback/anti-patterns.md`
    - validated fixes/best practices -> `feedback/patterns.md`
-3. Record `source_artifact` and `confidence` in memory updates.
-4. Mark processed inbox entries as `promoted` or `closed`.
-5. Refresh `.runtime/context/index.yaml` or record why it did not change.
+4. Record `source_artifact`, `source_bug` when available, and `confidence` in memory updates.
+5. Mark processed inbox entries as `promoted` or `closed`.
+6. Refresh `.runtime/context/index.yaml` or record why it did not change.

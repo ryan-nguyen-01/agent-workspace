@@ -1,0 +1,39 @@
+version: 1
+generated_at: "2026-05-20"
+generated_by: "framework-template"
+status: "idle"
+active_task_id: null
+updated_at: "2026-05-20"
+updated_by: "coordinator"
+
+dashboard:
+  mode: "text-status"
+  source_of_truth: ".runtime/context/agent-activity.yaml"
+  response_ui: ".runtime/context/response-ui.yaml"
+  rendered_by: "/status"
+  refresh_policy: "Read this file plus workflow-state.yaml. Do not scan task folders unless a task id is active or requested."
+
+automation:
+  update_cli: "python3 scripts/agent-activity.py <start|heartbeat|block|complete|reset>"
+  status_cli: "python3 scripts/status-dashboard.py --mode dashboard"
+  health_cli: "python3 scripts/architecture-health-check.py --strict"
+
+totals:
+  running_agents: 0
+  queued_agents: 0
+  blocked_agents: 0
+  completed_agents_last_24h: 0
+  estimated_tokens_used: 0
+  actual_tokens_used: "unknown"
+  estimated_cost_usd: "unknown"
+  actual_cost_usd: "unknown"
+
+current_agents: []
+
+recent_events: []
+
+token_accounting_policy:
+  actual_tokens_rule: "Only record actual token counts if the active tool exposes reliable usage metrics."
+  estimated_tokens_rule: "Estimate from prompt/output/artifact size when actual usage is unavailable, and mark source: estimated."
+  cost_rule: "Do not calculate exact spend without provider price table and actual token usage. Use unknown or estimated."
+  no_secrets_rule: "Never paste raw prompts, raw logs, credentials, cookies, private keys, or long outputs into this file."

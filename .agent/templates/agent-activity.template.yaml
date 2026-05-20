@@ -1,0 +1,69 @@
+version: 1
+generated_at: "{{GENERATED_AT}}"
+generated_by: "coordinator"
+status: "idle|running|blocked"
+active_task_id: "{{TASK_ID_OR_NULL}}"
+updated_at: "{{UPDATED_AT}}"
+updated_by: "{{AGENT_ID}}"
+
+dashboard:
+  mode: "text-status"
+  source_of_truth: ".runtime/context/agent-activity.yaml"
+  response_ui: ".runtime/context/response-ui.yaml"
+  rendered_by: "/status"
+  refresh_policy: "Read this file plus workflow-state.yaml. Do not scan task folders unless a task id is active or requested."
+
+automation:
+  update_cli: "python3 scripts/agent-activity.py <start|heartbeat|block|complete|reset>"
+  status_cli: "python3 scripts/status-dashboard.py --mode dashboard"
+  health_cli: "python3 scripts/architecture-health-check.py --strict"
+
+totals:
+  running_agents: 0
+  queued_agents: 0
+  blocked_agents: 0
+  completed_agents_last_24h: 0
+  estimated_tokens_used: 0
+  actual_tokens_used: "unknown"
+  estimated_cost_usd: "unknown"
+  actual_cost_usd: "unknown"
+
+current_agents:
+  - agent_id: "{{AGENT_ID}}"
+    phase: "{{WORKFLOW_PHASE}}"
+    status: "queued|running|blocked|completed"
+    model_profile: "{{MODEL_PROFILE}}"
+    provider: "{{PROVIDER_OR_UNKNOWN}}"
+    model_id: "{{MODEL_ID_OR_UNKNOWN}}"
+    started_at: "{{STARTED_AT}}"
+    last_heartbeat_at: "{{UPDATED_AT}}"
+    elapsed_seconds: 0
+    eta_seconds: "unknown"
+    current_action: "{{CURRENT_ACTION}}"
+    active_file: "{{PATH_OR_NULL}}"
+    task_id: "{{TASK_ID_OR_NULL}}"
+    token_budget:
+      max_input_tokens: "{{MAX_INPUT_TOKENS_OR_UNKNOWN}}"
+      max_output_tokens: "{{MAX_OUTPUT_TOKENS_OR_UNKNOWN}}"
+      max_total_tokens: "{{MAX_TOTAL_TOKENS_OR_UNKNOWN}}"
+    token_usage:
+      source: "actual|estimated|unknown"
+      actual_input_tokens: "unknown"
+      actual_output_tokens: "unknown"
+      estimated_total_tokens: "unknown"
+      actual_cost_usd: "unknown"
+      estimated_cost_usd: "unknown"
+    evidence:
+      - "{{FILE_OR_COMMAND_OR_ARTIFACT}}"
+
+recent_events:
+  - at: "{{ISO8601}}"
+    agent_id: "{{AGENT_ID}}"
+    event: "started|heartbeat|blocked|completed"
+    summary: "{{SHORT_SUMMARY}}"
+
+token_accounting_policy:
+  actual_tokens_rule: "Only record actual token counts if the active tool exposes reliable usage metrics."
+  estimated_tokens_rule: "Estimate from prompt/output/artifact size when actual usage is unavailable, and mark source: estimated."
+  cost_rule: "Do not calculate exact spend without provider price table and actual token usage. Use unknown or estimated."
+  no_secrets_rule: "Never paste raw prompts, raw logs, credentials, cookies, private keys, or long outputs into this file."

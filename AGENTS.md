@@ -16,10 +16,10 @@ Tool-specific entrypoints:
 `agent-workspace` is a **workflow-coordinator-driven multi-agent framework** for software engineering. It is not an application. It defines:
 
 - 12 workflow agents (see [.claude/agents/](.claude/agents/))
-- 227 skills (12 workflow + 215 technical) at [.claude/skills/](.claude/skills/)
-- 15 workflow rules at [.agent/rules/](.agent/rules/)
-- 16 templates at [.agent/templates/](.agent/templates/)
-- 15 slash commands at [.claude/commands/](.claude/commands/)
+- 231 skills (12 workflow + 219 technical) at [.claude/skills/](.claude/skills/)
+- 16 workflow rules at [.agent/rules/](.agent/rules/)
+- 20 templates at [.agent/templates/](.agent/templates/)
+- 16 slash commands at [.claude/commands/](.claude/commands/)
 - 2 built-in cross-cutting coders: `coder-infra` and `coder-database`
 - Durable memory at [.runtime/context/](.runtime/context/)
 - User-provided reference docs (PRD, HLD, ADR, OpenAPI, glossary, runbooks) at [inputs/](inputs/) — onboarding scans these to seed the brain
@@ -28,32 +28,52 @@ The authoritative spec is [.agent/workflow.md](.agent/workflow.md). Read it befo
 
 This repository is the coordination workspace. Do not copy `.claude/` into each service repository. Users clone service repositories under `services/`, add reference docs under `inputs/`, then run onboarding from this repository. Do not treat `NEED_ONBOARDING`, empty `service-catalog.yaml`, or stale seed brain values as defects before services have been cloned and onboarding has run.
 
+## Framework-template mode
+
+This repository can be used in two modes:
+
+- **Framework template:** `distribution_mode: "framework-template"` and `instance_status: "not_applied"` in [.runtime/context/workflow-state.yaml](.runtime/context/workflow-state.yaml). This is the reusable distribution. `NEED_ONBOARDING` is expected and must not block maintenance of framework files.
+- **Applied workspace:** service repositories have been cloned under `services/`, reference docs have been added under `inputs/`, and onboarding has created the project brain/service contracts.
+
+For framework-template maintenance, classify the request before brain checks:
+
+```yaml
+target_scope: framework
+requires_onboarding: false
+```
+
+Framework maintenance includes docs, scripts, workflow rules, templates, command contracts, workflow agent definitions, and tool entrypoints in this repository. Do not require onboarding, service catalog, generated service coders, or service brain freshness unless the request reads or writes application source under `services/<service-name>/`.
+
 ## Rules you MUST follow
 
 1. **Single entrypoint.** Every user request enters through `coordinator` (the `/coord` command). Do not jump straight to `coder-leader`, `qc-runner`, etc. from raw user input.
-2. **No coding without `task-analysis.yaml`.** The `task-analysis` agent normalizes intent/AC/risks first. R-000-06.
+2. **No application coding without `task-analysis.yaml`.** The `task-analysis` agent normalizes applied-service intent/AC/risks first. R-000-06. Trivial framework-template maintenance may use the lightweight fast-track path.
 3. **Scoped writes.** Generated service coders write only inside `allowed_write_paths` and never inside `forbidden_paths`. R-006-01..03.
 4. **Approval gates.** User approval is required for: creating coder agents, expanding scope, skipping QC, downgrading a blocker bug, proceeding from task-analysis to coder-leader. Full list: [.agent/rules/11-approval-gates.md](.agent/rules/11-approval-gates.md).
 5. **Anti-guessing.** If a fact is uncertain, mark `unknown` and ask. Do not fabricate. Critical claims need evidence (file/test/command/artifact). R-000-11..14.
 6. **No secrets in artifacts.** Never write passwords, tokens, private keys, raw cookies, or long logs into `.runtime/` artifacts or tool adapter files. R-013-01..04.
 7. **Project CLAUDE.md beats global CLAUDE.md.** Agents/aliases defined in `~/.claude/CLAUDE.md` that are not in this project's 12-agent list (below) must route through `coordinator` instead.
+8. **Context economy.** For applied-service work, use `.runtime/context/index.yaml`, `project_profile`, service `profile.context_hints`, and `task-analysis.yaml.context_plan` before opening broad source context. Expand reads only when a recorded trigger requires it. R-001-18..24.
+9. **Model routing, observability, and response UI.** Select agent model profiles from `.runtime/context/model-routing.yaml`, surface live activity/token/cost telemetry through `.runtime/context/agent-activity.yaml` and `/status`, and format status/reports/final answers through `.runtime/context/response-ui.yaml`. Never fabricate exact token/cost values. R-015-01..22.
 
 ## The 12 workflow agents
 
-| Agent | Role | Activates when |
-|---|---|---|
-| `coordinator` | Routes, gates, holds workflow state | Every request enters here |
-| `onboarding` | Builds Project Brain (scan-only) | Brain missing or stale |
-| `agent-factory` | Generates service-specific coders | After onboarding + user approval |
-| `task-analysis` | Normalizes input into task spec | Before any implementation |
-| `solution-architect` | Reviews architecture risk and constraints | When task-analysis requires architecture review |
-| `coder-leader` | Plans + coordinates service coders | Implementation phase |
-| `dev-verification` | Decides Code Done (≥80% + critical checks) | After implementation |
-| `qc-handoff` | Writes Dev→QC handoff doc | After Code Done |
-| `qc-runner` | Executes QC, classifies bugs | After handoff |
-| `bug-router` | Routes blocker/non-blocker bugs | QC found a defect |
-| `memory-update` | Persists durable learnings | After meaningful workflow events |
-| `workflow-policy` | Validates transitions and gates | State dispute |
+| Agent | Model profile | Role | Activates when |
+|---|---|---|---|
+| `coordinator` | `fast_router` | Routes, gates, holds workflow state | Every request enters here |
+| `onboarding` | `deep_reasoning` | Builds Project Brain (scan-only) | Brain missing or stale |
+| `agent-factory` | `coding_planner` | Generates service-specific coders | After onboarding + user approval |
+| `task-analysis` | `deep_reasoning` | Normalizes input into task spec | Before any implementation |
+| `solution-architect` | `deep_reasoning` | Reviews architecture risk and constraints | When task-analysis requires architecture review |
+| `coder-leader` | `coding_planner` | Plans + coordinates service coders | Implementation phase |
+| `dev-verification` | `verification` | Decides Code Done (≥80% + critical checks) | After implementation |
+| `qc-handoff` | `fast_router` | Writes Dev→QC handoff doc | After Code Done |
+| `qc-runner` | `verification` | Executes QC, classifies bugs | After handoff |
+| `bug-router` | `deep_reasoning` | Routes blocker/non-blocker bugs | QC found a defect |
+| `memory-update` | `memory_light` | Persists durable learnings | After meaningful workflow events |
+| `workflow-policy` | `deep_reasoning` | Validates transitions and gates | State dispute |
+
+Provider defaults live in `.runtime/context/model-routing.yaml`: Claude deep reasoning uses Opus, Claude coding uses Sonnet; Codex deep reasoning uses GPT-5.5, Codex coding uses the configured Codex coding model (`gpt-5.3-codex` by default).
 
 ## Built-in cross-cutting coders
 
@@ -74,7 +94,7 @@ NEW
   → MEMORY_SYNCING → DONE
 ```
 
-Current state lives in [.runtime/context/workflow-state.yaml](.runtime/context/workflow-state.yaml). The `coordinator` writes every transition.
+Current state lives in [.runtime/context/workflow-state.yaml](.runtime/context/workflow-state.yaml). Model routing lives in [.runtime/context/model-routing.yaml](.runtime/context/model-routing.yaml). Live activity/status telemetry lives in [.runtime/context/agent-activity.yaml](.runtime/context/agent-activity.yaml). Response layout modes live in [.runtime/context/response-ui.yaml](.runtime/context/response-ui.yaml). The `coordinator` writes every transition and activity update.
 
 ## Slash commands
 
@@ -96,19 +116,34 @@ Run any of these via the Claude Code CLI or by directly invoking the matching ag
 /sync-memory      Persist durable knowledge
 /skills           Maintain installed skills and registry metadata
 /resume-task      Continue an interrupted task
-/policy-check     Validate transitions and exceptions
-/status           Print state banner
+/workspace-mode   Switch or repair distribution_mode between framework-template and workspace
+/policy-check     Validate transitions, exceptions, and artifact snapshots
+/status           Print state banner and agent activity dashboard using response UI mode
 ```
+
+For tools that do not expose project slash commands, `python3 scripts/status-dashboard.py --mode <compact|concise|dashboard|models|json>` renders the status/model dashboard from `.runtime/context/`. Add `--write` to generate `.runtime/status.md` and `.runtime/status.html`. Tool adapters may update telemetry through `python3 scripts/agent-activity.py`; maintainers may run `python3 scripts/architecture-health-check.py --strict` as an optional deterministic drift check. Switch default models through `model-routing.yaml.model_overrides`, not by editing agent files.
 
 ## Fast-track lane (small tasks)
 
-A trivial task may skip the user-approval gate on `task-analysis.yaml` and the `implementation-plan.yaml` / `service-assignments.yaml` artifacts. Eligibility is strict — see workflow.md §6.2. All other gates still apply (scope, secrets, dev-verification, QC).
+A trivial applied-service task may skip the user-approval gate on `task-analysis.yaml` and the full `implementation-plan.yaml`. It still requires `task-analysis.yaml.context_plan` and a lightweight `service-assignments.yaml` before source edits. Eligibility is strict — see workflow.md §6.2. All other gates still apply (scope, secrets, dev-verification, QC).
 
 Eligible intents: `typo`, `comment`, `format`, `rename-local`, `docs-only`, `dependency-version-bump`, `config-value-tweak`. Disqualifiers: any contract change, security surface, >30 LOC diff, new dependency, blocker-bug fix.
 
+For framework-template maintenance, use the lighter fast-track path in workflow.md §6.2 when the change is trivial and does not alter approval gates, security/secret rules, workflow state machine, service coder write scopes, destructive behavior, or application code under `services/`.
+
 ## Drift detection
 
-The coordinator reads `project-brain.yaml.freshness` at session startup and compares `last_indexed_at`, `stale_after_days`, and `tracked_paths` against the workspace state when needed. It surfaces `Brain: fresh|stale|missing` in its state banner. When stale, do not advance into `IN_DEV` without `/sync-memory --refresh-index` or explicit user acceptance.
+The coordinator reads `project-brain.yaml.freshness` at session startup and compares `last_indexed_at`, `stale_after_days`, and `tracked_paths` against the workspace state when needed. It surfaces `Brain: fresh|stale|missing|template-seed` in its state banner. When stale for applied-service work, do not advance into `IN_DEV` without `/sync-memory --refresh-index` or explicit user acceptance. In framework-template/not_applied mode, seed or stale brain values do not block framework maintenance.
+
+## Context economy
+
+Onboarding classifies each workspace/service with project archetypes such as `backend-api`, `frontend-web`, `mobile-app`, `cli-tool`, `library-sdk`, `data-pipeline`, `ml-model`, `infra-iac`, `embedded-firmware`, `docs-site`, `docs-and-templates`, and `monorepo-platform`. Agents start with a signature scan and indexed summaries, not a full repo read.
+
+For applied-service tasks, `task-analysis.yaml` must include `context_plan` with bounded memory/source/skill budgets, required evidence, excluded paths, expansion triggers, unresolved context, and confidence. Do not advance to implementation when context confidence is low or service/test/contract ownership is unknown.
+
+## Policy consistency
+
+Run `/policy-check snapshot --root .` before trusting migrated workspace state or `/policy-check snapshot --root <snapshot-root>` for shared artifact-only snapshots without `services/`. This is handled by the `workflow-policy` agent and must not depend on Python, Node, jq, or shell helpers. Missing `services/` is reported as `services_available: false`, not as a project defect. `DEV_DONE` requires `dev-verification.yaml` result/verdict `DEV_DONE`; `QC_DONE`/`PASS` is invalid while required cases remain blocked/pending/not_run/failed or manual/retest evidence is still required.
 
 ## Where to find more
 

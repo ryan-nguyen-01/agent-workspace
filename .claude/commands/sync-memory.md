@@ -26,12 +26,14 @@ memory-update
    - --scan: rescan the requested service/repo scope.
    - --files: read only explicitly provided files/paths.
 3. Read only task artifacts and memory files relevant to the changed paths/services.
-4. Identify durable facts worth storing.
-5. Redact sensitive content.
-6. Write memory-updates.yaml when a task is involved.
-7. Update project-brain.yaml, service brain, test policy, service catalog, or agent registry only where relevant.
-8. Refresh .runtime/context/index.yaml so future sessions can skip full memory rereads.
-9. Append changelog when workflow-level behavior changes.
+4. Identify durable facts worth storing, including context misses or source layout changes.
+5. For coding errors, extract root_cause, prevention_rule, regression_check, and recurrence_key from bugs/dev-verification/coder-results.
+6. Redact sensitive content.
+7. Write memory-updates.yaml when a task is involved.
+8. Update project-brain.yaml, service brain, test policy, service catalog, agent registry, or feedback patterns/anti-patterns only where relevant.
+9. Refresh project_profile/context_economy/index routing rows when source layout or context hints changed.
+10. Refresh .runtime/context/index.yaml so future sessions can skip full memory rereads.
+11. Append changelog when workflow-level behavior changes.
 ```
 
 ## Usage

@@ -22,6 +22,43 @@ project:
   generated_at: "2026-05-17"
   generated_by: "memory-structure-migration"
 
+project_profile:
+  archetypes:
+    - "workflow-framework"
+    - "docs-and-templates"
+  confidence: "high"
+  evidence:
+    - "AGENTS.md"
+    - ".agent/workflow.md"
+    - ".claude/agents/"
+  source_layout:
+    service_roots: []
+    app_roots: []
+    package_roots: []
+    shared_code_roots:
+      - ".agent"
+      - ".claude"
+      - ".codex"
+      - ".cursor"
+      - ".gemini"
+      - ".github"
+    infra_roots: []
+    data_roots: []
+    docs_roots:
+      - "README.md"
+      - "SETUP.md"
+      - "QUICKSTART.md"
+      - "inputs"
+    generated_or_vendor_roots: []
+  critical_manifests:
+    - "AGENTS.md"
+    - "CLAUDE.md"
+    - "COMMAND.md"
+    - ".agent/workflow.md"
+    - ".runtime/context/workflow-state.yaml"
+  boundary_strategy: "framework-template"
+  onboarding_scan_profile: "signature-first"
+
 memory:
   role: "agent-brain"
   root: ".runtime/context"
@@ -29,11 +66,53 @@ memory:
   service_memory_root: ".runtime/context/services"
   service_workspace_root: "services"
   state_file: ".runtime/context/workflow-state.yaml"
+  model_routing_file: ".runtime/context/model-routing.yaml"
+  agent_activity_file: ".runtime/context/agent-activity.yaml"
+  response_ui_file: ".runtime/context/response-ui.yaml"
   read_policy:
     - "Read .runtime/context/index.yaml before opening large memory files."
     - "Read only memory files whose tags, service_ids, or paths match the current task."
     - "Do not full-rescan services when the index and service brain are fresh enough."
     - "Run /sync-memory after meaningful changes so the index and brain stay current."
+
+context_economy:
+  goal: "High recall with bounded reads: agents start from indexes and expand only when confidence or task risk requires it."
+  default_context_budget:
+    coordinator_files: 4
+    task_analysis_files: 12
+    coder_leader_files: 16
+    service_coder_files: 20
+    verification_files: 12
+  always_read:
+    - ".agent/workflow.md"
+    - ".runtime/context/workflow-state.yaml"
+    - ".runtime/context/index.yaml"
+  read_order:
+    - "task artifact or user input"
+    - "memory index rows matching tags/service_ids/paths"
+    - "project profile and service catalog summaries"
+    - "impacted service brain summaries"
+    - "specific source files referenced by evidence"
+  expansion_triggers:
+    - "impacted service cannot be resolved"
+    - "acceptance criteria map to unknown files"
+    - "contract/schema/security/test policy risk is present"
+    - "confidence is low or evidence is stale"
+    - "implementation touches shared code or cross-service behavior"
+  stop_before_coding_when:
+    - "context_plan.confidence is low"
+    - "required evidence is missing"
+    - "service boundary is unknown"
+    - "test policy is unknown for impacted service"
+  never_read_by_default:
+    - "node_modules"
+    - "vendor"
+    - "dist"
+    - "build"
+    - ".next"
+    - "coverage"
+    - ".git"
+    - "large generated files"
 
 freshness:
   repo_reference: "unknown"
@@ -84,7 +163,7 @@ service_boundaries:
   catalog: ".runtime/context/service-catalog.yaml"
   agent_registry: ".runtime/context/agent-registry.yaml"
   test_policy: ".runtime/context/test-policy.yaml"
-  rule: "Actual application code lives in each service.path from .runtime/context/service-catalog.yaml; services is the control plane, not a source-code dumping ground."
+  rule: "Actual application code lives in each service.path from .runtime/context/service-catalog.yaml, normally services/<service-name>. The service control plane lives in .runtime/context, not services/."
 
 policies:
   workflow: "end-to-end"
@@ -137,7 +216,8 @@ deep_project_intelligence:
   coding_conventions:
     folder_structure:
       - "memory is durable agent brain."
-      - "services is service control plane and coder scope registry."
+      - "services is a gitignored workspace for cloned application repositories."
+      - ".runtime/context is the service control plane and coder scope registry."
       - "state is transient workflow state."
       - "tasks is per-task evidence and artifacts."
       - ".claude/agents, .claude/skills, .agent/rules, .agent/templates, and .claude/commands are static workflow definitions."

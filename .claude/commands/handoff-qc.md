@@ -27,13 +27,15 @@ dev-verification.yaml result is DEV_DONE
 
 ```text
 1. Read task-analysis.yaml.
-2. Read implementation-plan.yaml.
+2. Read implementation-plan.yaml only when standard pipeline created it.
 3. Read coder-results.yaml.
 4. Read dev-verification.yaml.
 5. Write .runtime/tasks/<task-id>/qc-handoff.md.
 6. Append task-updates.yaml with QC_READY transition.
 7. Return QC_READY.
 ```
+
+Framework-maintenance fast-track does not create qc-handoff.md. The final response or lightweight task note must carry changed files, verification evidence, and any residual risk.
 
 ## Stop conditions
 

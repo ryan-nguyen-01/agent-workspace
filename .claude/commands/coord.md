@@ -24,17 +24,19 @@ coordinator
 
 ```text
 1. Read .agent/workflow.md.
-2. Check Project Brain and Agent Registry.
-3. Validate current state transition and required artifacts.
-4. If Project Brain is missing or stale, route to /onboard.
-5. If coder agents are needed but not active, ask user approval and route to /create-coders.
-6. If input is a task, route to /analyze-task.
-7. If task is analyzed but not planned, route to /plan-dev.
-8. If task is planned, route to /dev.
-9. If task is DEV_DONE, route to /handoff-qc. The canonical handoff stays inside .runtime/tasks/<task_id>/qc-handoff.md.
-10. If task is QC_READY or QC_TESTING, route to /qc.
-11. If bug exists, route to /bug.
-12. If task is done, route to /sync-memory.
+2. Classify target_scope and detect explicit command intents, including /workspace-mode.
+3. If the request is /workspace-mode, route to /workspace-mode before Project Brain checks.
+4. Check Project Brain and Agent Registry when needed for applied-service work.
+5. Validate current state transition and required artifacts.
+6. If Project Brain is missing or stale for applied-service work, route to /onboard.
+7. If coder agents are needed but not active, ask user approval and route to /create-coders.
+8. If input is a task, route to /analyze-task.
+9. If task is analyzed but not planned, route to /plan-dev.
+10. If task is planned, route to /dev.
+11. If task is DEV_DONE, route to /handoff-qc. The canonical handoff stays inside .runtime/tasks/<task_id>/qc-handoff.md.
+12. If task is QC_READY or QC_TESTING, route to /qc.
+13. If bug exists, route to /bug.
+14. If task is done, route to /sync-memory.
 ```
 
 If any gate fails, coordinator must deny transition and return missing artifacts or approval requirements.
@@ -42,7 +44,7 @@ If any gate fails, coordinator must deny transition and return missing artifacts
 ## Stop conditions
 
 ```text
-Missing Project Brain
+Missing Project Brain for applied-service work
 Missing user approval
 Missing required artifact
 Blocker bug

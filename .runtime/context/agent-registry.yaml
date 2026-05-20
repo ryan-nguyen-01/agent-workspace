@@ -6,6 +6,8 @@ agents:
     type: "cross-cutting-coder"
     origin: "built-in"
     scope_class: "cross-cutting"
+    model_profile: "coding"
+    model_routing_source: ".runtime/context/model-routing.yaml"
     requires_project_onboarding: false
     status: "active"
     service_id: "_infra"
@@ -13,10 +15,9 @@ agents:
     agent_file: ".claude/agents/coder-infra.agent.md"
     scope_file: null
     approval:
-      required: true
-      approved_by: "user"
+      required: false
+      approved_by: "framework"
       approved_at: "2026-05-18T09:18:49+07:00"
-      approval_source: "Direct user request in current Codex session"
     permissions:
       allowed_read_paths:
         - "**/*"
@@ -89,6 +90,8 @@ agents:
     type: "cross-cutting-coder"
     origin: "built-in"
     scope_class: "cross-cutting"
+    model_profile: "coding"
+    model_routing_source: ".runtime/context/model-routing.yaml"
     requires_project_onboarding: false
     status: "active"
     service_id: "_database"
@@ -96,10 +99,9 @@ agents:
     agent_file: ".claude/agents/coder-database.agent.md"
     scope_file: null
     approval:
-      required: true
-      approved_by: "user"
+      required: false
+      approved_by: "framework"
       approved_at: "2026-05-18T09:18:49+07:00"
-      approval_source: "Direct user request in current Codex session"
     permissions:
       allowed_read_paths:
         - "**/*"
@@ -178,7 +180,7 @@ agents:
     handoff_required: true
 approval_required: false
 notes:
-  - "Cross-cutting coders approved by direct user request on 2026-05-18."
   - "Built-in cross-cutting coders are shipped with the framework and are not generated from workspace onboarding."
+  - "Built-in cross-cutting coders are framework-provided seed entries; generated service coder approval is still required after onboarding."
   - "coder-infra owns Terraform/IaC, Kubernetes, Docker, and CI/CD scope."
   - "coder-database owns schema, migrations, query, and index scope."

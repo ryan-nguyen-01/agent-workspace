@@ -9,7 +9,7 @@
         "command": "./.cursor/hooks/check-task-analysis.sh",
         "type": "command",
         "timeout": 5,
-        "failClosed": false
+        "failClosed": true
       },
       {
         "command": "./.cursor/hooks/warn-engine-edit.sh",

@@ -34,11 +34,11 @@ agent-workspace/
 ├── .gemini/                       ← Gemini instructions
 ├── .agent/                        ← Tool-neutral workflow source
 │   ├── workflow.md
-│   ├── rules/                     ← 15 workflow rules
-│   ├── templates/                 ← 16 artifact templates
+│   ├── rules/                     ← 16 workflow rules
+│   ├── templates/                 ← 20 artifact templates
 │   └── docs/                      ← Documentation + visual diagrams
 ├── .runtime/                      ← Runtime memory and workflow artifacts
-│   ├── context/                   ← Project brain + service contracts + workflow state
+│   ├── context/                   ← Project brain + service contracts + workflow state + model/status/response UI telemetry
 │   ├── tasks/                     ← Task artifacts
 │   └── bugs/                      ← Bug reports
 ├── .claude/                       ← Claude adapter
@@ -56,14 +56,14 @@ agent-workspace/
 │   │   ├── memory-update.agent.md
 │   │   └── workflow-policy.agent.md
 │   │
-│   ├── skills/                    ← 227 skill definitions
+│   ├── skills/                    ← 231 skill definitions
 │   │   ├── skill-project-brain/SKILL.md      (12 workflow skills)
 │   │   ├── skill-task-analysis/SKILL.md
-│   │   ├── react/SKILL.md                    (215 technical skills)
+│   │   ├── react/SKILL.md                    (219 technical skills)
 │   │   ├── prisma/SKILL.md
 │   │   └── ...
 │   │
-│   ├── commands/                  ← 15 workflow commands
+│   ├── commands/                  ← 16 workflow commands
 │   │   ├── onboard.md
 │   │   ├── dev.md
 │   │   └── ...
@@ -91,6 +91,20 @@ git clone <repo-url> ~/Downloads/agent-workspace
 cd ~/Downloads/agent-workspace
 ```
 
+Nếu user chỉ muốn commit/push trong từng service repo và không muốn workspace
+điều phối này còn là Git repo riêng, có thể detach root `.git`:
+
+```bash
+scripts/remove-workspace-git.sh
+```
+
+Script này chỉ xóa `.git` ở root `agent-workspace`, không đụng vào
+`services/<service-name>/.git`. Có thể kiểm tra trước bằng:
+
+```bash
+scripts/remove-workspace-git.sh --dry-run
+```
+
 Expected distribution shape:
 
 ```bash
@@ -101,8 +115,8 @@ echo "Rules:  $(find .agent/rules -name '[0-9][0-9]-*.md' 2>/dev/null | wc -l | 
 
 ```text
 Agents: 14
-Skills: 227
-Rules:  15
+Skills: 231
+Rules:  16
 ```
 
 ### 2. Add user inputs
@@ -129,6 +143,7 @@ git clone <worker-repo-url> services/worker
 ```
 
 `services/` được gitignored trong repo `agent-workspace`, nên source code của app không bị commit vào framework.
+Trong framework-template mode, `services/` có thể rỗng và không cần file scaffold bên trong; clone service repo thật vào đây khi áp dụng workspace.
 
 ### 4. Onboard workspace
 
@@ -172,8 +187,8 @@ Agent Workspace ship sẵn entrypoints cho 5 AI tools. Mỗi tool có convention
 Không cần setup thêm. Claude Code tự discover:
 
 - `.claude/agents/*.agent.md` — 12 workflow agents + 2 built-in coders qua Agent tool
-- `.claude/skills/*/SKILL.md` — 227 skills qua Skill tool
-- `.claude/commands/*.md` — 15 slash commands (`/coord`, `/onboard`, …)
+- `.claude/skills/*/SKILL.md` — 231 skills qua Skill tool
+- `.claude/commands/*.md` — 16 slash commands (`/coord`, `/onboard`, …)
 - `CLAUDE.md` ở root — system instructions
 
 #### Codex CLI
@@ -283,7 +298,12 @@ Dùng commands để gọi trực tiếp workflow phase:
 /skills                     → Maintain installed skills
 /policy-check               → Validate workflow policy
 /coord                      → Coordinator direct
-/status                     → Check workflow status
+/status                     → Check workflow status + agent activity dashboard
+python3 scripts/status-dashboard.py --mode <compact|concise|dashboard|models|json>
+python3 scripts/status-dashboard.py --mode dashboard --write
+python3 scripts/agent-activity.py start --agent-id <agent> --phase <phase> --current-action <summary>
+python3 scripts/architecture-health-check.py --strict --write-report
+                            → Terminal dashboard mirror for tools without project slash commands
 /resume-task                → Resume interrupted task
 ```
 
@@ -365,9 +385,9 @@ Expected:
 
 ```
 Agents: 14
-Skills: 227
-Rules:  15
-Templates: 16
+Skills: 231
+Rules:  16
+Templates: 20
 Commands: 16
 ```
 
@@ -482,6 +502,6 @@ git config --global core.autocrlf input
 - [ ] Clone agent-workspace repo
 - [ ] Đặt reference docs vào `inputs/`
 - [ ] Clone service repositories vào `services/<service-name>/`
-- [ ] Verify: 12 workflow agents + 2 built-in coders, 227 skills, 15 workflow rules, 16 templates, 15 commands
+- [ ] Verify: 12 workflow agents + 2 built-in coders, 231 skills, 16 workflow rules, 20 templates, 16 commands
 - [ ] Mở repo `agent-workspace` trong IDE có Claude
 - [ ] Test: gõ "Phân tích dự án này" hoặc `/onboard`

@@ -10,10 +10,15 @@ tools: Read, Write, Edit, Glob, Grep
 
 Generate coder agents that match the actual project services/modules and their allowed scopes.
 
+## Model routing
+
+Use `model_profile=coding_planner` from `.runtime/context/model-routing.yaml`. Generated service coders must receive `model_profile=coding` and `model_routing_source=.runtime/context/model-routing.yaml` in both their agent contract and `.runtime/context/agent-registry.yaml`.
+
 ## Required reading
 
 ```text
 .agent/workflow.md
+.runtime/context/model-routing.yaml
 .runtime/context/project-brain.yaml
 .runtime/context/service-catalog.yaml
 .runtime/context/test-policy.yaml
@@ -36,6 +41,8 @@ Each generated coder must include:
 
 ```text
 Service identity
+Model profile and routing source
+Service archetype/profile and context hints
 Allowed read paths
 Allowed write paths
 Forbidden paths
@@ -67,7 +74,7 @@ Do not overwrite manually approved custom scopes without asking Coordinator.
 
 ```text
 Primary command: /create-coders
-Required rules: 00-core-rules, 03-agent-factory-rules, 11-approval-gates, 12-artifact-contracts, 14-skill-composition-rules
+Required rules: 00-core-rules, 03-agent-factory-rules, 11-approval-gates, 12-artifact-contracts, 14-skill-composition-rules, 15-model-routing-observability-rules
 ```
 
 ---
@@ -95,7 +102,7 @@ Do NOT use unrecorded paths as write paths for services.
 
 ## Stack skill selection rule
 
-When building service coder agents, use `.runtime/context/skill-registry.yaml` as the machine-readable stack skill registry. Use `.agent/docs/external-skills.md` only as human-readable background and installation notes. The factory must not preload every installed stack skill into every coder. It must select only the skills matching the detected service stack, framework, database, cloud provider, and task type.
+When building service coder agents, use `.runtime/context/skill-registry.yaml` as the machine-readable stack skill registry. Use `.agent/docs/external-skills.md` only as human-readable background and installation notes. The factory must not preload every installed stack skill into every coder. It must select only the skills matching the detected service archetype/profile, stack, framework, database, cloud provider, and task type.
 
 Minimum default for every generated coder:
 
@@ -107,7 +114,7 @@ Minimum default for every generated coder:
 
 Then add stack skills such as `next-best-practices`, `nodejs-backend-patterns`, `supabase`, `firebase-basics`, `building-native-ui`, `vue`, `vite`, `github-actions-docs`, or Azure skills only when Project Brain or Service Brain provides evidence that the service uses that stack.
 
-The generated coder agent must include a `Selected skills` section with reason per skill, plus a `Not selected` section for nearby skills that were intentionally skipped.
+The generated coder agent must include a `Selected skills` section with reason per skill, plus a `Not selected` section for nearby skills that were intentionally skipped. It must also include a compact context section from service brain `profile.context_hints` so the coder can start from manifests, entrypoints, API/schema files, config, and tests without scanning the whole service.
 
 If a skill is marked `requires_user_approval: true` in `skill-registry.yaml`, Agent Factory must not attach it automatically. It must list the skill under `Not selected` with the approval reason and ask Coordinator to request user approval when the task genuinely needs it.
 

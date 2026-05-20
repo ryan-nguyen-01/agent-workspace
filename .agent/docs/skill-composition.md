@@ -175,6 +175,8 @@ If those technical skills do not exist locally, keep them as desired capability 
 
 Do not load every possible skill.
 
+Runtime agents must not scan or read all of `.claude/skills/**`. Start with `.runtime/context/skill-registry.yaml`, select the smallest useful set, then open only the chosen skill's `SKILL.md` and directly referenced files.
+
 Use this priority:
 
 ```text

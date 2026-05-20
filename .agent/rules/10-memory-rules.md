@@ -19,6 +19,9 @@ R-010-09: Actionable user feedback must be recorded in .runtime/context/feedback
 R-010-10: Durable or recurring feedback must be promoted to .runtime/context/feedback/patterns.md or .runtime/context/feedback/anti-patterns.md.
 R-010-11: Every memory update must refresh .runtime/context/index.yaml or explicitly record why the index did not change.
 R-010-12: Agents must read .runtime/context/index.yaml before opening multiple memory files.
+R-010-13: Coding-error feedback must include `root_cause`, `prevention_rule`, `regression_check`, and `recurrence_key` before promotion.
+R-010-14: Bugs with `prevention.promote_to_feedback: true` must create or update feedback inbox/pattern/anti-pattern entries during `/sync-memory`.
+R-010-15: Memory Update must avoid storing raw logs; summarize evidence and cite source artifacts or canonical bug files.
 ```
 
 ## Required artifact

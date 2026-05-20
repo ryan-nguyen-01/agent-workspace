@@ -6,13 +6,20 @@ Runtime memory and task artifacts do not live here. They live under `.runtime/`.
 
 Claude-specific executable adapters live under `.claude/`.
 
+## Framework-template mode
+
+The reusable distribution starts with `distribution_mode: framework-template` and `instance_status: not_applied` in `.runtime/context/workflow-state.yaml`. In that mode, `NEED_ONBOARDING` is an expected seed state.
+
+Framework maintenance of `.agent/`, `.claude/`, tool adapters, scripts, and root docs does not require onboarding or service coder generation. Onboarding is required only after application repositories are cloned under `services/` and the user wants applied-service analysis or implementation.
+
 ## Architecture
 
 ```text
 User
   -> Coordinator Agent
-  -> Project Brain Check
-  -> Onboarding Agent when brain is missing or stale
+  -> Scope classification
+  -> Project Brain Check when applied-service work needs it
+  -> Onboarding Agent when applied-service brain is missing or stale
   -> Agent Factory after user approval
   -> Task Analysis Agent for HLD, LLD, ticket text, or free-form task
   -> Coder Leader Agent
@@ -47,10 +54,15 @@ User
   agent-registry.yaml
   test-policy.yaml
   skill-registry.yaml
+  model-routing.yaml
+  agent-activity.yaml
+  response-ui.yaml
   workflow-state.yaml
   services/
     <service>.yaml
   feedback/
+.runtime/status.md
+.runtime/status.html
 .runtime/tasks/
   <task-id>/
     task-input.md
@@ -137,7 +149,8 @@ Recommended command path:
 
 ```text
 /coord
--> /onboard when brain is missing or stale
+-> classify target_scope
+-> /onboard when applied-service brain is missing or stale
 -> /create-coders after user approval
 -> /analyze-task for HLD, LLD, ticket, or text
 -> /plan-dev
