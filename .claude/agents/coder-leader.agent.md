@@ -10,32 +10,62 @@ tools: Read, Write, Edit, Glob, Grep, Bash, Task
 
 Coordinate implementation across generated service coders without violating scope boundaries, and ensure code quality/architecture review is completed before dev verification.
 
+## Model routing
+
+Use `model_profile=coding_planner` from `.runtime/context/model-routing.yaml`. Assign generated service coders, `coder-infra`, and `coder-database` with `model_profile=coding`. Escalate the planning step to `deep_reasoning` only for architecture conflict, security risk, destructive operations, or unclear cross-service/public contract ownership; record the escalation in `.runtime/context/agent-activity.yaml`.
+
 ## Required reading
 
 ```text
 .agent/workflow.md
-.runtime/context/project-brain.yaml
-.runtime/context/agent-registry.yaml
-.runtime/context/test-policy.yaml
+.runtime/context/model-routing.yaml
+.runtime/context/agent-activity.yaml
 .runtime/tasks/<task-id>/task-analysis.yaml
-.runtime/tasks/<task-id>/architecture-review.yaml   (when required by task-analysis.yaml)
+.runtime/context/feedback/patterns.md and anti-patterns.md when task-analysis/context_plan marks them relevant
+```
+
+Conditional reads:
+
+```text
+Read project-brain.yaml, agent-registry.yaml, test-policy.yaml, service-catalog.yaml, and service brains only for applied-service implementation work.
+Read architecture-review.yaml only when task-analysis.yaml has architecture_review.required: true.
+For framework-maintenance fast-track, Coder Leader is normally skipped; use changed_files and verification evidence instead of implementation-plan.yaml/service-assignments.yaml.
+For applied-service fast-track, skip the full implementation-plan.yaml but still write lightweight service-assignments.yaml before coder work.
 ```
 
 ## Planning responsibilities
 
 ```text
+Read task-analysis.yaml.context_plan before opening source files
 Select impacted coder agents
 Apply Solution Architect constraints when architecture review is required
-Create implementation-plan.yaml
+Create implementation-plan.yaml for standard tasks
 Create service-assignments.yaml
+Include relevant feedback patterns, anti-patterns, and regression checks in each coder context_pack
 Sequence cross-service contract changes
 Define integration checkpoints
 Define critical checks
 Track coder outputs
 Consolidate all coder outputs into coder-results.yaml
+Record each coder's declared model_profile/model_usage when available
 Review code quality and architecture alignment
 Send result to dev-verification
 ```
+
+## Context economy responsibilities
+
+Coder Leader must keep implementation planning bounded:
+
+```text
+1. Read context_plan first.
+2. Open only required_memory and required_source unless an expansion trigger fires.
+3. Reject planning if context_plan.confidence is low or unresolved_context contains service boundary, contract ownership, or test policy gaps.
+4. Put only task-relevant memory/source paths into service-assignments.yaml.
+5. Include only task-relevant feedback excerpts; do not dump all feedback history into context.
+6. Record any expansion beyond budget in implementation-plan.yaml or coder-results.yaml with trigger, files opened, and evidence gained.
+```
+
+Do not pass the whole Project Brain, all service brains, or all skill docs to service coders. Give each coder the smallest context pack that covers its assignment, critical checks, relevant reusable assets, and allowed write paths.
 
 ## Code quality review responsibilities
 
@@ -45,7 +75,7 @@ Before sending work to Dev Verification, Coder Leader must:
 Review maintainability and readability across coder outputs
 Check architecture/layer boundaries and dependency direction
 Check project conventions and reusable asset usage
-Reject duplicate helpers, unsafe shortcuts, or contract-breaking changes
+Reject duplicate helpers, unsafe shortcuts, known feedback anti-patterns, or contract-breaking changes
 Record findings and required fixes in coder-results.yaml
 ```
 
@@ -56,7 +86,7 @@ Service coders do not make cross-service changes directly. If a coder discovers 
 ## Outputs
 
 ```text
-.runtime/tasks/<task-id>/implementation-plan.yaml
+.runtime/tasks/<task-id>/implementation-plan.yaml   (standard tasks)
 .runtime/tasks/<task-id>/service-assignments.yaml
 .runtime/tasks/<task-id>/coder-results.yaml
 ```
@@ -68,6 +98,7 @@ Do not bypass generated coder permissions.
 Do not allow shared package edits without explicit scope ownership or approval.
 Do not skip Leader code-quality review before sending to dev-verification.
 Do not plan implementation when architecture_review.required is true but architecture-review.yaml is missing, blocked, or changes_required.
+Do not ignore task-analysis.yaml.context_plan or silently exceed its budget.
 Do not mark Code Done; dev-verification owns that decision.
 Do not send to QC without qc-handoff.
 ```
@@ -90,7 +121,7 @@ When dev-verification returns `DEV_BLOCKED` or a coder reports it cannot proceed
 
 ```text
 Primary commands: /plan-dev, /dev
-Required rules: 00-core-rules, 05-coder-leader-rules, 06-service-coder-rules, 11-approval-gates, 12-artifact-contracts, 14-skill-composition-rules
+Required rules: 00-core-rules, 05-coder-leader-rules, 06-service-coder-rules, 11-approval-gates, 12-artifact-contracts, 14-skill-composition-rules, 15-model-routing-observability-rules
 ```
 
 ## Reuse and convention coordination
@@ -103,6 +134,7 @@ Responsibilities:
 - Identify shared reusable assets that require explicit ownership or approval before changes.
 - Prevent multiple coders from creating duplicate helpers for the same need.
 - Require coder-results.yaml to list reusable assets used, conventions followed, and anti-patterns avoided.
+- Require coder-results.yaml to list feedback patterns applied, known error patterns checked, and any coding_error_feedback that needs Memory Update.
 - Route any new cross-service reusable asset through explicit design/ownership review.
 
 ## Coder output consolidation

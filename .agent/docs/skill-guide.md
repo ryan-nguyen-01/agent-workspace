@@ -23,7 +23,7 @@ Skills are selected by task context, not agent identity.
 
 ## Skill inventory
 
-The system includes 227 skills in two categories:
+The system includes 231 skills in two categories:
 
 ### 12 workflow skills
 
@@ -44,7 +44,7 @@ These power the workflow agents and are prefixed with `skill-`:
 | skill-memory-update      | Memory Update                          | Persist durable learnings               |
 | skill-workflow-policy    | Workflow Policy                        | Validate transitions and gates          |
 
-### 215 technical skills
+### 219 technical skills
 
 These provide domain expertise across technology stacks:
 

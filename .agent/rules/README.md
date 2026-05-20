@@ -28,4 +28,5 @@ If a rule conflicts with workflow.md, workflow.md defines the state machine and 
 12-artifact-contracts.md         Required artifacts and schemas
 13-security-secret-rules.md      Secrets, PII, auth-sensitive work
 14-skill-composition-rules.md    Skill composition and multi-skill agents
+15-model-routing-observability-rules.md  Model profiles, activity dashboard, response UI, token/cost reporting
 ```

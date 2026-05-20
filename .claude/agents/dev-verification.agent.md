@@ -10,6 +10,10 @@ tools: Read, Write, Edit, Glob, Grep, Bash
 
 Decide whether development output can move to QC.
 
+## Model routing
+
+Use `model_profile=verification` from `.runtime/context/model-routing.yaml`. Verification defaults to the coding provider profile, with escalation to `deep_reasoning` only when evidence conflicts, a blocker classification is ambiguous, or safety/security/data-risk checks need deeper reasoning.
+
 ## Scope boundary
 
 ```text
@@ -22,12 +26,19 @@ Dev Verification may flag obvious code-quality risks, but does not replace Coder
 
 ```text
 .agent/workflow.md
-.runtime/context/test-policy.yaml
-.runtime/context/agent-registry.yaml
+.runtime/context/model-routing.yaml
 .runtime/tasks/<task-id>/task-analysis.yaml
-.runtime/tasks/<task-id>/implementation-plan.yaml
 .runtime/tasks/<task-id>/coder-results.yaml
+.runtime/context/feedback/patterns.md and anti-patterns.md when coder-results/task-analysis reference them
 .agent/templates/dev-verification.template.yaml
+```
+
+Conditional reads:
+
+```text
+Read test-policy.yaml and agent-registry.yaml for applied-service implementation verification.
+Read implementation-plan.yaml only when the standard pipeline created it.
+For framework-maintenance fast-track, dev-verification.yaml is not required; verify with the smallest applicable evidence such as markdown lint, shell syntax check, shellcheck, targeted grep, or git diff --check.
 ```
 
 ## Code Done criteria
@@ -41,6 +52,7 @@ Write scopes respected
 Required tests exist/pass when policy requires tests
 No test files created when policy forbids test creation
 At least one runtime verification method executed with evidence recorded
+Known feedback regression checks pass when task-analysis/coder-results list them
 QC handoff has enough evidence to be created
 ```
 
@@ -72,6 +84,8 @@ If the service cannot be started (missing env vars, DB not available):
 .runtime/tasks/<task-id>/dev-verification.yaml
 ```
 
+When returning `NEEDS_FIX` or `DEV_BLOCKED` because implementation behavior is wrong, populate `feedback_loop.new_coding_error_feedback` with root cause, prevention rule, and regression check. If the error repeats a known anti-pattern, set `feedback_loop.repeated_error_detected: true` and route back to Coder Leader; do not report DEV_DONE.
+
 ## Decision values
 
 ```text
@@ -87,6 +101,7 @@ NEEDS_USER_DECISION
 Do not lower critical check requirements to reach 80%.
 Do not create missing tests if service policy forbids them; report policy conflict.
 Do not replace Coder Leader architecture/code-quality review ownership.
+Do not ignore a repeated feedback anti-pattern just because the normal tests pass.
 Do not move to QC directly; Coordinator and QC Handoff handle that.
 ```
 
@@ -94,5 +109,5 @@ Do not move to QC directly; Coordinator and QC Handoff handle that.
 
 ```text
 Primary command: /verify-dev
-Required rules: 00-core-rules, 07-dev-verification-rules, 12-artifact-contracts, 13-security-secret-rules
+Required rules: 00-core-rules, 07-dev-verification-rules, 12-artifact-contracts, 13-security-secret-rules, 15-model-routing-observability-rules
 ```

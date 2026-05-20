@@ -22,6 +22,14 @@ R-002-12: Onboarding must not commit, modify, move, or delete files under inputs
 R-002-13: Onboarding must support three refresh granularities: full (/onboard), partial-service (--refresh <service>), partial-inputs (--refresh inputs or --scan --inputs). Prefer the smallest granularity that covers the change.
 R-002-14: Partial inputs refresh must skip files whose mtime <= indexed_mtime and content hash matches, to avoid token waste. When a tracked inputs file is deleted, onboarding must remove its inputs-index row and any memory entries citing its path.
 R-002-15: Partial inputs refresh must not touch service-catalog.yaml, test-policy.yaml, agent-registry.yaml, or services/<service>.yaml sections that are not contracts-related.
+R-002-16: Onboarding must classify universal project archetypes without forcing a single category: backend-api, frontend-web, mobile-app, desktop-app, cli-tool, library-sdk, data-pipeline, ml-model, infra-iac, embedded-firmware, docs-site, docs-and-templates, plugin-extension, monorepo-platform, workflow-framework, or unknown.
+R-002-17: Onboarding must run a signature scan before deep reads: file tree shape, manifests, lockfiles, service roots, app/package roots, route/API/schema files, test config, CI/deploy config, and inputs-index.
+R-002-18: Onboarding must record source_layout and generated_or_vendor_roots so future agents can skip heavy directories safely.
+R-002-19: Onboarding must write context_economy defaults and context hints in Project Brain, Memory Index, and service brains.
+R-002-20: Onboarding must prefer structured parsers or manifest semantics over ad hoc string scans when the format is known.
+R-002-21: Onboarding must mark unknown rather than infer service boundaries, test requirements, or deployment surfaces from weak evidence.
+R-002-22: Onboarding must record enough evidence paths for each archetype and boundary decision so future agents do not rescan unrelated files.
+R-002-23: For project types without application source (docs-only, infra-only, framework-template), onboarding must still create a coherent profile and mark coding surfaces as none or scoped to the relevant artifact type.
 ```
 
 ## Required artifacts

@@ -10,15 +10,26 @@ tools: Read, Write, Edit, Glob, Grep
 
 Create a clear test handoff for QC from task analysis, implementation notes, and dev verification evidence.
 
+## Model routing
+
+Use `model_profile=fast_router` from `.runtime/context/model-routing.yaml`. Escalate only if the handoff exposes missing evidence, approval-gate ambiguity, or a safety-critical contradiction.
+
 ## Required reading
 
 ```text
 .agent/workflow.md
+.runtime/context/model-routing.yaml
 .agent/templates/qc-handoff.template.md
 .runtime/tasks/<task-id>/task-analysis.yaml
-.runtime/tasks/<task-id>/implementation-plan.yaml
 .runtime/tasks/<task-id>/coder-results.yaml
 .runtime/tasks/<task-id>/dev-verification.yaml
+```
+
+Conditional reads:
+
+```text
+Read implementation-plan.yaml only when the standard pipeline created it.
+For framework-maintenance fast-track, qc-handoff.md is not required; the final response or task note carries changed_files, verification evidence, and residual risk.
 ```
 
 ## Handoff contents
@@ -56,5 +67,5 @@ Do not omit known risks.
 
 ```text
 Primary command: /handoff-qc
-Required rules: 00-core-rules, 07-dev-verification-rules, 08-qc-rules, 12-artifact-contracts
+Required rules: 00-core-rules, 07-dev-verification-rules, 08-qc-rules, 12-artifact-contracts, 15-model-routing-observability-rules
 ```

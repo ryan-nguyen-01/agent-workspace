@@ -32,19 +32,26 @@ R-014-13: A skill is eligible only if its name appears in .runtime/context/skill
 R-014-14: If two candidate skills have overlapping scope (e.g. two ORMs), select the one referenced by service-brain or project-brain; never load both.
 R-014-15: Skill updates must go through /skills. Do not mutate installed skills, skills-lock.json, or skill-registry risk metadata from onboarding, coder generation, or implementation commands.
 R-014-16: A newly updated skill must not be attached to generated coders automatically; Agent Factory must re-evaluate it through skill-registry.yaml and approval gates.
+R-014-17: Runtime agents must not scan or read all of .claude/skills/**. Use .runtime/context/skill-registry.yaml first, select a minimal candidate set, then read only the selected skill's SKILL.md and directly referenced files.
+R-014-18: Framework maintenance tasks must not load technical skills unless the task explicitly edits skill metadata, skill files, or stack-selection behavior.
+R-014-19: Skill selection must consider project_profile.archetypes and service profile.archetypes before falling back to generic project language/framework metadata.
+R-014-20: task-analysis.yaml.context_plan.budget.max_skill_files is the hard contextual skill budget unless Coordinator records an approved exception or a high-risk trigger requires expansion.
+R-014-21: Agents must record dropped candidate skills when a budget cut occurs so missing context can be audited later.
 ```
 
 ## Selection algorithm (contextual_skills)
 
-When an agent needs to pick contextual skills from the 215 technical skills, apply this deterministic algorithm:
+When an agent needs to pick contextual skills from the 219 technical skills, apply this deterministic algorithm:
 
 ```text
-Step 1. Build candidate set from .runtime/context/skill-registry.yaml.
+Step 1. Build candidate set from .runtime/context/skill-registry.yaml without opening .claude/skills/**.
         Inputs (priority order, dedup by skill name):
-          a. service-brain stack    (language, framework, db, queue, api, frontend)
-          b. project-brain stack    (primary_languages, frameworks)
-          c. task-analysis tags     (security|perf|a11y|data|migration|ui|ops)
-          d. impacted_services      (intersect their service-brain stacks)
+          a. service profile archetypes (backend-api, frontend-web, mobile-app, etc.)
+          b. project_profile archetypes
+          c. service-brain stack    (language, framework, db, queue, api, frontend)
+          d. project-brain stack    (primary_languages, frameworks)
+          e. task-analysis tags     (security|perf|a11y|data|migration|ui|ops)
+          f. impacted_services      (intersect their service-brain stacks)
 
 Step 2. Drop ineligible candidates:
           - skill not in skill-registry and no .claude/skills/<name>/SKILL.md
@@ -57,12 +64,13 @@ Step 3. Rank remaining candidates:
           3) project-stack match
           4) risk-area match (from task-analysis.risks)
 
-Step 4. Apply skill budget (R-014-11):
+Step 4. Apply skill budget (R-014-11 and context_plan when present):
           - workflow agents: max 3 contextual skills
           - generated service coders: max 5 contextual skills
+          - task-analysis.yaml.context_plan.budget.max_skill_files overrides the default when present
           - if budget exceeded, drop lowest-ranked candidates and record dropped[] in task artifact
 
-Step 5. Record selection in task-analysis.yaml or coder-results.yaml:
+Step 5. Read only selected skills, then record selection in task-analysis.yaml or coder-results.yaml:
           skills_used:
             required: [...]
             optional: [...]

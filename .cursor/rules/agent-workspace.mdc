@@ -11,6 +11,19 @@ Application repositories are cloned under `services/<service-name>/`. User refer
 
 > See also: `agent-workspace-source.mdc` (when editing `services/**` or `src/**`), `agent-workspace-runtime.mdc` (when editing `.runtime/**`), `agent-workspace-spec.mdc` (when editing `.agent/**`).
 
+## Framework-template mode
+
+When `.runtime/context/workflow-state.yaml` has `distribution_mode: framework-template` and `instance_status: not_applied`, this repo is the reusable framework distribution. `NEED_ONBOARDING`, empty service catalogs, and seed brain values are expected and must not block framework maintenance.
+
+For changes confined to framework docs, rules, templates, workflow agents, commands, tool adapters, or helper scripts:
+
+- classify `target_scope: framework`
+- set `requires_onboarding: false`
+- read only entrypoints and directly relevant framework files
+- use lightweight fast-track evidence for trivial changes
+
+Require onboarding only before analyzing or coding application source under `services/<service-name>/`.
+
 ## Read First
 
 - `AGENTS.md`
@@ -22,9 +35,18 @@ Application repositories are cloned under `services/<service-name>/`. User refer
 ## Core workflow rules (always)
 
 - Route every natural-language request through `/coord`.
+- Classify `target_scope` before broad brain/service reads.
+- Use signature-first context loading before broad source reads: memory index, project/service profile summaries, context hints, then specific evidence files.
+- Use `.runtime/context/model-routing.yaml` for agent model profiles and `.runtime/context/agent-activity.yaml` for `/status` activity/ETA/token/cost reporting.
+- Switch models through `.runtime/context/model-routing.yaml.model_overrides`; do not edit agent files or remove stable profiles to switch models.
+- Use `.runtime/context/response-ui.yaml` for markdown/text response structure.
+- Use `python3 scripts/status-dashboard.py --mode <compact|concise|dashboard|models|json>` as a terminal status mirror when project slash commands are not exposed. Add `--write` to generate `.runtime/status.md` and `.runtime/status.html`.
+- Use `python3 scripts/agent-activity.py` for adapter telemetry updates and `python3 scripts/architecture-health-check.py --strict` for optional deterministic drift checks.
+- For applied-service tasks, require `task-analysis.yaml.context_plan` before implementation planning or coding.
 - Do not jump directly to workflow agents or generated coders from raw user input.
 - If a required fact is missing, mark `unknown`, cite the evidence gap, and ask through Coordinator. Do not fabricate.
 - Claims of "done" must include evidence (file path, command output, or artifact).
+- Do not fabricate exact token/cost/ETA. Use `unknown` or clearly marked estimates when Cursor does not expose reliable metrics.
 
 ## Task Folder Contract
 
@@ -32,7 +54,7 @@ Task IDs use `TASK-YYYYMMDD-NNN-slug`.
 
 All task artifacts stay in `.runtime/tasks/<task_id>/`.
 
-Required baseline artifacts:
+Required baseline artifacts for applied-service implementation tasks:
 
 - `task-input.md`
 - `task.yaml`

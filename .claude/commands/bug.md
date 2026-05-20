@@ -2,7 +2,7 @@
 
 ## Purpose
 
-Create or route blocker/non-blocker bug tasks.
+Create or route blocker/non-blocker defects.
 
 ## Responsible agent
 
@@ -22,8 +22,12 @@ bug-router
 
 ```text
 1. Classify defect as blocker or non-blocker.
-2. Write blocker or non-blocker bug artifact.
-3. Update .runtime/tasks/<task-id>/bugs.yaml.
+2. Write the canonical bug artifact:
+   - blocker: .runtime/bugs/blockers/<bug-id>.yaml
+   - non-blocker: .runtime/bugs/non-blockers/<bug-id>.yaml
+3. Update .runtime/tasks/<task-id>/bugs.yaml as the task-local bug index.
+   The task index must reference bug_id, severity, status, canonical_path, and retest_scope.
+   Do not store the only bug detail copy in the task folder.
 4. For blocker, stop QC and route to Coder Leader.
 5. For non-blocker, allow QC to continue and create parallel fix task if needed.
 ```

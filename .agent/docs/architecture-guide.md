@@ -99,6 +99,9 @@ The **project brain** is the central knowledge store. It is created by onboardin
 ├── agent-registry.yaml     ← Built-in/generated coders with scopes
 ├── test-policy.yaml        ← Test requirements per service
 ├── skill-registry.yaml     ← Installed skill selection metadata
+├── model-routing.yaml      ← Agent model profile routing
+├── agent-activity.yaml     ← Status dashboard and token/cost telemetry
+├── response-ui.yaml        ← Response layout modes
 ├── workflow-state.yaml     ← Current workflow state
 ├── services/<service>.yaml ← Per-service deep intelligence
 └── feedback/               ← Patterns and anti-patterns
@@ -235,19 +238,21 @@ See also: [folder-guide.md](folder-guide.md) for detailed folder descriptions.
 ```text
 .agent/
 ├── workflow.md      ← End-to-end workflow policy
-├── rules/           ← 15 workflow rules (constraints and governance)
-├── templates/       ← 16 artifact templates
+├── rules/           ← 16 workflow rules (constraints and governance)
+├── templates/       ← 20 artifact templates
 └── docs/            ← Documentation and visual diagrams
 
 .runtime/
-├── context/         ← Durable brain + service control plane + workflow state
+├── context/         ← Durable brain + service control plane + workflow state + model/status/response UI telemetry
+├── status.md        ← Generated status artifact
+├── status.html      ← Generated browser status dashboard
 ├── tasks/           ← Per-task artifact folders
 └── bugs/            ← Bug tracking (blockers and non-blockers)
 
 .claude/
 ├── agents/         ← 12 workflow agents + built-in/generated coders
-├── skills/         ← 227 skill definitions (12 workflow + 215 technical)
-├── commands/       ← 15 workflow commands (user entry points)
+├── skills/         ← 231 skill definitions (12 workflow + 219 technical)
+├── commands/       ← 16 workflow commands (user entry points)
 └── settings.json    ← Claude Code settings
 
 inputs/             ← User-provided reference docs scanned by onboarding

@@ -1,0 +1,146 @@
+version: 1
+generated_at: "2026-05-20"
+generated_by: "framework-template"
+status: "active"
+
+purpose: "Tool-agnostic response presentation contract for Claude, Codex, Cursor, Gemini, and GitHub Copilot."
+
+source_of_truth: ".runtime/context/response-ui.yaml"
+rule_file: ".agent/rules/15-model-routing-observability-rules.md"
+
+defaults:
+  language: "vi"
+  tone: "direct-pragmatic"
+  status_mode: "dashboard"
+  final_mode: "concise"
+  review_mode: "review"
+  max_final_lines: 70
+  markdown: true
+
+global_rules:
+  respect_user_requested_format: true
+  prefer_vietnamese_when_user_uses_vietnamese: true
+  no_exact_token_cost_without_metrics: true
+  no_raw_prompts_or_long_logs: true
+  cite_files_when_discussing_local_changes: true
+  keep_final_high_signal: true
+
+modes:
+  compact:
+    intent: "Short status or simple completion update."
+    sections:
+      - "state"
+      - "current_action"
+      - "blocker"
+      - "next"
+    line_budget: 8
+  concise:
+    intent: "Default final response for completed work."
+    sections:
+      - "summary"
+      - "verification"
+      - "next_command"
+    line_budget: 30
+  dashboard:
+    intent: "Status dashboard for /status or terminal renderer."
+    sections:
+      - "workflow_state"
+      - "project_brain"
+      - "response_ui"
+      - "agent_activity"
+      - "model_profile"
+      - "elapsed_eta"
+      - "token_cost"
+      - "next_command"
+    line_budget: 52
+  models:
+    intent: "Full model routing and provider profile report."
+    sections:
+      - "workflow_state"
+      - "project_brain"
+      - "response_ui"
+      - "model_profile"
+      - "token_cost"
+      - "next_command"
+    line_budget: 120
+  dev:
+    intent: "Implementation completion report."
+    sections:
+      - "changed_files"
+      - "behavior"
+      - "verification"
+      - "residual_risk"
+    line_budget: 60
+  review:
+    intent: "Code/workflow review."
+    sections:
+      - "findings"
+      - "open_questions"
+      - "test_gaps"
+      - "summary"
+    line_budget: 70
+  policy:
+    intent: "Workflow gate or policy result."
+    sections:
+      - "decision"
+      - "evidence"
+      - "violations"
+      - "required_next_action"
+    line_budget: 50
+
+intent_routing:
+  status:
+    mode: "dashboard"
+  review:
+    mode: "review"
+  implementation_done:
+    mode: "dev"
+  policy_check:
+    mode: "policy"
+  quick_answer:
+    mode: "compact"
+  final_response:
+    mode: "concise"
+  model_report:
+    mode: "models"
+
+status_artifacts:
+  markdown: ".runtime/status.md"
+  html: ".runtime/status.html"
+  html_style: "github-readme-card"
+
+tool_overrides:
+  claude:
+    instruction_file: "CLAUDE.md"
+    support_level: "strong"
+    note: "Claude Code can follow response-ui directly through project instructions and command contracts."
+  codex:
+    instruction_file: ".codex/AGENTS.md"
+    support_level: "strong"
+    note: "Codex should read response-ui and can render terminal status through scripts/status-dashboard.py."
+  cursor:
+    instruction_file: ".cursor/rules/agent-workspace.mdc"
+    support_level: "strong-with-hooks"
+    note: "Cursor rules/hooks can enforce parts of the workflow, but chat UI layout remains client-owned."
+  copilot:
+    instruction_file: ".github/copilot-instructions.md"
+    support_level: "best-effort"
+    note: "Copilot may follow markdown structure but does not expose native UI customization hooks."
+  gemini:
+    instruction_file: ".gemini/GEMINI.md"
+    support_level: "best-effort"
+
+customization:
+  safe_to_edit:
+    - "defaults.language"
+    - "defaults.status_mode"
+    - "defaults.final_mode"
+    - "defaults.max_final_lines"
+    - "modes.*.sections"
+    - "modes.*.line_budget"
+    - "status_artifacts.*"
+  requires_policy_review:
+    - "global_rules.no_exact_token_cost_without_metrics"
+    - "global_rules.no_raw_prompts_or_long_logs"
+    - "global_rules.cite_files_when_discussing_local_changes"
+    - "tool_overrides.*.support_level"

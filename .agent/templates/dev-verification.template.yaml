@@ -50,6 +50,21 @@ risks: []
 handoff_ready: false
 required_fixes: []
 
+feedback_loop:
+  known_patterns_checked:
+    - ".runtime/context/feedback/patterns.md"
+    - ".runtime/context/feedback/anti-patterns.md"
+  repeated_error_detected: false
+  repeated_error_refs: []
+  new_coding_error_feedback:
+    required: false
+    feedback_id: null
+    canonical_bug: null
+    root_cause: null
+    prevention_rule: null
+    regression_check: null
+  memory_update_required: false
+
 reuse_and_convention_check:
   reusable_assets_used: []
   conventions_followed: []

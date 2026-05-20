@@ -1,6 +1,6 @@
 ---
 description: Coder scope and editing rules for application source code
-globs: services/**, src/**, app/**, packages/**, apps/**
+globs: services/**, src/**, app/**, packages/**, apps/**, cmd/**, internal/**, pkg/**, lib/**, libs/**, crates/**, notebooks/**, dags/**, jobs/**, pipelines/**, tests/**
 alwaysApply: false
 ---
 
@@ -12,6 +12,9 @@ These rules apply when editing application source code (services, packages, apps
 
 - Do not modify application source before `.runtime/tasks/<task_id>/task-analysis.yaml` exists.
 - If `architecture_review.required: true` in `task-analysis.yaml`, do not plan or code until `.runtime/tasks/<task_id>/architecture-review.yaml` has decision `approved`.
+- In the standard pipeline, do not modify application source before `implementation-plan.yaml` and `service-assignments.yaml` exist.
+- In applied-service fast-track, `task-analysis.yaml.context_plan` and a lightweight `service-assignments.yaml` are still required; only the full `implementation-plan.yaml` is skipped.
+- Cursor's `check-task-analysis.sh` hook enforces the active task, architecture gate, standard-plan artifacts, and active coder write scope for edit-class tools.
 
 ## Scope enforcement (R-006)
 

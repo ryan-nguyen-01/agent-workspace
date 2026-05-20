@@ -11,6 +11,8 @@ agents:
     type: "cross-cutting-coder"
     origin: "built-in"
     scope_class: "cross-cutting"
+    model_profile: "coding"
+    model_routing_source: ".runtime/context/model-routing.yaml"
     requires_project_onboarding: false
     status: "active"
     service_id: "_infra"
@@ -93,6 +95,8 @@ agents:
     type: "cross-cutting-coder"
     origin: "built-in"
     scope_class: "cross-cutting"
+    model_profile: "coding"
+    model_routing_source: ".runtime/context/model-routing.yaml"
     requires_project_onboarding: false
     status: "active"
     service_id: "_database"
@@ -184,6 +188,8 @@ agents:
   - id: "coder-{{SERVICE_SLUG}}"
     type: "service-coder"
     origin: "generated"
+    model_profile: "coding"
+    model_routing_source: ".runtime/context/model-routing.yaml"
     status: "candidate|active|disabled"
     service_id: "{{SERVICE_ID}}"
     service_name: "{{SERVICE_NAME}}"

@@ -6,6 +6,19 @@ This is **agent-workspace**: a coordinator-driven AI workflow workspace for soft
 
 It is not an application repository. Application/service repositories are cloned under `services/<service-name>/`, while this repository holds the agent engine, workflow rules, memory, task artifacts, and service coder scopes.
 
+## Framework-template mode
+
+When `.runtime/context/workflow-state.yaml` has `distribution_mode: framework-template` and `instance_status: not_applied`, this repository is the reusable framework distribution. `NEED_ONBOARDING`, empty service catalogs, and seed Project Brain values are expected and must not block maintenance of framework files.
+
+For framework maintenance, classify first:
+
+```yaml
+target_scope: framework
+requires_onboarding: false
+```
+
+Framework maintenance covers docs, scripts, workflow rules, templates, slash commands, workflow agent definitions, and tool entrypoints in this repository. Do not require onboarding, service catalog, generated coders, or service brain freshness unless the task reads or writes application source under `services/<service-name>/`.
+
 ## How to use this workspace
 
 Use `COMMAND.md` to choose a slash command. For natural-language requests, route through `/coord`.
@@ -25,13 +38,21 @@ Do **not** jump directly to sub-agents (onboarding, coder-leader, qc-runner, etc
 ## Copilot operating rules
 
 - Open the `agent-workspace` root, not an individual service folder, when running workflow tasks.
+- Classify `target_scope` before broad Project Brain or service catalog reads.
 - Do not copy `.claude/` into service repositories.
 - Do not modify application source before `task-analysis.yaml` exists and the workflow has moved into implementation.
+- For applied-service tasks, do not plan or code until `task-analysis.yaml.context_plan` exists with medium/high confidence.
+- Use signature-first context loading: Memory Index, project/service profile summaries, service context hints, then specific evidence files. Do not broad-scan source or skills by default.
+- Use `.runtime/context/model-routing.yaml` for model profiles and `.runtime/context/agent-activity.yaml` for `/status` activity/ETA/token/cost reporting.
+- Switch models through `.runtime/context/model-routing.yaml.model_overrides`; do not edit agent files or remove stable profiles to switch models.
+- Use `.runtime/context/response-ui.yaml` for markdown/text response structure and generated status artifacts. Copilot support is best-effort; do not claim native Copilot panel customization.
+- Framework-template maintenance may use workflow.md §6.2 lightweight fast-track evidence for trivial changes that do not affect approval gates, security rules, workflow state machine, generated coder scopes, destructive behavior, or application source under `services/`.
 - If `task-analysis.yaml` requires architecture review, do not plan or code until `architecture-review.yaml` exists with `decision: approved`.
 - Generated service coders may write only inside paths approved in `.runtime/context/agent-registry.yaml`.
 - Treat `inputs/` as read-only user reference docs.
 - Treat `.runtime/context/`, `.runtime/tasks/`, and `.runtime/bugs/` as workflow/runtime artifacts.
 - Do not store secrets, tokens, raw cookies, private keys, or long logs in `.runtime/` artifacts or tool adapter files.
+- Do not fabricate exact token usage, model cost, elapsed time, or ETA. If Copilot does not expose reliable metrics, write `unknown` or clearly marked estimates.
 - If uncertain, mark the fact `unknown` and ask the user or route to `/policy-check`.
 
 ## Key files
@@ -47,6 +68,11 @@ Do **not** jump directly to sub-agents (onboarding, coder-leader, qc-runner, etc
 | `.runtime/context/service-catalog.yaml` | Service inventory and source paths |
 | `.runtime/context/agent-registry.yaml` | Active coder agents and approved scopes |
 | `.runtime/context/skill-registry.yaml` | Skill selection and approval metadata |
+| `.runtime/context/model-routing.yaml` | Agent model profile routing |
+| `.runtime/context/agent-activity.yaml` | Agent activity dashboard, ETA, token/cost telemetry |
+| `.runtime/context/response-ui.yaml` | Response layout modes for chat/status/report outputs |
+| `.runtime/status.md` | Generated readable status artifact |
+| `.runtime/status.html` | Generated browser status dashboard |
 | `.claude/agents/coordinator.agent.md` | Coordinator agent definition |
 | `.claude/agents/solution-architect.agent.md` | Optional architecture review definition |
 
@@ -66,9 +92,12 @@ Do **not** jump directly to sub-agents (onboarding, coder-leader, qc-runner, etc
 /sync-memory    Persist durable learnings
 /skills         Maintain installed skills and registry metadata
 /resume-task    Continue an interrupted task
-/policy-check   Validate transitions and exceptions
-/status         Print state banner
+/workspace-mode Switch or repair distribution_mode between framework-template and workspace
+/policy-check   Validate transitions, exceptions, and artifact snapshots
+/status         Print state banner and agent activity dashboard using response UI mode
 ```
+
+Terminal status mirror: `python3 scripts/status-dashboard.py --mode <compact|concise|dashboard|models|json>`; add `--write` to generate `.runtime/status.md` and `.runtime/status.html`. Optional helpers: `python3 scripts/agent-activity.py` for telemetry updates and `python3 scripts/architecture-health-check.py --strict` for deterministic drift checks.
 
 ## Workflow states (summary)
 

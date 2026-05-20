@@ -21,16 +21,18 @@ dev-verification
 
 ```text
 1. Read task-analysis.yaml.
-2. Read implementation-plan.yaml.
-3. Read service-assignments.yaml.
+2. Read implementation-plan.yaml only when standard pipeline created it.
+3. Read service-assignments.yaml only when standard pipeline created it.
 4. Read coder-results.yaml.
 5. Verify scope compliance.
 6. Verify acceptance criteria mapping.
 7. Verify critical checks.
-8. Verify test policy compliance.
+8. Verify test policy compliance for applied-service work.
 9. Calculate score.
-10. Write dev-verification.yaml.
+10. Write dev-verification.yaml for standard pipeline.
 ```
+
+Framework-maintenance fast-track does not run /verify-dev. Use lightweight evidence such as `git diff --check`, markdown lint, shell syntax check, shellcheck, or targeted command output.
 
 ## Decision
 

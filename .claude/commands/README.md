@@ -10,7 +10,7 @@ Commands are user-facing entrypoints. They describe which agent owns the action,
 /coord          Main coordinator entrypoint
 /onboard        Build or refresh Project Brain
 /create-coders  Generate scoped service coder agents after approval
-/status         Report workflow, brain, task, and agent registry state
+/status         Report workflow, brain, task, model routing, response UI, and agent activity dashboard
 /analyze-task   Normalize HLD/LLD/ticket/text into task-analysis.yaml
 /plan-dev       Build implementation plan and service assignments
 /dev            Run implementation through Coder Leader and service coders
@@ -21,5 +21,6 @@ Commands are user-facing entrypoints. They describe which agent owns the action,
 /sync-memory    Persist durable memory updates
 /skills         Maintain installed skills and skill registry metadata
 /resume-task    Continue a task from its current state
-/policy-check   Validate transition, gate, or exception
+/workspace-mode Switch or repair distribution_mode between framework-template and workspace
+/policy-check   Validate transition, gate, exception, or artifact snapshot
 ```

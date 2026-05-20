@@ -12,6 +12,15 @@ In Codex, invoke these as natural-language intents such as `coord: <request>` or
 
 Every user request should enter through `/coord` unless the user intentionally calls a specific command.
 
+In framework-template/not_applied mode, requests that maintain this repository's framework files still enter through `/coord`, but the coordinator should classify them as:
+
+```yaml
+target_scope: framework
+requires_onboarding: false
+```
+
+Use natural-language intents such as `coord: framework <request>` when you want to make that scope explicit. Onboarding is required only before applied-service work under `services/<service-name>/`.
+
 ## Commands
 
 | Command | Owner | Use when |
@@ -29,8 +38,22 @@ Every user request should enter through `/coord` unless the user intentionally c
 | `/sync-memory` | Memory Update | Persist durable project/service/workflow learnings. |
 | `/skills` | Coordinator | Maintain installed skills, `skills-lock.json`, and skill registry metadata. |
 | `/resume-task` | Coordinator | Continue an interrupted task from current artifacts/state. |
-| `/policy-check` | Workflow Policy | Validate transition, approval gate, or exception. |
-| `/status` | Coordinator | Print workflow state, brain freshness, task, and agent registry summary. |
+| `/workspace-mode` | Coordinator | Switch or repair `distribution_mode` between `framework-template` and `workspace`. |
+| `/policy-check` | Workflow Policy | Validate transition, approval gate, exception, or workflow artifact snapshot. |
+| `/status` | Coordinator | Print workflow state, brain freshness, task, model routing, response UI mode, and agent activity/token dashboard. |
+
+CLI mirror for tools that do not expose project slash commands:
+
+```bash
+python3 scripts/status-dashboard.py --mode <compact|concise|dashboard|models|json>
+python3 scripts/status-dashboard.py --mode dashboard --write
+python3 scripts/agent-activity.py start --agent-id <agent> --phase <phase> --current-action <summary>
+python3 scripts/architecture-health-check.py --strict --write-report
+```
+
+## Fast Maintenance
+
+Trivial framework maintenance may use the lightweight fast-track path from `.agent/workflow.md` §6.2. It can skip onboarding, generated coder selection, implementation-plan/service-assignments, and QC artifacts when the change does not affect approval gates, security rules, workflow state machine, generated coder scopes, destructive behavior, or application source under `services/`.
 
 ## Maintenance Commands
 
@@ -44,7 +67,16 @@ Use these intentionally; they are not part of normal feature implementation:
 /skills audit
 /skills update <skill-name>
 /skills refresh-registry
+/workspace-mode status
+/workspace-mode framework-template
+/workspace-mode workspace
+/workspace-mode repair
 /policy-check <transition-or-exception>
+/policy-check snapshot --root <snapshot-root>
+python3 scripts/status-dashboard.py --mode <compact|concise|dashboard|models|json>
+python3 scripts/status-dashboard.py --mode dashboard --write
+python3 scripts/agent-activity.py start --agent-id <agent> --phase <phase> --current-action <summary>
+python3 scripts/architecture-health-check.py --strict --write-report
 ```
 
 ## Skill Updates

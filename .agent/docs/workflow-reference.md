@@ -47,6 +47,7 @@ AGENTS_READY ──→ READY_FOR_ANALYSIS
 
 READY_FOR_ANALYSIS ──→ ANALYZED
   Requires: task-input.md, task-analysis.yaml
+  For applied-service tasks: task-analysis.yaml.context_plan with medium/high confidence
 
 ANALYZED ──→ ARCHITECTURE_REVIEWING
   Requires: task-analysis.yaml with architecture_review.required: true
@@ -55,10 +56,11 @@ ARCHITECTURE_REVIEWING ──→ PLANNED
   Requires: architecture-review.yaml with decision approved
 
 ANALYZED ──→ PLANNED
-  Requires: task-analysis.yaml with user approval (R-011-10)
+  Requires: task-analysis.yaml with user approval (R-011-10 unless fast-track applies), context_plan present and actionable for applied-service tasks
 
 PLANNED ──→ IN_DEV
   Requires: implementation-plan.yaml, service-assignments.yaml
+  Applied-service fast-track may skip implementation-plan.yaml but still requires lightweight service-assignments.yaml
 
 IN_DEV ──→ DEV_VERIFYING
   Requires: coder-results.yaml
@@ -122,8 +124,9 @@ QC_DONE ──→ MEMORY_SYNCING ──→ DONE
 | --------------- | --------------- | --------------------------------------- |
 | `/sync-memory`  | Memory Update   | Update project brain and service brains |
 | `/skills`       | Coordinator     | Maintain installed skills and registry metadata |
-| `/policy-check` | Workflow Policy | Validate transition or gate             |
-| `/status`       | Coordinator     | Show workflow state, brain, agents      |
+| `/workspace-mode` | Coordinator   | Switch distribution mode safely          |
+| `/policy-check` | Workflow Policy | Validate transition, gate, or artifact snapshot |
+| `/status`       | Coordinator     | Show workflow state, brain, agents, model routing, response UI, and activity dashboard |
 | `/resume-task`  | Coordinator     | Resume interrupted task from last state |
 
 ## Approval gates (R-011)
@@ -142,6 +145,11 @@ User approval is required before:
 | Changing workflow policy or state machine rules  | R-011-08 |
 | Touching files outside a coder's approved scope  | R-011-09 |
 | Proceeding from Task Analysis to Coder Leader    | R-011-10 |
+| Fast-track exemption from Task Analysis approval  | R-011-10b |
+| Disabling fast-track through test policy          | R-011-11 |
+| Updating installed skill content/lock/risk metadata | R-011-12 |
+| Switching distribution mode via `/workspace-mode` | R-011-13 |
+| Writing `/workspace-mode repair` changes          | R-011-14 |
 
 ## Required artifacts per state
 
@@ -149,6 +157,7 @@ User approval is required before:
 Before coding:
   .runtime/tasks/<task-id>/task-input.md
   .runtime/tasks/<task-id>/task-analysis.yaml (with user approval)
+  .runtime/tasks/<task-id>/task-analysis.yaml.context_plan (all applied-service tasks)
 
 Before planning architecture-sensitive tasks:
   .runtime/tasks/<task-id>/architecture-review.yaml (when required)
@@ -156,6 +165,7 @@ Before planning architecture-sensitive tasks:
 Before assigning coders:
   .runtime/tasks/<task-id>/implementation-plan.yaml
   .runtime/tasks/<task-id>/service-assignments.yaml
+  Applied-service fast-track may omit implementation-plan.yaml but not service-assignments.yaml.
 
 Before Code Done:
   .runtime/tasks/<task-id>/coder-results.yaml
@@ -241,6 +251,7 @@ Blocker bugs stop QC immediately. Do not downgrade severity to keep QC moving.
 | R-012 | Artifact Contracts | Required artifacts per state transition                      |
 | R-013 | Security           | No secrets in artifacts, critical checks for auth            |
 | R-014 | Skill Composition  | Skills are capabilities, not agent identities                |
+| R-015 | Model/Observability/UI | Model profiles, activity dashboard, response UI, token/cost reporting |
 
 ## Related documents
 

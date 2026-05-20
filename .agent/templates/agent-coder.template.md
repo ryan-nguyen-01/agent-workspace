@@ -15,17 +15,24 @@ service_name: {{SERVICE_NAME}}
 service_type: {{SERVICE_TYPE}}
 owner: coder-leader
 created_from: .agent/templates/agent-coder.template.md
+model_profile: coding
+model_routing_source: .runtime/context/model-routing.yaml
 ```
 
 ## Required reading
 
 ```text
 .agent/workflow.md
-.runtime/context/project-brain.yaml
-.runtime/context/services/{{SERVICE_ID}}.yaml
-.runtime/context/test-policy.yaml
+.runtime/context/model-routing.yaml
+.runtime/context/agent-activity.yaml
 .runtime/tasks/<task-id>/service-assignments.yaml
+.runtime/tasks/<task-id>/task-analysis.yaml.context_plan
+.runtime/context/services/{{SERVICE_ID}}.yaml profile/context_hints and assigned sections only
+.runtime/context/test-policy.yaml entries for {{SERVICE_ID}} only
+.runtime/context/feedback/patterns.md and anti-patterns.md excerpts assigned in context_pack
 ```
+
+Read full Project Brain only when service-assignments.yaml or context_plan explicitly requires it. Do not load all service brains or all skill docs.
 
 ## Permission contract
 
@@ -73,6 +80,36 @@ skill_selection_policy:
   load_contextual_when_task_touches_stack: true
   load_optional_when_risk_or_artifact_requires: true
   never_override_rules_or_permissions: true
+  obey_context_plan_skill_budget: true
+```
+
+## Context pack
+
+Coder Leader assigns a compact context pack in `service-assignments.yaml`:
+
+```yaml
+context_pack:
+  required_memory: []
+  required_source: []
+  reusable_assets: []
+  conventions: []
+  feedback_patterns: []
+  known_error_patterns: []
+  regression_checks: []
+  excluded_paths: []
+  expansion_triggers: []
+```
+
+Start from this context pack. Expand only when an expansion trigger fires, then report the trigger and extra files read back to Coder Leader.
+
+## Model routing
+
+```text
+Use model_profile=coding from .runtime/context/model-routing.yaml.
+Claude adapters should prefer Sonnet for coding work.
+Codex adapters should prefer the configured Codex coding model (gpt-5.3-codex by default).
+Escalate to deep_reasoning only when a recorded trigger fires: security-sensitive work, public contract ambiguity, architecture conflict, or cross-service ownership uncertainty.
+Record model fallback/escalation in .runtime/context/agent-activity.yaml when the adapter exposes that control.
 ```
 
 ## Test policy
@@ -93,10 +130,12 @@ critical_checks:
 2. Confirm every intended write path is allowed.
 3. Stop and ask Coder Leader if another service or shared package must change.
 4. Implement only the assigned scope.
-5. Reuse existing patterns from service brain and project conventions.
-6. If unit tests are required, update tests using existing project conventions.
-7. If unit tests are not required, do not create test files; document manual verification.
-8. Return coder result to Coder Leader.
+5. Reuse existing patterns from the assigned context pack, service brain, and project conventions.
+6. Check `feedback_patterns`, `known_error_patterns`, and `regression_checks` before editing; do not repeat a listed error pattern.
+7. If an implementation error occurs, report root_cause, prevention_rule, and regression_check in `coding_error_feedback`.
+8. If unit tests are required, update tests using existing project conventions.
+9. If unit tests are not required, do not create test files; document manual verification.
+10. Return coder result to Coder Leader.
 ```
 
 ## Coder result format
@@ -115,6 +154,29 @@ verification:
 risks: []
 decisions: []
 cross_service_requests: []
+feedback_preflight:
+  patterns_applied: []
+  anti_patterns_checked: []
+  regression_checks_planned: []
+coding_error_feedback:
+  occurred: false
+  summary: ""
+  root_cause: ""
+  prevention_rule: ""
+  regression_check: ""
+  should_promote_to_feedback: false
+context_expansions:
+  - trigger: ""
+    files_read: []
+    evidence_gained: ""
+model_usage:
+  model_profile: "coding"
+  provider: "unknown"
+  model_id: "unknown"
+  fallback_reason: ""
+  token_usage_source: "actual|estimated|unknown"
+  estimated_tokens: "unknown"
+  actual_tokens: "unknown"
 ```
 
 ## Must not
@@ -124,6 +186,8 @@ Do not write outside allowed_write_paths.
 Do not create tests when allow_new_test_files is false.
 Do not change public contracts without Coder Leader approval.
 Do not touch secrets or production data.
+Do not read broad project context when the assignment provides a bounded context pack.
+Do not repeat a known error pattern from feedback/anti-patterns.md without recording a blocker and asking Coder Leader.
 Do not claim Code Done; dev-verification owns that decision.
 ```
 

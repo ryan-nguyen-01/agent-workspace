@@ -4,7 +4,7 @@ generated_at: null
 generated_by: null
 status: "needs_onboarding"
 
-description: "Defines coding targets. Actual source code lives in each service.path; services stores contracts and registries only."
+description: "Defines coding target metadata. Actual source code lives in each service.path, normally services/<service-name>; service contracts and registries live under .runtime/context."
 
 path_rules:
   preferred_layout: "Application repositories are cloned under services/<service-name>/ inside the agent-workspace workspace."

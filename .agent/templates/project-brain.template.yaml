@@ -9,12 +9,34 @@ distribution:
 project:
   name: "{{PROJECT_NAME}}"
   slug: "{{PROJECT_SLUG}}"
-  repository_type: "unknown|monolith|modular-monolith|monorepo|microservices"
+  repository_type: "unknown|single-repo|polyrepo-workspace|monolith|modular-monolith|monorepo|microservices|library|cli|mobile|desktop|data-ml|infrastructure|docs-only|embedded|workflow-framework"
   primary_languages: []
   frameworks: []
   package_managers: []
   generated_at: "{{GENERATED_AT}}"
   generated_by: "onboarding"
+
+project_profile:
+  archetypes: []
+    # Examples: backend-api, frontend-web, mobile-app, desktop-app, cli-tool,
+    # library-sdk, data-pipeline, ml-model, infra-iac, embedded-firmware,
+    # docs-site, docs-and-templates, plugin-extension, monorepo-platform, workflow-framework.
+  confidence: "low|medium|high"
+  evidence: []
+  source_layout:
+    service_roots: []
+    app_roots: []
+    package_roots: []
+    shared_code_roots: []
+    infra_roots: []
+    data_roots: []
+    docs_roots: []
+    generated_or_vendor_roots: []
+  critical_manifests: []
+    # package.json, pyproject.toml, go.mod, pom.xml, Cargo.toml, pubspec.yaml,
+    # Package.swift, build.gradle, docker-compose.yml, terraform files, etc.
+  boundary_strategy: "service-catalog|monorepo-packages|single-service|docs-only|unknown"
+  onboarding_scan_profile: "signature-first|standard|deep-required"
 
 memory:
   role: "agent-brain"
@@ -23,9 +45,51 @@ memory:
   service_memory_root: ".runtime/context/services"
   service_workspace_root: "services"
   state_file: ".runtime/context/workflow-state.yaml"
+  model_routing_file: ".runtime/context/model-routing.yaml"
+  agent_activity_file: ".runtime/context/agent-activity.yaml"
+  response_ui_file: ".runtime/context/response-ui.yaml"
   read_policy:
     - "Read .runtime/context/index.yaml before opening large memory files."
     - "Read only relevant memory files for the current task/service."
+
+context_economy:
+  goal: "High recall with bounded reads: agents start from indexes and expand only when confidence or task risk requires it."
+  default_context_budget:
+    coordinator_files: 4
+    task_analysis_files: 12
+    coder_leader_files: 16
+    service_coder_files: 20
+    verification_files: 12
+  always_read:
+    - ".agent/workflow.md"
+    - ".runtime/context/workflow-state.yaml"
+    - ".runtime/context/index.yaml"
+  read_order:
+    - "task artifact or user input"
+    - "memory index rows matching tags/service_ids/paths"
+    - "project profile and service catalog summaries"
+    - "impacted service brain summaries"
+    - "specific source files referenced by evidence"
+  expansion_triggers:
+    - "impacted service cannot be resolved"
+    - "acceptance criteria map to unknown files"
+    - "contract/schema/security/test policy risk is present"
+    - "confidence is low or evidence is stale"
+    - "implementation touches shared code or cross-service behavior"
+  stop_before_coding_when:
+    - "context_plan.confidence is low"
+    - "required evidence is missing"
+    - "service boundary is unknown"
+    - "test policy is unknown for impacted service"
+  never_read_by_default:
+    - "node_modules"
+    - "vendor"
+    - "dist"
+    - "build"
+    - ".next"
+    - "coverage"
+    - ".git"
+    - "large generated files"
 
 freshness:
   repo_reference: "{{COMMIT_OR_HASH}}"
@@ -70,7 +134,7 @@ service_boundaries:
   catalog: ".runtime/context/service-catalog.yaml"
   agent_registry: ".runtime/context/agent-registry.yaml"
   test_policy: ".runtime/context/test-policy.yaml"
-  rule: "Actual application code lives in each service.path from .runtime/context/service-catalog.yaml."
+  rule: "Actual application code lives in each service.path from .runtime/context/service-catalog.yaml, normally services/<service-name>. The service control plane lives in .runtime/context, not services/."
 
 policies:
   workflow: "end-to-end"

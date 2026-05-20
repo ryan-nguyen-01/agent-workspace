@@ -2,12 +2,12 @@
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![Agents](https://img.shields.io/badge/Agents-12-blue)](#12-workflow-agents)
-[![Skills](https://img.shields.io/badge/Skills-227-green)](#227-skills)
+[![Skills](https://img.shields.io/badge/Skills-231-green)](#231-skills)
 [![Stars](https://img.shields.io/github/stars/ryan-nguyen-01/agent-workspace?style=social)](https://github.com/ryan-nguyen-01/agent-workspace)
 
 > **Language / Ngôn ngữ**: Tài liệu framework viết bằng **tiếng Việt**, dành cho teams Việt Nam. Agents và skills hoạt động với cả prompt tiếng Việt lẫn tiếng Anh.
 
-Hệ thống multi-agent AI hoạt động theo **workflow coordinator-driven**. Từ task analysis đến architecture review, implementation, verification, QC, và memory — tất cả được điều phối bởi 12 workflow agents với 227 skills.
+Hệ thống multi-agent AI hoạt động theo **workflow coordinator-driven**. Từ task analysis đến architecture review, implementation, verification, QC, và memory — tất cả được điều phối bởi 12 workflow agents với 231 skills.
 
 ## Documentation Entry Points
 
@@ -50,6 +50,7 @@ Khi sử dụng AI assistant (Claude, GPT, Copilot…) để viết code trong t
 | AI không biết giới hạn | **Generated service coders** với `allowed_write_paths` và `forbidden_paths` scoped theo service |
 | Không có quality gate  | **Dev Verification** (≥80% score + critical checks) và **QC Runner** bắt buộc trước DONE        |
 | Không học từ sai lầm   | **Memory Update** ghi pattern, anti-pattern, bug root cause sau mỗi workflow event              |
+| Context quá lớn / tốn token | **Context economy** — signature scan, project archetype, context hints, và task `context_plan` giới hạn file cần đọc |
 
 ### Mục tiêu thiết kế
 
@@ -75,10 +76,10 @@ Project này không dành cho prototype nhanh. Nó dành cho **team** cần cons
 | Metric           | Số lượng                          |
 | ---------------- | --------------------------------- |
 | Workflow agents  | 12                                |
-| Skills           | 227 (12 workflow + 215 technical) |
-| Rules            | 15                                |
-| Templates        | 16                                |
-| Commands         | 15                                |
+| Skills           | 231 (12 workflow + 219 technical) |
+| Rules            | 16                                |
+| Templates        | 20                                |
+| Commands         | 16                                |
 | Built-in coders  | 2 cross-cutting coders            |
 | Generated agents | Unlimited (per workspace)         |
 
@@ -99,8 +100,8 @@ agent-workspace/
 ├── .gemini/                           ← Gemini-specific instructions
 ├── .agent/                            ← Tool-neutral workflow source
 │   ├── workflow.md                    ← End-to-end workflow policy
-│   ├── rules/                         ← 15 workflow rules (00-14)
-│   ├── templates/                     ← 16 artifact templates
+│   ├── rules/                         ← 16 workflow rules (00-15)
+│   ├── templates/                     ← 20 artifact templates
 │   └── docs/                          ← Documentation + visual diagrams
 ├── .runtime/                          ← Runtime memory, task artifacts, bug records
 │   ├── context/                       ← Project brain, service contracts, workflow state
@@ -121,14 +122,14 @@ agent-workspace/
 │   │   ├── memory-update.agent.md
 │   │   └── workflow-policy.agent.md
 │   │
-│   ├── skills/                        ← 227 skill definitions
+│   ├── skills/                        ← 231 skill definitions
 │   │   ├── skill-project-brain/SKILL.md
 │   │   ├── skill-task-analysis/SKILL.md
 │   │   ├── react/SKILL.md
 │   │   ├── docker/SKILL.md
-│   │   └── ... (227 skills)
+│   │   └── ... (231 skills)
 │   │
-│   ├── commands/                      ← 15 workflow commands
+│   ├── commands/                      ← 16 workflow commands
 │   │   ├── onboard.md
 │   │   ├── analyze-task.md
 │   │   ├── dev.md
@@ -143,28 +144,31 @@ agent-workspace/
 │   ├── domain/                        Domain models, glossary, business rules
 │   ├── runbooks/                      Ops playbooks, incident response
 │   └── misc/                          Uncategorized
-├── services/                          ← Ignored workspace for cloned service repos
-│   └── README.md
+├── services/                          ← Local empty/ignored workspace for cloned service repos
 ```
 
 ---
 
 ## 12 Workflow Agents
 
-| Agent                | File                      | Vai trò                                                                      |
-| -------------------- | ------------------------- | ---------------------------------------------------------------------------- |
-| **Coordinator**      | coordinator.agent.md      | Central router — routes tasks, checks project brain, enforces approval gates |
-| **Onboarding**       | onboarding.agent.md       | Scans project → builds project brain, service catalog, test policy           |
-| **Agent Factory**    | agent-factory.agent.md    | Creates service-specific coder agents (requires user approval)               |
-| **Task Analysis**    | task-analysis.agent.md    | Normalizes HLD/LLD/tickets/bugs into structured task spec                    |
-| **Solution Architect** | solution-architect.agent.md | Reviews cross-service/API/data/event/security/infra architecture risk before planning |
-| **Coder Leader**     | coder-leader.agent.md     | Coordinates generated service coders — plans, assigns, integrates, reviews architecture/code quality |
-| **Dev Verification** | dev-verification.agent.md | Output-readiness gate: critical checks, runtime evidence, test policy, ≥80% score |
-| **QC Handoff**       | qc-handoff.agent.md       | Creates mandatory Dev-to-QC handoff document after Code Done                 |
-| **QC Runner**        | qc-runner.agent.md        | Runs QC tests from handoff, stops on blocker bugs                            |
-| **Bug Router**       | bug-router.agent.md       | Classifies defects as blocker/non-blocker, routes fixes                      |
-| **Memory Update**    | memory-update.agent.md    | Persists durable learnings after meaningful workflow events                  |
-| **Workflow Policy**  | workflow-policy.agent.md  | Validates state transitions, approval gates, policy compliance               |
+| Agent                | Model profile  | File                      | Vai trò                                                                      |
+| -------------------- | -------------- | ------------------------- | ---------------------------------------------------------------------------- |
+| **Coordinator**      | fast_router    | coordinator.agent.md      | Central router — routes tasks, checks project brain, enforces approval gates |
+| **Onboarding**       | deep_reasoning | onboarding.agent.md       | Scans project → builds project brain, service catalog, test policy           |
+| **Agent Factory**    | coding_planner | agent-factory.agent.md    | Creates service-specific coder agents (requires user approval)               |
+| **Task Analysis**    | deep_reasoning | task-analysis.agent.md    | Normalizes HLD/LLD/tickets/bugs into structured task spec                    |
+| **Solution Architect** | deep_reasoning | solution-architect.agent.md | Reviews cross-service/API/data/event/security/infra architecture risk before planning |
+| **Coder Leader**     | coding_planner | coder-leader.agent.md     | Coordinates generated service coders — plans, assigns, integrates, reviews architecture/code quality |
+| **Dev Verification** | verification   | dev-verification.agent.md | Output-readiness gate: critical checks, runtime evidence, test policy, ≥80% score |
+| **QC Handoff**       | fast_router    | qc-handoff.agent.md       | Creates mandatory Dev-to-QC handoff document after Code Done                 |
+| **QC Runner**        | verification   | qc-runner.agent.md        | Runs QC tests from handoff, stops on blocker bugs                            |
+| **Bug Router**       | deep_reasoning | bug-router.agent.md       | Classifies defects as blocker/non-blocker, routes fixes                      |
+| **Memory Update**    | memory_light   | memory-update.agent.md    | Persists durable learnings after meaningful workflow events                  |
+| **Workflow Policy**  | deep_reasoning | workflow-policy.agent.md  | Validates state transitions, approval gates, policy compliance               |
+
+Model defaults live in `.runtime/context/model-routing.yaml`: Claude deep reasoning uses Opus, Claude coding uses Sonnet; Codex deep reasoning uses GPT-5.5, Codex coding uses the configured Codex coding model (`gpt-5.3-codex` by default).
+
+Muốn switch model, chỉnh `.runtime/context/model-routing.yaml.model_overrides` thay vì sửa agent files hoặc xóa stable model profiles. Override hợp lệ giữ nguyên profile contract (`deep_reasoning`, `coding`, `fast`) và thêm `reason` khi policy yêu cầu.
 
 ---
 
@@ -252,7 +256,7 @@ Generated:
 
 ---
 
-## 15 Workflow Rules
+## 16 Workflow Rules
 
 Rules tại `.agent/rules/` định nghĩa constraints và governance cho workflow:
 
@@ -276,7 +280,7 @@ Rules tại `.agent/rules/` định nghĩa constraints và governance cho workfl
 
 ---
 
-## 227 Skills
+## 231 Skills
 
 ### 12 Workflow Skills (skill-\* prefix)
 
@@ -295,7 +299,7 @@ Rules tại `.agent/rules/` định nghĩa constraints và governance cho workfl
 | skill-memory-update      | Persist durable learnings               |
 | skill-workflow-policy    | Validate transitions and gates          |
 
-### 215 Technical Skills
+### 219 Technical Skills
 
 | Category            | Ví dụ skills                                                                      |
 | ------------------- | --------------------------------------------------------------------------------- |
@@ -329,9 +333,10 @@ Rules tại `.agent/rules/` định nghĩa constraints và governance cho workfl
 | /bug           | bug.md           | Route bug report           |
 | /sync-memory   | sync-memory.md   | Update memory              |
 | /skills        | skills.md        | Maintain installed skills  |
+| /workspace-mode | workspace-mode.md | Switch/repair workspace mode |
 | /policy-check  | policy-check.md  | Validate workflow policy   |
 | /coord         | coord.md         | Coordinator direct         |
-| /status        | status.md        | Check workflow status      |
+| /status        | status.md        | Check workflow + activity dashboard |
 | /resume-task   | resume-task.md   | Resume interrupted task    |
 
 ---
@@ -341,13 +346,28 @@ Rules tại `.agent/rules/` định nghĩa constraints và governance cho workfl
 Runtime được gom dưới `.runtime` để tách khỏi adapter của từng tool và không lẫn với source service:
 
 ```text
-.runtime/context/  ← bộ não bền vững, service contracts, workflow state
+.runtime/context/  ← bộ não bền vững, service contracts, workflow state, model routing, activity dashboard, response UI
 .runtime/tasks/    ← artifact theo task
 .runtime/bugs/     ← bug blocker/non-blocker
-services/         ← workspace rỗng/ignored để clone source service
+services/         ← workspace rỗng/ignored để clone source service; không cần file scaffold bên trong
 ```
 
-Agent không đọc toàn bộ memory mỗi lần. Nó đọc `.runtime/context/index.yaml` trước, rồi chỉ mở các file liên quan đến task/service đang xử lý.
+Agent không đọc toàn bộ memory mỗi lần. Nó đọc `.runtime/context/index.yaml` trước, dùng `project_profile`, service `profile.context_hints`, và task `context_plan`, rồi chỉ mở các file liên quan đến task/service đang xử lý.
+
+`/status` hiển thị dashboard từ `.runtime/context/agent-activity.yaml`: agent nào đang chạy, đang làm gì, model profile/model id khi biết, elapsed/ETA, token budget, token usage và cost nếu tool expose metrics. Nếu không có số liệu thật, status phải hiển thị `unknown` hoặc `estimated`, không bịa số chính xác.
+
+Response layout cho Claude/Codex/Cursor/Gemini/Copilot nằm trong `.runtime/context/response-ui.yaml`: compact, concise, dashboard, models, dev, review, policy. File này điều khiển cấu trúc markdown/text và line budget, không điều khiển native panel UI của từng tool.
+
+Với tool không expose project slash command, dùng CLI mirror:
+
+```bash
+python3 scripts/status-dashboard.py --mode <compact|concise|dashboard|models|json>
+python3 scripts/status-dashboard.py --mode dashboard --write
+python3 scripts/agent-activity.py start --agent-id coordinator --phase routing --current-action "Classifying request"
+python3 scripts/architecture-health-check.py --strict --write-report
+```
+
+`status-dashboard.py --write` tạo `.runtime/status.md` và `.runtime/status.html` từ cùng nguồn dữ liệu status; HTML dùng style `github-readme-card` với tab bar, hero banner, metric cards, và raw status audit block. Đây là artifact đọc lại, không phải source of truth. `agent-activity.py` giúp adapter cập nhật activity/heartbeat mà không bịa token/cost. `architecture-health-check.py` là safety net deterministic cho drift counts/model/UI/entrypoint; nó không thay thế `/policy-check`.
 
 Memory tự động tạo bởi onboarding, duy trì bởi memory-update:
 
@@ -565,12 +585,12 @@ coordinator → onboarding (nếu project mới)
 | `.agent/docs/workflow-reference.md` | **Workflow reference** — states, transitions, commands, gates      |
 | `.agent/docs/agent-catalog.md`      | **Agent catalog** — all 12 workflow agents + generated coders      |
 | `.agent/docs/agent-taxonomy.md`     | **Agent taxonomy** — workflow agents vs built-in coders vs generated coders |
-| `.agent/docs/skill-guide.md`        | **Skill guide** — 227 skills, categories, composition              |
+| `.agent/docs/skill-guide.md`        | **Skill guide** — 231 skills, categories, composition              |
 | `.agent/docs/diagrams/*.svg`        | SVG workflow diagrams + legacy full flow                         |
 
 ---
 
-_Built with 12 workflow agents, 2 built-in cross-cutting coders, 227 skills, 15 rules, 15 commands, and a coordinator-driven workflow._
+_Built with 12 workflow agents, 2 built-in cross-cutting coders, 231 skills, 16 rules, 20 templates, 16 commands, and a coordinator-driven workflow._
 
 ---
 

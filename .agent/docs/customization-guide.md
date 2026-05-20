@@ -15,7 +15,9 @@ Coordinator là entrypoint duy nhất.
 Runtime hiện tại nằm trong:
 
 ```text
-.runtime/context/   Project brain, service catalog, agent registry, test policy, workflow state
+.runtime/context/   Project brain, service catalog, agent registry, test policy, workflow state, model/status/response UI
+.runtime/status.md  Generated status artifact
+.runtime/status.html Generated browser status dashboard
 .runtime/tasks/     Task artifacts
 .runtime/bugs/      Bug artifacts
 inputs/            User-provided PRD/HLD/ADR/OpenAPI/glossary/runbooks
@@ -119,12 +121,12 @@ Với skill đã tồn tại, dùng:
 
 ## Thêm Rule
 
-Custom rule nên dùng prefix `15+` vì built-in rules là `00-14`.
+Custom rule nên dùng prefix `16+` vì built-in rules là `00-15`.
 
 Checklist:
 
 ```text
-1. Tạo .agent/rules/15-<name>.md
+1. Tạo .agent/rules/16-<name>.md
 2. Ghi rõ Applies to, Rules, Violation handling
 3. Cập nhật CLAUDE.md rules list nếu rule là default framework policy
 4. Cập nhật CHANGELOG.md

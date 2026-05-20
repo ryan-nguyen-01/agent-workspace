@@ -8,6 +8,8 @@ alwaysApply: false
 
 These rules apply when editing the framework engine: workflow rules, templates, workflow spec, agent definitions, slash commands, or skills.
 
+When the workspace state is `distribution_mode: framework-template` and `instance_status: not_applied`, engine edits are framework maintenance. Do not require onboarding, service catalog, generated service coders, or service brain freshness unless the task also touches application source under `services/<service-name>/`.
+
 ## Scope
 
 - `.agent/rules/`, `.agent/templates/`, `.agent/docs/`, `.agent/workflow.md` are **framework spec** — change cascades to every project using this framework.
@@ -17,6 +19,7 @@ These rules apply when editing the framework engine: workflow rules, templates, 
 ## Editing policy
 
 - Workflow rule changes require explicit user approval (R-011-08) and a CHANGELOG entry.
+- Trivial framework maintenance may use workflow.md §6.2 lightweight fast-track evidence instead of full task artifacts when it does not affect approval gates, security rules, state machine, generated coder scopes, destructive behavior, or application code.
 - Template additions/changes must keep backward compatibility (or bump a major version + migration note).
 - Slash command changes must preserve the contract documented in `COMMAND.md`.
 - Skill changes route through `/skills` command; do not mutate `skills-lock.json` or installed `SKILL.md` directly from implementation tasks (R-014-15).

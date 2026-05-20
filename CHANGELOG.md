@@ -6,6 +6,36 @@ Format: `## [version] — YYYY-MM-DD`
 
 ---
 
+## [Unreleased]
+
+### Added
+
+- **Framework-template fast path** — Thêm rule rõ ràng cho `distribution_mode: framework-template` + `instance_status: not_applied`: `NEED_ONBOARDING`, service catalog rỗng, và seed brain values không block framework maintenance. Coordinator classify `target_scope` trước khi đọc rộng Project Brain/service catalog, set `requires_onboarding: false` cho docs/rules/templates/scripts/tool adapters, và dùng lightweight fast-track cho thay đổi nhỏ không đụng approval/security/state-machine/service scope.
+- **Agent speed-path cleanup** — Đồng bộ coordinator/task-analysis/coder-leader/dev-verification/QC agent definitions để chỉ đọc project brain, registry, service catalog, test policy, và task artifacts khi phase thật sự cần. Framework maintenance trivial dùng lightweight evidence thay vì full task/dev/QC artifact chain.
+- **Skill loading guard** — Thêm rule không scan/read toàn bộ `.claude/skills/**` ở runtime; agents phải chọn skill từ `skill-registry.yaml` trước rồi chỉ mở `SKILL.md` đã chọn.
+- **`/workspace-mode` command** — Thêm command để chuyển `distribution_mode` giữa `framework-template` và `workspace` qua Coordinator. Command deny khi đang có `active_task_id`, chỉ cập nhật field mode/state trong `.runtime/context/workflow-state.yaml`, và không tự động sửa project brain/service catalog/services.
+- **Agent-native workflow policy checker** — Nâng `workflow-policy` + `/policy-check snapshot` thành checker không phụ thuộc Python/Node/script để validate workspace hoặc artifact-only snapshot như `DATA/` không có `services/`. Checker bắt drift giữa `workflow-state.yaml` và Project Brain, `DEV_DONE` thiếu `dev-verification.yaml`, `QC_DONE/PASS` còn blocked/manual retest, artifact manifest lệch file thật, và agent-registry status conflict. Có report artifact template và safe repair path qua `/workspace-mode repair`.
+- **Workspace Git detach helper** — Thêm `scripts/remove-workspace-git.sh` để xóa root `.git` của `agent-workspace` khi user chỉ muốn commit/push trong các repo dưới `services/`. Script có `--dry-run`, confirmation mặc định, và không đụng vào `services/<service-name>/.git`.
+- **Context economy layer** — Thêm project/service archetypes, signature-first onboarding, `project_profile`, service `profile.context_hints`, `context_economy`, và task `context_plan` để framework áp dụng cho nhiều loại project nhưng vẫn giới hạn token/read scope.
+- **Model routing + activity dashboard** — Thêm `.runtime/context/model-routing.yaml` để map agent → model profile (Claude Opus cho reasoning sâu, Sonnet cho coding; Codex GPT-5.5 cho reasoning sâu, Codex coding model cho coding), `.runtime/context/agent-activity.yaml` để `/status` hiển thị agent đang làm gì, elapsed/ETA, token budget/usage/cost khi biết, `scripts/status-dashboard.py` làm terminal mirror, và rule R-015 để cấm bịa token/cost.
+- **Response UI contract** — Thêm `.runtime/context/response-ui.yaml` và `.agent/templates/response-ui.template.yaml` để cấu hình layout trả lời cho Claude/Codex/Cursor/Gemini/Copilot theo mode `compact`, `concise`, `dashboard`, `models`, `dev`, `review`, `policy`; terminal dashboard hỗ trợ `--mode compact|concise|dashboard|models|json` và `--write` để tạo `.runtime/status.md/.html`. R-015 mở rộng để phân biệt markdown/text response contract với native UI của từng client.
+- **9.5+ hardening helpers** — Thêm `scripts/agent-activity.py` để adapter cập nhật telemetry start/heartbeat/block/complete và `scripts/architecture-health-check.py` để CI/local bắt drift deterministic ở counts, model routing, response UI, status artifacts, Cursor hooks, và cross-tool entrypoints. Helper này không thay thế `/policy-check` agent-native.
+- **Scoped model overrides** — Thêm `model-routing.yaml.model_overrides` để switch model theo provider profile, agent, phase, hoặc emergency override mà không sửa agent files/provider defaults; health checker validate override contract.
+
+### Fixed
+
+- **Seed runtime semantics** — Sửa seed `project-brain.yaml` và `service-catalog.yaml` để mô tả đúng `services/` là workspace clone source application; control plane nằm trong `.runtime/context`.
+- **Cursor runtime gates** — `check-task-analysis.sh` giờ chặn source edits khi thiếu architecture approval, thiếu standard plan artifacts, hoặc file nằm ngoài active coder write scope; `block-destructive.sh` chặn rộng hơn các lệnh destructive tương đối như `rm -rf services`, `rm -rf .git`, `git reset --hard`, và `git clean -fd`.
+- **Policy reference drift** — Đồng bộ `.agent/workflow.md` và workflow reference với `/workspace-mode`, artifact snapshot policy checks, và R-011-10b..14.
+- **Context-read stability** — Bổ sung rule để block planning/coding khi context confidence thấp, thiếu service/test/contract ownership, hoặc agent cần vượt context budget mà chưa ghi trigger/evidence.
+- **P1/P2/P3 review fixes** — Cursor source-edit gate chuyển sang fail-closed, mở rộng nhận diện source layout phổ biến, bắt `context_plan` cho mọi applied-service task kể cả fast-track, yêu cầu lightweight `service-assignments.yaml` cho applied-service fast-track, đồng bộ `approval_gates` với R-011, chuẩn hóa archetype `docs-and-templates`, bỏ full-root service reads khỏi service-brain template, và sửa count docs.
+- **Status/template drift fixes** — `/status` terminal mirror giờ hiển thị `project_brain` freshness và response UI selected mode đúng command contract; `model-routing.template.yaml` seed đủ 12 workflow agents + 2 built-in coders; docs nói rõ `services/` có thể rỗng/không cần scaffold files trong framework-template mode; health-check bắt drift giữa status contract, renderer, model-routing template, và services workspace policy.
+- **Bug artifact contract** — Làm rõ `.runtime/tasks/<task-id>/bugs.yaml` chỉ là task-local index; canonical bug detail bắt buộc nằm ở `.runtime/bugs/blockers/<bug-id>.yaml` hoặc `.runtime/bugs/non-blockers/<bug-id>.yaml`. `/bug`, Bug Router, rules, templates, và health-check giờ bắt case task index có bug nhưng thiếu canonical artifact.
+- **Coding error feedback loop** — Bổ sung root-cause/prevention loop để agent không lặp lỗi coding: bug/dev-verification/coder result phải ghi `root_cause`, `prevention_rule`, `regression_check`, `recurrence_key`; Memory Update promote lỗi bền vững sang `feedback/anti-patterns.md` hoặc fix pattern sang `feedback/patterns.md`; Task Analysis/Coder Leader đưa feedback liên quan vào context pack; health-check bắt drift contract này.
+- **Styled status HTML** — `scripts/status-dashboard.py --write` giờ render `.runtime/status.html` theo dạng GitHub README card với tab bar, hero banner, metric cards, workflow/model/response sections, và raw status audit block; health-check bắt drift nếu HTML artifact không còn style marker.
+
+---
+
 ## [1.7.0] — 2026-05-18
 
 ### Added
@@ -25,7 +55,7 @@ Format: `## [version] — YYYY-MM-DD`
 - **Docs entrypoint + skill hardening** — Chuẩn hóa documentation entrypoint trong README/SETUP/QUICKSTART và validate `skill-registry.yaml` references against installed skills/unavailable list.
 - **Workspace-first setup** — Chuẩn hóa lại setup theo mô hình clone `agent-workspace` làm workspace điều phối, clone service repos vào `services/`, không copy `.claude/` sang từng project.
 - **Skill maintenance command** — Thêm `/skills` để status/audit/update/refresh-registry cho installed skills, `skills-lock.json`, và `skill-registry.yaml` với approval gate riêng.
-- **COMMAND.md** — Thêm root command index làm entrypoint canonical cho 15 slash commands, trỏ xuống `.claude/commands/*.md` cho contract chi tiết.
+- **COMMAND.md** — Thêm root command index làm entrypoint canonical cho 16 slash commands, trỏ xuống `.claude/commands/*.md` cho contract chi tiết.
 - **Drift detection**: Coordinator đọc `project-brain.yaml.freshness` ở session startup; banner state thêm `Brain: fresh|stale|missing`.
 - **Fast-track lane** (workflow.md §6.2): pipeline rút gọn cho 7 loại task nhỏ (typo, comment, format, rename-local, docs-only, dependency-version-bump, config-value-tweak). Bỏ qua user-approval gate R-011-10 và `implementation-plan.yaml` / `service-assignments.yaml`. Vẫn giữ scope, secrets, dev-verification, và (mặc định) QC.
 - **Skill selection algorithm** (R-014): 5-bước deterministic từ service-brain → project-brain → task-tags → impacted-services. Skill budget: 3 (workflow agent) / 5 (service coder). Có worked example chọn 5 skills từ 215 ứng viên.
@@ -40,12 +70,13 @@ Format: `## [version] — YYYY-MM-DD`
 - **SETUP.md per-tool setup section** — Thêm `### 5. Per-tool setup (optional)` document cụ thể từng AI tool: Claude Code (auto-discover, no setup), Codex CLI (cảnh báo `.codex/config.toml` bị ignore mặc định, cần `[projects."<abs-path>"] trust_level = "trusted"` trong `~/.codex/config.toml` để activate), Cursor (rules + hooks, `jq` optional), Gemini, Copilot.
 - **AGENTS.md per-tool enforcement boundary table** — Bảng so sánh 5 tools với cột `Auto-discovers`, `Lifecycle hooks`, `Enforcement path`. Khẳng định rõ Cursor là tool DUY NHẤT có lifecycle hooks; các tool khác enforce qua AGENTS.md / CLAUDE.md / `.codex/AGENTS.md` / `.gemini/GEMINI.md`.
   - Split `.cursor/rules/` thành 4 file glob-targeted: `agent-workspace.mdc` (alwaysApply core), `agent-workspace-source.mdc` (globs: services/**, src/**, …), `agent-workspace-runtime.mdc` (globs: .runtime/**), `agent-workspace-spec.mdc` (globs: .agent/**, .claude/agents/**, …). Cursor chỉ load đúng rule cho đúng file type, giảm token cost.
-  - Không mirror `.claude/agents/` vào `.codex/agents/` hay `.claude/skills/` vào `.cursor/skills/` — giữ DRY (14 agents × 4 tools = 56 file sync nightmare; 227 skills × 4 = 908 file). Tool khác đọc qua entrypoint `.codex/AGENTS.md`, `.cursor/rules/`, `.gemini/GEMINI.md` trỏ về `.agent/` và `.runtime/`.
+  - Không mirror `.claude/agents/` vào `.codex/agents/` hay `.claude/skills/` vào `.cursor/skills/` — giữ DRY (14 agents × 4 tools = 56 file sync nightmare; 231 skills × 4 = 924 file). Tool khác đọc qua entrypoint `.codex/AGENTS.md`, `.cursor/rules/`, `.gemini/GEMINI.md` trỏ về `.agent/` và `.runtime/`.
 - **`.runtime/` folder cho runtime data tool-agnostic** — Move `context/`, `tasks/`, `bugs/` từ `.claude/` ra `.runtime/`. Đây là dữ liệu runtime (project-brain, workflow-state, service-catalog, agent-registry, task artifacts, bug reports) — không phải Claude convention. Sau reorg: `.runtime/` đọc bởi mọi AI tool (Claude/Codex/Cursor/Gemini), `.claude/` chỉ còn `agents/`, `skills/`, `commands/`, `settings.json` (Claude conventions thật sự). Bulk-replace 53 file references. Update tool entrypoints (`.codex/AGENTS.md`, `.cursor/rules/agent-workspace.mdc`, `.gemini/GEMINI.md`, `.github/copilot-instructions.md`) trỏ path mới. Xóa `.claude/progress.md` stale (duplicate `workflow-state.yaml`). Layout cuối: `.agent/` (spec) + `.runtime/` (runtime) + `.claude/` (Claude engine) + `.codex/`/`.cursor/`/`.gemini/`/`.github/` (tool entrypoints) + `inputs/` + `services/`.
 
 ### Changed
 
 - **CLAUDE.md (project)**: thêm section "Precedence: project CLAUDE.md ghi đè global CLAUDE.md" — map legacy agent names (agent-orchestrator, business-analyst…) về 12 workflow agents thực tế. `solution-architect` giờ là workflow agent hợp lệ nhưng vẫn phải được route qua Coordinator sau Task Analysis. Disable aliases `sa:/ba:/qa:/pm:/sec:/sre:/dev:` trong scope project.
+- **Policy gates tightened from real DATA evidence**: `DEV_DONE` giờ bắt buộc có `dev-verification.yaml` verdict/result `DEV_DONE`; coder/coder-leader không được tự set Code Done. `QC_DONE/PASS` không hợp lệ nếu còn blocked/pending/not_run/failed test case hoặc notes vẫn yêu cầu manual/retest evidence. `/policy-check` và `/workspace-mode repair` được nối với checker mới.
 - **Rules mới**:
   - `R-001-11..14` — Drift detection bookkeeping cho Coordinator/Onboarding/Memory-Update.
   - `R-004-09..11` — Fast-track exception và architecture-review trigger fields cho task-analysis.
@@ -57,7 +88,7 @@ Format: `## [version] — YYYY-MM-DD`
 - **Task ID contract**: chuẩn hóa task folder theo `TASK-YYYYMMDD-NNN-slug`; Coordinator cấp ID trước Task Analysis, tạo `task.yaml`, và append `task-updates.yaml` cho mỗi state/artifact update.
 - **Coder output contract**: bỏ per-service `coder-handoff-<service>.yaml`; Coder Leader gom output của service coders vào `coder-results.yaml.coder_outputs[]`.
 - **Coordinator startup**: thêm Step 6 (drift check) và "Drift handling rules" — block routing vào IN_DEV khi brain stale trừ khi user accept.
-- **Counts**: sync count thực tế trong README/SETUP/GUIDELINES/CLAUDE — **12 workflow agents**, 227 skills (12 workflow + 215 technical), 16 templates, 15 workflow rules, 15 commands.
+- **Counts**: sync count thực tế trong README/SETUP/GUIDELINES/CLAUDE — **12 workflow agents**, 231 skills (12 workflow + 219 technical), 20 templates, 16 workflow rules, 16 commands.
 
 ### Removed
 
@@ -68,7 +99,7 @@ Format: `## [version] — YYYY-MM-DD`
 
 ### Fixed
 
-- Doc drift count trong `README.md`, `SETUP.md`, `GUIDELINES.md`, `CLAUDE.md`: chuẩn hóa về 227 skills, 16 templates, 15 workflow rules, và 15 slash commands.
+- Doc drift count trong `README.md`, `SETUP.md`, `GUIDELINES.md`, `CLAUDE.md`: chuẩn hóa về 231 skills, 20 templates, 16 workflow rules, và 16 slash commands.
 - **Folder semantics**: sửa `.agent/workflow.md §1.1` không còn liệt kê `memory/` và `state/` như folder root. `SETUP.md` backup/restore script và bảng "không ghi đè khi upgrade" trỏ về `.runtime/context/`. `project-brain.yaml.memory` schema đổi `root: "memory"` → `root: ".runtime/context"`, bỏ `state_root`, thêm `state_file` trỏ thẳng `.runtime/context/workflow-state.yaml`.
 
 ---
@@ -158,7 +189,7 @@ Format: `## [version] — YYYY-MM-DD`
 - **Docs**: `architecture-guide.md` — Kiến trúc tổng quan hệ thống (agents, skills, rules, context)
 - **Docs**: `workflow-reference.md` — Tham chiếu nhanh workflow phases và state machine
 - **Docs**: `agent-catalog.md` — Danh mục workflow agents với vai trò và triggers
-- **Docs**: `skill-guide.md` — Hướng dẫn skill system (12 workflow + 215 technical skills)
+- **Docs**: `skill-guide.md` — Hướng dẫn skill system (12 workflow + 219 technical skills)
 - **Docs**: `customization-guide.md` — Hướng dẫn mở rộng framework (thêm agents, skills, rules)
 - **Template**: `tasks/TASK-example/` — Demo task end-to-end cho workflow reference
 - **Config**: `.claude/settings.json` — Default framework configuration

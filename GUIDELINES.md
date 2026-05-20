@@ -31,7 +31,7 @@ Dùng commands tại [COMMAND.md](COMMAND.md):
 /skills            → Maintain installed skills
 /policy-check      → Validate workflow policy
 /coord             → Coordinator direct
-/status            → Check workflow status
+/status            → Check workflow status + agent activity dashboard
 /resume-task       → Resume interrupted task
 ```
 
@@ -58,8 +58,8 @@ Coordinator tự route đến đúng workflow agent:
 ```
 .agent/
 ├── workflow.md                ← End-to-end workflow policy
-├── rules/{nn}-{name}.md       ← 15 workflow rules
-├── templates/*.template.*     ← 16 artifact templates
+├── rules/{nn}-{name}.md       ← 16 workflow rules
+├── templates/*.template.*     ← 20 artifact templates
 └── docs/                      ← Documentation + SVG workflow diagrams
 ```
 
@@ -67,7 +67,7 @@ Coordinator tự route đến đúng workflow agent:
 
 ```
 .runtime/
-├── context/                   ← Project brain, service contracts, workflow state
+├── context/                   ← Project brain, service contracts, workflow state, model/status/response UI telemetry
 ├── tasks/                     ← Task tracking + artifacts
 └── bugs/                      ← Bug tracking
 ```
@@ -77,8 +77,8 @@ Coordinator tự route đến đúng workflow agent:
 ```
 .claude/
 ├── agents/*.agent.md          ← 12 workflow agents + built-in/generated coders
-├── skills/*/SKILL.md          ← 227 skill definitions
-├── commands/*.md              ← 15 workflow commands
+├── skills/*/SKILL.md          ← 231 skill definitions
+├── commands/*.md              ← 16 workflow commands
 └── settings.json              ← Claude Code settings
 ```
 
@@ -124,6 +124,7 @@ Coordinator tự route đến đúng workflow agent:
 ### `services/` — local clone workspace
 
 - Thư mục rỗng/ignored để user `cd services` rồi clone source service vào.
+- Không cần file scaffold trong `services/`; framework template vẫn hợp lệ khi thư mục này rỗng.
 - Không lưu memory, registry, hoặc workflow state ở đây.
 - Không đẩy source code service lên repo `agent-workspace`.
 
@@ -137,6 +138,7 @@ Coordinator tự route đến đúng workflow agent:
 - **Không chắc thì hỏi, không đoán** — nếu thiếu dữ kiện ảnh hưởng correctness/security/scope thì hỏi user, không bịa facts/evidence
 - **Approval gates**: tạo coder agents, expand scope, skip QC cần user approval
 - **Task-analysis trước code**: không có task-analysis.yaml = không code
+- **Model routing/status/response UI**: model profile lấy từ `.runtime/context/model-routing.yaml`, `/status` đọc `.runtime/context/agent-activity.yaml`, response format đọc `.runtime/context/response-ui.yaml`; `scripts/agent-activity.py` cập nhật telemetry, `scripts/status-dashboard.py --write` tạo `.runtime/status.md/.html`, `scripts/architecture-health-check.py --strict` bắt drift deterministic
 
 ---
 
@@ -201,7 +203,7 @@ Chi tiết: `.claude/agents/coordinator.agent.md`, `.claude/agents/coder-leader.
 ### Khi thêm/sửa rule
 
 - Thêm/sửa `.agent/rules/{nn}-{name}.md`
-- Đảm bảo numbered prefix liên tục (00-14)
+- Đảm bảo numbered prefix liên tục (00-15)
 - Cập nhật rules table trong `CLAUDE.md`
 
 ### Khi thay đổi .runtime/context/ system
@@ -213,4 +215,4 @@ Chi tiết: `.claude/agents/coordinator.agent.md`, `.claude/agents/coder-leader.
 ### Khi đổi counts (thêm/xóa resources)
 
 - Sync counts across: `README.md`, `CLAUDE.md`, `SETUP.md`, `GUIDELINES.md`
-- Hiện tại: 12 workflow agents + 2 built-in coders, 227 skills, 15 rules (16 files including README), 16 templates, 15 commands
+- Hiện tại: 12 workflow agents + 2 built-in coders, 231 skills, 16 rules (17 files including README), 20 templates, 16 commands

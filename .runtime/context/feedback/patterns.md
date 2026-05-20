@@ -9,11 +9,12 @@ Cac pattern da duoc xac nhan qua feedback va nen duoc reuse.
   title: "Pattern title"
   applies_to: [analysis, implementation, verification, qc, memory]
   rule: "Nguyen tac thuc thi ngan gon"
+  guardrail_check: "Check/test/manual step de xac minh pattern da duoc ap dung"
   source_feedback: [FB-0001]
+  source_bug: ".runtime/bugs/<severity>/<bug-id>.yaml"
   source_artifact: ".runtime/tasks/<task-id>/..."
   confidence: high|medium
   updated_at: 2026-04-23
 ```
 
 ## Entries
-

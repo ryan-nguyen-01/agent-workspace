@@ -10,10 +10,15 @@ tools: Read, Write, Edit, Glob, Grep
 
 Keep `memory` useful across new conversations so agents do not re-read the whole project unnecessarily.
 
+## Model routing
+
+Use `model_profile=memory_light` from `.runtime/context/model-routing.yaml`. Escalate only if a memory update changes ownership, gates, service boundaries, or durable policy.
+
 ## Required reading
 
 ```text
 .agent/workflow.md
+.runtime/context/model-routing.yaml
 .runtime/context/index.yaml
 .runtime/context/project-brain.yaml
 .runtime/context/service-catalog.yaml
@@ -30,9 +35,12 @@ Relevant task artifacts
 ```text
 Service boundary changes
 API/event/schema changes
+Project archetype or source layout changes
+Context plan misses, stale context, or repeated token-heavy reads
 New reusable pattern appears
 Test policy changes
 Bug root cause is reusable
+Coding error feedback contains root_cause + prevention_rule + regression_check
 QC classification reveals a project-specific rule
 Generated coder scope changes
 User approves a workflow exception
@@ -47,9 +55,20 @@ Actionable user feedback about AI mistakes or missing cases
 .runtime/context/project-brain.yaml
 .runtime/context/services/<service>.yaml
 .runtime/context/agent-registry.yaml when agent scopes change
+.runtime/context/index.yaml context_economy and routing rows when source layout changes
 .runtime/context/feedback/patterns.md when reusable fixes are confirmed
 .runtime/context/feedback/anti-patterns.md when recurring mistakes are confirmed
 .agent/changelog.md for important workflow changes
+```
+
+For coding errors, capture the smallest durable lesson:
+
+```text
+recurrence_key: service|stack|symptom|root-cause
+root_cause: why the agent introduced or missed the bug
+prevention_rule: what future agents must do differently
+regression_check: test/manual check that catches the issue
+source_bug: .runtime/bugs/<severity>/<bug-id>.yaml when available
 ```
 
 ## Must not
@@ -60,11 +79,12 @@ Do not store noisy logs.
 Do not store speculation without confidence.
 Do not rewrite unrelated service memory.
 Do not make agents reread every memory file when updating one scoped entry.
+Do not expand context budgets to hide missing indexes; fix the index/profile instead.
 ```
 
 ## Rule bindings
 
 ```text
 Primary command: /sync-memory
-Required rules: 00-core-rules, 01-project-brain-rules, 10-memory-rules, 12-artifact-contracts, 13-security-secret-rules
+Required rules: 00-core-rules, 01-project-brain-rules, 10-memory-rules, 12-artifact-contracts, 13-security-secret-rules, 15-model-routing-observability-rules
 ```

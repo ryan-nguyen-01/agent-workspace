@@ -22,6 +22,9 @@ R-006-12: Built-in cross-cutting coders (`coder-infra`, `coder-database`) may be
 R-006-13: Built-in cross-cutting coders must have `origin: "built-in"`, `scope_class: "cross-cutting"`, and `requires_project_onboarding: false` in agent-registry.yaml.
 R-006-14: Built-in cross-cutting coders do not replace generated service coders. If application code changes are required, Coder Leader must assign the owning generated service coder or raise a scope/approval request.
 R-006-15: Service coders return structured results to Coder Leader; they must not create separate coder-handoff files. Coder Leader consolidates outputs in coder-results.yaml.coder_outputs[].
+R-006-16: Before coding, service coders must check feedback patterns/anti-patterns assigned in the context_pack and record `feedback_preflight`.
+R-006-17: If a coder hits or introduces a coding error, it must return `coding_error_feedback` with root_cause, prevention_rule, and regression_check.
+R-006-18: A coder must not knowingly repeat a known feedback anti-pattern; if the task appears to require it, stop and ask Coder Leader.
 ```
 
 ## Required artifacts
@@ -45,3 +48,4 @@ R-006-D03: Existing reusable assets must be preferred over newly written helpers
 R-006-D04: New reusable assets require Coder Leader visibility and ownership notes.
 R-006-D05: Coder results must list reusable assets used, conventions followed, and anti-patterns avoided.
 R-006-D06: A coder must stop and ask Coder Leader if the task requires changing a shared reusable asset outside its allowed_write_paths.
+R-006-D07: Coder results must list feedback patterns applied and known error patterns avoided.

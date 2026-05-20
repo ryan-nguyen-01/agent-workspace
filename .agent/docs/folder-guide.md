@@ -61,7 +61,7 @@ Các command thường dùng:
 /bug TASK-123          Route bug blocker/non-blocker
 /sync-memory TASK-123  Cập nhật Project Brain
 /resume-task TASK-123  Tiếp tục task từ state hiện tại
-/status                Xem trạng thái workflow/brain/agents
+/status                Xem trạng thái workflow/brain/agents/model/activity
 /policy-check          Kiểm tra gate/exception
 ```
 
@@ -434,6 +434,8 @@ Folder này chứa policy bắt buộc.
   11-approval-gates.md
   12-artifact-contracts.md
   13-security-secret-rules.md
+  14-skill-composition-rules.md
+  15-model-routing-observability-rules.md
 ```
 
 ### Khi nào dùng?
@@ -523,6 +525,9 @@ Folder này chứa mẫu artifact chuẩn.
   dev-verification.template.yaml
   environment.template.yaml
   memory-update.template.yaml
+  model-routing.template.yaml
+  agent-activity.template.yaml
+  response-ui.template.yaml
   project-brain.template.yaml
   qc-handoff.template.md
   qc-test-result.template.yaml
@@ -589,7 +594,17 @@ Không tạo root `memory/` hoặc root `state/`. Source of truth hiện tại n
   agent-registry.yaml
   test-policy.yaml
   skill-registry.yaml
+  model-routing.yaml
+  agent-activity.yaml
+  response-ui.yaml
   workflow-state.yaml
+```
+
+Generated status artifacts:
+
+```text
+.runtime/status.md
+.runtime/status.html
 ```
 
 ### Khi nào dùng?
@@ -619,6 +634,10 @@ Có pattern/common util nào nên reuse?
 | `.runtime/context/test-policy.yaml` | Quy định unit/manual test theo service                                                |
 | `.runtime/context/workflow-state.yaml` | State hiện tại của workflow                                                           |
 | `.runtime/context/skill-registry.yaml` | Registry máy đọc được cho skill selection, risk gate, approval, installed/failed skills |
+| `.runtime/context/model-routing.yaml` | Model profile routing cho workflow agents                                             |
+| `.runtime/context/agent-activity.yaml` | Activity dashboard, ETA, token/cost telemetry                                         |
+| `.runtime/context/response-ui.yaml` | Response layout modes cho status/review/dev/final output                              |
+| `.runtime/status.md` / `.runtime/status.html` | Generated status artifacts; regenerate bằng `scripts/status-dashboard.py --write` |
 | `feedback/inbox.md`       | Nơi nhận feedback thô khi AI làm sai/làm thiếu                                           |
 | `feedback/patterns.md`    | Pattern đã xác nhận qua feedback để reuse                                                 |
 | `feedback/anti-patterns.md` | Lỗi lặp lại cần tránh từ feedback                                                        |

@@ -10,14 +10,25 @@ tools: Read, Write, Edit, Glob, Grep, Bash
 
 Use the QC handoff to produce test cases, execute or record QC testing, and classify issues.
 
+## Model routing
+
+Use `model_profile=verification` from `.runtime/context/model-routing.yaml`. Escalate to `deep_reasoning` only for ambiguous blocker classification, security/data-loss risk, or conflicting QC evidence.
+
 ## Required reading
 
 ```text
 .agent/workflow.md
-.runtime/context/environments.md
+.runtime/context/model-routing.yaml
 .agent/templates/qc-test-result.template.yaml
 .agent/templates/bug.template.yaml
 .runtime/tasks/<task-id>/qc-handoff.md
+```
+
+Conditional reads:
+
+```text
+Read environments.md only when the QC handoff requires environment-specific execution.
+Skip QC Runner entirely for framework-maintenance fast-track unless the task explicitly changes QC policy, test behavior, or a runnable helper script with user-facing risk.
 ```
 
 ## QC flow
@@ -30,8 +41,8 @@ Use the QC handoff to produce test cases, execute or record QC testing, and clas
 5. On non-blocker: create bug and continue unaffected tests.
 6. Record results in qc-test-results.yaml.
 7. QC_DONE requires zero open blockers.
-8. After QC_DONE: generate Postman collection from API changes in qc-handoff.md.
-9. Write qc-delivery-report.md with link to the collection file.
+8. Generate Postman collection only when qc-handoff.md records API endpoint changes.
+9. Write qc-delivery-report.md with link to the collection file, or note that collection generation was skipped.
 ```
 
 ## Postman Collection Export
@@ -89,5 +100,5 @@ Do not mark QC_DONE with open blockers.
 
 ```text
 Primary command: /qc
-Required rules: 00-core-rules, 08-qc-rules, 09-bug-routing-rules, 12-artifact-contracts, 13-security-secret-rules
+Required rules: 00-core-rules, 08-qc-rules, 09-bug-routing-rules, 12-artifact-contracts, 13-security-secret-rules, 15-model-routing-observability-rules
 ```

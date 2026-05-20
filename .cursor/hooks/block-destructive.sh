@@ -17,30 +17,36 @@ init_stdin
 CMD=$(json_field command)
 [ -z "$CMD" ] && exit 0
 
-# Patterns Codex/Cursor must never auto-run (R-011-07: destructive ops require
-# explicit user approval).
+# Patterns Cursor must never auto-run (R-011-07: destructive ops require
+# explicit user approval). Keep these broad: hooks are a guardrail, not the
+# place to decide whether destructive cleanup is safe.
 DENIED_PATTERNS=(
-  'rm[[:space:]]+-rf[[:space:]]+/[^[:space:]]*'         # rm -rf / or rm -rf /<anything>
+  '(^|[;&|[:space:]])rm[[:space:]]+-[^;&|[:space:]]*r[^;&|[:space:]]*f'
+  '(^|[;&|[:space:]])rm[[:space:]]+-[^;&|[:space:]]*f[^;&|[:space:]]*r'
+  '(^|[;&|[:space:]])rm[[:space:]]+(-r[[:space:]]+-f|-f[[:space:]]+-r)'
   'git[[:space:]]+push[[:space:]]+.*--force.*(main|master)'
   'git[[:space:]]+push[[:space:]]+-f[[:space:]]+.*(main|master)'
-  'git[[:space:]]+reset[[:space:]]+--hard[[:space:]]+origin'
+  'git[[:space:]]+reset[[:space:]]+--hard([[:space:]]|$)'
+  'git[[:space:]]+clean[[:space:]]+-[^[:space:]]*[dfx]'
+  'git[[:space:]]+checkout[[:space:]]+--[[:space:]]'
+  'find[[:space:]].*[[:space:]]-delete([[:space:]]|$)'
   'kubectl[[:space:]]+apply'
   'kubectl[[:space:]]+delete'
   'terraform[[:space:]]+apply'
   'terraform[[:space:]]+destroy'
   'docker[[:space:]]+push'
   'DROP[[:space:]]+(TABLE|DATABASE|SCHEMA)'
-  ':\(\)\s*\{\s*:\|:&\s*\};:'                            # fork bomb
+  ':\(\)[[:space:]]*\{[[:space:]]*:[|]:&[[:space:]]*\};:' # fork bomb
 )
 
 for pattern in "${DENIED_PATTERNS[@]}"; do
-  if printf '%s' "$CMD" | grep -Eq "$pattern"; then
+  if printf '%s' "$CMD" | grep -Eiq "$pattern"; then
     cat >&2 <<EOF
 ⛔ [agent-workspace] Destructive command blocked.
 ⛔ Command : $CMD
 ⛔ Pattern : $pattern
 ⛔ Per R-011-07, destructive environment/data actions need explicit user approval.
-⛔ If intentional, run the command in a regular terminal outside Cursor.
+⛔ If intentional, get explicit approval through Coordinator and run it manually.
 EOF
     exit 2
   fi
