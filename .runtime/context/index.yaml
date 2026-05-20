@@ -225,15 +225,15 @@ documents:
   - path: ".runtime/context/feedback/patterns.md"
     role: "positive_feedback_patterns"
     scope: "project"
-    tags: ["feedback", "patterns"]
+    tags: ["feedback", "patterns", "docs", "language", "style-guide"]
     service_ids: []
-    read_when: ["task-analysis", "planning", "coding", "dev-verification", "bug-routing", "memory-update"]
+    read_when: ["task-analysis", "planning", "coding", "dev-verification", "bug-routing", "memory-update", "docs-update", "response-writing"]
   - path: ".runtime/context/feedback/anti-patterns.md"
     role: "negative_feedback_patterns"
     scope: "project"
-    tags: ["feedback", "anti-patterns"]
+    tags: ["feedback", "anti-patterns", "docs", "language"]
     service_ids: []
-    read_when: ["task-analysis", "planning", "coding", "dev-verification", "bug-routing", "memory-update"]
+    read_when: ["task-analysis", "planning", "coding", "dev-verification", "bug-routing", "memory-update", "docs-update", "response-writing"]
 
 service_memory:
   directory: ".runtime/context/services"

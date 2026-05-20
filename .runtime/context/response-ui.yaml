@@ -20,6 +20,13 @@ defaults:
 global_rules:
   respect_user_requested_format: true
   prefer_vietnamese_when_user_uses_vietnamese: true
+  normalize_user_facing_prose_only: true
+  user_facing_primary_language: "vi"
+  use_single_primary_language_per_response: true
+  write_user_facing_docs_like_project_maintainer: true
+  avoid_marketing_or_ai_generated_voice: true
+  preserve_ai_facing_contract_terms: true
+  preserve_technical_literals: ["command", "file path", "agent id", "model profile", "workflow state", "rule id", "skill name", "YAML key", "artifact filename", "tool name", "code symbol"]
   no_exact_token_cost_without_metrics: true
   no_raw_prompts_or_long_logs: true
   cite_files_when_discussing_local_changes: true
@@ -136,6 +143,13 @@ customization:
     - "defaults.status_mode"
     - "defaults.final_mode"
     - "defaults.max_final_lines"
+    - "global_rules.normalize_user_facing_prose_only"
+    - "global_rules.user_facing_primary_language"
+    - "global_rules.use_single_primary_language_per_response"
+    - "global_rules.write_user_facing_docs_like_project_maintainer"
+    - "global_rules.avoid_marketing_or_ai_generated_voice"
+    - "global_rules.preserve_ai_facing_contract_terms"
+    - "global_rules.preserve_technical_literals"
     - "modes.*.sections"
     - "modes.*.line_budget"
     - "status_artifacts.*"
