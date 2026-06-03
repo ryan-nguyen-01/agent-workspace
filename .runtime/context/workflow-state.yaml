@@ -1,5 +1,6 @@
 version: 1
 distribution_mode: "framework-template"
+access_mode: "guarded"
 instance_status: "not_applied"
 current_state: "NEED_ONBOARDING"
 active_task_id: null
@@ -77,4 +78,3 @@ approval_gates:
   - disable_fast_track_through_test_policy
   - update_installed_skills
   - switch_distribution_mode
-  - workspace_mode_repair_write

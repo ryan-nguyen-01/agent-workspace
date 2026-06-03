@@ -1,6 +1,7 @@
 ---
 name: gsap
 description: Expert guidelines for building high-performance animations with GSAP (GreenSock Animation Platform)
+category: frontend
 ---
 
 # GSAP Animation Guidelines

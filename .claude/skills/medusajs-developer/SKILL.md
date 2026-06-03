@@ -1,6 +1,7 @@
 ---
 name: medusajs-developer
 description: Specialized agent for MedusaJS development including custom modules, API routes, data models, workflows, scheduled jobs, and third-party integrations. Provides expert guidance on commerce platform architecture and plugin development.
+category: backend
 license: MIT
 compatibility: Requires Node.js 18+, TypeScript, and MedusaJS v2
 metadata:

@@ -1,6 +1,7 @@
 ---
 name: tokio-knowledge-patch
 description: "Tokio changes since training cutoff (latest: 1.50.0 / tokio-util 0.7.18) — SetOnce, JoinMap, JoinQueue, cooperative scheduling, biased join. Load before working with Tokio."
+category: knowledge-patch
 version: "1.50.0"
 license: MIT
 metadata:

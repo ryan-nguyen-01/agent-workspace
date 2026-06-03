@@ -1,6 +1,7 @@
 ---
 name: kotlin-development
 description: Kotlin development guidelines with best practices for clean code, naming conventions, function design, and data handling
+category: mobile
 ---
 
 # Kotlin Development Best Practices

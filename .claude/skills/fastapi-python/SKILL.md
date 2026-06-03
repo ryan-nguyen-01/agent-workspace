@@ -1,6 +1,7 @@
 ---
 name: fastapi-python
 description: Expert in FastAPI Python development with best practices for APIs and async operations
+category: backend
 ---
 
 # FastAPI Python

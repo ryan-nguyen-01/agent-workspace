@@ -1,6 +1,7 @@
 ---
 name: expo-dev-client
 description: Build and distribute Expo development clients locally or via TestFlight
+category: mobile
 version: 1.0.0
 license: MIT
 ---

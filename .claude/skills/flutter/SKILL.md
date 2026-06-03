@@ -1,6 +1,7 @@
 ---
 name: flutter
 description: Expert in Flutter and Dart development with clean architecture and state management
+category: mobile
 ---
 
 # Flutter

@@ -1,6 +1,7 @@
 ---
 name: go-documentation
 description: Use when writing or reviewing documentation for Go packages, types, functions, or methods. Also use proactively when creating new exported types, functions, or packages, even if the user doesn't explicitly ask about documentation. Does not cover code comments for non-exported symbols (see go-style-core).
+category: mobile
 license: Apache-2.0
 metadata:
   sources: "Google Style Guide"

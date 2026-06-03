@@ -17,7 +17,7 @@ agents:
     status: "active"
     service_id: "_infra"
     service_name: "Infrastructure (cross-cutting)"
-    agent_file: ".claude/agents/coder-infra.agent.md"
+    agent_file: ".claude/agents/coders/coder-infra.agent.md"
     scope_file: null
     approval:
       required: false
@@ -101,7 +101,7 @@ agents:
     status: "active"
     service_id: "_database"
     service_name: "Database (cross-cutting)"
-    agent_file: ".claude/agents/coder-database.agent.md"
+    agent_file: ".claude/agents/coders/coder-database.agent.md"
     scope_file: null
     approval:
       required: false
@@ -193,7 +193,7 @@ agents:
     status: "candidate|active|disabled"
     service_id: "{{SERVICE_ID}}"
     service_name: "{{SERVICE_NAME}}"
-    agent_file: ".claude/agents/coder-{{SERVICE_SLUG}}.agent.md"
+    agent_file: ".claude/agents/coders/coder-{{SERVICE_SLUG}}.agent.md"
     scope_file: ".runtime/context/services/{{SERVICE_ID}}.yaml"
     approval:
       required: true

@@ -1,6 +1,7 @@
 ---
 name: skill-coder-leader
 description: Coordinate generated service coder agents for single-service and multi-service implementation tasks.
+category: workflow
 ---
 
 # Skill: Coder Leader

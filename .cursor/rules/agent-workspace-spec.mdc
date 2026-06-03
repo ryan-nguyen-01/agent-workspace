@@ -1,6 +1,6 @@
 ---
 description: Framework engine editing rules (rules, templates, workflow.md, agents)
-globs: .agent/**, .claude/agents/**, .claude/commands/**, .claude/skills/**
+globs: .agent/**, .claude/agents/**, .claude/commands/**, .claude/skills/**, scripts/hooks/**
 alwaysApply: false
 ---
 
@@ -13,8 +13,11 @@ When the workspace state is `distribution_mode: framework-template` and `instanc
 ## Scope
 
 - `.agent/rules/`, `.agent/templates/`, `.agent/docs/`, `.agent/workflow.md` are **framework spec** — change cascades to every project using this framework.
-- `.claude/agents/<workflow>.agent.md` (coordinator, onboarding, task-analysis, coder-leader, dev-verification, qc-handoff, qc-runner, bug-router, memory-update, workflow-policy, agent-factory, solution-architect) are **workflow agent definitions** — owned by framework.
-- `.claude/agents/coder-*.agent.md` are **generated coders** — created by `agent-factory` after user approval.
+- `.claude/agents/workflow/<name>.agent.md` (coordinator, onboarding, task-analysis, coder-leader, dev-verification, qc-handoff, qc-runner, bug-router, memory-update, workflow-policy, agent-factory, solution-architect) are **workflow agent definitions** — owned by framework.
+- `.claude/agents/specialists/<category>/<name>.agent.md` are the **19 specialist advisors** (advisor-only, see R-016) — owned by framework. Categories: architecture, quality-security, product, data-ai, ops-devex, research-qa.
+- `.claude/agents/coders/coder-infra.agent.md` and `coder-database.agent.md` are **built-in cross-cutting coders** — owned by framework.
+- `.claude/agents/coders/coder-<service>.agent.md` are **generated coders** — created by `agent-factory` after user approval.
+- `scripts/hooks/*` + `.claude/settings.json` PreToolUse are the **Claude enforcement hooks** (parity with `.cursor/hooks/*`, see R-017) — owned by framework.
 
 ## Editing policy
 
@@ -33,6 +36,6 @@ When changing engine files, also update:
 
 ## Never
 
-- Do not delete workflow agents from `.claude/agents/`.
+- Do not delete workflow agents from `.claude/agents/workflow/` or specialist advisors from `.claude/agents/specialists/`.
 - Do not move framework engine paths without updating all references (the moves are tracked in CHANGELOG).
 - Do not bypass approval gates by editing rules to remove the check (R-011-08).

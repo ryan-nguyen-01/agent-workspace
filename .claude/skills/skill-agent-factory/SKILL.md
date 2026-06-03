@@ -1,6 +1,7 @@
 ---
 name: skill-agent-factory
 description: Generate service-specific coder agents from project brain and approved service scopes.
+category: workflow
 ---
 
 # Skill: Agent Factory

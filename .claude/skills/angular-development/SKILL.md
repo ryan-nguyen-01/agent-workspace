@@ -1,6 +1,7 @@
 ---
 name: angular-development
 description: Expert guidance for Angular and TypeScript development focused on scalable, high-performance web applications
+category: frontend
 ---
 
 # Angular Development

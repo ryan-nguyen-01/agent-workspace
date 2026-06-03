@@ -1,6 +1,7 @@
 ---
 name: ruby
 description: Ruby development guidelines covering idiomatic code style, Ruby 3.x features, testing with RSpec, and best practices for building maintainable Ruby applications.
+category: testing
 ---
 
 # Ruby Development

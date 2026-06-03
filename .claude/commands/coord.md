@@ -24,12 +24,11 @@ coordinator
 
 ```text
 1. Read .agent/workflow.md.
-2. Classify target_scope and detect explicit command intents, including /workspace-mode.
-3. If the request is /workspace-mode, route to /workspace-mode before Project Brain checks.
-4. Check Project Brain and Agent Registry when needed for applied-service work.
-5. Validate current state transition and required artifacts.
-6. If Project Brain is missing or stale for applied-service work, route to /onboard.
-7. If coder agents are needed but not active, ask user approval and route to /create-coders.
+2. Classify target_scope and detect explicit command intents.
+3. Check Project Brain and Agent Registry when needed for applied-service work.
+4. Validate current state transition and required artifacts.
+5. If Project Brain is missing or stale for applied-service work, route to /onboard.
+6. If coder agents are needed but not active, ask user approval and route to /create-coders.
 8. If input is a task, route to /analyze-task.
 9. If task is analyzed but not planned, route to /plan-dev.
 10. If task is planned, route to /dev.

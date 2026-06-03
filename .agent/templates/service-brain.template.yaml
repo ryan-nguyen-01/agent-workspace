@@ -34,9 +34,8 @@ stack:
   package_manager: "{{PACKAGE_MANAGER}}"
 
 boundaries:
-  allowed_write_paths_for_coder:
-    # Dùng relative path từ workspace root (vd: services/service-a/src).
-    []
+    # allowed_write_paths_for_coder: relative path từ workspace root (vd: services/service-a/src).
+  allowed_write_paths_for_coder: []
   shared_read_paths: []
   forbidden_paths: []
   public_apis: []

@@ -1,6 +1,7 @@
 ---
 name: python-uv
 description: Guidelines for Python dependency management using uv, the fast Python package installer and resolver.
+category: backend
 ---
 
 # Python Package Management with uv

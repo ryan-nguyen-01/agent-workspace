@@ -1,6 +1,7 @@
 ---
 name: kotlin-knowledge-patch
 description: "Kotlin ecosystem changes since training cutoff (latest: 2.3.0) — guard conditions, explicit backing fields, multi-dollar interpolation, Compose compiler plugin, Ktor 3.0, Coroutines 1.10, Serialization 1.10, Compose Multiplatform 1.10. Load before working with Kotlin."
+category: knowledge-patch
 license: MIT
 version: "2.3.0"
 metadata:

@@ -1,6 +1,7 @@
 ---
 name: docker-knowledge-patch
 description: "Docker changes since training cutoff (latest: 0.31.0) — Rego source policies, bake --var flag, semvercmp function, env lookup disable. Load before working with Docker."
+category: knowledge-patch
 version: "0.31.0"
 license: MIT
 metadata:

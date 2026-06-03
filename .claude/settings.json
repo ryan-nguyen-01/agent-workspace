@@ -1,6 +1,6 @@
 {
   "framework": {
-    "version": "1.7.0",
+    "version": "1.8.0",
     "name": "agent-workspace"
   },
   "workflow": {
@@ -33,5 +33,36 @@
     "task_id_format": "TASK-{number}",
     "bug_id_format": "BUG-{number}",
     "commit_format": "conventional"
-  }
+  },
+  "_comment_hooks": "SCOPE: Claude Code only. Mirrors .cursor/hooks/* for the Claude adapter. Runtime controls via env: AW_HOOK_PROFILE=minimal|standard|strict (default standard), AW_DISABLED_HOOKS=comma,ids. scope-guard + secret-guard gate Write/Edit; destructive-guard gates Bash. See .agent/rules/17-hook-enforcement-rules.md and SETUP.md.",
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Write|Edit|MultiEdit|NotebookEdit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 \"$CLAUDE_PROJECT_DIR/scripts/hooks/scope-guard.py\"",
+            "timeout": 5
+          },
+          {
+            "type": "command",
+            "command": "python3 \"$CLAUDE_PROJECT_DIR/scripts/hooks/secret-guard.py\"",
+            "timeout": 5
+          }
+        ]
+      },
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 \"$CLAUDE_PROJECT_DIR/scripts/hooks/destructive-guard.py\"",
+            "timeout": 5
+          }
+        ]
+      }
+    ]
+  },
+  "permissions": {}
 }

@@ -1,6 +1,7 @@
 ---
 name: skill-task-analysis
 description: Convert HLD, LLD, ticket text, bug reports, or direct user text into a normalized task spec before implementation.
+category: workflow
 ---
 
 # Skill: Task Analysis

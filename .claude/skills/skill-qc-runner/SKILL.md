@@ -1,6 +1,7 @@
 ---
 name: skill-qc-runner
 description: Run QC from the handoff document, record test results, and stop immediately on blocker bugs.
+category: workflow
 ---
 
 # Skill: QC Runner

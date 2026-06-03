@@ -1,6 +1,7 @@
 ---
 name: graphql
 description: Expert in GraphQL API development with type-safe patterns and optimization
+category: backend
 ---
 
 # GraphQL

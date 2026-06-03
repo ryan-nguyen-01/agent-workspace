@@ -1,6 +1,7 @@
 ---
 name: cloud-solution-architect
 description: >-
+category: devops-cloud
   Transform the agent into a Cloud Solution Architect following Azure Architecture Center best practices.
   Use when designing cloud architectures, reviewing system designs, selecting architecture styles,
   applying cloud design patterns, making technology choices, or conducting Well-Architected Framework reviews.

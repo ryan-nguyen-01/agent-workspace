@@ -1,6 +1,7 @@
 ---
 name: go-logging
 description: Use when choosing a logging approach, configuring slog, writing structured log statements, or deciding log levels in Go. Also use when setting up production logging, adding request-scoped context to logs, or migrating from log to slog, even if the user doesn't explicitly mention logging. Does not cover error handling strategy (see go-error-handling).
+category: backend
 license: Apache-2.0
 compatibility: slog requires Go 1.21+; slog/slogtest requires Go 1.22+
 metadata:

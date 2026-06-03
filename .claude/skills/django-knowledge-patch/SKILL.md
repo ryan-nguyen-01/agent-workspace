@@ -1,6 +1,7 @@
 ---
 name: django-knowledge-patch
 description: "Django changes since training cutoff (latest: 6.0) — composite primary keys, CSP middleware, template partials, background tasks, async paginator. Load before working with Django."
+category: knowledge-patch
 license: MIT
 version: "1.0.0"
 metadata:

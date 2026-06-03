@@ -1,6 +1,7 @@
 ---
 name: kafka-development
 description: Best practices and guidelines for Apache Kafka event streaming and distributed messaging
+category: backend
 ---
 
 # Kafka Development

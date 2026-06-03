@@ -1,6 +1,7 @@
 ---
 name: capacitor-push-notifications
 description: Complete guide to implementing push notifications in Capacitor apps using Firebase Cloud Messaging (FCM) and Apple Push Notification Service (APNs). Covers setup, handling, and best practices. Use this skill when users need to add push notifications.
+category: mobile
 ---
 
 # Push Notifications in Capacitor

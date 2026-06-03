@@ -1,6 +1,7 @@
 ---
 name: fastify-typescript
 description: Guidelines for building high-performance APIs with Fastify and TypeScript, covering validation, Prisma integration, and testing best practices
+category: testing
 ---
 
 # Fastify TypeScript Development

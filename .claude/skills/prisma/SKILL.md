@@ -1,6 +1,7 @@
 ---
 name: prisma
 description: Expert in Prisma ORM with type-safe database operations and schema design
+category: database
 ---
 
 # Prisma

@@ -1,6 +1,7 @@
 ---
 name: fastapi-microservices-serverless
 description: Expert in FastAPI microservices for serverless and cloud-native environments
+category: devops-cloud
 ---
 
 # FastAPI Microservices Serverless

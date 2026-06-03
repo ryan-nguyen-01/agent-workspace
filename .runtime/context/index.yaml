@@ -82,7 +82,6 @@ commands:
   partial_service_refresh: "/onboard --refresh <service-id-or-path>"
   skill_maintenance: "/skills status|audit|update|refresh-registry"
   policy_snapshot_check: "/policy-check snapshot --root <workspace-or-snapshot>"
-  workspace_mode_repair: "/workspace-mode repair"
   activity_status: "/status"
   activity_status_cli: "python3 scripts/status-dashboard.py --mode models"
   activity_start_cli: "python3 scripts/agent-activity.py start --agent-id <agent> --phase <phase> --current-action <summary>"

@@ -25,11 +25,25 @@ REPORT_JSON = ROOT / ".runtime" / "architecture-health-report.json"
 REPORT_MD = ROOT / ".runtime" / "architecture-health-report.md"
 
 EXPECTED_COUNTS = {
-    "agents": 14,
+    "agents": 33,
     "skills": 231,
-    "rules": 16,
-    "templates": 20,
-    "commands": 16,
+    "rules": 18,
+    "templates": 22,
+    "commands": 17,
+}
+
+# Framework-owned agents: 12 workflow + 19 specialist advisors + 2 built-in coders.
+# Generated service coders (coders/coder-<svc>.agent.md) are intentionally excluded so
+# this count stays stable in applied workspaces.
+BUILT_IN_CODERS = {"coder-infra", "coder-database"}
+EXPECTED_SPECIALIST_COUNT = 19
+SPECIALIST_CATEGORIES = {
+    "architecture",
+    "quality-security",
+    "product",
+    "data-ai",
+    "ops-devex",
+    "research-qa",
 }
 
 EXPECTED_WORKFLOW_AGENTS = {
@@ -139,7 +153,6 @@ STALE_TEXT_PATTERNS = [
     re.compile(r"\b227\s+skills?\b", re.I),
     re.compile(r"\b215\s+technical\s+skills?\b", re.I),
     re.compile(r"\b15\s+workflow\s+rules?\b", re.I),
-    re.compile(r"\b15\s+commands?\b", re.I),
     re.compile(r"R-015-01\.\.18"),
     re.compile(r"workflow-policy-check\.py"),
 ]
@@ -196,9 +209,17 @@ def add(findings: list[dict[str, str]], severity: str, code: str, message: str, 
     )
 
 
+def count_framework_agents() -> int:
+    agents_dir = ROOT / ".claude" / "agents"
+    workflow = len(list((agents_dir / "workflow").glob("*.agent.md")))
+    specialists = len(list((agents_dir / "specialists").rglob("*.agent.md")))
+    builtins = sum(1 for c in BUILT_IN_CODERS if (agents_dir / "coders" / f"{c}.agent.md").exists())
+    return workflow + specialists + builtins
+
+
 def count_files() -> dict[str, int]:
     return {
-        "agents": len(list((ROOT / ".claude" / "agents").glob("*.agent.md"))),
+        "agents": count_framework_agents(),
         "skills": len(list((ROOT / ".claude" / "skills").rglob("SKILL.md"))),
         "rules": len([p for p in (ROOT / ".agent" / "rules").glob("*.md") if p.name != "README.md"]),
         "templates": len([p for p in (ROOT / ".agent" / "templates").iterdir() if p.is_file()]),
@@ -755,6 +776,173 @@ def check_cursor_hooks(findings: list[dict[str, str]]) -> None:
         add(findings, "error", "cursor-shell-hook-missing", "Cursor destructive command gate must fail closed", ".cursor/hooks.json")
 
 
+def check_specialists(findings: list[dict[str, str]]) -> None:
+    spec_dir = ROOT / ".claude" / "agents" / "specialists"
+    if not spec_dir.is_dir():
+        add(findings, "error", "specialists-dir-missing", "Missing .claude/agents/specialists/ directory", "specialists")
+        return
+    files = sorted(spec_dir.rglob("*.agent.md"))
+    if len(files) != EXPECTED_SPECIALIST_COUNT:
+        add(findings, "error", "specialist-count-drift", f"specialist count drift: expected {EXPECTED_SPECIALIST_COUNT}, got {len(files)}", "specialists")
+
+    routing = load_yaml(CONTEXT / "model-routing.yaml")
+    agent_map = routing.get("agent_model_map", {}) if isinstance(routing, dict) else {}
+    advisors = agent_map.get("specialist_advisors", {}) if isinstance(agent_map, dict) else {}
+    advisor_ids = set(advisors.keys()) if isinstance(advisors, dict) else set()
+
+    file_ids = set()
+    for f in files:
+        text = f.read_text(encoding="utf-8", errors="ignore")
+        name_m = re.search(r"^name:\s*(.+)$", text, re.M)
+        cat_m = re.search(r"^category:\s*(.+)$", text, re.M)
+        name = name_m.group(1).strip().strip('"') if name_m else f.stem.replace(".agent", "")
+        file_ids.add(name)
+        if not cat_m:
+            add(findings, "error", "specialist-frontmatter-invalid", f"{f.name} missing category frontmatter", f.name)
+        elif cat_m.group(1).strip().strip('"') not in SPECIALIST_CATEGORIES:
+            add(findings, "error", "specialist-category-invalid", f"{f.name} has unknown category {cat_m.group(1).strip()}", f.name)
+        # advisor-only contract guard
+        if "Advisor-only" not in text and "advisor-only" not in text.lower():
+            add(findings, "error", "specialist-advisory-contract-missing", f"{f.name} lacks advisor-only contract text", f.name)
+
+    if isinstance(advisors, dict):
+        missing = sorted(file_ids - advisor_ids)
+        extra = sorted(advisor_ids - file_ids)
+        if missing or extra:
+            add(findings, "error", "specialist-routing-drift", f"specialist_advisors map vs files mismatch: missing={missing} extra={extra}", "model-routing.yaml")
+        profile_names = set(routing.get("model_profiles", {}).keys()) if isinstance(routing, dict) else set()
+        for sid, cfg in advisors.items():
+            prof = cfg.get("model_profile") if isinstance(cfg, dict) else None
+            if prof not in profile_names:
+                add(findings, "error", "specialist-profile-invalid", f"specialist {sid} uses unknown model_profile {prof}", "model-routing.yaml")
+    else:
+        add(findings, "error", "specialist-routing-missing", "model-routing.yaml missing agent_model_map.specialist_advisors", "model-routing.yaml")
+
+    # Guard the integration: specialists must be operationally wired into the agents that invoke them,
+    # not just defined. Each of these workflow agents must reference the advisory contract.
+    wiring = {
+        "task-analysis": "advisory_required",
+        "solution-architect": "advisor",
+        "coder-leader": "advisor",
+        "dev-verification": "advisor",
+        "qc-handoff": "advisor",
+    }
+    wf_dir = ROOT / ".claude" / "agents" / "workflow"
+    for agent_id, needle in wiring.items():
+        path = wf_dir / f"{agent_id}.agent.md"
+        text = path.read_text(encoding="utf-8", errors="ignore").lower() if path.is_file() else ""
+        if needle.lower() not in text or "advisor" not in text:
+            add(findings, "error", "specialist-wiring-missing", f"{agent_id}.agent.md does not wire specialist advisories (R-016 integration)", f"{agent_id}.agent.md")
+
+
+def check_claude_hooks(findings: list[dict[str, str]]) -> None:
+    settings_path = ROOT / ".claude" / "settings.json"
+    try:
+        settings = json.loads(settings_path.read_text(encoding="utf-8"))
+    except Exception as exc:  # noqa: BLE001
+        add(findings, "error", "claude-settings-invalid", f"Cannot parse .claude/settings.json: {exc}", ".claude/settings.json")
+        return
+    hooks = settings.get("hooks", {})
+    pre = hooks.get("PreToolUse", []) if isinstance(hooks, dict) else []
+    commands = " ".join(
+        h.get("command", "")
+        for group in pre if isinstance(group, dict)
+        for h in group.get("hooks", []) if isinstance(h, dict)
+    )
+    for script in ("scope-guard.py", "secret-guard.py", "destructive-guard.py"):
+        if script not in commands:
+            add(findings, "error", "claude-hook-missing", f"settings.json PreToolUse missing {script}", ".claude/settings.json")
+        if not (ROOT / "scripts" / "hooks" / script).is_file():
+            add(findings, "error", "claude-hook-script-missing", f"Missing hook script scripts/hooks/{script}", f"scripts/hooks/{script}")
+
+
+def check_plugin_wrapper(findings: list[dict[str, str]]) -> None:
+    """The Claude plugin wrapper must exist, be valid JSON, and stay generated from source."""
+    plugin_dir = ROOT / ".claude-plugin"
+    for name in ("plugin.json", "hooks.json", "marketplace.json"):
+        path = plugin_dir / name
+        if not path.is_file():
+            add(findings, "error", "plugin-wrapper-missing", f"Missing .claude-plugin/{name} (run scripts/build-plugin.py)", f".claude-plugin/{name}")
+            continue
+        try:
+            json.loads(path.read_text(encoding="utf-8"))
+        except Exception as exc:  # noqa: BLE001
+            add(findings, "error", "plugin-wrapper-invalid", f".claude-plugin/{name} is not valid JSON: {exc}", f".claude-plugin/{name}")
+    # Drift: wrapper must match scripts/build-plugin.py output (single source of truth).
+    try:
+        module_path = ROOT / "scripts" / "build-plugin.py"
+        spec = importlib.util.spec_from_file_location("build_plugin", module_path)
+        if spec and spec.loader:
+            module = importlib.util.module_from_spec(spec)
+            spec.loader.exec_module(module)
+            version = module.framework_version()
+            c = module.counts()
+            expected = {
+                module.PLUGIN_DIR / "plugin.json": module.dump(module.PLUGIN_DIR / "plugin.json", module.build_manifest(version, c)),
+                module.PLUGIN_DIR / "hooks.json": module.dump(module.PLUGIN_DIR / "hooks.json", module.translate_hooks()),
+                module.PLUGIN_DIR / "marketplace.json": module.dump(module.PLUGIN_DIR / "marketplace.json", module.build_marketplace(version)),
+            }
+            for path, exp in expected.items():
+                actual = path.read_text(encoding="utf-8") if path.is_file() else None
+                if actual != exp:
+                    add(findings, "error", "plugin-wrapper-drift", f"{path.relative_to(ROOT).as_posix()} out of sync; run scripts/build-plugin.py", path.name)
+    except Exception as exc:  # noqa: BLE001
+        add(findings, "error", "plugin-wrapper-check-failed", f"plugin wrapper drift check failed: {exc}", "scripts/build-plugin.py")
+
+
+def check_skill_taxonomy(findings: list[dict[str, str]]) -> None:
+    tax_path = CONTEXT / "skill-taxonomy.yaml"
+    if not tax_path.is_file():
+        add(findings, "error", "skill-taxonomy-missing", "Missing .runtime/context/skill-taxonomy.yaml (run scripts/build-skill-catalog.py)", "skill-taxonomy.yaml")
+        return
+    tax = load_yaml(tax_path)
+    total = tax.get("total_skills") if isinstance(tax, dict) else None
+    actual = len(list((ROOT / ".claude" / "skills").rglob("SKILL.md")))
+    if total != actual:
+        add(findings, "error", "skill-taxonomy-stale", f"skill-taxonomy total_skills={total} but {actual} SKILL.md found; rerun scripts/build-skill-catalog.py", "skill-taxonomy.yaml")
+    if not (ROOT / ".agent" / "docs" / "skill-catalog.md").is_file():
+        add(findings, "error", "skill-catalog-missing", "Missing .agent/docs/skill-catalog.md", "skill-catalog.md")
+
+
+# Commands excluded from the Codex prompt surface (Claude-plugin-specific). Keep in sync with
+# scripts/build-codex-prompts.py EXCLUDE.
+CODEX_PROMPT_EXCLUDE = {"aw-init", "access"}
+
+
+def check_codex_plugin(findings: list[dict[str, str]]) -> None:
+    """Codex plugin manifests must exist + be valid. The skills copy is build-time/gitignored, so
+    it is NOT required here — only the manifests are checked for drift parity with the Claude side."""
+    manifest = ROOT / ".codex" / "marketplace" / "plugins" / "agent-workspace" / ".codex-plugin" / "plugin.json"
+    market = ROOT / ".codex" / "marketplace" / ".agents" / "plugins" / "marketplace.json"
+    for raw, label in ((manifest, "codex-plugin"), (market, "codex-marketplace")):
+        if not raw.is_file():
+            add(findings, "error", f"{label}-missing", f"Missing {raw.relative_to(ROOT)} (run scripts/build-codex-plugin.py)", raw.relative_to(ROOT).as_posix())
+            continue
+        try:
+            data = json.loads(raw.read_text(encoding="utf-8"))
+        except Exception as exc:  # noqa: BLE001
+            add(findings, "error", f"{label}-invalid", f"Cannot parse {raw.relative_to(ROOT)}: {exc}", raw.relative_to(ROOT).as_posix())
+            continue
+        if data.get("name") != "agent-workspace":
+            add(findings, "error", f"{label}-name-drift", f"{raw.relative_to(ROOT)} name != agent-workspace", raw.relative_to(ROOT).as_posix())
+
+
+def check_codex_prompts(findings: list[dict[str, str]]) -> None:
+    """Each command (minus the Codex-excluded set) must have a generated Codex prompt, and there
+    must be no stale prompts left over."""
+    cmd_dir = ROOT / ".claude" / "commands"
+    out_dir = ROOT / ".codex" / "prompts"
+    if not out_dir.is_dir():
+        add(findings, "error", "codex-prompts-missing", "Missing .codex/prompts/ (run scripts/build-codex-prompts.py)", ".codex/prompts")
+        return
+    expected = {p.stem for p in cmd_dir.glob("*.md") if p.name != "README.md" and p.stem not in CODEX_PROMPT_EXCLUDE}
+    actual = {p.stem for p in out_dir.glob("*.md") if p.name != "README.md"}
+    missing = sorted(expected - actual)
+    stale = sorted(actual - expected)
+    if missing or stale:
+        add(findings, "error", "codex-prompts-drift", f"Codex prompts out of sync: missing={missing} stale={stale}; rerun scripts/build-codex-prompts.py", ".codex/prompts")
+
+
 def score(findings: list[dict[str, str]]) -> float:
     errors = sum(1 for item in findings if item["severity"] == "error")
     warnings = sum(1 for item in findings if item["severity"] == "warning")
@@ -836,6 +1024,12 @@ def run_checks() -> dict[str, Any]:
     check_feedback_loop_contract(findings)
     check_agent_activity(findings)
     check_cursor_hooks(findings)
+    check_specialists(findings)
+    check_claude_hooks(findings)
+    check_skill_taxonomy(findings)
+    check_codex_plugin(findings)
+    check_codex_prompts(findings)
+    check_plugin_wrapper(findings)
     return build_report(findings, counts)
 
 

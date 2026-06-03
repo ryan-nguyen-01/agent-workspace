@@ -1,6 +1,7 @@
 ---
 name: skill-project-brain
 description: Manage reusable project brain files so agents can resume work across conversations without rescanning the whole repository.
+category: workflow
 ---
 
 # Skill: Project Brain

@@ -1,6 +1,7 @@
 ---
 name: cloudformation
 description: AWS CloudFormation infrastructure as code for stack management. Use when writing templates, deploying stacks, managing drift, troubleshooting deployments, or organizing infrastructure with nested stacks.
+category: devops-cloud
 last_updated: "2026-01-07"
 doc_source: https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/
 ---

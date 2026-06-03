@@ -1,6 +1,7 @@
 ---
 name: python-testing
 description: Expert in Python testing with pytest and test-driven development
+category: testing
 ---
 
 # Python Testing

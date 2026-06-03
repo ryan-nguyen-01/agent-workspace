@@ -22,18 +22,18 @@ FILE_PATH=$(json_field file_path)
 [ -z "$FILE_PATH" ] && exit 0
 
 WORKFLOW_AGENTS=(
-  ".claude/agents/coordinator.agent.md"
-  ".claude/agents/onboarding.agent.md"
-  ".claude/agents/agent-factory.agent.md"
-  ".claude/agents/task-analysis.agent.md"
-  ".claude/agents/solution-architect.agent.md"
-  ".claude/agents/coder-leader.agent.md"
-  ".claude/agents/dev-verification.agent.md"
-  ".claude/agents/qc-handoff.agent.md"
-  ".claude/agents/qc-runner.agent.md"
-  ".claude/agents/bug-router.agent.md"
-  ".claude/agents/memory-update.agent.md"
-  ".claude/agents/workflow-policy.agent.md"
+  ".claude/agents/workflow/coordinator.agent.md"
+  ".claude/agents/workflow/onboarding.agent.md"
+  ".claude/agents/workflow/agent-factory.agent.md"
+  ".claude/agents/workflow/task-analysis.agent.md"
+  ".claude/agents/workflow/solution-architect.agent.md"
+  ".claude/agents/workflow/coder-leader.agent.md"
+  ".claude/agents/workflow/dev-verification.agent.md"
+  ".claude/agents/workflow/qc-handoff.agent.md"
+  ".claude/agents/workflow/qc-runner.agent.md"
+  ".claude/agents/workflow/bug-router.agent.md"
+  ".claude/agents/workflow/memory-update.agent.md"
+  ".claude/agents/workflow/workflow-policy.agent.md"
 )
 
 for agent in "${WORKFLOW_AGENTS[@]}"; do

@@ -21,7 +21,7 @@
 
 ## Cấu trúc Agent Workspace
 
-```
+```text
 agent-workspace/
 ├── CLAUDE.md                      ← Entry point (Claude đọc file này đầu tiên)
 ├── AGENTS.md                      ← Entry point chung cho AI coding agents
@@ -34,8 +34,8 @@ agent-workspace/
 ├── .gemini/                       ← Gemini instructions
 ├── .agent/                        ← Tool-neutral workflow source
 │   ├── workflow.md
-│   ├── rules/                     ← 16 workflow rules
-│   ├── templates/                 ← 20 artifact templates
+│   ├── rules/                     ← 18 workflow rules
+│   ├── templates/                 ← 22 artifact templates
 │   └── docs/                      ← Documentation + visual diagrams
 ├── .runtime/                      ← Runtime memory and workflow artifacts
 │   ├── context/                   ← Project brain + service contracts + workflow state + model/status/response UI telemetry
@@ -63,7 +63,7 @@ agent-workspace/
 │   │   ├── prisma/SKILL.md
 │   │   └── ...
 │   │
-│   ├── commands/                  ← 16 workflow commands
+│   ├── commands/                  ← 17 workflow commands
 │   │   ├── onboard.md
 │   │   ├── dev.md
 │   │   └── ...
@@ -108,15 +108,15 @@ scripts/remove-workspace-git.sh --dry-run
 Expected distribution shape:
 
 ```bash
-echo "Agents: $(ls .claude/agents/*.agent.md 2>/dev/null | wc -l | tr -d ' ')"
+echo "Agents: $(find .claude/agents -name '*.agent.md' 2>/dev/null | wc -l | tr -d ' ')"
 echo "Skills: $(ls -d .claude/skills/*/SKILL.md 2>/dev/null | wc -l | tr -d ' ')"
 echo "Rules:  $(find .agent/rules -name '[0-9][0-9]-*.md' 2>/dev/null | wc -l | tr -d ' ')"
 ```
 
 ```text
-Agents: 14
+Agents: 33
 Skills: 231
-Rules:  16
+Rules:  18
 ```
 
 ### 2. Add user inputs
@@ -186,9 +186,9 @@ Agent Workspace ship sẵn entrypoints cho 5 AI tools. Mỗi tool có convention
 
 Không cần setup thêm. Claude Code tự discover:
 
-- `.claude/agents/*.agent.md` — 12 workflow agents + 2 built-in coders qua Agent tool
+- `.claude/agents/**/*.agent.md` — 12 workflow agents + 2 built-in coders + 19 specialist advisors qua Agent tool
 - `.claude/skills/*/SKILL.md` — 231 skills qua Skill tool
-- `.claude/commands/*.md` — 16 slash commands (`/coord`, `/onboard`, …)
+- `.claude/commands/*.md` — 17 slash commands (`/coord`, `/onboard`, …)
 - `CLAUDE.md` ở root — system instructions
 
 #### Codex CLI
@@ -248,7 +248,7 @@ Nếu workspace đã onboard và có generated coders/task history, kiểm tra c
 | `.runtime/context/`                | Brain, service contracts, workflow state, feedback |
 | `.runtime/tasks/`                  | Task history                                       |
 | `.runtime/bugs/`                   | Bug history                                        |
-| `.claude/agents/coder-*.agent.md` | Generated service coders                           |
+| `.claude/agents/coders/coder-*.agent.md` | Generated service coders                    |
 | `.agent/rules/15-*.md` trở lên   | Custom rules                                       |
 | `inputs/`                         | User-provided reference docs (PRD/HLD/ADR/specs)   |
 
@@ -273,7 +273,7 @@ Agent Workspace sử dụng **coordinator-driven workflow**. Bạn có thể gia
 
 Claude tự động route qua coordinator đến đúng workflow agent:
 
-```
+```text
 "Phân tích dự án này"                      → coordinator → onboarding
 "Thêm tính năng login bằng Google OAuth"   → coordinator → task-analysis → coder-leader → ...
 "Kiểm tra code đã sẵn sàng chưa"          → coordinator → dev-verification
@@ -284,7 +284,7 @@ Claude tự động route qua coordinator đến đúng workflow agent:
 
 Dùng commands để gọi trực tiếp workflow phase:
 
-```
+```bash
 /onboard                    → Scan project, tạo project brain
 /analyze-task               → Normalize task thành spec
 /create-coders              → Tạo service coder agents
@@ -311,7 +311,7 @@ python3 scripts/architecture-health-check.py --strict --write-report
 
 Khi giao task, coordinator tự động chạy workflow đầy đủ:
 
-```
+```text
 1. coordinator        → Route task, check project brain
 2. task-analysis      → Normalize → task-analysis.yaml
 3. solution-architect → Review architecture khi task yêu cầu
@@ -374,7 +374,7 @@ ls CLAUDE.md
 
 ```bash
 # Verify tất cả resources
-echo "Agents: $(ls .claude/agents/*.agent.md 2>/dev/null | wc -l | tr -d ' ')"
+echo "Agents: $(find .claude/agents -name '*.agent.md' 2>/dev/null | wc -l | tr -d ' ')"
 echo "Skills: $(ls -d .claude/skills/*/SKILL.md 2>/dev/null | wc -l | tr -d ' ')"
 echo "Rules:  $(find .agent/rules -name '[0-9][0-9]-*.md' 2>/dev/null | wc -l | tr -d ' ')"
 echo "Templates: $(ls .agent/templates/* 2>/dev/null | wc -l | tr -d ' ')"
@@ -383,12 +383,12 @@ echo "Commands: $(ls .claude/commands/*.md 2>/dev/null | wc -l | tr -d ' ')"
 
 Expected:
 
-```
-Agents: 14
+```text
+Agents: 33
 Skills: 231
-Rules:  16
-Templates: 20
-Commands: 16
+Rules:  18
+Templates: 22
+Commands: 15
 ```
 
 ### Workflow không chạy đúng
@@ -416,7 +416,7 @@ git pull
 
 ```bash
 echo "=== Verification ==="
-echo "Agents: $(ls .claude/agents/*.agent.md 2>/dev/null | wc -l | tr -d ' ')"
+echo "Agents: $(find .claude/agents -name '*.agent.md' 2>/dev/null | wc -l | tr -d ' ')"
 echo "Skills: $(ls -d .claude/skills/*/SKILL.md 2>/dev/null | wc -l | tr -d ' ')"
 echo "Rules:  $(find .agent/rules -name '[0-9][0-9]-*.md' 2>/dev/null | wc -l | tr -d ' ')"
 echo "Templates: $(ls .agent/templates/* 2>/dev/null | wc -l | tr -d ' ')"
@@ -502,6 +502,6 @@ git config --global core.autocrlf input
 - [ ] Clone agent-workspace repo
 - [ ] Đặt reference docs vào `inputs/`
 - [ ] Clone service repositories vào `services/<service-name>/`
-- [ ] Verify: 12 workflow agents + 2 built-in coders, 231 skills, 16 workflow rules, 20 templates, 16 commands
+- [ ] Verify: 12 workflow agents + 2 built-in coders + 19 specialist advisors, 231 skills, 18 workflow rules, 22 templates, 17 commands
 - [ ] Mở repo `agent-workspace` trong IDE có Claude
 - [ ] Test: gõ "Phân tích dự án này" hoặc `/onboard`

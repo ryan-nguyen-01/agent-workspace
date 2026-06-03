@@ -1,6 +1,7 @@
 ---
 name: sqlx-knowledge-patch
 description: "SQLx changes since training cutoff (latest: 0.9.0-alpha.1) — SqlSafeStr, owned Arguments, sqlx.toml config, begin_with transactions, SQLite hooks, PgBindIter. Load before working with SQLx."
+category: knowledge-patch
 version: "0.9.0-alpha.1"
 license: MIT
 metadata:

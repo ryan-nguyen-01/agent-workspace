@@ -1,6 +1,7 @@
 ---
 name: flutter-knowledge-patch
 description: "Flutter 3.29-3.41 + Dart 3.7-3.11 changes since training cutoff — dot shorthands, squircles, null-aware elements, predictive back, platform assets. Load before working with Flutter/Dart."
+category: knowledge-patch
 license: MIT
 version: "3.41.0"
 metadata:

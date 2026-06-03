@@ -21,6 +21,7 @@ Commands are user-facing entrypoints. They describe which agent owns the action,
 /sync-memory    Persist durable memory updates
 /skills         Maintain installed skills and skill registry metadata
 /resume-task    Continue a task from its current state
-/workspace-mode Switch or repair distribution_mode between framework-template and workspace
+/aw-init        Scaffold .agent/+.runtime/+CLAUDE.md into another project (post-plugin-install)
+/access         Switch tool-permission posture: full (bypassPermissions) / guarded (R-011-14)
 /policy-check   Validate transition, gate, exception, or artifact snapshot
 ```

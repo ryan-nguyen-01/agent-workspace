@@ -44,6 +44,8 @@ Require onboarding only before analyzing or coding application source under `ser
 - Use `python3 scripts/agent-activity.py` for adapter telemetry updates and `python3 scripts/architecture-health-check.py --strict` for optional deterministic drift checks.
 - For applied-service tasks, require `task-analysis.yaml.context_plan` before implementation planning or coding.
 - Do not jump directly to workflow agents or generated coders from raw user input.
+- Specialist advisors live under `.claude/agents/specialists/<category>/` (19 advisor-only experts). Invoke them in-pipeline per `R-016` and `task-analysis.yaml.advisory_required`; they only write `.runtime/tasks/<task_id>/advisories/<id>.yaml`, never application code, never assign coders or mark gates, and are never a raw-user entrypoint.
+- Cursor enforces source/secret/destructive gates via `.cursor/hooks/*` (parity with the Claude `scripts/hooks/*` guards; see `R-017`). Do not weaken or bypass these hooks; resolve the underlying rule instead.
 - If a required fact is missing, mark `unknown`, cite the evidence gap, and ask through Coordinator. Do not fabricate.
 - Claims of "done" must include evidence (file path, command output, or artifact).
 - Do not fabricate exact token/cost/ETA. Use `unknown` or clearly marked estimates when Cursor does not expose reliable metrics.

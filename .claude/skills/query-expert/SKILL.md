@@ -1,6 +1,7 @@
 ---
 name: query-expert
 description: Master SQL and database queries across multiple systems. Generate optimized queries, analyze performance, design indexes, and troubleshoot slow queries for PostgreSQL, MySQL, MongoDB, and more.
+category: database
 ---
 
 # Query Expert

@@ -1,6 +1,7 @@
 ---
 name: rust-knowledge-patch
 description: "Rust changes since training cutoff (latest: 1.94.0) \u2014 Rust 2024 Edition, async closures, trait upcasting, new std APIs, cargo resolver v3. Load before working with Rust."
+category: knowledge-patch
 version: "1.94.0"
 license: MIT
 metadata:

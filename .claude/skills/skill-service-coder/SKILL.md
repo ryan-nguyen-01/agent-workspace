@@ -1,6 +1,7 @@
 ---
 name: skill-service-coder
 description: Implement code inside a generated service coder's allowed scope while following service test policy and handoff obligations.
+category: workflow
 ---
 
 # Skill: Service Coder

@@ -74,6 +74,15 @@ architecture_review:
   triggers: []
   output_required: ".runtime/tasks/{{TASK_ID}}/architecture-review.yaml"
 
+# Specialist advisors to invoke in-pipeline (advisor-only, see R-016).
+# List specialist ids from .claude/agents/specialists/<category>/. Each writes
+# .runtime/tasks/{{TASK_ID}}/advisories/<id>.yaml; the owning workflow agent resolves
+# handoff.must_address before proceeding. Leave empty when no advisory is needed.
+advisory_required: []
+  # - id: "security-auditor"
+  #   reason: "auth/PII surface"
+  #   invoke_at: "DEV_VERIFYING"   # state where the owning agent calls it
+
 # Design references for UI/frontend tasks (optional — omit for non-UI tasks)
 design_references:
   figma_urls: []

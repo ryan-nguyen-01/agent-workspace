@@ -1,6 +1,7 @@
 ---
 name: skill-dev-verification
 description: Decide Code Done using critical checks, service test policy, scope compliance, and >=80% dev verification score.
+category: workflow
 ---
 
 # Skill: Dev Verification

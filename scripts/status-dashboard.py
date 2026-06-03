@@ -159,6 +159,10 @@ def is_list_item(value: str) -> bool:
 
 
 def split_key_value(value: str) -> tuple[str, str]:
+    # Fallback parser hardening: a mapping line without ':' (e.g. a bare "[]" on its own line,
+    # or a stray scalar) must not crash the whole parse. Treat it as a key with an empty value.
+    if ":" not in value:
+        return value.strip(), ""
     key, raw_value = value.split(":", 1)
     return key.strip(), raw_value.strip()
 

@@ -1,6 +1,7 @@
 ---
 name: rust
 description: Expert in Rust development with focus on safety, performance, and async programming
+category: backend
 ---
 
 # Rust

@@ -20,9 +20,38 @@ R-011-10: Proceeding from Task Analysis to Coder Leader (user must review and ap
 R-011-10b: Exception to R-011-10 — Fast-track tasks (workflow.md §6.2) skip the user approval gate when ALL eligibility conditions hold. Coordinator must record fast_track: true in task-analysis.yaml and add an entry to workflow-state.yaml.fast_track_log[]. User may revoke fast-track at any time.
 R-011-11: USER may explicitly disable fast-track for the project by setting fast_track_enabled: false in test-policy.yaml. When disabled, R-011-10b does not apply.
 R-011-12: Updating installed skill content, skills-lock.json, or skill risk/approval metadata requires explicit user approval. High/critical risk skill updates require separate per-skill approval.
-R-011-13: Switching distribution_mode via /workspace-mode requires explicit user intent and must be denied when workflow-state.yaml.active_task_id is not null.
-R-011-14: Applying `/workspace-mode repair` with `--write` requires explicit user intent unless the user already requested a repair/write operation. Dry-run/report-only policy checks do not require approval.
+R-011-13: Switching distribution_mode (via onboarding or an explicit user-approved edit to workflow-state.yaml) requires explicit user intent and must be denied when workflow-state.yaml.active_task_id is not null.
+R-011-14: workflow-state.yaml.access_mode (guarded | fullaccess, default guarded) is a HARNESS
+TOOL-EXECUTION posture only. It controls whether ordinary tool calls (terminal commands, file
+reads/edits) prompt the user for permission — it does NOT touch the workflow approval gates
+(R-011-01..13) or any hook. Switch with the /access command; record the change.
 ```
+
+## Access mode
+
+`workflow-state.yaml.access_mode` is purely about **harness permission prompts**, not the workflow.
+The pipeline still runs the same, and every gate above still asks. Default `guarded`.
+Switch with `/access full | guarded | status`.
+
+```text
+guarded   (default): tool calls follow .claude/settings.json permissions (prompt per allowlist).
+fullaccess          : the agent may read files and run terminal commands without a per-call
+                      permission prompt (settings.json permissions.defaultMode = bypassPermissions).
+```
+
+`access_mode` ONLY removes the per-tool permission prompt. It does NOT change any of the following —
+they apply identically in both modes:
+
+```text
+- All R-011 workflow approval gates above (create coders, Task Analysis -> Coder Leader, skip QC,
+  downgrade blocker, expand scope, switch distribution_mode, …) — the agent still ASKS for each.
+- The scope-guard / secret-guard / destructive-guard hooks — they still block (R-006, R-013, R-011-07).
+- Production deployment and irreversible data actions still require explicit user approval.
+```
+
+So `fullaccess` = "you have terminal + file access without being asked each time", while the workflow
+keeps asking for everything it must ask. Implemented by `scripts/access-mode.py` (writes
+settings.json + workflow-state.yaml); takes effect for new sessions or via the harness permission UI.
 
 ## Approval record
 

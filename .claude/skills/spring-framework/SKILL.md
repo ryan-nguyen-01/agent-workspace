@@ -1,6 +1,7 @@
 ---
 name: spring-framework
 description: Expert guidance for Spring Framework and Spring Boot development with Java best practices, dependency injection, and RESTful API design
+category: backend
 ---
 
 # Spring Framework

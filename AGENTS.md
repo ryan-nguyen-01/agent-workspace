@@ -15,12 +15,14 @@ Tool-specific entrypoints:
 
 `agent-workspace` is a **workflow-coordinator-driven multi-agent framework** for software engineering. It is not an application. It defines:
 
-- 12 workflow agents (see [.claude/agents/](.claude/agents/))
-- 231 skills (12 workflow + 219 technical) at [.claude/skills/](.claude/skills/)
-- 16 workflow rules at [.agent/rules/](.agent/rules/)
-- 20 templates at [.agent/templates/](.agent/templates/)
-- 16 slash commands at [.claude/commands/](.claude/commands/)
-- 2 built-in cross-cutting coders: `coder-infra` and `coder-database`
+- 12 workflow agents (see [.claude/agents/workflow/](.claude/agents/workflow/))
+- 19 specialist advisors (advisor-only, in-pipeline) at [.claude/agents/specialists/](.claude/agents/specialists/) — see [R-016](.agent/rules/16-specialist-advisory-rules.md)
+- 231 skills (12 workflow + 219 technical) at [.claude/skills/](.claude/skills/); discovery layer: [.agent/docs/skill-catalog.md](.agent/docs/skill-catalog.md)
+- 18 workflow rules at [.agent/rules/](.agent/rules/)
+- 22 templates at [.agent/templates/](.agent/templates/)
+- 17 slash commands at [.claude/commands/](.claude/commands/)
+- 2 built-in cross-cutting coders: `coder-infra` and `coder-database` at [.claude/agents/coders/](.claude/agents/coders/)
+- Deterministic hook guardrails (scope/secret/destructive) at [scripts/hooks/](scripts/hooks/) — see [R-017](.agent/rules/17-hook-enforcement-rules.md)
 - Durable memory at [.runtime/context/](.runtime/context/)
 - User-provided reference docs (PRD, HLD, ADR, OpenAPI, glossary, runbooks) at [inputs/](inputs/) — onboarding scans these to seed the brain
 
@@ -84,7 +86,7 @@ Provider defaults live in `.runtime/context/model-routing.yaml`: Claude deep rea
 
 ## Workflow phases
 
-```
+```text
 NEW
   → NEED_ONBOARDING / ONBOARDED
   → NEED_AGENT_CREATION_APPROVAL → AGENTS_READY
@@ -102,7 +104,7 @@ These are `agent-workspace` workflow commands. Tool support differs by client: C
 
 Run any of these via the Claude Code CLI or by directly invoking the matching agent:
 
-```
+```text
 /coord            Universal entrypoint — start here
 /onboard          Build or refresh Project Brain
 /create-coders    Generate service coders after approval
@@ -116,7 +118,7 @@ Run any of these via the Claude Code CLI or by directly invoking the matching ag
 /sync-memory      Persist durable knowledge
 /skills           Maintain installed skills and registry metadata
 /resume-task      Continue an interrupted task
-/workspace-mode   Switch or repair distribution_mode between framework-template and workspace
+/access           Switch tool-permission posture: full / guarded (R-011-14)
 /policy-check     Validate transitions, exceptions, and artifact snapshots
 /status           Print state banner and agent activity dashboard using response UI mode
 ```
@@ -153,7 +155,7 @@ Run `/policy-check snapshot --root .` before trusting migrated workspace state o
 | Slash commands | [COMMAND.md](COMMAND.md) |
 | All workflow rules | [.agent/rules/](.agent/rules/) |
 | Agent taxonomy | [.agent/docs/agent-taxonomy.md](.agent/docs/agent-taxonomy.md) |
-| Coordinator behavior | [.claude/agents/coordinator.agent.md](.claude/agents/coordinator.agent.md) |
+| Coordinator behavior | [.claude/agents/workflow/coordinator.agent.md](.claude/agents/workflow/coordinator.agent.md) |
 | Template for new artifacts | [.agent/templates/](.agent/templates/) |
 | Claude Code-specific instructions | [CLAUDE.md](CLAUDE.md) |
 | Setup and install | [SETUP.md](SETUP.md) |
@@ -164,7 +166,7 @@ Run `/policy-check snapshot --root .` before trusting migrated workspace state o
 
 ## Folder semantics
 
-```
+```text
 .runtime/context/   Durable brain + service contracts + workflow state (agent-generated)
 .runtime/tasks/     Per-task evidence and artifacts
 .runtime/bugs/      Bug reports and routing

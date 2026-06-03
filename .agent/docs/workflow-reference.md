@@ -124,7 +124,6 @@ QC_DONE ──→ MEMORY_SYNCING ──→ DONE
 | --------------- | --------------- | --------------------------------------- |
 | `/sync-memory`  | Memory Update   | Update project brain and service brains |
 | `/skills`       | Coordinator     | Maintain installed skills and registry metadata |
-| `/workspace-mode` | Coordinator   | Switch distribution mode safely          |
 | `/policy-check` | Workflow Policy | Validate transition, gate, or artifact snapshot |
 | `/status`       | Coordinator     | Show workflow state, brain, agents, model routing, response UI, and activity dashboard |
 | `/resume-task`  | Coordinator     | Resume interrupted task from last state |
@@ -148,8 +147,7 @@ User approval is required before:
 | Fast-track exemption from Task Analysis approval  | R-011-10b |
 | Disabling fast-track through test policy          | R-011-11 |
 | Updating installed skill content/lock/risk metadata | R-011-12 |
-| Switching distribution mode via `/workspace-mode` | R-011-13 |
-| Writing `/workspace-mode repair` changes          | R-011-14 |
+| Switching distribution_mode (onboarding or manual edit) | R-011-13 |
 
 ## Required artifacts per state
 

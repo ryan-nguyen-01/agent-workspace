@@ -1,6 +1,7 @@
 ---
 name: docker
 description: Docker containerization best practices for building, securing, and deploying containers.
+category: devops-cloud
 ---
 
 # Docker Development

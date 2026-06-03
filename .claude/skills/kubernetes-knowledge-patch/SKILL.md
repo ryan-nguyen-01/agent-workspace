@@ -1,6 +1,7 @@
 ---
 name: kubernetes-knowledge-patch
 description: "Kubernetes features from v1.33-1.35 including In-Place Pod Resize GA, Dynamic Resource Allocation GA, MutatingAdmissionPolicy, Pod-Level Resources, Image Volumes, Gateway API v1.3-1.4, and key deprecations. Use when writing Kubernetes manifests, Helm charts, or controller code targeting recent cluster versions."
+category: knowledge-patch
 license: MIT
 metadata:
   author: Nevaberry

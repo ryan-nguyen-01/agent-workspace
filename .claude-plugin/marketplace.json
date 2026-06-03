@@ -1,0 +1,17 @@
+{
+  "name": "agent-workspace",
+  "owner": {
+    "name": "agent-workspace"
+  },
+  "metadata": {
+    "description": "agent-workspace framework — Claude tool layer.",
+    "version": "1.8.0"
+  },
+  "plugins": [
+    {
+      "name": "agent-workspace",
+      "source": "./",
+      "description": "Agents, skills, commands, and enforcement hooks for the agent-workspace workflow."
+    }
+  ]
+}

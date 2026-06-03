@@ -1,6 +1,7 @@
 ---
 name: framer-motion
 description: Expert guidelines for building performant animations with Framer Motion/Motion library in React applications
+category: frontend
 ---
 
 # Framer Motion / Motion Animation Guidelines

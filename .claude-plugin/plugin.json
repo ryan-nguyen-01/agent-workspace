@@ -1,0 +1,22 @@
+{
+  "name": "agent-workspace",
+  "version": "1.8.0",
+  "description": "Coordinator-driven multi-agent workflow for software engineering: 33 agents (12 workflow + 2 built-in coders + 19 specialist advisors), 231 skills, 17 commands, and deterministic scope/secret/destructive hooks. Claude tool layer of the agent-workspace framework.",
+  "author": {
+    "name": "agent-workspace"
+  },
+  "keywords": [
+    "workflow",
+    "multi-agent",
+    "coordinator",
+    "specialists",
+    "code-review",
+    "hooks",
+    "skills"
+  ],
+  "license": "MIT",
+  "commands": "./.claude/commands",
+  "agents": "./.claude/agents",
+  "skills": "./.claude/skills",
+  "hooks": "./.claude-plugin/hooks.json"
+}

@@ -68,6 +68,8 @@ Use .runtime/context/model-routing.yaml for model profiles. In Codex, deep reaso
 Use .runtime/context/agent-activity.yaml for /status activity, elapsed/ETA, token budget, token usage, and cost reporting. If exact usage is unavailable, mark unknown or estimated; do not invent token/cost numbers.
 Use .runtime/context/response-ui.yaml for status, model report, review, dev, policy, and final response layout. User-requested format wins unless it hides required evidence or unknown/estimated metric labels.
 Framework-template maintenance may use workflow.md §6.2 lightweight fast-track instead of full task artifacts when the change is trivial and does not affect approval gates, security rules, state machine, generated coder scope, destructive commands, or services/<service-name>/ source.
+Specialist advisors live under .claude/agents/specialists/<category>/ (19 advisor-only experts). Invoke them in-pipeline per R-016 and task-analysis.yaml.advisory_required; they write only .runtime/tasks/<task_id>/advisories/<id>.yaml, never application code, never assign coders, never mark gates, and are never a raw-user entrypoint.
+Codex has no hook runtime, so the scope/secret/destructive guardrails in .claude/settings.json + scripts/hooks/ do NOT auto-enforce here. Follow the underlying rules (R-000, R-006, R-013, R-011-07) and R-017 manually: no source edit without the task-analysis gate + coder scope, no secrets in writes, and destructive commands need explicit user approval through Coordinator.
 For migrated workspaces or artifact-only snapshots, run `/policy-check snapshot --root <workspace-or-snapshot>` before trusting DEV_DONE/QC_DONE state. This is an agent-native checklist, not a Python/Node/script dependency.
 Never copy .claude/ into service repos.
 Never write secrets, tokens, raw cookies, private keys, or long logs into .runtime artifacts or tool adapter files.
@@ -152,7 +154,33 @@ Do not trust `DEV_DONE` unless `dev-verification.yaml` exists and has `result` o
 
 Codex does not auto-register this repository's `.claude/commands/*.md` files in the Codex `/` popup. The Codex slash menu is owned by the Codex TUI and currently shows Codex built-ins such as `/model`, `/review`, `/plan`, `/status`, `/skills`, `/hooks`, `/mcp`, `/apps`, and `/plugins`.
 
-Treat the commands below as `agent-workspace` workflow intents. If the user types one of them in natural language or asks for that phase, execute the matching contract from `.claude/commands/<name>.md`; do not expect Codex autocomplete to list them.
+Codex ships two installable surfaces for this framework. Both are generated; `.claude/` stays the single source of truth.
+
+### Plugin (skills) — `codex plugin`
+
+Codex CLI (0.132+) has a real plugin system (`.codex-plugin/plugin.json` + `.agents/plugins/marketplace.json`). It packages the 231 skills. Codex COPIES a plugin into its cache and does NOT follow symlinks, so the generator copies `.claude/skills/` into `plugins/agent-workspace/skills/` (gitignored).
+
+```bash
+python3 scripts/build-codex-plugin.py
+codex plugin marketplace add "$(pwd)/.codex/marketplace"
+codex plugin add agent-workspace@agent-workspace
+```
+
+Rerun `build-codex-plugin.py` after changing skills. `--check` verifies manifest + copy are in sync.
+
+### Custom prompts (commands) — `~/.codex/prompts`
+
+To get the portable workflow commands as real Codex `/` slash commands, install the generated prompts (Claude-only commands like `/aw-init` and `/access` are excluded):
+
+```bash
+mkdir -p ~/.codex/prompts && cp .codex/prompts/*.md ~/.codex/prompts/
+```
+
+Then `/coord`, `/analyze-task`, `/dev`, `/qc`, … appear in the Codex TUI. Generated from `.claude/commands/` by `python3 scripts/build-codex-prompts.py`. Both surfaces mirror entrypoints/skills; the full stateful workflow still requires this repo + `AGENTS.md`.
+
+> `/aw-init` is intentionally **excluded** from Codex prompts: it scaffolds from `${CLAUDE_PLUGIN_ROOT}` (Claude-only) and the Codex plugin ships only skills (no `.agent/`/`.runtime/` to copy). For full flow under Codex, clone this repo and either work inside it, or scaffold another project with `python3 scripts/aw-init.py --from <repo-clone> --to <project-dir>`.
+
+Treat the commands below as `agent-workspace` workflow intents. If the user types one of them in natural language or asks for that phase, execute the matching contract from `.claude/commands/<name>.md`; do not expect Codex autocomplete to list them unless the custom prompts are installed.
 
 When instructing a human using Codex, prefer `coord: <request>` or `theo /coord: <request>` instead of a bare leading `/coord`, because Codex may intercept unknown leading slash commands before they reach the model.
 
@@ -174,7 +202,6 @@ For status in Codex or any terminal, `python3 scripts/status-dashboard.py --mode
 /sync-memory
 /skills
 /resume-task
-/workspace-mode
 /policy-check
 /status
 ```

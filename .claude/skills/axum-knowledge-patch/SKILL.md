@@ -1,6 +1,7 @@
 ---
 name: axum-knowledge-patch
 description: "Axum changes since training cutoff (latest: 0.8.5) — {param} path syntax, no async_trait, OptionalFromRequestParts, Utf8Bytes WS, HTTP/2 WebSockets, NoContent. Load before working with Axum."
+category: knowledge-patch
 version: "0.8.5"
 license: MIT
 metadata:
