@@ -1,6 +1,7 @@
 ---
 name: discover-networking
 description: Automatically discover networking and connectivity skills when working with TCP, UDP, DNS, mTLS, NAT traversal, SSH, Mosh, Tailscale, or network resilience. Activates for networking development tasks.
+category: meta-process
 license: MIT
 metadata:
   author: rand

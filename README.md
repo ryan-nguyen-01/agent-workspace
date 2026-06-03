@@ -54,7 +54,7 @@ Workspace này thêm một lớp điều phối trước khi AI sửa code:
 
 ### Mục tiêu thiết kế
 
-```
+```text
 Không tối ưu cho demo nhanh.
 Tối ưu cho việc dùng AI trong codebase cần kiểm soát, review và audit.
 ```
@@ -76,9 +76,10 @@ Nếu bạn chỉ cần thử ý tưởng nhỏ, repo này có thể hơi nặng
 | Hạng mục         | Số lượng                          |
 | ---------------- | --------------------------------- |
 | Agent workflow   | 12                                |
+| Specialist advisors | 19 (advisor-only)              |
 | Skills           | 231 (12 workflow + 219 technical) |
-| Rules            | 16                                |
-| Template         | 20                                |
+| Rules            | 18                                |
+| Template         | 22                                |
 | Command          | 16                                |
 | Built-in coders  | 2 cross-cutting coders            |
 | Agent sinh tự động | Tạo theo service sau onboarding  |
@@ -87,7 +88,7 @@ Nếu bạn chỉ cần thử ý tưởng nhỏ, repo này có thể hơi nặng
 
 ## Cấu trúc thư mục
 
-```
+```text
 agent-workspace/
 ├── CLAUDE.md                          ← Entry point (Claude đọc file này đầu tiên)
 ├── AGENTS.md                          ← Entry point chung cho AI coding agents
@@ -100,27 +101,20 @@ agent-workspace/
 ├── .gemini/                           ← Gemini-specific instructions
 ├── .agent/                            ← Tool-neutral workflow source
 │   ├── workflow.md                    ← End-to-end workflow policy
-│   ├── rules/                         ← 16 workflow rules (00-15)
-│   ├── templates/                     ← 20 artifact templates
+│   ├── rules/                         ← 18 workflow rules (00-17)
+│   ├── templates/                     ← 22 artifact templates
 │   └── docs/                          ← Tài liệu + sơ đồ trực quan
 ├── .runtime/                          ← Runtime memory, task artifacts, bug records
 │   ├── context/                       ← Project brain, service contracts, workflow state
 │   ├── tasks/                         ← Per-task artifacts
 │   └── bugs/                          ← Bug tracking
 ├── .claude/                           ← Claude adapter
-│   ├── agents/                        ← 12 workflow agents + built-in/generated coders
-│   │   ├── coordinator.agent.md
-│   │   ├── onboarding.agent.md
-│   │   ├── agent-factory.agent.md
-│   │   ├── task-analysis.agent.md
-│   │   ├── solution-architect.agent.md
-│   │   ├── coder-leader.agent.md
-│   │   ├── dev-verification.agent.md
-│   │   ├── qc-handoff.agent.md
-│   │   ├── qc-runner.agent.md
-│   │   ├── bug-router.agent.md
-│   │   ├── memory-update.agent.md
-│   │   └── workflow-policy.agent.md
+│   ├── agents/                        ← agents grouped by class (see README in folder)
+│   │   ├── workflow/                   ← 12 workflow agents (coordinator, task-analysis, ...)
+│   │   ├── coders/                     ← built-in (coder-infra, coder-database) + generated coders
+│   │   └── specialists/               ← 19 specialist advisors, grouped by category
+│   │       ├── architecture/  quality-security/  product/
+│   │       └── data-ai/  ops-devex/  research-qa/
 │   │
 │   ├── skills/                        ← 231 skill definitions
 │   │   ├── skill-project-brain/SKILL.md
@@ -176,7 +170,7 @@ Muốn switch model, chỉnh `.runtime/context/model-routing.yaml.model_override
 
 ### Luồng 1: Onboarding (dự án mới / chưa có memory)
 
-```
+```text
 User mở project → gõ task bất kỳ
   │
   ├─ coordinator        → Phát hiện chưa có project brain
@@ -188,7 +182,7 @@ User mở project → gõ task bất kỳ
 
 ### Luồng 2: Implement tính năng (workflow đầy đủ)
 
-```
+```yaml
 User: "Thêm tính năng login bằng Google OAuth"
   │
   ├─ 1. coordinator     → Xác định hướng xử lý và gate cần qua
@@ -208,7 +202,7 @@ User: "Thêm tính năng login bằng Google OAuth"
 
 ### Luồng 3: Vòng lặp fix bug
 
-```
+```text
 QC Runner phát hiện bug
   │
   ├─ bug-router         → Phân loại: blocker / non-blocker
@@ -239,13 +233,13 @@ QC Runner phát hiện bug
 
 ### Quy ước đặt tên
 
-```
+```text
 coder-<service-slug>.agent.md
 ```
 
 ### Ví dụ: Project e-commerce
 
-```
+```text
 Phát hiện stack: NestJS + React + PostgreSQL + Redis
 
 Được tạo:
@@ -333,7 +327,6 @@ Các rule tại `.agent/rules/` định nghĩa constraint và governance cho wor
 | /bug           | bug.md           | Route bug report           |
 | /sync-memory   | sync-memory.md   | Cập nhật memory            |
 | /skills        | skills.md        | Bảo trì skills đã cài      |
-| /workspace-mode | workspace-mode.md | Chuyển hoặc sửa workspace mode |
 | /policy-check  | policy-check.md  | Kiểm tra workflow policy   |
 | /coord         | coord.md         | Gọi coordinator trực tiếp  |
 | /status        | status.md        | Xem workflow và activity dashboard |
@@ -371,7 +364,7 @@ python3 scripts/architecture-health-check.py --strict --write-report
 
 Memory tự động tạo bởi onboarding, duy trì bởi memory-update:
 
-```
+```text
 .runtime/context/
 ├── index.yaml                ← Routing index để tránh đọc toàn bộ memory
 ├── project-brain.yaml        ← Project memory
@@ -387,7 +380,7 @@ Memory tự động tạo bởi onboarding, duy trì bởi memory-update:
 
 Service control plane cũng nằm trong `.runtime/context`, không nằm trong `services/`:
 
-```
+```text
 .runtime/context/
 ├── service-catalog.yaml      ← service.path, boundaries, coder candidates
 ├── agent-registry.yaml       ← Active generated coders
@@ -405,7 +398,7 @@ Sau khi có cập nhật: dùng `/sync-memory --files <paths> --services <servic
 
 Mỗi task có một folder riêng trong `.runtime/tasks/`. Folder này lưu input, analysis, plan, kết quả verify, QC và memory update của task đó.
 
-```
+```text
 .runtime/tasks/<task_id>/              ← TASK-YYYYMMDD-NNN-slug
 ├── task-input.md             ← Nội dung user gửi ban đầu
 ├── task.yaml                 ← Manifest của task và đường dẫn artifact
@@ -510,7 +503,7 @@ cd ~/Downloads/agent-workspace
 
 **Khi không có workflow rõ ràng:**
 
-```
+```yaml
 User: "Thêm API tạo order"
 AI:   → Viết code ngay, không hỏi, không phân tích, không test
       → Có thể sửa cả file không liên quan
@@ -519,7 +512,7 @@ AI:   → Viết code ngay, không hỏi, không phân tích, không test
 
 **Khi chạy qua agent-workspace:**
 
-```
+```text
 User:          "Thêm API tạo order"
 coordinator:   → đọc Project Brain, route đến task-analysis
 task-analysis: → phân tích impact, risk, acceptance criteria
@@ -536,7 +529,7 @@ memory-update: → ghi lại bài học cần dùng lần sau
 
 Mở project trong IDE tích hợp Claude và gõ bằng ngôn ngữ tự nhiên:
 
-```
+```text
 "Phân tích dự án này"                    → onboarding
 "Implement API /orders"                  → coordinator → task-analysis → coder-leader
 "Kiểm tra code đã sẵn sàng chưa"        → dev-verification
@@ -544,7 +537,7 @@ Mở project trong IDE tích hợp Claude và gõ bằng ngôn ngữ tự nhiên
 
 Hoặc dùng command:
 
-```
+```text
 /onboard                                 → Quét project, tạo brain
 /analyze-task                            → Chuẩn hóa task
 /dev                                     → Implement
@@ -554,7 +547,7 @@ Hoặc dùng command:
 
 ### 5. Workflow tự động
 
-```
+```text
 coordinator → onboarding (nếu project mới)
            → task-analysis → coder-leader → [service coders]
            → dev-verification → qc-handoff → qc-runner
@@ -584,13 +577,15 @@ coordinator → onboarding (nếu project mới)
 | `.agent/docs/architecture-guide.md` | **Kiến trúc hệ thống** — layer, data flow, security model          |
 | `.agent/docs/workflow-reference.md` | **Tham chiếu workflow** — state, transition, command, gate         |
 | `.agent/docs/agent-catalog.md`      | **Catalog agent** — 12 workflow agents + generated coders          |
-| `.agent/docs/agent-taxonomy.md`     | **Taxonomy agent** — workflow agents, built-in coders, generated coders |
+| `.agent/docs/agent-taxonomy.md`     | **Taxonomy agent** — workflow, built-in coders, generated coders, specialist advisors |
 | `.agent/docs/skill-guide.md`        | **Hướng dẫn skill** — 231 skills, category, composition            |
+| `.agent/docs/skill-catalog.md`      | **Catalog skill** — 231 skills phân loại theo domain (generated)   |
+| `.claude/agents/specialists/README.md` | **Catalog specialist** — 19 advisors, quick-selection theo domain |
 | `.agent/docs/diagrams/*.svg`        | Sơ đồ workflow SVG + legacy full flow                              |
 
 ---
 
-Framework hiện có 12 workflow agents, 2 built-in cross-cutting coders, 231 skills, 16 rules, 20 templates và 16 commands.
+Framework hiện có 12 workflow agents, 2 built-in cross-cutting coders, 19 specialist advisors, 231 skills, 18 rules, 22 templates và 16 commands. Deterministic guardrails: `scripts/hooks/` (scope/secret/destructive). Cài Claude tool layer qua plugin: xem [PLUGIN.md](PLUGIN.md); `/aw-init` scaffold full flow sang project khác.
 
 ---
 

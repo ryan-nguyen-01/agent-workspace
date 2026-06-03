@@ -1,6 +1,7 @@
 ---
 name: skill-memory-update
 description: Persist durable project, service, task, agent, and QC learnings after meaningful workflow events.
+category: workflow
 ---
 
 # Skill: Memory Update

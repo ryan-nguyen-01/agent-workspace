@@ -1,6 +1,7 @@
 ---
 name: skill-qc-handoff
 description: Create the mandatory Dev-to-QC handoff document after Code Done.
+category: workflow
 ---
 
 # Skill: QC Handoff

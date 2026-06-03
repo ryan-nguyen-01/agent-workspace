@@ -1,0 +1,12 @@
+{
+  "_comment": "agent-workspace doc conventions. Disables rules that conflict with intentional style (Keep-a-Changelog repeated headings, ASCII trees/tables, <placeholder> tokens, long prose lines). Genuine readability rules like MD040 stay on and are fixed in the docs.",
+  "default": true,
+  "MD013": false,
+  "MD024": false,
+  "MD029": false,
+  "MD033": false,
+  "MD041": false,
+  "MD055": false,
+  "MD056": false,
+  "MD060": false
+}

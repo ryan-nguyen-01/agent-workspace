@@ -1,6 +1,7 @@
 ---
 name: oracle-database
 description: Use when working on Oracle Database, Oracle SQL, PL/SQL, schema migrations, packages, procedures, functions, triggers, indexes, partitions, sequences, locks, JDBC/ODP.NET/oracledb connectivity, or Oracle-specific query behavior.
+category: database
 ---
 
 # Oracle Database

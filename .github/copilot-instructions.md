@@ -49,6 +49,8 @@ Do **not** jump directly to sub-agents (onboarding, coder-leader, qc-runner, etc
 - Framework-template maintenance may use workflow.md §6.2 lightweight fast-track evidence for trivial changes that do not affect approval gates, security rules, workflow state machine, generated coder scopes, destructive behavior, or application source under `services/`.
 - If `task-analysis.yaml` requires architecture review, do not plan or code until `architecture-review.yaml` exists with `decision: approved`.
 - Generated service coders may write only inside paths approved in `.runtime/context/agent-registry.yaml`.
+- Specialist advisors live under `.claude/agents/specialists/<category>/` (19 advisor-only experts). Invoke them in-pipeline per `R-016` and `task-analysis.yaml.advisory_required`; they only write `.runtime/tasks/<task_id>/advisories/<id>.yaml`, never application code, never assign coders or mark gates, and are never a raw-user entrypoint.
+- Copilot has no hook runtime, so the scope/secret/destructive guardrails in `.claude/settings.json` + `scripts/hooks/` do not auto-enforce here. Follow `R-000`/`R-006`/`R-013`/`R-011-07` and `R-017` manually: no source edit without the task-analysis gate + coder scope, no secrets in writes, destructive commands need explicit user approval.
 - Treat `inputs/` as read-only user reference docs.
 - Treat `.runtime/context/`, `.runtime/tasks/`, and `.runtime/bugs/` as workflow/runtime artifacts.
 - Do not store secrets, tokens, raw cookies, private keys, or long logs in `.runtime/` artifacts or tool adapter files.
@@ -73,8 +75,11 @@ Do **not** jump directly to sub-agents (onboarding, coder-leader, qc-runner, etc
 | `.runtime/context/response-ui.yaml` | Response layout modes for chat/status/report outputs |
 | `.runtime/status.md` | Generated readable status artifact |
 | `.runtime/status.html` | Generated browser status dashboard |
-| `.claude/agents/coordinator.agent.md` | Coordinator agent definition |
-| `.claude/agents/solution-architect.agent.md` | Optional architecture review definition |
+| `.claude/agents/workflow/coordinator.agent.md` | Coordinator agent definition |
+| `.claude/agents/workflow/solution-architect.agent.md` | Optional architecture review definition |
+| `.claude/agents/specialists/README.md` | Specialist advisor catalog (19 advisors, quick-selection) |
+| `scripts/hooks/` | Deterministic scope/secret/destructive guardrails (Claude adapter) |
+| `.agent/docs/skill-catalog.md` | Skill discovery catalog (231 skills by domain) |
 
 ## Commands
 
@@ -92,7 +97,6 @@ Do **not** jump directly to sub-agents (onboarding, coder-leader, qc-runner, etc
 /sync-memory    Persist durable learnings
 /skills         Maintain installed skills and registry metadata
 /resume-task    Continue an interrupted task
-/workspace-mode Switch or repair distribution_mode between framework-template and workspace
 /policy-check   Validate transitions, exceptions, and artifact snapshots
 /status         Print state banner and agent activity dashboard using response UI mode
 ```

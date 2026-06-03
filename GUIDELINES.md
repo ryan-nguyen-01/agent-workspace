@@ -17,7 +17,7 @@ Bạn có 2 cách gọi:
 
 Dùng commands tại [COMMAND.md](COMMAND.md):
 
-```
+```text
 /onboard           → Scan project, tạo project brain
 /analyze-task      → Normalize task thành spec
 /create-coders     → Tạo service coder agents
@@ -39,7 +39,7 @@ Dùng commands tại [COMMAND.md](COMMAND.md):
 
 Coordinator tự route đến đúng workflow agent:
 
-```
+```text
 "Phân tích dự án này"                    → coordinator → onboarding
 "Thêm tính năng login"                  → coordinator → task-analysis → coder-leader → ...
 "Kiểm tra code sẵn sàng chưa"           → coordinator → dev-verification
@@ -55,17 +55,17 @@ Coordinator tự route đến đúng workflow agent:
 
 ### `.agent/` — workflow source
 
-```
+```text
 .agent/
 ├── workflow.md                ← End-to-end workflow policy
-├── rules/{nn}-{name}.md       ← 16 workflow rules
-├── templates/*.template.*     ← 20 artifact templates
+├── rules/{nn}-{name}.md       ← 18 workflow rules
+├── templates/*.template.*     ← 22 artifact templates
 └── docs/                      ← Documentation + SVG workflow diagrams
 ```
 
 ### `.runtime/` — runtime memory + artifacts
 
-```
+```text
 .runtime/
 ├── context/                   ← Project brain, service contracts, workflow state, model/status/response UI telemetry
 ├── tasks/                     ← Task tracking + artifacts
@@ -74,7 +74,7 @@ Coordinator tự route đến đúng workflow agent:
 
 ### `.claude/` — Claude adapter
 
-```
+```text
 .claude/
 ├── agents/*.agent.md          ← 12 workflow agents + built-in/generated coders
 ├── skills/*/SKILL.md          ← 231 skill definitions
@@ -158,7 +158,7 @@ Mục tiêu: **ít token, vẫn đúng** — đọc `.runtime/context/index.yaml
 - Chỉ write trong allowed paths (scoped per service)
 - Đọc service brain trước khi implement, nhưng chỉ service liên quan
 
-Chi tiết: `.claude/agents/coordinator.agent.md`, `.claude/agents/coder-leader.agent.md`
+Chi tiết: `.claude/agents/workflow/coordinator.agent.md`, `.claude/agents/workflow/coder-leader.agent.md`
 
 ---
 
@@ -166,7 +166,7 @@ Chi tiết: `.claude/agents/coordinator.agent.md`, `.claude/agents/coder-leader.
 
 - Chỉ **agent-factory** được quyền tạo generated coder agents
 - Cần **user approval** trước khi tạo
-- Generated coders ghi vào `.claude/agents/coder-{service}.agent.md`
+- Generated coders ghi vào `.claude/agents/coders/coder-{service}.agent.md`
 - Service brains ghi vào `.runtime/context/services/{service}.yaml`
 - Service coding contracts ghi vào `.runtime/context/`
 - Mỗi coder scoped: chỉ write trong allowed paths của service đó
@@ -203,16 +203,16 @@ Chi tiết: `.claude/agents/coordinator.agent.md`, `.claude/agents/coder-leader.
 ### Khi thêm/sửa rule
 
 - Thêm/sửa `.agent/rules/{nn}-{name}.md`
-- Đảm bảo numbered prefix liên tục (00-15)
+- Đảm bảo numbered prefix liên tục (00-17)
 - Cập nhật rules table trong `CLAUDE.md`
 
 ### Khi thay đổi .runtime/context/ system
 
-- Cập nhật `.claude/agents/onboarding.agent.md` (nếu đổi cách scan)
+- Cập nhật `.claude/agents/workflow/onboarding.agent.md` (nếu đổi cách scan)
 - Cập nhật templates tương ứng trong `.agent/templates/`
 - Cập nhật runtime tree trong `CLAUDE.md` và `GUIDELINES.md`
 
 ### Khi đổi counts (thêm/xóa resources)
 
 - Sync counts across: `README.md`, `CLAUDE.md`, `SETUP.md`, `GUIDELINES.md`
-- Hiện tại: 12 workflow agents + 2 built-in coders, 231 skills, 16 rules (17 files including README), 20 templates, 16 commands
+- Hiện tại: 12 workflow agents + 2 built-in coders + 19 specialist advisors, 231 skills, 18 rules (19 files including README), 22 templates, 16 commands

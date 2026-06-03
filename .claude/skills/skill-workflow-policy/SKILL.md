@@ -1,6 +1,7 @@
 ---
 name: skill-workflow-policy
 description: Validate workflow state transitions, required artifacts, approval gates, and agent permissions.
+category: workflow
 ---
 
 # Skill: Workflow Policy

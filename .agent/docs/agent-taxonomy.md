@@ -1,6 +1,13 @@
 # Agent Taxonomy
 
-`agent-workspace` has three different agent classes. Keep these terms separate in docs, registries, and handoffs.
+`agent-workspace` has four different agent classes. Keep these terms separate in docs, registries, and handoffs.
+
+```text
+.claude/agents/
+├── workflow/      class 1 — 12 control-plane agents
+├── coders/        class 2 (built-in) + class 3 (generated)
+└── specialists/   class 4 — 19 specialist advisors, grouped by category
+```
 
 ## 1. Workflow Agents
 
@@ -64,6 +71,30 @@ Rules:
 - They must not touch `forbidden_paths`.
 - Scope expansion requires user approval.
 
+## 4. Specialist Advisors
+
+Specialist advisors are domain experts that produce evidence-based recommendations **inside the
+pipeline**. They are the newest agent class and live under `.claude/agents/specialists/<category>/`.
+
+Categories and members (19 total):
+
+- `architecture/` — api-designer, database-architect, cloud-architect, event-architect, ui-ux-designer
+- `quality-security/` — security-auditor, performance-engineer, accessibility-auditor, code-reviewer
+- `product/` — discovery-analyst, business-analyst, product-strategist
+- `data-ai/` — data-engineer, ml-ai-architect
+- `ops-devex/` — sre-observability, technical-writer, migration-strategist
+- `research-qa/` — tech-researcher, qa-strategist
+
+Rules (full set in `.agent/rules/16-specialist-advisory-rules.md`):
+
+- They **advise**; they never write application code, assign coders, mark Code Done/QC Done, or approve gates.
+- They are **not** user entrypoints — a workflow agent invokes them in-pipeline.
+- Each writes exactly one artifact: `.runtime/tasks/<task-id>/advisories/<id>.yaml`.
+- Their model comes from `model-routing.yaml > agent_model_map.specialist_advisors`.
+- They run as sub-steps inside existing workflow states; they introduce no new state.
+- Where they overlap a workflow agent (code-reviewer, business-analyst, qa-strategist, security-auditor) they **augment**, never replace it.
+- Tool access is read + own-artifact-write only (`Read, Grep, Glob, Write`).
+
 ## Counting Rule
 
 Use these counts separately:
@@ -71,8 +102,11 @@ Use these counts separately:
 ```text
 Workflow agents: 12
 Built-in cross-cutting coders: 2
+Specialist advisors: 19
 Generated service coders: unlimited, per onboarded workspace
-Agent definition files: workflow agents + built-ins + generated coders
+Framework-owned agent definition files: 12 + 2 + 19 = 33
 ```
 
-Do not say "14 workflow agents" when the repository has 14 `.agent.md` files. The correct wording is: `12 workflow agents + 2 built-in cross-cutting coders`.
+Do not collapse the classes. The correct distribution wording is:
+`12 workflow agents + 2 built-in cross-cutting coders + 19 specialist advisors` (33 framework-owned),
+plus any generated service coders in an applied workspace.

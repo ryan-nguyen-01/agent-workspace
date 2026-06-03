@@ -2,7 +2,7 @@
 
 ![System overview](diagrams/01-system-overview.svg)
 
-This document is the detailed reference for all 12 workflow agents and the generated service coder pattern.
+This document is the detailed reference for all 12 workflow agents and the generated service coder pattern. For the 19 specialist advisors (4th agent class, advisor-only) see [`.claude/agents/specialists/README.md`](../../.claude/agents/specialists/README.md) and [agent-taxonomy.md](agent-taxonomy.md); for class definitions see [agent-taxonomy.md](agent-taxonomy.md).
 
 ## Agent overview
 
@@ -96,7 +96,7 @@ See also: [deep-onboarding.md](deep-onboarding.md)
 **Outputs:**
 
 ```text
-.claude/agents/coder-<service-slug>.agent.md
+.claude/agents/coders/coder-<service-slug>.agent.md
 .runtime/context/agent-registry.yaml (updated)
 ```
 

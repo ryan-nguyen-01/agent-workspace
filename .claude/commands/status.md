@@ -2,7 +2,7 @@
 
 ## Purpose
 
-Report current workspace mode, workflow state, brain freshness, generated coders, task status, model routing, response UI mode, and live agent activity.
+Report current distribution mode, workflow state, brain freshness, generated coders, task status, model routing, response UI mode, and live agent activity.
 
 ## Responsible agent
 

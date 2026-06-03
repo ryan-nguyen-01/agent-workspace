@@ -20,8 +20,7 @@ R-011-10: Proceeding from Task Analysis to Coder Leader (user must review and ap
 R-011-10b: Exception to R-011-10 — Fast-track tasks (workflow.md §6.2) skip the user approval gate when ALL eligibility conditions hold. Coordinator must record fast_track: true in task-analysis.yaml and add an entry to workflow-state.yaml.fast_track_log[]. User may revoke fast-track at any time.
 R-011-11: USER may explicitly disable fast-track for the project by setting fast_track_enabled: false in test-policy.yaml. When disabled, R-011-10b does not apply.
 R-011-12: Updating installed skill content, skills-lock.json, or skill risk/approval metadata requires explicit user approval. High/critical risk skill updates require separate per-skill approval.
-R-011-13: Switching distribution_mode via /workspace-mode requires explicit user intent and must be denied when workflow-state.yaml.active_task_id is not null.
-R-011-14: Applying `/workspace-mode repair` with `--write` requires explicit user intent unless the user already requested a repair/write operation. Dry-run/report-only policy checks do not require approval.
+R-011-13: Switching distribution_mode (via onboarding or an explicit user-approved edit to workflow-state.yaml) requires explicit user intent and must be denied when workflow-state.yaml.active_task_id is not null.
 ```
 
 ## Approval record

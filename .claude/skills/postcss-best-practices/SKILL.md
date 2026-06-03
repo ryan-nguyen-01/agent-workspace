@@ -1,6 +1,7 @@
 ---
 name: postcss-best-practices
 description: PostCSS best practices and configuration guidelines for modern CSS processing and optimization
+category: frontend
 ---
 
 # PostCSS Best Practices

@@ -48,7 +48,7 @@ Service coders nên được tạo qua workflow:
 2. Chạy /onboard
 3. Review service catalog và coder candidates
 4. Approve /create-coders
-5. Agent Factory tạo .claude/agents/coder-<service>.agent.md
+5. Agent Factory tạo .claude/agents/coders/coder-<service>.agent.md
 6. Agent Factory cập nhật .runtime/context/agent-registry.yaml
 ```
 
@@ -61,7 +61,7 @@ Dùng khi scope không thuộc một service duy nhất, ví dụ infra hoặc d
 Checklist:
 
 ```text
-1. Tạo .claude/agents/coder-<scope>.agent.md
+1. Tạo .claude/agents/coders/coder-<scope>.agent.md
 2. Thêm contract vào .runtime/context/agent-registry.yaml
 3. Định nghĩa allowed_read_paths, allowed_write_paths, forbidden_paths
 4. Thêm escalation rules và test_policy
@@ -161,7 +161,7 @@ Muốn thay đổi routing mặc định thì sửa các file policy tương ứ
 
 ```text
 .agent/workflow.md
-.claude/agents/coordinator.agent.md
+.claude/agents/workflow/coordinator.agent.md
 .agent/rules/11-approval-gates.md
 .runtime/context/workflow-state.yaml
 ```

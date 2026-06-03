@@ -1,6 +1,7 @@
 ---
 name: prisma-knowledge-patch
 description: "Prisma changes since training cutoff (latest: 7.3) — v7 ESM rewrite, prisma-client generator, driver adapters, prisma.config.ts, TypedSQL, SQL comments. Load before working with Prisma."
+category: knowledge-patch
 license: MIT
 version: "7.3"
 metadata:

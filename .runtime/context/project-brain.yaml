@@ -244,7 +244,7 @@ deep_project_intelligence:
       description: "Coordinator detects missing or stale brain, runs onboarding, writes memory and service contracts, then requests approval for coder generation."
       entrypoints:
         - ".claude/commands/onboard.md"
-        - ".claude/agents/onboarding.agent.md"
+        - ".claude/agents/workflow/onboarding.agent.md"
       services:
         - "agent-workspace"
       steps:

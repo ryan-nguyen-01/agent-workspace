@@ -1,6 +1,7 @@
 ---
 name: cloudwatch
 description: AWS CloudWatch monitoring for logs, metrics, alarms, and dashboards. Use when setting up monitoring, creating alarms, querying logs with Insights, configuring metric filters, building dashboards, or troubleshooting application issues.
+category: devops-cloud
 last_updated: "2026-01-07"
 doc_source: https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/
 ---

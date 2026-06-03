@@ -38,7 +38,7 @@ Use natural-language intents such as `coord: framework <request>` when you want 
 | `/sync-memory` | Memory Update | Persist durable project/service/workflow learnings. |
 | `/skills` | Coordinator | Maintain installed skills, `skills-lock.json`, and skill registry metadata. |
 | `/resume-task` | Coordinator | Continue an interrupted task from current artifacts/state. |
-| `/workspace-mode` | Coordinator | Switch or repair `distribution_mode` between `framework-template` and `workspace`. |
+| `/aw-init` | Coordinator | Scaffold the full flow (`.agent/` + `.runtime/` + `CLAUDE.md`) into another project after installing the plugin. |
 | `/policy-check` | Workflow Policy | Validate transition, approval gate, exception, or workflow artifact snapshot. |
 | `/status` | Coordinator | Print workflow state, brain freshness, task, model routing, response UI mode, and agent activity/token dashboard. |
 
@@ -67,10 +67,6 @@ Use these intentionally; they are not part of normal feature implementation:
 /skills audit
 /skills update <skill-name>
 /skills refresh-registry
-/workspace-mode status
-/workspace-mode framework-template
-/workspace-mode workspace
-/workspace-mode repair
 /policy-check <transition-or-exception>
 /policy-check snapshot --root <snapshot-root>
 python3 scripts/status-dashboard.py --mode <compact|concise|dashboard|models|json>

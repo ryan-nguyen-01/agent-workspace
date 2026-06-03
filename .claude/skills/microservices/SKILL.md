@@ -1,6 +1,7 @@
 ---
 name: microservices
 description: Guidelines for building production-grade microservices with FastAPI/Python and Go, covering serverless patterns, clean architecture, observability, and resilience.
+category: devops-cloud
 ---
 
 # Microservices Development

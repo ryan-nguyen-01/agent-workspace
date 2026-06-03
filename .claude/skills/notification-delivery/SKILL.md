@@ -1,6 +1,7 @@
 ---
 name: notification-delivery
 description: Use when designing or modifying notification systems across email, SMS, push, in-app, webhook, message center, billing alerts, operational alerts, retries, templates, preferences, suppression lists, delivery status, or notification event pipelines.
+category: backend
 ---
 
 # Notification Delivery

@@ -1,6 +1,7 @@
 ---
 name: skill-bug-routing
 description: Classify QC defects as blocker or non-blocker and route fix work to the correct generated coder through Coder Leader.
+category: workflow
 ---
 
 # Skill: Bug Routing

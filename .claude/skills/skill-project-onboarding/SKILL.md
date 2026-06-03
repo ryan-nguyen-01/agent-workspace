@@ -1,6 +1,7 @@
 ---
 name: skill-project-onboarding
 description: Build the initial project brain by scanning architecture, services, stack, dependencies, environment, and test policy.
+category: workflow
 ---
 
 # Skill: Project Onboarding

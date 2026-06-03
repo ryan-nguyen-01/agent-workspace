@@ -22,7 +22,7 @@ R-003-10: Update agent-registry.yaml after creating or changing coder agents.
 ## Required artifacts
 
 ```text
-.claude/agents/coder-<service>.agent.md
+.claude/agents/coders/coder-<service>.agent.md
 .runtime/context/agent-registry.yaml
 .runtime/context/services/<service>.yaml
 ```

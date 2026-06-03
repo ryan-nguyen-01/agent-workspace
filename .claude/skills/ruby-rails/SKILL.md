@@ -1,6 +1,7 @@
 ---
 name: ruby-rails
 description: Expert in Ruby and Rails development with conventions and best practices
+category: backend
 ---
 
 # Ruby on Rails

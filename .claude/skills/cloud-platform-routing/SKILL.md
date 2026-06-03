@@ -1,6 +1,7 @@
 ---
 name: cloud-platform-routing
 description: Use when a task touches AWS, Azure, cloud architecture, IAM/RBAC, serverless, queues, event buses, object storage, cloud databases, observability, cloud cost, infrastructure-as-code, cloud migration, cloud deployment, or multi-cloud service ownership.
+category: security
 ---
 
 # Cloud Platform Routing

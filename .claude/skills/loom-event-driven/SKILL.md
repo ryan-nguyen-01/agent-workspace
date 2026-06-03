@@ -1,6 +1,7 @@
 ---
 name: loom-event-driven
 description: Event-driven architecture patterns including message queues, pub/sub, event sourcing, CQRS, and sagas. Use when implementing async messaging, distributed transactions, event stores, command query separation, domain events, integration events, data streaming, choreography, orchestration, or integrating with RabbitMQ, Kafka, Apache Pulsar, AWS SQS, AWS SNS, NATS, event buses, or message brokers.
+category: devops-cloud
 triggers:
   - event
   - message

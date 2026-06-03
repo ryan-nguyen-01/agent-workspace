@@ -2,3 +2,19 @@
 
 # Local Cursor hook/runtime diagnostics
 .agent/dirty-flags.log
+
+# Codex plugin: skills copied from .claude/skills by scripts/build-codex-plugin.py (single source = .claude/skills)
+.codex/marketplace/plugins/agent-workspace/skills/
+
+# macOS
+.DS_Store
+
+# Generated runtime reports/status (output of scripts, not seed state)
+.runtime/architecture-health-report.json
+.runtime/architecture-health-report.md
+.runtime/status.md
+.runtime/status.html
+
+# Python
+__pycache__/
+*.pyc

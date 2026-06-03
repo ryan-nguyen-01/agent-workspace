@@ -1,6 +1,7 @@
 ---
 name: upgrade-stripe
 description: Guide for upgrading Stripe API versions and SDKs
+category: payments
 
 ---
 

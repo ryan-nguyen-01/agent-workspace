@@ -1,0 +1,49 @@
+# Advisory artifact — output của một Specialist Advisor.
+# Path: .runtime/tasks/<task-id>/advisories/<specialist-id>.yaml
+# Contract: xem .agent/rules/16-specialist-advisory-rules.md và 12-artifact-contracts.md
+
+advisory_id: "{{TASK_ID}}-{{SPECIALIST_ID}}"
+task_id: "{{TASK_ID}}"
+specialist: "{{SPECIALIST_ID}}"          # ví dụ: security-auditor
+category: "{{CATEGORY}}"                   # architecture | quality-security | product | data-ai | ops-devex | research-qa
+created_at: "{{CREATED_AT}}"
+created_by: "{{SPECIALIST_ID}}"
+model_profile: "{{MODEL_PROFILE}}"
+
+invoked_by: "{{INVOKING_AGENT}}"          # coordinator | task-analysis | solution-architect | coder-leader | dev-verification | qc-handoff
+phase: "{{WORKFLOW_STATE}}"               # state hiện tại khi advisory chạy (không tạo state mới)
+
+# Quyết định tư vấn — KHÔNG phải gate quyết định cuối (gate thuộc workflow agent).
+decision: "recommendations"               # approved | recommendations | blocked
+decision_reason: "{{REASON}}"
+confidence: "medium"                      # low | medium | high
+
+summary: "{{ONE_LINE_SUMMARY}}"
+
+findings:
+  - id: "F-1"
+    severity: "high"                      # critical | high | medium | low | info
+    title: "{{FINDING_TITLE}}"
+    description: "{{DESCRIPTION}}"
+    evidence:                             # bắt buộc có evidence cho critical/high (R-000-13)
+      - "path/to/file.ext:42"
+    recommendation: "{{RECOMMENDATION}}"
+    references:                           # skills, ADR, docs liên quan
+      - "skill: {{SKILL_NAME}}"
+    blocking: false                       # true => khuyến nghị workflow agent dừng trước khi đi tiếp
+
+# Critical checks đề xuất bổ sung cho dev-verification / qc (nếu có)
+proposed_critical_checks:
+  - id: "{{CHECK_ID}}"
+    description: "{{CHECK_DESC}}"
+    reason: "{{WHY_CRITICAL}}"
+
+# Items chuyển cho downstream workflow agent
+handoff:
+  to: "{{DOWNSTREAM_AGENT}}"
+  must_address: []                        # danh sách finding id mà downstream phải xử lý/ghi nhận
+  recommended: []
+
+assumptions: []
+unknowns: []                              # mark unknown thay vì bịa (4 nguyên tắc Karpathy)
+out_of_scope: []

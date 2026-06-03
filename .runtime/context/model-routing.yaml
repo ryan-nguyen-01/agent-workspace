@@ -164,6 +164,66 @@ agent_model_map:
   generated_service_coders:
     default_model_profile: "coding"
     escalate_when: ["public contract change", "security-sensitive code", "cross-service ownership unclear"]
+  # Specialist advisors (class 4): advisor-only, triệu hồi trong pipeline. Không phải workflow agents.
+  # Profiles tái dùng các profile chuẩn (không thêm profile mới).
+  specialist_advisors:
+    api-designer:
+      model_profile: "coding"
+      category: "architecture"
+    database-architect:
+      model_profile: "deep_reasoning"
+      category: "architecture"
+    cloud-architect:
+      model_profile: "deep_reasoning"
+      category: "architecture"
+    event-architect:
+      model_profile: "deep_reasoning"
+      category: "architecture"
+    ui-ux-designer:
+      model_profile: "coding"
+      category: "architecture"
+    security-auditor:
+      model_profile: "deep_reasoning"
+      category: "quality-security"
+    performance-engineer:
+      model_profile: "deep_reasoning"
+      category: "quality-security"
+    accessibility-auditor:
+      model_profile: "coding"
+      category: "quality-security"
+    code-reviewer:
+      model_profile: "deep_reasoning"
+      category: "quality-security"
+    discovery-analyst:
+      model_profile: "deep_reasoning"
+      category: "product"
+    business-analyst:
+      model_profile: "coding"
+      category: "product"
+    product-strategist:
+      model_profile: "deep_reasoning"
+      category: "product"
+    data-engineer:
+      model_profile: "coding"
+      category: "data-ai"
+    ml-ai-architect:
+      model_profile: "deep_reasoning"
+      category: "data-ai"
+    sre-observability:
+      model_profile: "coding"
+      category: "ops-devex"
+    technical-writer:
+      model_profile: "memory_light"
+      category: "ops-devex"
+    migration-strategist:
+      model_profile: "deep_reasoning"
+      category: "ops-devex"
+    tech-researcher:
+      model_profile: "deep_reasoning"
+      category: "research-qa"
+    qa-strategist:
+      model_profile: "coding"
+      category: "research-qa"
 
 observability:
   activity_file: ".runtime/context/agent-activity.yaml"

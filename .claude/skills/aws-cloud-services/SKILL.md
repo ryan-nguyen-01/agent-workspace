@@ -1,6 +1,7 @@
 ---
 name: aws-cloud-services
 description: Comprehensive AWS cloud services skill covering S3, Lambda, DynamoDB, EC2, RDS, IAM, CloudFormation, and enterprise cloud architecture patterns with AWS SDK
+category: security
 ---
 
 # AWS Cloud Services

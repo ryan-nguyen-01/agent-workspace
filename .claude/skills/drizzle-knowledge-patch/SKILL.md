@@ -1,6 +1,7 @@
 ---
 name: drizzle-knowledge-patch
 description: "Drizzle ORM changes since training cutoff (latest: 1.0.0-beta.19) — consolidated validator imports, Effect Schema support, node-sqlite driver, .comment() query tagging. Load before working with Drizzle."
+category: knowledge-patch
 version: "1.0.0-beta.19"
 license: MIT
 metadata:

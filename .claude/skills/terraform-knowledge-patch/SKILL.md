@@ -1,6 +1,7 @@
 ---
 name: terraform-knowledge-patch
 description: "Terraform/OpenTofu changes since training cutoff (latest: TF 1.15 / OT 1.12) — ephemeral values, write-only arguments, cross-object validation, Stacks, resource identity, OpenTofu divergences. Load before working with Terraform or OpenTofu."
+category: knowledge-patch
 license: MIT
 version: "1.15.0"
 metadata:

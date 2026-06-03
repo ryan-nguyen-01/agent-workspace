@@ -1,6 +1,7 @@
 ---
 name: aspnet-core
 description: Guidelines for ASP.NET Core web development covering API design, authentication, caching, and best practices
+category: security
 ---
 
 # ASP.NET Core Development Guidelines

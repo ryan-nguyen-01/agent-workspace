@@ -1,6 +1,7 @@
 ---
 name: serde-knowledge-patch
 description: "Serde/serde_json changes since training cutoff (latest: serde 1.0.228 / serde_json 1.0.149) — Map sorting, Map as Deserializer, RawValue constants, Map FromStr. Load before working with serde or serde_json."
+category: knowledge-patch
 version: "1.0.228"
 license: MIT
 metadata:

@@ -1,6 +1,7 @@
 ---
 name: building-storefronts
 description: Load automatically when planning, researching, or implementing Medusa storefront features (calling custom API routes, SDK integration, React Query patterns, data fetching). REQUIRED for all storefront development in ALL modes (planning, implementation, exploration). Contains SDK usage patterns, frontend integration, and critical rules for calling Medusa APIs.
+category: frontend
 ---
 
 # Medusa Storefront Development

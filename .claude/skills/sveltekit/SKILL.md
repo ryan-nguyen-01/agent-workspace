@@ -1,6 +1,7 @@
 ---
 name: sveltekit
 description: Expert guidance for SvelteKit development with TypeScript, Tailwind CSS, SSR/SSG, and performance optimization best practices
+category: frontend
 ---
 
 # SvelteKit Development

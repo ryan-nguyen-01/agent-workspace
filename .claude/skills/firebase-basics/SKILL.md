@@ -1,6 +1,7 @@
 ---
 name: firebase-basics
 description: >-
+category: devops-cloud
   Provides foundational setup, authentication, and project management workflows
   for Firebase using the Firebase CLI. Use when checking Firebase CLI version
   (must use 'npx -y firebase-tools@latest --version'), initializing a Firebase

@@ -1,6 +1,7 @@
 ---
 name: rails-knowledge-patch
 description: "Rails 8.0–8.1 changes — Solid Queue/Cache/Cable (no Redis), Kamal 2 deployment, Propshaft, authentication generator, Turbo 8 morphing, params.expect, job continuations, structured events. Load before working with Rails."
+category: knowledge-patch
 license: MIT
 version: "8.1.3"
 metadata:

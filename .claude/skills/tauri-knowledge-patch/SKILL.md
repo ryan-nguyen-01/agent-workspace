@@ -1,6 +1,7 @@
 ---
 name: tauri-knowledge-patch
 description: "Tauri 2.0-2.5 changes since training cutoff — capabilities replacing allowlist, IPC channels, plugin system v2, mobile support, config v2 structure. Load before working with Tauri."
+category: knowledge-patch
 version: "2.5.0"
 license: MIT
 metadata:

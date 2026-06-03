@@ -1,6 +1,7 @@
 ---
 name: fastapi-knowledge-patch
 description: "FastAPI changes since training cutoff (0.112-0.135.3) -- native SSE, yield streaming, strict_content_type, dependency scopes, Pydantic v1 dropped, Starlette 1.0, Pydantic 2.12 MISSING sentinel/exclude_if, security 401 fix. Load before working with FastAPI."
+category: knowledge-patch
 license: MIT
 version: "0.135.3"
 metadata:

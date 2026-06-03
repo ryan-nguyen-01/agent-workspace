@@ -1,6 +1,7 @@
 ---
 name: tailwind-knowledge-patch
 description: "Tailwind CSS changes since training cutoff (latest: 4.1) — text shadows, composable masks, overflow-wrap, safe alignment, @source directives, pointer/noscript variants. Load before working with Tailwind CSS."
+category: knowledge-patch
 version: "4.1"
 license: MIT
 metadata:

@@ -1,6 +1,7 @@
 ---
 name: swift-knowledge-patch
 description: "Swift changes since training cutoff (5.10\u20136.3) \u2014 approachable concurrency, InlineArray, @c interop, module selectors, Swift Testing updates. Load before working with Swift."
+category: knowledge-patch
 license: MIT
 version: "6.3"
 metadata:

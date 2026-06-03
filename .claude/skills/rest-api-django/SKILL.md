@@ -1,6 +1,7 @@
 ---
 name: rest-api-django
 description: Comprehensive guidelines for Django REST API development covering project structure, views, models, serializers, authentication, performance, and error handling.
+category: security
 ---
 
 # REST API Development with Django

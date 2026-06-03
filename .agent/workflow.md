@@ -271,23 +271,18 @@ Coordinator must validate state transition legality, required artifacts, and app
 If validation fails, coordinator returns deny/needs_user_approval and does not advance state.
 ```
 
-## 2.2. Workspace mode switch
+## 2.2. Distribution mode
 
-The coordinator owns changes to `.runtime/context/workflow-state.yaml.distribution_mode`.
-
-```text
-/workspace-mode framework-template  -> reusable distribution seed
-/workspace-mode workspace           -> applied workspace seed
-/workspace-mode status              -> report current mode without mutation
-```
-
-Mode switching rules:
+`.runtime/context/workflow-state.yaml.distribution_mode` (`framework-template` | `workspace`) and
+`instance_status` are set during onboarding, or by an explicit user-approved edit to
+`workflow-state.yaml`. There is no dedicated switch command; the coordinator may change the mode only
+under the approval-required action `switch_distribution_mode` (R-011-13).
 
 ```text
 1. Do not infer a mode switch from unrelated task text; require explicit user intent.
 2. Do not switch modes while active_task_id is set.
-3. Switching to framework-template sets distribution_mode=framework-template, instance_status=not_applied, current_state=NEED_ONBOARDING.
-4. Switching to workspace sets distribution_mode=workspace, instance_status=applied, current_state=NEED_ONBOARDING.
+3. framework-template => distribution_mode=framework-template, instance_status=not_applied, current_state=NEED_ONBOARDING.
+4. workspace          => distribution_mode=workspace, instance_status=applied, current_state=NEED_ONBOARDING.
 5. Do not mutate project-brain.yaml, service-catalog.yaml, agent-registry.yaml, inputs/, or services/ as part of the switch.
 6. After switching to workspace, the next applied-service command is /onboard.
 ```
@@ -478,6 +473,42 @@ All agents must follow these operating principles:
 
 When any principle is violated, stop execution and route back to Coordinator or Workflow Policy.
 
+## 6.4. Specialist advisory lane
+
+Specialist advisors (the 4th agent class, see `.agent/docs/agent-taxonomy.md` and `R-016`) provide
+evidence-based domain advice **inside existing states** — they do not add new workflow states and are
+never user entrypoints.
+
+### When advisors are invoked
+
+```text
+1. Task Analysis lists advisory_required: [<specialist-id>, ...] in task-analysis.yaml, OR
+2. A workflow agent detects a domain risk during its state:
+   - Solution Architect (ARCHITECTURE_REVIEWING): api-designer, database-architect, cloud-architect,
+     event-architect, ml-ai-architect, data-engineer.
+   - Coder Leader (PLANNED/IMPLEMENTING): ui-ux-designer, migration-strategist, code-reviewer.
+   - Dev Verification (DEV_VERIFYING): security-auditor, performance-engineer, accessibility-auditor,
+     sre-observability, code-reviewer.
+   - QC Handoff (QC): qa-strategist.
+   - Coordinator (pre-pipeline / discovery): discovery-analyst, business-analyst, product-strategist.
+   - Memory Update: technical-writer.
+```
+
+### Flow
+
+```text
+1. The owning workflow agent invokes the specialist as a sub-step of its current state.
+2. The specialist writes .runtime/tasks/<task-id>/advisories/<id>.yaml and returns a summary.
+3. The owning agent reads handoff.must_address, records disposition (addressed / deferred / rejected),
+   and continues the state. Advisory output is advisory: the workflow agent still owns the decision.
+4. Advisors that overlap a workflow mandate AUGMENT it (code-reviewer↔Coder Leader R-005-09,
+   business-analyst↔Task Analysis, qa-strategist↔qc-runner/qc-handoff, security-auditor↔Dev Verification);
+   the workflow agent remains the gate owner.
+```
+
+Advisors obey the same scope, security/secret (R-013), and tool limits (Read, Grep, Glob, Write own
+advisory only). They never assign coders or mark gates.
+
 ## 7. Coder Leader workflow
 
 This section applies to the standard applied-service implementation pipeline. Framework-maintenance fast-track skips Coder Leader unless the task changes high-risk framework behavior.
@@ -654,7 +685,7 @@ Rules live in `.agent/rules/` and are mandatory. Commands live in `.claude/comma
 /sync-memory    Persist durable knowledge
 /skills         Maintain installed skills and registry metadata
 /resume-task    Continue from current state
-/workspace-mode Switch or repair distribution mode
+/aw-init        Scaffold .agent/+.runtime/+CLAUDE.md into another project (post-plugin-install)
 /policy-check   Validate transitions, exceptions, and artifact snapshots
 /status         Print workflow status and agent activity dashboard using response-ui mode
 ```

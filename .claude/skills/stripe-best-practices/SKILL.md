@@ -1,6 +1,7 @@
 ---
 name: stripe-best-practices
 description: >-
+category: payments
   Guides Stripe integration decisions — API selection (Checkout Sessions vs
   PaymentIntents), Connect platform setup (Accounts v2, controller properties),
   billing/subscriptions, Treasury financial accounts, integration surfaces

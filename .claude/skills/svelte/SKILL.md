@@ -1,6 +1,7 @@
 ---
 name: svelte
 description: Expert in Svelte and SvelteKit development with modern patterns and SSR
+category: frontend
 ---
 
 # Svelte / SvelteKit

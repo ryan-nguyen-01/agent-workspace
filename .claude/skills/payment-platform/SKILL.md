@@ -1,6 +1,7 @@
 ---
 name: payment-platform
 description: Use when designing or modifying payment, billing, checkout, subscription, refund, dispute, invoice, wallet, payout, payment-webhook, PCI, or provider integration flows such as Stripe, PayPal, Square, Adyen, bank transfer, Apple Pay, Google Pay, or marketplace payment routing.
+category: payments
 ---
 
 # Payment Platform

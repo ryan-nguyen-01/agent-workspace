@@ -1,6 +1,7 @@
 ---
 name: astro
 description: Expert in Astro framework with static generation and partial hydration patterns
+category: frontend
 ---
 
 # Astro

@@ -1,6 +1,7 @@
 ---
 name: go-performance
 description: Use when optimizing Go code, investigating slow performance, or writing performance-critical sections. Also use when a user mentions slow Go code, string concatenation in loops, or asks about benchmarking, even if the user doesn't explicitly mention performance patterns. Does not cover concurrent performance patterns (see go-concurrency).
+category: backend
 license: Apache-2.0
 metadata:
   sources: "Uber Style Guide, Google Style Guide, Go Wiki CodeReviewComments"

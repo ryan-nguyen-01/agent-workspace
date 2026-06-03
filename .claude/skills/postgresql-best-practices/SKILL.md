@@ -1,6 +1,7 @@
 ---
 name: postgresql-best-practices
 description: PostgreSQL development best practices for schema design, query optimization, and database administration
+category: database
 ---
 
 # PostgreSQL Best Practices

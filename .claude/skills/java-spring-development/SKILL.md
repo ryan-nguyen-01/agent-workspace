@@ -1,6 +1,7 @@
 ---
 name: java-spring-development
 description: Java Spring Boot development guidelines with best practices for building robust, secure, and maintainable enterprise applications
+category: backend
 ---
 
 # Java Spring Development Best Practices

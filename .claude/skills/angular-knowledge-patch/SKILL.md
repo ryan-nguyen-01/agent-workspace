@@ -1,6 +1,7 @@
 ---
 name: angular-knowledge-patch
 description: "Angular v19-v21 features: linkedSignal, resource/httpResource, signal forms, route-level SSR render modes, incremental hydration, zoneless change detection, Vitest migration, and Angular Aria components."
+category: knowledge-patch
 version: "21.0.0"
 license: MIT
 metadata:

@@ -46,6 +46,8 @@ No application coding under services/<service-name>/ before task-analysis.yaml.
 No applied-service planning/coding before task-analysis.yaml.context_plan exists with medium/high confidence.
 No planning/coding before approved architecture-review.yaml when architecture_review.required is true.
 No direct raw-user routing to coder-leader, qc-runner, generated coders, or built-in coders.
+Specialist advisors live under .claude/agents/specialists/<category>/ (19 advisor-only experts). Invoke them in-pipeline per R-016 and task-analysis.yaml.advisory_required; they only write .runtime/tasks/<task_id>/advisories/<id>.yaml, never application code, never assign coders or mark gates, and are never a raw-user entrypoint.
+Gemini has no hook runtime; the scope/secret/destructive guardrails in scripts/hooks/ do not auto-enforce here. Follow R-000/R-006/R-013/R-011-07 and R-017 manually: no source edit without the task-analysis gate + coder scope, no secrets in writes, destructive commands need explicit user approval.
 Generated coders must obey agent-registry.yaml allowed_write_paths and forbidden_paths.
 Use signature-first context loading: memory index, project/service profile summaries, service context hints, then specific evidence files. Do not broad-scan source or skills by default.
 Use `.runtime/context/model-routing.yaml` for model profiles and `.runtime/context/agent-activity.yaml` for `/status` activity/ETA/token/cost reporting.
@@ -53,7 +55,7 @@ Switch models through `.runtime/context/model-routing.yaml.model_overrides`; do 
 Use `.runtime/context/response-ui.yaml` for markdown/text response structure.
 Use `python3 scripts/status-dashboard.py --mode <compact|concise|dashboard|models|json>` as a terminal status mirror when project slash commands are not exposed. Add `--write` to generate `.runtime/status.md` and `.runtime/status.html`. Optional helpers: `python3 scripts/agent-activity.py` for telemetry updates and `python3 scripts/architecture-health-check.py --strict` for deterministic drift checks.
 Framework-template maintenance may use workflow.md §6.2 lightweight fast-track evidence for trivial changes that do not alter approval gates, security rules, state machine, generated coder scope, destructive behavior, or services/<service-name>/ source.
-Use /workspace-mode to switch distribution_mode; do not edit workflow-state.yaml mode fields ad hoc.
+Switch distribution_mode only via onboarding or an explicit user-approved edit to workflow-state.yaml (R-011-13); do not change mode fields ad hoc.
 For migrated workspaces or artifact-only snapshots, run `/policy-check snapshot --root <workspace-or-snapshot>` before trusting DEV_DONE/QC_DONE state. This is an agent-native checklist, not a Python/Node/script dependency.
 ```
 

@@ -1,6 +1,7 @@
 ---
 name: websocket-development
 description: Best practices and guidelines for building real-time applications with WebSocket communication
+category: backend
 ---
 
 # WebSocket Development

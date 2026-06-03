@@ -1,6 +1,7 @@
 ---
 name: astro-knowledge-patch
 description: "Astro changes since training cutoff (latest: 6.0) — Fonts API, live collections, CSP, route caching, ClientRouter, Zod 4/Vite 7/Shiki 4. Load before working with Astro."
+category: knowledge-patch
 version: "6.0"
 license: MIT
 metadata:

@@ -238,8 +238,8 @@ See also: [folder-guide.md](folder-guide.md) for detailed folder descriptions.
 ```text
 .agent/
 ├── workflow.md      ← End-to-end workflow policy
-├── rules/           ← 16 workflow rules (constraints and governance)
-├── templates/       ← 20 artifact templates
+├── rules/           ← 18 workflow rules (constraints and governance)
+├── templates/       ← 22 artifact templates
 └── docs/            ← Documentation and visual diagrams
 
 .runtime/

@@ -1,6 +1,7 @@
 ---
 name: laravel-development
 description: Expert guidance for Laravel PHP development following best practices, SOLID principles, and Laravel conventions
+category: backend
 ---
 
 # Laravel Development

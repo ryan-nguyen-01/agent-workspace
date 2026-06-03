@@ -1,0 +1,13 @@
+{
+  "name": "agent-workspace",
+  "plugins": [
+    {
+      "name": "agent-workspace",
+      "source": {
+        "source": "local",
+        "path": "./plugins/agent-workspace"
+      },
+      "category": "Developer Tools"
+    }
+  ]
+}

@@ -1,6 +1,7 @@
 ---
 name: tailwindcss
 description: Expert in TailwindCSS utility-first styling with responsive design patterns
+category: frontend
 ---
 
 # TailwindCSS
