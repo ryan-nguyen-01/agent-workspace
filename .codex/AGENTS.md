@@ -170,7 +170,7 @@ Rerun `build-codex-plugin.py` after changing skills. `--check` verifies manifest
 
 ### Custom prompts (commands) — `~/.codex/prompts`
 
-To get the 16 workflow commands as real Codex `/` slash commands, install the generated prompts:
+To get the portable workflow commands as real Codex `/` slash commands, install the generated prompts (Claude-only commands like `/aw-init` and `/access` are excluded):
 
 ```bash
 mkdir -p ~/.codex/prompts && cp .codex/prompts/*.md ~/.codex/prompts/

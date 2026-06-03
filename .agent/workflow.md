@@ -686,6 +686,7 @@ Rules live in `.agent/rules/` and are mandatory. Commands live in `.claude/comma
 /skills         Maintain installed skills and registry metadata
 /resume-task    Continue from current state
 /aw-init        Scaffold .agent/+.runtime/+CLAUDE.md into another project (post-plugin-install)
+/access         Switch tool-permission posture: full / guarded (R-011-14)
 /policy-check   Validate transitions, exceptions, and artifact snapshots
 /status         Print workflow status and agent activity dashboard using response-ui mode
 ```

@@ -252,7 +252,7 @@ See also: [folder-guide.md](folder-guide.md) for detailed folder descriptions.
 .claude/
 ├── agents/         ← 12 workflow agents + built-in/generated coders
 ├── skills/         ← 231 skill definitions (12 workflow + 219 technical)
-├── commands/       ← 16 workflow commands (user entry points)
+├── commands/       ← 17 workflow commands (user entry points)
 └── settings.json    ← Claude Code settings
 
 inputs/             ← User-provided reference docs scanned by onboarding

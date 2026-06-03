@@ -22,5 +22,6 @@ Commands are user-facing entrypoints. They describe which agent owns the action,
 /skills         Maintain installed skills and skill registry metadata
 /resume-task    Continue a task from its current state
 /aw-init        Scaffold .agent/+.runtime/+CLAUDE.md into another project (post-plugin-install)
+/access         Switch tool-permission posture: full (bypassPermissions) / guarded (R-011-14)
 /policy-check   Validate transition, gate, exception, or artifact snapshot
 ```

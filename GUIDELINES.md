@@ -78,7 +78,7 @@ Coordinator tự route đến đúng workflow agent:
 .claude/
 ├── agents/*.agent.md          ← 12 workflow agents + built-in/generated coders
 ├── skills/*/SKILL.md          ← 231 skill definitions
-├── commands/*.md              ← 16 workflow commands
+├── commands/*.md              ← 17 workflow commands
 └── settings.json              ← Claude Code settings
 ```
 
@@ -215,4 +215,4 @@ Chi tiết: `.claude/agents/workflow/coordinator.agent.md`, `.claude/agents/work
 ### Khi đổi counts (thêm/xóa resources)
 
 - Sync counts across: `README.md`, `CLAUDE.md`, `SETUP.md`, `GUIDELINES.md`
-- Hiện tại: 12 workflow agents + 2 built-in coders + 19 specialist advisors, 231 skills, 18 rules (19 files including README), 22 templates, 16 commands
+- Hiện tại: 12 workflow agents + 2 built-in coders + 19 specialist advisors, 231 skills, 18 rules (19 files including README), 22 templates, 17 commands

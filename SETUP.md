@@ -63,7 +63,7 @@ agent-workspace/
 │   │   ├── prisma/SKILL.md
 │   │   └── ...
 │   │
-│   ├── commands/                  ← 16 workflow commands
+│   ├── commands/                  ← 17 workflow commands
 │   │   ├── onboard.md
 │   │   ├── dev.md
 │   │   └── ...
@@ -188,7 +188,7 @@ Không cần setup thêm. Claude Code tự discover:
 
 - `.claude/agents/**/*.agent.md` — 12 workflow agents + 2 built-in coders + 19 specialist advisors qua Agent tool
 - `.claude/skills/*/SKILL.md` — 231 skills qua Skill tool
-- `.claude/commands/*.md` — 16 slash commands (`/coord`, `/onboard`, …)
+- `.claude/commands/*.md` — 17 slash commands (`/coord`, `/onboard`, …)
 - `CLAUDE.md` ở root — system instructions
 
 #### Codex CLI
@@ -502,6 +502,6 @@ git config --global core.autocrlf input
 - [ ] Clone agent-workspace repo
 - [ ] Đặt reference docs vào `inputs/`
 - [ ] Clone service repositories vào `services/<service-name>/`
-- [ ] Verify: 12 workflow agents + 2 built-in coders + 19 specialist advisors, 231 skills, 18 workflow rules, 22 templates, 16 commands
+- [ ] Verify: 12 workflow agents + 2 built-in coders + 19 specialist advisors, 231 skills, 18 workflow rules, 22 templates, 17 commands
 - [ ] Mở repo `agent-workspace` trong IDE có Claude
 - [ ] Test: gõ "Phân tích dự án này" hoặc `/onboard`

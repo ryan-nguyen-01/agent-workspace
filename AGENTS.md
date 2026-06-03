@@ -20,7 +20,7 @@ Tool-specific entrypoints:
 - 231 skills (12 workflow + 219 technical) at [.claude/skills/](.claude/skills/); discovery layer: [.agent/docs/skill-catalog.md](.agent/docs/skill-catalog.md)
 - 18 workflow rules at [.agent/rules/](.agent/rules/)
 - 22 templates at [.agent/templates/](.agent/templates/)
-- 16 slash commands at [.claude/commands/](.claude/commands/)
+- 17 slash commands at [.claude/commands/](.claude/commands/)
 - 2 built-in cross-cutting coders: `coder-infra` and `coder-database` at [.claude/agents/coders/](.claude/agents/coders/)
 - Deterministic hook guardrails (scope/secret/destructive) at [scripts/hooks/](scripts/hooks/) — see [R-017](.agent/rules/17-hook-enforcement-rules.md)
 - Durable memory at [.runtime/context/](.runtime/context/)
@@ -118,6 +118,7 @@ Run any of these via the Claude Code CLI or by directly invoking the matching ag
 /sync-memory      Persist durable knowledge
 /skills           Maintain installed skills and registry metadata
 /resume-task      Continue an interrupted task
+/access           Switch tool-permission posture: full / guarded (R-011-14)
 /policy-check     Validate transitions, exceptions, and artifact snapshots
 /status           Print state banner and agent activity dashboard using response UI mode
 ```

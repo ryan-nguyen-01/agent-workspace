@@ -123,7 +123,7 @@ agent-workspace/
 │   │   ├── docker/SKILL.md
 │   │   └── ... (231 skills)
 │   │
-│   ├── commands/                      ← 16 workflow commands
+│   ├── commands/                      ← 17 workflow commands
 │   │   ├── onboard.md
 │   │   ├── analyze-task.md
 │   │   ├── dev.md
@@ -585,7 +585,7 @@ coordinator → onboarding (nếu project mới)
 
 ---
 
-Framework hiện có 12 workflow agents, 2 built-in cross-cutting coders, 19 specialist advisors, 231 skills, 18 rules, 22 templates và 16 commands. Deterministic guardrails: `scripts/hooks/` (scope/secret/destructive). Cài Claude tool layer qua plugin: xem [PLUGIN.md](PLUGIN.md); `/aw-init` scaffold full flow sang project khác.
+Framework hiện có 12 workflow agents, 2 built-in cross-cutting coders, 19 specialist advisors, 231 skills, 18 rules, 22 templates và 17 commands. Deterministic guardrails: `scripts/hooks/` (scope/secret/destructive). Cài Claude tool layer qua plugin: xem [PLUGIN.md](PLUGIN.md); `/aw-init` scaffold full flow sang project khác; `/access` đổi tool-permission posture.
 
 ---
 

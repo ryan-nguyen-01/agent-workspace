@@ -1,5 +1,6 @@
 version: 1
 distribution_mode: "framework-template"
+access_mode: "guarded"
 instance_status: "not_applied"
 current_state: "NEED_ONBOARDING"
 active_task_id: null

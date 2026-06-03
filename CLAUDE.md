@@ -184,7 +184,7 @@ Runtime controls (no code edits): `AW_HOOK_PROFILE=minimal|standard|strict` (def
 
 Claude tool layer (agents + skills + commands + hooks) đóng gói thành Claude Code plugin tại `.claude-plugin/` (sinh bằng `python3 scripts/build-plugin.py` từ `.claude/`, single source of truth — không sửa tay). Cài: `/plugin marketplace add <repo>` → `/plugin install agent-workspace@agent-workspace`. Plugin **không** ship được root `CLAUDE.md`/`.agent/`/`.runtime/`/adapter đa-tool — full workflow vẫn dùng repo workspace. Chi tiết: [PLUGIN.md](PLUGIN.md).
 
-## Commands (16 commands)
+## Commands (17 commands)
 
 Commands tại `.claude/commands/`:
 
@@ -206,6 +206,7 @@ Commands tại `.claude/commands/`:
 | /status        | Check workflow status + activity dashboard |
 | /resume-task   | Resume interrupted task    |
 | /aw-init       | Scaffold full flow (.agent/+.runtime/+CLAUDE.md) vào project khác sau khi cài plugin |
+| /access        | Đổi tool-permission posture: full (bypassPermissions) / guarded. KHÔNG đổi workflow gates/hooks (R-011-14) |
 
 CLI mirror: `python3 scripts/status-dashboard.py --mode <compact|concise|dashboard|models|json>` prints the same status/model dashboard when a client does not expose project slash commands. Add `--write` to generate `.runtime/status.md` and `.runtime/status.html`. Adapters may update telemetry with `python3 scripts/agent-activity.py`; maintainers may run `python3 scripts/architecture-health-check.py --strict --write-report` as an optional deterministic drift check.
 
@@ -371,7 +372,7 @@ Rules tại `.agent/rules/` định nghĩa constraints cho workflow:
 .claude/                       ← Claude adapter
 ├── agents/*.agent.md          ← 12 workflow agents + built-in/generated coders
 ├── skills/*/SKILL.md          ← 231 skill definitions
-├── commands/                  ← 16 workflow commands
+├── commands/                  ← 17 workflow commands
 └── settings.json              ← Claude Code settings
 
 inputs/                        ← USER drops reference docs here (onboarding scans recursively)

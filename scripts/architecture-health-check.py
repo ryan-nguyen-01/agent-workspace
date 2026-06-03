@@ -29,7 +29,7 @@ EXPECTED_COUNTS = {
     "skills": 231,
     "rules": 18,
     "templates": 22,
-    "commands": 16,
+    "commands": 17,
 }
 
 # Framework-owned agents: 12 workflow + 19 specialist advisors + 2 built-in coders.
@@ -906,7 +906,7 @@ def check_skill_taxonomy(findings: list[dict[str, str]]) -> None:
 
 # Commands excluded from the Codex prompt surface (Claude-plugin-specific). Keep in sync with
 # scripts/build-codex-prompts.py EXCLUDE.
-CODEX_PROMPT_EXCLUDE = {"aw-init"}
+CODEX_PROMPT_EXCLUDE = {"aw-init", "access"}
 
 
 def check_codex_plugin(findings: list[dict[str, str]]) -> None:

@@ -33,7 +33,7 @@ OUT = ROOT / ".codex" / "prompts"
 # Commands that are Claude-plugin-specific and do NOT work as Codex prompts.
 # `aw-init` scaffolds from ${CLAUDE_PLUGIN_ROOT} (Claude-only) and the Codex plugin ships only
 # skills (no .agent/ /.runtime/ /CLAUDE.md to copy) — so a Codex /aw-init would point at nothing.
-EXCLUDE = {"aw-init"}
+EXCLUDE = {"aw-init", "access"}
 
 
 def purpose_of(text: str) -> str:

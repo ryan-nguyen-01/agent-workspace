@@ -1,5 +1,6 @@
 version: 1
 distribution_mode: "{{DISTRIBUTION_MODE}}"  # framework-template | workspace
+access_mode: "guarded"                       # guarded | fullaccess — tool-permission posture only (R-011-14), switch via /access
 instance_status: "{{INSTANCE_STATUS}}"      # not_applied | applied | onboarded
 current_state: "NEW"
 active_task_id: null
