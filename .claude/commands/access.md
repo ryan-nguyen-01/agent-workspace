@@ -15,17 +15,22 @@ coordinator
 ## Usage
 
 ```text
-/access status     Report current access_mode + settings permissions.defaultMode
+/access status     Report current access_mode + the fullaccess allowlist state
 /access full       fullaccess — run terminal + read/edit files without a per-call permission prompt
-/access guarded    guarded (default) — tool calls follow .claude/settings.json allowlist
+/access guarded    guarded (default) — remove the fullaccess allowlist; tools prompt as normal
 ```
+
+fullaccess uses a permission **allowlist** (`permissions.allow`), NOT `bypassPermissions` /
+`--dangerously-skip-permissions`. The bypass mode is refused by Claude Code under root/sudo; the
+allowlist works for all users (including root) and keeps the hooks active.
 
 ## Behavior
 
 ```text
 1. Run: python3 scripts/access-mode.py --status | --set full | --set guarded
 2. The script writes:
-   - .claude/settings.json  permissions.defaultMode  (bypassPermissions for full, removed for guarded)
+   - .claude/settings.json  permissions.allow  (grants Bash + file tools for full, removed for guarded;
+     also strips any unsafe legacy permissions.defaultMode=bypassPermissions)
    - .runtime/context/workflow-state.yaml  access_mode  (for /status visibility)
 3. A permission-mode change applies to NEW sessions; for the current session use the harness
    permission UI (Shift+Tab) if immediate effect is needed.
