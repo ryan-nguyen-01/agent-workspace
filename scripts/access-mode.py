@@ -5,16 +5,18 @@ access_mode is ONLY about whether ordinary tool calls (terminal commands, file r
 for permission. It does NOT change the workflow approval gates (R-011) or any hook — the pipeline
 still asks for everything it must ask, and scope/secret/destructive guards still block (R-011-14).
 
-  guarded    (default): .claude/settings.json permissions follow the allowlist (prompt as configured).
-  fullaccess          : permissions.defaultMode = "bypassPermissions" — read files / run terminal
-                        commands without a per-call prompt. Workflow gates + hooks unchanged.
+  guarded    (default): the fullaccess allowlist is removed; tool calls prompt as normal.
+  fullaccess          : .claude/settings.json permissions.allow grants Bash/file tools so they run
+                        without a per-call prompt. Workflow gates + hooks unchanged.
+
+IMPORTANT: fullaccess uses a permission ALLOWLIST, not bypassPermissions / --dangerously-skip-
+permissions. The bypass mode is refused by Claude Code under root/sudo; the allowlist works for all
+users (including root) and is safer because each tool is explicitly allowed and the PreToolUse hooks
+still run (destructive/secret/scope guards keep blocking).
 
 This writes both:
-  - .claude/settings.json   permissions.defaultMode
+  - .claude/settings.json   permissions.allow   (+ removes any legacy defaultMode=bypassPermissions)
   - .runtime/context/workflow-state.yaml   access_mode   (for /status visibility)
-
-A settings.json permission-mode change applies to NEW sessions; in the current session use the
-harness permission UI (e.g. Shift+Tab) if you need it to take effect immediately.
 
 Usage:
   python3 scripts/access-mode.py --status
@@ -33,14 +35,19 @@ ROOT = Path(__file__).resolve().parents[1]
 SETTINGS = ROOT / ".claude" / "settings.json"
 STATE = ROOT / ".runtime" / "context" / "workflow-state.yaml"
 
-MODE_TO_DEFAULTMODE = {"fullaccess": "bypassPermissions", "guarded": "default"}
+# Tools auto-approved in fullaccess. Bare tool names match all invocations of that tool.
+# PreToolUse hooks still run on allowed tools, so destructive/secret/scope guards keep blocking.
+FULLACCESS_ALLOW = ["Bash", "Read", "Edit", "Write", "MultiEdit", "NotebookEdit", "Glob", "Grep"]
 
 
 def read_status() -> dict:
-    out = {"access_mode": "guarded", "settings_default_mode": "default"}
+    out = {"access_mode": "guarded", "allow_count": 0, "legacy_bypass": False}
     try:
         s = json.loads(SETTINGS.read_text(encoding="utf-8"))
-        out["settings_default_mode"] = s.get("permissions", {}).get("defaultMode", "default")
+        perms = s.get("permissions", {})
+        allow = perms.get("allow", [])
+        out["allow_count"] = sum(1 for a in allow if a in FULLACCESS_ALLOW)
+        out["legacy_bypass"] = perms.get("defaultMode") == "bypassPermissions"
     except Exception:
         pass
     try:
@@ -52,13 +59,21 @@ def read_status() -> dict:
     return out
 
 
-def set_settings(default_mode: str) -> None:
+def apply_settings(mode: str) -> None:
     data = json.loads(SETTINGS.read_text(encoding="utf-8"))
     perms = data.setdefault("permissions", {})
-    if default_mode == "default":
-        perms.pop("defaultMode", None)  # default posture = follow allowlist
+    # Always drop the unsafe legacy bypass mode (rejected under root).
+    if perms.get("defaultMode") == "bypassPermissions":
+        perms.pop("defaultMode", None)
+    existing = [a for a in perms.get("allow", []) if a not in FULLACCESS_ALLOW]
+    if mode == "fullaccess":
+        perms["allow"] = existing + FULLACCESS_ALLOW
     else:
-        perms["defaultMode"] = default_mode
+        perms["allow"] = existing
+        if not perms["allow"]:
+            perms.pop("allow", None)
+    if not perms:
+        data.pop("permissions", None)
     SETTINGS.write_text(json.dumps(data, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
 
 
@@ -68,12 +83,10 @@ def set_state(mode: str) -> None:
     text = STATE.read_text(encoding="utf-8")
     if re.search(r"^access_mode:", text, re.M):
         text = re.sub(r"^access_mode:.*$", f'access_mode: "{mode}"', text, count=1, flags=re.M)
+    elif re.search(r"^distribution_mode:", text, re.M):
+        text = re.sub(r"^(distribution_mode:.*)$", rf'\1\naccess_mode: "{mode}"', text, count=1, flags=re.M)
     else:
-        # insert near the top, after distribution_mode if present, else prepend
-        if re.search(r"^distribution_mode:", text, re.M):
-            text = re.sub(r"^(distribution_mode:.*)$", rf'\1\naccess_mode: "{mode}"', text, count=1, flags=re.M)
-        else:
-            text = f'access_mode: "{mode}"\n' + text
+        text = f'access_mode: "{mode}"\n' + text
     STATE.write_text(text, encoding="utf-8")
 
 
@@ -86,17 +99,24 @@ def main() -> int:
     if args.status or not args.set:
         st = read_status()
         print(f"access_mode: {st['access_mode']}")
-        print(f"settings permissions.defaultMode: {st['settings_default_mode']}")
-        print("  guarded = prompt per allowlist · fullaccess = bypassPermissions (workflow gates + hooks unchanged)")
+        print(f"fullaccess allowlist active: {st['allow_count']}/{len(FULLACCESS_ALLOW)} tools")
+        if st["legacy_bypass"]:
+            print("  ⚠️ legacy permissions.defaultMode=bypassPermissions present (breaks `claude` as root)."
+                  " Run: python3 scripts/access-mode.py --set guarded")
+        print("  guarded = prompt as normal · fullaccess = allowlist (workflow gates + hooks unchanged)")
         return 0
 
     mode = "fullaccess" if args.set in ("full", "fullaccess") else "guarded"
-    set_settings(MODE_TO_DEFAULTMODE[mode])
+    apply_settings(mode)
     set_state(mode)
-    print(f"access_mode -> {mode} (settings permissions.defaultMode = {MODE_TO_DEFAULTMODE[mode]})")
-    print("Workflow approval gates (R-011) and scope/secret/destructive hooks are UNCHANGED.")
+    print(f"access_mode -> {mode}")
     if mode == "fullaccess":
-        print("Applies to new sessions; for the current session use the harness permission UI (Shift+Tab).")
+        print(f"  permissions.allow grants: {', '.join(FULLACCESS_ALLOW)} (no per-call prompt)")
+        print("  Uses an allowlist (NOT bypassPermissions) — works under root; hooks still block.")
+    else:
+        print("  fullaccess allowlist removed; tool calls prompt as normal.")
+    print("Workflow approval gates (R-011) and scope/secret/destructive hooks are UNCHANGED.")
+    print("Applies to new sessions; for the current session use the harness permission UI (Shift+Tab).")
     return 0
 
 

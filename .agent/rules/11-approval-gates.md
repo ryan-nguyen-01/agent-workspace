@@ -34,10 +34,15 @@ The pipeline still runs the same, and every gate above still asks. Default `guar
 Switch with `/access full | guarded | status`.
 
 ```text
-guarded   (default): tool calls follow .claude/settings.json permissions (prompt per allowlist).
-fullaccess          : the agent may read files and run terminal commands without a per-call
-                      permission prompt (settings.json permissions.defaultMode = bypassPermissions).
+guarded   (default): the fullaccess allowlist is removed; tool calls prompt as normal.
+fullaccess          : .claude/settings.json permissions.allow grants Bash + file tools so they run
+                      without a per-call prompt.
 ```
+
+fullaccess uses a permission **allowlist**, NOT `bypassPermissions` / `--dangerously-skip-permissions`.
+The bypass mode is refused by Claude Code under root/sudo, so it must not be used. The allowlist works
+for every user (including root), each tool is explicitly allowed, and the PreToolUse hooks still run
+(destructive/secret/scope guards keep blocking).
 
 `access_mode` ONLY removes the per-tool permission prompt. It does NOT change any of the following —
 they apply identically in both modes:
