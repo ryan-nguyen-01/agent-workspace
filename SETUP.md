@@ -211,6 +211,31 @@ Lưu ý: Codex sandbox là lớp hỗ trợ, không phải hard gate theo từng
 
 Verify project-level config schema tại [`developers.openai.com/codex/config-reference`](https://developers.openai.com/codex/config-reference).
 
+**Codex plugin (231 skills) + slash commands — tùy chọn.** Codex CLI 0.132+ có plugin system riêng.
+Cài skill layer của framework dưới dạng Codex plugin:
+
+```bash
+# 1. Sinh plugin (BẮT BUỘC chạy trước — bản copy skills bị gitignore, không có sẵn sau git clone/pull)
+python3 scripts/build-codex-plugin.py
+# 2. Add marketplace của repo + cài plugin
+codex plugin marketplace add "$(pwd)/.codex/marketplace"
+codex plugin add agent-workspace@agent-workspace
+# 3. Verify → (installed, enabled), 231 skills vào cache
+codex plugin list --marketplace agent-workspace
+```
+
+Lấy 15 workflow command thành Codex `/` slash command (custom prompts):
+
+```bash
+mkdir -p ~/.codex/prompts && cp .codex/prompts/*.md ~/.codex/prompts/
+```
+
+Lưu ý:
+
+- Chạy lại `python3 scripts/build-codex-plugin.py` sau mỗi lần `git clone`/`git pull` (skills copy bị gitignore) và sau khi sửa skills.
+- `/aw-init` và `/access` là Claude-specific nên KHÔNG có trong Codex prompts.
+- Codex plugin chỉ ship skills; full workflow (`.agent/`, `.runtime/`, routing) vẫn cần làm việc trong repo này. Chi tiết: [`.codex/AGENTS.md`](.codex/AGENTS.md).
+
 #### Cursor
 
 Cursor tự discover:

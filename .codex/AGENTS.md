@@ -158,15 +158,17 @@ Codex ships two installable surfaces for this framework. Both are generated; `.c
 
 ### Plugin (skills) — `codex plugin`
 
-Codex CLI (0.132+) has a real plugin system (`.codex-plugin/plugin.json` + `.agents/plugins/marketplace.json`). It packages the 231 skills. Codex COPIES a plugin into its cache and does NOT follow symlinks, so the generator copies `.claude/skills/` into `plugins/agent-workspace/skills/` (gitignored).
+Codex CLI (0.132+) has a real plugin system (`.codex-plugin/plugin.json` + `.agents/plugins/marketplace.json`, both under `.codex/marketplace/`). It packages the 231 skills. Codex COPIES a plugin into its cache and does NOT follow symlinks, so the generator copies `.claude/skills/` into `.codex/marketplace/plugins/agent-workspace/skills/` (gitignored).
 
 ```bash
-python3 scripts/build-codex-plugin.py
+python3 scripts/build-codex-plugin.py                 # REQUIRED first — the skills copy is gitignored
 codex plugin marketplace add "$(pwd)/.codex/marketplace"
 codex plugin add agent-workspace@agent-workspace
+codex plugin list --marketplace agent-workspace       # verify: (installed, enabled)
 ```
 
-Rerun `build-codex-plugin.py` after changing skills. `--check` verifies manifest + copy are in sync.
+Run `build-codex-plugin.py` FIRST after every clone/pull (the gitignored skills copy is not in the
+repo) and again after changing skills. `--check` verifies manifest + copy are in sync.
 
 ### Custom prompts (commands) — `~/.codex/prompts`
 
