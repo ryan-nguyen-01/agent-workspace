@@ -16,105 +16,105 @@ This workspace separates 3 layers:
 .claude/     Claude adapter: agents, commands, skills, settings
 ```
 
-Mục tiêu chính:
+Main goals:
 
 ```text
-Tránh mỗi hội thoại mới phải scan lại dự án từ đầu
-Không tạo coder agent chung chung trước khi hiểu dự án
-Bắt buộc task đi qua phân tích, planning, dev verification, QC, bug loop, memory update
-Giới hạn coder agent theo service/module để tránh sửa sai phạm vi
-Chuẩn hóa tài liệu bàn giao dev -> QC
+Avoid having to rescan the project from scratch on every new conversation
+Do not create a generic coder agent before understanding the project
+Force every task to go through analysis, planning, dev verification, QC, bug loop, memory update
+Scope coder agents per service/module to avoid edits outside the intended scope
+Standardize the dev -> QC handoff document
 ```
 
-## 2. Khi nào dùng agent-workspace?
+## 2. When to use agent-workspace?
 
-Dùng workspace này khi bạn muốn làm việc theo quy trình agent end-to-end.
+Use this workspace when you want to work through the end-to-end agent workflow.
 
-Ví dụ:
+Examples:
 
 ```text
-Onboard một project mới
-Phân tích cấu trúc project
-Tạo Project Brain
-Tạo coder agents theo service/module
-Nhận task từ HLD, LLD, ticket, hoặc text
-Chia task cho nhiều service coder
-Kiểm tra Code Done
-Tạo QC handoff
-QC test và phân loại bug blocker/non-blocker
-Resume task ở hội thoại mới
-Cập nhật memory sau khi xong task
+Onboard a new project
+Analyze the project structure
+Create a Project Brain
+Create coder agents per service/module
+Receive a task from an HLD, LLD, ticket, or text
+Split a task across multiple service coders
+Check Code Done
+Create a QC handoff
+QC testing and classifying bugs as blocker/non-blocker
+Resume a task in a new conversation
+Update memory after finishing a task
 ```
 
-Các command thường dùng:
+Commonly used commands:
 
 ```text
-/coord <request>       Entry chính, tự route workflow
-/onboard               Scan project và tạo Project Brain
-/create-coders         Tạo service coder agents sau user approval
-/analyze-task <input>  Phân tích HLD/LLD/ticket/text
-/plan-dev TASK-123     Tạo implementation plan
-/dev TASK-123          Chạy dev flow
-/verify-dev TASK-123   Kiểm tra Code Done
-/handoff-qc TASK-123   Tạo tài liệu bàn giao QC
-/qc TASK-123           Chạy QC flow
-/bug TASK-123          Route bug blocker/non-blocker
-/sync-memory TASK-123  Cập nhật Project Brain
-/resume-task TASK-123  Tiếp tục task từ state hiện tại
-/status                Xem trạng thái workflow/brain/agents/model/activity
-/policy-check          Kiểm tra gate/exception
+/coord <request>       Main entry, auto-routes the workflow
+/onboard               Scan the project and create the Project Brain
+/create-coders         Create service coder agents after user approval
+/analyze-task <input>  Analyze HLD/LLD/ticket/text
+/plan-dev TASK-123     Create an implementation plan
+/dev TASK-123          Run the dev flow
+/verify-dev TASK-123   Check Code Done
+/handoff-qc TASK-123   Create the QC handoff document
+/qc TASK-123           Run the QC flow
+/bug TASK-123          Route a blocker/non-blocker bug
+/sync-memory TASK-123  Update the Project Brain
+/resume-task TASK-123  Continue a task from the current state
+/status                View workflow/brain/agents/model/activity status
+/policy-check          Check gate/exception
 ```
 
-## 3. Khi nào không nên dùng full workflow?
+## 3. When should you not use the full workflow?
 
-Không cần dùng full workflow cho việc quá nhỏ hoặc không thuộc workflow.
+You do not need the full workflow for things that are too small or outside the workflow.
 
-Ví dụ:
+Examples:
 
 ```text
-Sửa một typo nhỏ mà không cần agent workflow
-Hỏi giải thích một đoạn code đơn lẻ
-Viết snippet tạm thời
-Thử nghiệm local không cần lưu memory
-Một task chưa muốn đi qua QC/handoff
+Fix a small typo without the agent workflow
+Ask for an explanation of a single code snippet
+Write a temporary snippet
+Local experiments that do not need memory saved
+A task you do not yet want to send through QC/handoff
 ```
 
-Tuy nhiên, nếu task có thể ảnh hưởng project thật, nhiều service, auth, DB, API contract, QC, hoặc cần resume về sau, nên dùng workflow trong `agent-workspace`.
+However, if the task can affect the real project, multiple services, auth, DB, API contract, QC, or needs to be resumed later, you should use the workflow in `agent-workspace`.
 
-## 4. Nguyên tắc vận hành
+## 4. Operating principles
 
-`agent-workspace` được thiết kế theo mô hình:
+`agent-workspace` is designed around the model:
 
 ```text
 Workflow source -> Tool adapters -> Runtime context -> Task artifacts
 ```
 
-Ý nghĩa từng lớp:
+Meaning of each layer:
 
 ```text
-.agent/workflow.md     State machine và SOP tổng thể
-.agent/rules/          Luật bắt buộc, không được bỏ qua
-.agent/templates/      Mẫu file artifact chuẩn
-.agent/docs/           Tài liệu và sơ đồ
-.claude/commands/      Entry point user gọi trong Claude Code
-.claude/agents/        Vai trò và trách nhiệm của từng Claude agent
-.claude/skills/        Hướng dẫn thao tác cụ thể cho agent
+.agent/workflow.md     Overall state machine and SOP
+.agent/rules/          Mandatory rules, must not be skipped
+.agent/templates/      Standard artifact file templates
+.agent/docs/           Documentation and diagrams
+.claude/commands/      Entry points the user calls in Claude Code
+.claude/agents/        Role and responsibility of each Claude agent
+.claude/skills/        Concrete how-to guidance for agents
 .runtime/context/      Project Brain, service control plane, workflow state
-.runtime/tasks/        Artifact theo từng task
-.runtime/bugs/         Bug blocker/non-blocker
+.runtime/tasks/        Artifacts per task
+.runtime/bugs/         Blocker/non-blocker bugs
 ```
 
 Rule priority:
 
 ```text
-.agent/workflow.md định nghĩa state machine
-.agent/rules/ định nghĩa policy bắt buộc
-.claude/commands/ định nghĩa cách user gọi workflow trong Claude Code
-.claude/agents/ định nghĩa role behavior
-.claude/skills/ định nghĩa cách làm chi tiết
+.agent/workflow.md defines the state machine
+.agent/rules/ defines mandatory policy
+.claude/commands/ defines how the user invokes the workflow in Claude Code
+.claude/agents/ defines role behavior
+.claude/skills/ defines the detailed how-to
 ```
 
-Nếu có conflict, ưu tiên:
+On conflict, prioritize:
 
 ```text
 .agent/workflow.md + .agent/rules/
@@ -124,7 +124,7 @@ Nếu có conflict, ưu tiên:
 .agent/templates/
 ```
 
-## 5. Cấu trúc folder tổng quan
+## 5. Folder structure overview
 
 ```text
 .agent/
@@ -145,121 +145,121 @@ Nếu có conflict, ưu tiên:
   settings.json
 ```
 
-## 6. File cấp root
+## 6. Root-level files
 
 ### `CLAUDE.md`
 
-File hướng dẫn chính cho Claude/agent khi vào project.
+The main guidance file for Claude/agents when entering the project.
 
-Dùng để biết:
+Use it to learn:
 
 ```text
-Workflow mặc định
+Default workflow
 Bootstrap sequence
-Alias/command cơ bản
+Basic aliases/commands
 Approval gates
 Rule priority
 Visual flow reference
 ```
 
-Khi nào đọc:
+When to read:
 
 ```text
-Khi agent bắt đầu làm việc trong project
-Khi cần hiểu cách `agent-workspace` điều phối tổng thể
-Khi cần biết entrypoint nào nên dùng
+When an agent starts working in the project
+When you need to understand how `agent-workspace` orchestrates overall
+When you need to know which entrypoint to use
 ```
 
 ### `README.md`
 
-Tài liệu dành cho người dùng/dev lead.
+Documentation for users/dev leads.
 
-Dùng để biết:
+Use it to learn:
 
 ```text
-Kiến trúc tổng thể của `agent-workspace`
-Cách chạy lần đầu
-Luồng task tiêu chuẩn
+Overall architecture of `agent-workspace`
+How to run it for the first time
+The standard task flow
 Code Done rule
 QC rule
-Rules và commands hiện có
+Existing rules and commands
 ```
 
-Khi nào đọc:
+When to read:
 
 ```text
-Khi onboarding người mới vào workflow
-Khi cần giới thiệu các folder chính của workspace
-Khi cần xem command path chuẩn
+When onboarding a newcomer to the workflow
+When you need to introduce the main folders of the workspace
+When you need to view the standard command path
 ```
 
 ### `workflow.md`
 
-Nguồn chân lý cho state machine và SOP end-to-end.
+The source of truth for the end-to-end state machine and SOP.
 
-Dùng để biết:
+Use it to learn:
 
 ```text
-Các state hợp lệ
-Agent nào chịu trách nhiệm state nào
-Luồng onboarding
-Luồng tạo coder agents
-Luồng task intake
-Luồng dev
-Luồng QC
-Luồng bug
-Luồng memory update
+The valid states
+Which agent is responsible for which state
+Onboarding flow
+Coder-agent creation flow
+Task intake flow
+Dev flow
+QC flow
+Bug flow
+Memory update flow
 ```
 
-Khi nào đọc:
+When to read:
 
 ```text
-Mọi agent phải đọc trước khi hành động
-Khi cần validate một state transition
-Khi cần biết task đang ở bước nào
+Every agent must read it before acting
+When you need to validate a state transition
+When you need to know which step a task is at
 ```
 
 ### `.runtime/context/workflow-state.yaml`
 
-Theo dõi trạng thái workflow hiện tại. Đây là file state chính của workspace.
+Tracks the current workflow state. This is the main state file of the workspace.
 
-Dùng để biết:
+Use it to learn:
 
 ```text
-State hiện tại
-Task active
+Current state
+Active task
 Next required action
 ```
 
-Khi nào đọc:
+When to read:
 
 ```text
-Khi muốn biết hệ thống đang ở đâu
-Khi resume task hoặc resume workflow
+When you want to know where the system is
+When resuming a task or resuming the workflow
 ```
 
 ### `changelog.md`
 
-Ghi lại thay đổi quan trọng của workflow `agent-workspace`.
+Records significant changes to the `agent-workspace` workflow.
 
-Dùng để biết:
+Use it to learn:
 
 ```text
-Kiến trúc đã thay đổi gì
-Rules/commands/agents được cập nhật khi nào
-Workflow policy thay đổi ra sao
+What the architecture has changed
+When rules/commands/agents were updated
+How the workflow policy changed
 ```
 
-Khi nào đọc:
+When to read:
 
 ```text
-Khi audit thay đổi workflow
-Khi cần hiểu vì sao cấu trúc hiện tại tồn tại
+When auditing workflow changes
+When you need to understand why the current structure exists
 ```
 
 ## 7. `agents/`
 
-Folder này chứa định nghĩa các agent lõi và về sau sẽ chứa generated service coder agents.
+This folder contains the core agent definitions and will later hold generated service coder agents.
 
 ```text
 .claude/agents/
@@ -277,56 +277,56 @@ Folder này chứa định nghĩa các agent lõi và về sau sẽ chứa gener
   coder-<service>.agent.md       generated later
 ```
 
-### Khi nào dùng?
+### When to use?
 
-Dùng khi cần biết agent nào làm gì.
+Use it when you need to know which agent does what.
 
-Ví dụ:
+Examples:
 
 ```text
-Coordinator route task nhưng không code
-Onboarding scan project nhưng không tạo coder
-Agent Factory tạo coder sau approval
-Task Analysis chuẩn hóa HLD/LLD/text
-Coder Leader chia việc cho nhiều service coder
-Service Coder chỉ sửa đúng scope
-Dev Verification quyết định Code Done
-QC Runner test và phân loại bug
-Bug Router route blocker/non-blocker
-Memory Update cập nhật Project Brain
-Workflow Policy validate gate/transition
+Coordinator routes tasks but does not code
+Onboarding scans the project but does not create coders
+Agent Factory creates coders after approval
+Task Analysis normalizes HLD/LLD/text
+Coder Leader splits work across multiple service coders
+Service Coder only edits within its scope
+Dev Verification decides Code Done
+QC Runner tests and classifies bugs
+Bug Router routes blocker/non-blocker
+Memory Update updates the Project Brain
+Workflow Policy validates gate/transition
 ```
 
-### Agent lõi
+### Core agents
 
-| Agent              | Vai trò                                                       |
+| Agent              | Role                                                          |
 | ------------------ | ------------------------------------------------------------- |
-| `coordinator`      | Điều phối workflow, check brain, route command, hỏi approval  |
-| `onboarding`       | Scan project, tạo Project Brain, Service Catalog, Test Policy |
-| `agent-factory`    | Sinh coder agents theo service sau approval                   |
-| `task-analysis`    | Phân tích HLD/LLD/ticket/text thành task spec                 |
+| `coordinator`      | Orchestrate the workflow, check brain, route commands, ask for approval |
+| `onboarding`       | Scan project, create Project Brain, Service Catalog, Test Policy |
+| `agent-factory`    | Generate coder agents per service after approval              |
+| `task-analysis`    | Analyze HLD/LLD/ticket/text into a task spec                  |
 | `coder-leader`     | Lead multi-service implementation                             |
-| `dev-verification` | Kiểm tra Code Done, score >= 80%, critical pass               |
-| `qc-handoff`       | Tạo tài liệu bàn giao dev -> QC                               |
-| `qc-runner`        | Chạy QC, tạo test results, phát hiện bug                      |
-| `bug-router`       | Phân loại blocker/non-blocker, route về dev                   |
-| `memory-update`    | Cập nhật durable memory                                       |
-| `workflow-policy`  | Validate state transition và approval gates                   |
+| `dev-verification` | Check Code Done, score >= 80%, critical pass                  |
+| `qc-handoff`       | Create the dev -> QC handoff document                         |
+| `qc-runner`        | Run QC, produce test results, detect bugs                     |
+| `bug-router`       | Classify blocker/non-blocker, route back to dev              |
+| `memory-update`    | Update durable memory                                         |
+| `workflow-policy`  | Validate state transitions and approval gates                |
 
 ### Generated coder agents
 
-Generated coder agents chưa có ngay từ đầu.
+Generated coder agents do not exist from the start.
 
-Chúng chỉ được tạo sau:
+They are only created after:
 
 ```text
 /onboard
--> phát hiện services/modules
+-> detect services/modules
 -> user approve
 -> /create-coders
 ```
 
-Ví dụ sau này có thể có:
+Examples that may exist later:
 
 ```text
 coder-auth-service.agent.md
@@ -335,7 +335,7 @@ coder-admin-web.agent.md
 coder-notification-worker.agent.md
 ```
 
-Mỗi coder agent phải có:
+Each coder agent must have:
 
 ```text
 allowed_read_paths
@@ -349,7 +349,7 @@ escalation rules
 
 ## 8. `commands/`
 
-Folder này chứa các lệnh user-facing.
+This folder contains the user-facing commands.
 
 ```text
 .claude/commands/
@@ -370,14 +370,14 @@ Folder này chứa các lệnh user-facing.
   policy-check.md
 ```
 
-### Khi nào dùng?
+### When to use?
 
-Dùng khi bạn muốn gọi workflow bằng entrypoint rõ ràng.
+Use it when you want to invoke the workflow via a clear entrypoint.
 
-Ví dụ:
+Examples:
 
 ```text
-/coord thêm chức năng reset password
+/coord add a reset password feature
 /onboard
 /create-coders
 /qc TASK-123
@@ -385,20 +385,20 @@ Ví dụ:
 /status
 ```
 
-### Vì sao cần commands?
+### Why do we need commands?
 
-Commands giúp:
+Commands help:
 
 ```text
-User không cần nhớ agent nào cần gọi
-Agent biết rules nào phải đọc
-Workflow không bị nhảy bước
-Artifact nào cần tạo được định nghĩa rõ
-Stop condition rõ ràng
-Output format nhất quán
+The user does not need to remember which agent to call
+The agent knows which rules it must read
+The workflow does not skip steps
+Which artifacts to create are clearly defined
+Clear stop conditions
+Consistent output format
 ```
 
-### Command path chuẩn
+### Standard command path
 
 ```text
 /coord
@@ -410,13 +410,13 @@ Output format nhất quán
 -> /verify-dev
 -> /handoff-qc
 -> /qc
--> /bug nếu có defect
+-> /bug if there is a defect
 -> /sync-memory
 ```
 
 ## 9. `rules/`
 
-Folder này chứa policy bắt buộc.
+This folder contains the mandatory policy.
 
 ```text
 .agent/rules/
@@ -438,40 +438,40 @@ Folder này chứa policy bắt buộc.
   15-model-routing-observability-rules.md
 ```
 
-### Khi nào dùng?
+### When to use?
 
-Dùng khi cần kiểm tra agent có được phép làm gì không.
+Use it when you need to check whether an agent is allowed to do something.
 
-Ví dụ:
+Examples:
 
 ```text
-Có được tạo coder agents chưa?
-Có được code chưa?
-Có được tạo unit test không?
-Có được chuyển sang QC không?
-QC có được tiếp tục khi gặp bug không?
-Có được lưu thông tin này vào memory không?
-Có cần hỏi user approval không?
+Is it allowed to create coder agents yet?
+Is it allowed to code yet?
+Is it allowed to create unit tests?
+Is it allowed to move to QC?
+Is QC allowed to continue when it hits a bug?
+Is it allowed to save this information to memory?
+Is user approval required?
 ```
 
-### Một số rule quan trọng
+### Some important rules
 
 ```text
-Không có Project Brain thì không code
-Không có onboarding thì không tạo coder
-Không có task-analysis.yaml thì không dev
-Không có qc-handoff.md thì không QC
-Service coder chỉ sửa trong allowed_write_paths
-Unit test chỉ tạo khi service policy yêu cầu
-Nếu confidence thấp hoặc thiếu facts: hỏi user, không đoán, không fabricate evidence
-Code Done cần >= 80% và critical checks pass 100%
-QC gặp blocker thì dừng ngay
-Không lưu secret/token/password/log dài vào `.runtime` artifacts hoặc tool adapter files
+No coding without a Project Brain
+No creating coders without onboarding
+No dev without task-analysis.yaml
+No QC without qc-handoff.md
+Service coder only edits within allowed_write_paths
+Unit tests are only created when the service policy requires them
+If confidence is low or facts are missing: ask the user, do not guess, do not fabricate evidence
+Code Done requires >= 80% and critical checks passing 100%
+When QC hits a blocker, stop immediately
+Do not store secrets/tokens/passwords/long logs in `.runtime` artifacts or tool adapter files
 ```
 
 ## 10. `skills/`
 
-Folder này chứa hướng dẫn thao tác cụ thể cho agent.
+This folder contains concrete how-to guidance for agents.
 
 ```text
 .claude/skills/
@@ -489,32 +489,32 @@ Folder này chứa hướng dẫn thao tác cụ thể cho agent.
   skill-workflow-policy/
 ```
 
-### Khi nào dùng?
+### When to use?
 
-Dùng khi một agent cần biết **cách làm** một capability.
+Use it when an agent needs to know **how to perform** a capability.
 
-Ví dụ:
+Examples:
 
 ```text
-Onboarding agent dùng skill-project-onboarding
-Agent Factory dùng skill-agent-factory
-Task Analysis dùng skill-task-analysis
-Coder Leader dùng skill-coder-leader
-QC Runner dùng skill-qc-runner
-Memory Update dùng skill-memory-update
+The Onboarding agent uses skill-project-onboarding
+Agent Factory uses skill-agent-factory
+Task Analysis uses skill-task-analysis
+Coder Leader uses skill-coder-leader
+QC Runner uses skill-qc-runner
+Memory Update uses skill-memory-update
 ```
 
-### Khác gì với `agents/`?
+### How does it differ from `agents/`?
 
 ```text
-agents/ = ai là người chịu trách nhiệm
-skills/ = làm việc đó theo phương pháp nào
-rules/  = luật nào không được vi phạm
+agents/ = who is responsible
+skills/ = by what method to do it
+rules/  = which rules must not be violated
 ```
 
 ## 11. `templates/`
 
-Folder này chứa mẫu artifact chuẩn.
+This folder contains the standard artifact templates.
 
 ```text
 .agent/templates/
@@ -538,44 +538,44 @@ Folder này chứa mẫu artifact chuẩn.
   workflow-state.template.yaml
 ```
 
-### Khi nào dùng?
+### When to use?
 
-Dùng khi agent cần tạo file artifact mới.
+Use it when an agent needs to create a new artifact file.
 
-Ví dụ:
+Examples:
 
 ```text
-Agent Factory tạo coder agent từ agent-coder.template.md
-Onboarding tạo service brain từ service-brain.template.yaml
-Task Analysis tạo task-analysis.yaml từ task-analysis.template.yaml
-Dev Verification tạo dev-verification.yaml
-QC Runner tạo qc-test-results.yaml
-Bug Router tạo bug yaml
-Memory Update tạo memory-updates.yaml
+Agent Factory creates a coder agent from agent-coder.template.md
+Onboarding creates a service brain from service-brain.template.yaml
+Task Analysis creates task-analysis.yaml from task-analysis.template.yaml
+Dev Verification creates dev-verification.yaml
+QC Runner creates qc-test-results.yaml
+Bug Router creates a bug yaml
+Memory Update creates memory-updates.yaml
 ```
 
-### Vì sao cần templates?
+### Why do we need templates?
 
-Templates giúp:
+Templates help:
 
 ```text
-Artifact nhất quán giữa các task
-QC dễ đọc handoff
-Agent mới có thể resume task từ file
-Workflow Policy dễ validate thiếu file nào
+Consistent artifacts across tasks
+QC reads handoffs easily
+A new agent can resume a task from a file
+Workflow Policy can easily validate which file is missing
 ```
 
 ## 12. `.runtime/context/`
 
-`.runtime/context/` là runtime context của workspace:
+`.runtime/context/` is the runtime context of the workspace:
 
 ```text
-Project brain: kiến thức bền vững
+Project brain: durable knowledge
 Service control plane: service path, coder scope, test policy
-Workflow state: task đang ở bước nào
+Workflow state: which step the task is at
 ```
 
-Không tạo root `memory/` hoặc root `state/`. Source of truth hiện tại nằm dưới `.runtime/context/`.
+Do not create a root `memory/` or root `state/`. The current source of truth lives under `.runtime/context/`.
 
 ```text
 .runtime/context/
@@ -607,62 +607,62 @@ Generated status artifacts:
 .runtime/status.html
 ```
 
-### Khi nào dùng?
+### When to use?
 
-Dùng khi agent cần nhớ thông tin dự án mà không scan lại từ đầu.
+Use it when an agent needs to recall project information without rescanning from scratch.
 
-Ví dụ:
+Examples:
 
 ```text
-Project này dùng stack gì?
-Có những service nào?
-Service nào có coder agent?
-Service nào yêu cầu unit test?
-API/schema/event nào đang tồn tại?
-Task này đụng service nào?
-Có pattern/common util nào nên reuse?
+What stack does this project use?
+What services are there?
+Which service has a coder agent?
+Which service requires unit tests?
+Which API/schema/event currently exists?
+Which service does this task touch?
+Is there a pattern/common util that should be reused?
 ```
 
-### File quan trọng
+### Important files
 
-| File                      | Vai trò                                                                                 |
+| File                      | Role                                                                                    |
 | ------------------------- | --------------------------------------------------------------------------------------- |
-| `.runtime/context/index.yaml`       | Index đọc trước để tránh mở toàn bộ memory                                               |
-| `.runtime/context/project-brain.yaml` | Memory tổng thể của project                                                           |
-| `.runtime/context/service-catalog.yaml`   | Danh sách service/module, source path, coding boundary                                  |
-| `.runtime/context/agent-registry.yaml` | Danh sách coder agents và scope                                                   |
-| `.runtime/context/test-policy.yaml` | Quy định unit/manual test theo service                                                |
-| `.runtime/context/workflow-state.yaml` | State hiện tại của workflow                                                           |
-| `.runtime/context/skill-registry.yaml` | Registry máy đọc được cho skill selection, risk gate, approval, installed/failed skills |
-| `.runtime/context/model-routing.yaml` | Model profile routing cho workflow agents                                             |
-| `.runtime/context/agent-activity.yaml` | Activity dashboard, ETA, token/cost telemetry                                         |
-| `.runtime/context/response-ui.yaml` | Response layout modes cho status/review/dev/final output                              |
-| `.runtime/status.md` / `.runtime/status.html` | Generated status artifacts; regenerate bằng `scripts/status-dashboard.py --write` |
-| `feedback/inbox.md`       | Nơi nhận feedback thô khi AI làm sai/làm thiếu                                           |
-| `feedback/patterns.md`    | Pattern đã xác nhận qua feedback để reuse                                                 |
-| `feedback/anti-patterns.md` | Lỗi lặp lại cần tránh từ feedback                                                        |
-| `services/<service>.yaml` | Memory chi tiết từng service                                                            |
-| `common/generics.md`      | Pattern/util dùng chung để tránh viết lại                                               |
+| `.runtime/context/index.yaml`       | Index read first to avoid opening the entire memory                                       |
+| `.runtime/context/project-brain.yaml` | Overall memory of the project                                                          |
+| `.runtime/context/service-catalog.yaml`   | List of services/modules, source path, coding boundary                              |
+| `.runtime/context/agent-registry.yaml` | List of coder agents and their scope                                              |
+| `.runtime/context/test-policy.yaml` | Unit/manual test rules per service                                                    |
+| `.runtime/context/workflow-state.yaml` | Current state of the workflow                                                       |
+| `.runtime/context/skill-registry.yaml` | Machine-readable registry for skill selection, risk gate, approval, installed/failed skills |
+| `.runtime/context/model-routing.yaml` | Model profile routing for workflow agents                                            |
+| `.runtime/context/agent-activity.yaml` | Activity dashboard, ETA, token/cost telemetry                                        |
+| `.runtime/context/response-ui.yaml` | Response layout modes for status/review/dev/final output                              |
+| `.runtime/status.md` / `.runtime/status.html` | Generated status artifacts; regenerate with `scripts/status-dashboard.py --write` |
+| `feedback/inbox.md`       | Where raw feedback lands when the AI does something wrong/incomplete                     |
+| `feedback/patterns.md`    | Patterns confirmed through feedback for reuse                                            |
+| `feedback/anti-patterns.md` | Recurring mistakes to avoid, drawn from feedback                                       |
+| `services/<service>.yaml` | Detailed memory per service                                                              |
+| `common/generics.md`      | Shared patterns/utils to avoid rewriting                                                 |
 
-### Trạng thái ban đầu
+### Initial state
 
-Sau khi setup, state thường ở trạng thái:
+After setup, the state is usually:
 
 ```text
 NEED_ONBOARDING
 ```
 
-Nghĩa là cần chạy:
+This means you need to run:
 
 ```text
 /onboard
 ```
 
-để fill thông tin thật của project.
+to fill in the real project information.
 
 ## 13. `docs/`
 
-Folder tài liệu giải thích và visual.
+Folder of explanatory and visual documentation.
 
 ```text
 .agent/docs/
@@ -683,33 +683,33 @@ Folder tài liệu giải thích và visual.
     09-principle-flow.svg
 ```
 
-### Khi nào dùng?
+### When to use?
 
-Dùng khi cần hiểu hệ thống bằng tài liệu hoặc sơ đồ.
+Use it when you need to understand the system through documentation or diagrams.
 
-Ví dụ:
+Examples:
 
 ```text
-Người mới muốn hiểu agent-workspace
-Dev lead muốn review workflow
-QC muốn hiểu bug loop
-Agent designer muốn chỉnh architecture
+A newcomer wants to understand agent-workspace
+A dev lead wants to review the workflow
+QC wants to understand the bug loop
+An agent designer wants to adjust the architecture
 ```
 
-### File quan trọng
+### Important files
 
-| File                   | Vai trò                                          |
+| File                   | Role                                             |
 | ---------------------- | ------------------------------------------------ |
-| `folder-guide.md`      | Tài liệu này                                     |
-| `visual-flow.md`       | Trang xem toàn bộ sơ đồ workflow                 |
-| `deep-onboarding.md`   | Tiêu chuẩn deep onboarding                       |
-| `skill-composition.md` | Tiêu chuẩn skill composition                     |
-| `external-skills.md`   | Registry các external skills đã cài              |
-| `diagrams/*.svg`       | Hình tĩnh để Markdown preview hiển thị trực tiếp |
+| `folder-guide.md`      | This document                                    |
+| `visual-flow.md`       | Page to view all workflow diagrams               |
+| `deep-onboarding.md`   | Deep onboarding standard                          |
+| `skill-composition.md` | Skill composition standard                        |
+| `external-skills.md`   | Registry of installed external skills             |
+| `diagrams/*.svg`       | Static images that Markdown preview renders directly |
 
 ## 14. `.runtime/tasks/`
 
-Folder lưu artifact theo từng task.
+Folder that stores artifacts per task.
 
 ```text
 .runtime/tasks/
@@ -730,38 +730,38 @@ Folder lưu artifact theo từng task.
     memory-updates.yaml
 ```
 
-### Khi nào dùng?
+### When to use?
 
-Dùng khi có một task cụ thể cần đi qua workflow.
+Use it when there is a specific task that needs to go through the workflow.
 
-Ví dụ:
-
-```text
-Thêm feature
-Fix bug
-Refactor có scope rõ
-Thay đổi API
-Task lấy từ HLD/LLD/ticket
-```
-
-### Vì sao quan trọng?
-
-Task folder giúp:
+Examples:
 
 ```text
-Resume task ở hội thoại mới
-Biết task đang ở state nào
-Biết ai đã làm gì
-QC có handoff rõ
-Bug có reproduction rõ
-Memory update có source artifact
+Add a feature
+Fix a bug
+Refactor with a clear scope
+Change an API
+A task taken from an HLD/LLD/ticket
 ```
 
-QC handoff canonical nằm tại `.runtime/tasks/<task_id>/qc-handoff.md`. Không mirror sang folder riêng.
+### Why is it important?
+
+The task folder helps:
+
+```text
+Resume a task in a new conversation
+Know which state the task is at
+Know who did what
+QC has a clear handoff
+Bugs have clear reproduction
+Memory update has a source artifact
+```
+
+The canonical QC handoff lives at `.runtime/tasks/<task_id>/qc-handoff.md`. Do not mirror it to a separate folder.
 
 ## 15. `.runtime/bugs/`
 
-Folder lưu bug do QC hoặc workflow phát hiện.
+Folder that stores bugs found by QC or the workflow.
 
 ```text
 .runtime/bugs/
@@ -771,61 +771,61 @@ Folder lưu bug do QC hoặc workflow phát hiện.
     BUG-456.yaml
 ```
 
-### Khi nào dùng?
+### When to use?
 
-Dùng khi QC phát hiện bug.
+Use it when QC finds a bug.
 
 ### Blocker bug
 
-Blocker là bug khiến QC không thể tiếp tục luồng chính.
+A blocker is a bug that prevents QC from continuing the main flow.
 
-Ví dụ:
+Examples:
 
 ```text
-Happy path fail
+Happy path fails
 App crash
-Core API 500 toàn bộ
-Auth/permission bị sai
+Core API returns 500 entirely
+Auth/permission is wrong
 Data corruption
-Không tạo được test data nền
-Bug chặn các case QC tiếp theo
+Unable to create baseline test data
+A bug that blocks subsequent QC cases
 ```
 
-Hành động:
+Actions:
 
 ```text
-Dừng QC ngay
-Tạo .runtime/bugs/blockers/<bug-id>.yaml
-Route về Coder Leader
-Dev fix
-Verify lại
-QC retest
+Stop QC immediately
+Create .runtime/bugs/blockers/<bug-id>.yaml
+Route back to Coder Leader
+Dev fixes
+Verify again
+QC retests
 ```
 
 ### Non-blocker bug
 
-Non-blocker là bug không chặn QC tiếp tục.
+A non-blocker is a bug that does not stop QC from continuing.
 
-Ví dụ:
-
-```text
-UI copy sai
-Layout nhỏ
-Warning không ảnh hưởng flow
-Edge case phụ
-```
-
-Hành động:
+Examples:
 
 ```text
-Tạo .runtime/bugs/non-blockers/<bug-id>.yaml
-QC tiếp tục các case không bị ảnh hưởng
-Dev có thể fix song song
+Wrong UI copy
+Minor layout
+Warning that does not affect the flow
+Secondary edge case
 ```
 
-## 17. Luồng sử dụng thực tế
+Actions:
 
-### Lần đầu setup project
+```text
+Create .runtime/bugs/non-blockers/<bug-id>.yaml
+QC continues with the unaffected cases
+Dev can fix in parallel
+```
+
+## 17. Real-world usage flows
+
+### First-time project setup
 
 ```text
 /coord
@@ -838,10 +838,10 @@ Dev có thể fix song song
 -> AGENTS_READY
 ```
 
-### Làm một task mới
+### Working on a new task
 
 ```text
-/coord <task text hoặc HLD/LLD>
+/coord <task text or HLD/LLD>
 -> /analyze-task
 -> /plan-dev
 -> /dev
@@ -851,7 +851,7 @@ Dev có thể fix song song
 -> /sync-memory
 ```
 
-### Gặp blocker bug trong QC
+### Hitting a blocker bug during QC
 
 ```text
 /qc TASK-123
@@ -866,7 +866,7 @@ Dev có thể fix song song
 -> /qc retest
 ```
 
-### Gặp non-blocker bug trong QC
+### Hitting a non-blocker bug during QC
 
 ```text
 /qc TASK-123
@@ -877,7 +877,7 @@ Dev có thể fix song song
 -> dev fixes in parallel if needed
 ```
 
-### Resume task ở hội thoại mới
+### Resuming a task in a new conversation
 
 ```text
 /resume-task TASK-123
@@ -886,7 +886,7 @@ Dev có thể fix song song
 -> suggest next command
 ```
 
-## 18. Ai nên đọc file nào?
+## 18. Who should read which file?
 
 ### Dev lead / user
 
@@ -945,85 +945,85 @@ Dev có thể fix song song
 .runtime/tasks/<task-id>/qc-handoff.md
 ```
 
-## 19. Cách maintain folder này
+## 19. How to maintain this folder
 
-Khi thêm rule mới:
+When adding a new rule:
 
 ```text
-Thêm file hoặc section trong .agent/rules/
+Add a file or section in .agent/rules/
 Update .agent/rules/README.md
-Update commands liên quan
-Update agent Rule bindings nếu cần
+Update the related commands
+Update agent Rule bindings if needed
 ```
 
-Khi thêm command mới:
+When adding a new command:
 
 ```text
-Thêm .claude/commands/<command>.md
-Khai báo responsible agent
-Khai báo required rules
-Khai báo required artifacts
+Add .claude/commands/<command>.md
+Declare the responsible agent
+Declare the required rules
+Declare the required artifacts
 Update .claude/commands/README.md
-Update README.md nếu command user-facing quan trọng
+Update README.md if it is an important user-facing command
 ```
 
-Khi thêm artifact mới:
+When adding a new artifact:
 
 ```text
-Thêm template trong .agent/templates/
+Add a template in .agent/templates/
 Update .agent/rules/12-artifact-contracts.md
-Update .agent/workflow.md nếu artifact ảnh hưởng state machine
-Update .agent/docs/visual-flow.md nếu thay đổi luồng
+Update .agent/workflow.md if the artifact affects the state machine
+Update .agent/docs/visual-flow.md if the flow changes
 ```
 
-Khi thay đổi workflow:
+When changing the workflow:
 
 ```text
-Update .agent/workflow.md trước
-Update rules liên quan
-Update commands liên quan
-Update agents liên quan
-Update docs/visual-flow.md và diagrams nếu cần
+Update .agent/workflow.md first
+Update the related rules
+Update the related commands
+Update the related agents
+Update docs/visual-flow.md and the diagrams if needed
 Update changelog.md
 ```
 
-## 20. Checklist nhanh
+## 20. Quick checklist
 
-Trước khi code:
+Before coding:
 
 ```text
-Project Brain fresh chưa?
-Task đã có task-analysis.yaml chưa?
-Impacted services có active coder agents chưa?
-Coder scopes đúng chưa?
-Test policy rõ chưa?
+Is the Project Brain fresh?
+Does the task already have task-analysis.yaml?
+Do the impacted services have active coder agents?
+Are the coder scopes correct?
+Is the test policy clear?
 ```
 
-Trước khi chuyển QC:
+Before moving to QC:
 
 ```text
-Dev verification score >= 80% chưa?
-Critical checks pass 100% chưa?
-Không có blocker chưa?
-QC handoff đã tạo chưa?
+Is the dev verification score >= 80%?
+Do critical checks pass 100%?
+Are there no blockers?
+Has the QC handoff been created?
 ```
 
-Khi QC gặp bug:
+When QC hits a bug:
 
 ```text
-Bug có blocker không?
-Nếu blocker: dừng QC ngay
-Nếu non-blocker: tạo bug task và tiếp tục QC
-Bug có reproduction, expected, actual chưa?
+Is the bug a blocker?
+If a blocker: stop QC immediately
+If a non-blocker: create a bug task and continue QC
+Does the bug have reproduction, expected, actual?
 ```
 
-Khi kết thúc task:
+When finishing a task:
 
 ```text
-QC_DONE chưa?
-Memory update cần ghi gì?
-Service brain có thay đổi không?
-Bug pattern có cần lưu không?
+Is it QC_DONE?
+What does the memory update need to record?
+Did the service brain change?
+Does the bug pattern need to be saved?
 ```
 
 ## 21. Skill composition standard
@@ -1040,16 +1040,16 @@ Read [skill-composition.md](skill-composition.md) for the full standard.
 
 ## 22. Deep onboarding
 
-Deep onboarding là lớp scan sâu để agent hiểu project-specific reusable assets, coding flow, business flow, conventions và anti-patterns trước khi sinh coder agents.
+Deep onboarding is the deep-scan layer that lets agents understand project-specific reusable assets, coding flow, business flow, conventions and anti-patterns before generating coder agents.
 
-Dùng khi:
+Use when:
 
-- Project có nhiều helper/shared module dễ bị viết trùng.
-- Cần coder agent tuân thủ style/code flow hiện có.
-- Task chạm business flow phức tạp như auth, payment, notification, order, worker, event-driven, sync data.
-- Cần QC và Dev Verification biết flow nào là critical.
+- The project has many helpers/shared modules that are easy to duplicate.
+- You need coder agents to follow the existing style/code flow.
+- The task touches complex business flows such as auth, payment, notification, order, worker, event-driven, data sync.
+- QC and Dev Verification need to know which flow is critical.
 
-File liên quan:
+Related files:
 
 - docs/deep-onboarding.md
 - .runtime/context/common/generics.md
@@ -1058,9 +1058,9 @@ File liên quan:
 - .runtime/context/project-brain.yaml deep_project_intelligence
 - .runtime/context/services/<service>.yaml service_deep_intelligence
 
-Nguyên tắc chính:
+Key principles:
 
-- Onboarding phải ghi path, purpose, when_to_reuse, evidence và confidence.
-- Không paste source code dài vào memory.
-- Service coder phải check reusable assets trước khi tạo helper mới.
-- Dev Verification phải kiểm tra duplicate helper risk và convention compliance.
+- Onboarding must record path, purpose, when_to_reuse, evidence and confidence.
+- Do not paste long source code into memory.
+- Service coders must check reusable assets before creating a new helper.
+- Dev Verification must check duplicate helper risk and convention compliance.
