@@ -1,21 +1,21 @@
 # QC Delivery Report: {{TASK_ID}}
 
-## Tóm tắt
+## Summary
 
 {{SUMMARY}}
 
-## Kết quả QC
+## QC results
 
-- **Trạng thái**: {{QC_STATUS}} (QC_DONE | BLOCKED_BY_BUG)
+- **Status**: {{QC_STATUS}} (QC_DONE | BLOCKED_BY_BUG)
 - **Test cases**: {{TOTAL_TESTS}} total, {{PASSED}} pass, {{FAILED}} fail, {{BLOCKED}} blocked
 - **Blocker bugs**: {{BLOCKER_COUNT}}
 - **Non-blocker bugs**: {{NON_BLOCKER_COUNT}}
 
-## Những gì đã hoàn thành
+## What was completed
 
 {{COMPLETED_FEATURES}}
 
-## Files thay đổi
+## Files changed
 
 ```yaml
 services: []
@@ -32,7 +32,7 @@ files_changed: []
 
 {{KNOWN_LIMITATIONS}}
 
-## Bugs mở (nếu có)
+## Open bugs (if any)
 
 ### Blockers
 
@@ -42,7 +42,7 @@ files_changed: []
 
 {{NON_BLOCKERS_OR_NONE}}
 
-## Hướng dẫn verify cho User
+## Verification guide for the User
 
 {{USER_VERIFY_STEPS}}
 
@@ -50,14 +50,14 @@ files_changed: []
 
 {{POSTMAN_COLLECTION_NOTE}}
 
-<!-- Nếu có API thay đổi: -->
+<!-- If the API changed: -->
 <!-- File: .runtime/tasks/{{TASK_ID}}/postman-collection.json -->
-<!-- Cách dùng: -->
-<!--   1. Mở Postman → Import → chọn file postman-collection.json -->
-<!--   2. Tạo environment, set BASE_URL = http://localhost:<port> -->
-<!--   3. Set AUTH_TOKEN nếu endpoint cần auth -->
-<!--   4. Chạy từng request hoặc dùng Collection Runner để chạy toàn bộ -->
+<!-- How to use: -->
+<!--   1. Open Postman → Import → choose postman-collection.json -->
+<!--   2. Create an environment, set BASE_URL = http://localhost:<port> -->
+<!--   3. Set AUTH_TOKEN if the endpoint needs auth -->
+<!--   4. Run each request, or use the Collection Runner to run all -->
 
-## Đề xuất tiếp theo
+## Next steps
 
 {{NEXT_STEPS}}

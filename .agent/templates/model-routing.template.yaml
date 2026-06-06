@@ -164,7 +164,7 @@ agent_model_map:
   generated_service_coders:
     default_model_profile: "coding"
     escalate_when: ["public contract change", "security-sensitive code", "cross-service ownership unclear"]
-  # Specialist advisors (class 4): advisor-only, triệu hồi trong pipeline. Profiles tái dùng profile chuẩn.
+  # Specialist advisors (class 4): advisor-only, invoked in-pipeline. Profiles reuse the standard profiles.
   specialist_advisors:
     api-designer:
       model_profile: "coding"

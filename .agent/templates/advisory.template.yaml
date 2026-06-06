@@ -1,19 +1,19 @@
-# Advisory artifact — output của một Specialist Advisor.
+# Advisory artifact — output of a Specialist Advisor.
 # Path: .runtime/tasks/<task-id>/advisories/<specialist-id>.yaml
-# Contract: xem .agent/rules/16-specialist-advisory-rules.md và 12-artifact-contracts.md
+# Contract: see .agent/rules/16-specialist-advisory-rules.md and 12-artifact-contracts.md
 
 advisory_id: "{{TASK_ID}}-{{SPECIALIST_ID}}"
 task_id: "{{TASK_ID}}"
-specialist: "{{SPECIALIST_ID}}"          # ví dụ: security-auditor
+specialist: "{{SPECIALIST_ID}}"          # e.g. security-auditor
 category: "{{CATEGORY}}"                   # architecture | quality-security | product | data-ai | ops-devex | research-qa
 created_at: "{{CREATED_AT}}"
 created_by: "{{SPECIALIST_ID}}"
 model_profile: "{{MODEL_PROFILE}}"
 
 invoked_by: "{{INVOKING_AGENT}}"          # coordinator | task-analysis | solution-architect | coder-leader | dev-verification | qc-handoff
-phase: "{{WORKFLOW_STATE}}"               # state hiện tại khi advisory chạy (không tạo state mới)
+phase: "{{WORKFLOW_STATE}}"               # current state when the advisory runs (does not create a new state)
 
-# Quyết định tư vấn — KHÔNG phải gate quyết định cuối (gate thuộc workflow agent).
+# Advisory decision — NOT the final gate decision (the gate belongs to the workflow agent).
 decision: "recommendations"               # approved | recommendations | blocked
 decision_reason: "{{REASON}}"
 confidence: "medium"                      # low | medium | high
@@ -25,25 +25,25 @@ findings:
     severity: "high"                      # critical | high | medium | low | info
     title: "{{FINDING_TITLE}}"
     description: "{{DESCRIPTION}}"
-    evidence:                             # bắt buộc có evidence cho critical/high (R-000-13)
+    evidence:                             # evidence is required for critical/high (R-000-13)
       - "path/to/file.ext:42"
     recommendation: "{{RECOMMENDATION}}"
-    references:                           # skills, ADR, docs liên quan
+    references:                           # related skills, ADRs, docs
       - "skill: {{SKILL_NAME}}"
-    blocking: false                       # true => khuyến nghị workflow agent dừng trước khi đi tiếp
+    blocking: false                       # true => recommend the workflow agent stop before proceeding
 
-# Critical checks đề xuất bổ sung cho dev-verification / qc (nếu có)
+# Critical checks proposed for dev-verification / qc (if any)
 proposed_critical_checks:
   - id: "{{CHECK_ID}}"
     description: "{{CHECK_DESC}}"
     reason: "{{WHY_CRITICAL}}"
 
-# Items chuyển cho downstream workflow agent
+# Items handed off to the downstream workflow agent
 handoff:
   to: "{{DOWNSTREAM_AGENT}}"
-  must_address: []                        # danh sách finding id mà downstream phải xử lý/ghi nhận
+  must_address: []                        # finding ids the downstream must resolve/acknowledge
   recommended: []
 
 assumptions: []
-unknowns: []                              # mark unknown thay vì bịa (4 nguyên tắc Karpathy)
+unknowns: []                              # mark unknown instead of fabricating (Four Karpathy principles)
 out_of_scope: []

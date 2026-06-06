@@ -11,7 +11,7 @@ business_goal: "{{BUSINESS_GOAL}}"
 # `class` decides size + how deep verification/QC goes; `cut` decides which layer(s) are touched.
 classification:
   # class: depth of work + verification/QC.
-  #   slice       — small (~1 unit of work). Test cấp 1 (unit/build for BE; component/visual for FE).
+  #   slice       — small (~1 unit of work). Level-1 test (unit/build for BE; component/visual for FE).
   #                 Often fast-track-eligible. No integration test, no demo.
   #   integration — larger / cross-cutting. Full verification + QC (unit + integration + contract +
   #                 component + e2e/a11y as applicable). Demo/handoff point.

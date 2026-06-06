@@ -61,7 +61,7 @@ Cross-service coordination rule through Coder Leader
 .runtime/context/agent-registry.yaml
 ```
 
-> Generated service coders ghi vào `.claude/agents/coders/` (cùng nơi built-in coders). Workflow agents nằm ở `.claude/agents/workflow/`; specialist advisors ở `.claude/agents/specialists/<category>/`.
+> Generated service coders are written to `.claude/agents/coders/` (same place as built-in coders). Workflow agents live in `.claude/agents/workflow/`; specialist advisors in `.claude/agents/specialists/<category>/`.
 
 ## Must not
 
