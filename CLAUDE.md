@@ -295,7 +295,7 @@ Sau DONE hoặc meaningful workflow changes:
 
 ---
 
-## Rules (18 workflow rules)
+## Rules (19 workflow rules)
 
 Rules tại `.agent/rules/` định nghĩa constraints cho workflow:
 
@@ -318,6 +318,7 @@ Rules tại `.agent/rules/` định nghĩa constraints cho workflow:
 15-model-routing-observability-rules.md ← Model profiles + activity/token dashboard
 16-specialist-advisory-rules.md ← Specialist advisors: advisor-only, advisory artifacts
 17-hook-enforcement-rules.md  ← Tool-adapter hooks: scope/secret/destructive guards
+18-doc-precedence-rules.md    ← Doc tier model (T0–T3): one source per decision, higher tier wins
 ```
 
 ---
@@ -344,7 +345,7 @@ Rules tại `.agent/rules/` định nghĩa constraints cho workflow:
 ```text
 .agent/                        ← Tool-neutral workflow source
 ├── workflow.md                ← End-to-end workflow policy
-├── rules/                     ← 18 workflow rules
+├── rules/                     ← 19 workflow rules
 ├── templates/                 ← 22 artifact templates
 └── docs/                      ← Visual diagrams & documentation
     └── diagrams/*.svg         ← SVG workflow diagrams

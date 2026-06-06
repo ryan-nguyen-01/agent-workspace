@@ -72,7 +72,9 @@ def render_prompt(name: str, command_text: str) -> str:
 def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--check", action="store_true", help="verify prompts match source, no writes")
+    ap.add_argument("--force", action="store_true", help="overwrite even hand-edited prompts")
     args = ap.parse_args()
+    from _genlib import Generator
 
     sources = sorted(p for p in COMMANDS.glob("*.md") if p.name != "README.md" and p.stem not in EXCLUDE)
     artifacts: dict[Path, str] = {}
@@ -111,13 +113,15 @@ def main() -> int:
     OUT.mkdir(parents=True, exist_ok=True)
     for p in stale:
         p.unlink()
+    gen = Generator("build-codex-prompts", force=args.force)
     for path, content in artifacts.items():
-        path.write_text(content, encoding="utf-8")
+        gen.write(path, content)
+    gen.flush()
     if stale:
         print(f"Removed {len(stale)} stale prompt(s): {[p.name for p in stale]}")
-    print(f"Wrote {len(sources)} Codex prompts to {OUT.relative_to(ROOT)}/")
+    print(f"Codex prompts: {len(sources)} commands → {OUT.relative_to(ROOT)}/")
     print("  install: mkdir -p ~/.codex/prompts && cp .codex/prompts/*.md ~/.codex/prompts/")
-    return 0
+    return gen.report()
 
 
 if __name__ == "__main__":

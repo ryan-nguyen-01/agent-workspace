@@ -78,7 +78,7 @@ Nếu bạn chỉ cần thử ý tưởng nhỏ, repo này có thể hơi nặng
 | Agent workflow   | 12                                |
 | Specialist advisors | 19 (advisor-only)              |
 | Skills           | 231 (12 workflow + 219 technical) |
-| Rules            | 18                                |
+| Rules            | 19                                |
 | Template         | 22                                |
 | Command          | 16                                |
 | Built-in coders  | 2 cross-cutting coders            |
@@ -101,7 +101,7 @@ agent-workspace/
 ├── .gemini/                           ← Gemini-specific instructions
 ├── .agent/                            ← Tool-neutral workflow source
 │   ├── workflow.md                    ← End-to-end workflow policy
-│   ├── rules/                         ← 18 workflow rules (00-17)
+│   ├── rules/                         ← 19 workflow rules (00-18)
 │   ├── templates/                     ← 22 artifact templates
 │   └── docs/                          ← Tài liệu + sơ đồ trực quan
 ├── .runtime/                          ← Runtime memory, task artifacts, bug records
@@ -585,7 +585,7 @@ coordinator → onboarding (nếu project mới)
 
 ---
 
-Framework hiện có 12 workflow agents, 2 built-in cross-cutting coders, 19 specialist advisors, 231 skills, 18 rules, 22 templates và 17 commands. Deterministic guardrails: `scripts/hooks/` (scope/secret/destructive). Cài Claude tool layer qua plugin: xem [PLUGIN.md](PLUGIN.md); `/aw-init` scaffold full flow sang project khác; `/access` đổi tool-permission posture.
+Framework hiện có 12 workflow agents, 2 built-in cross-cutting coders, 19 specialist advisors, 231 skills, 19 rules, 22 templates và 17 commands. Deterministic guardrails: `scripts/hooks/` (scope/secret/destructive). Cài Claude tool layer qua plugin: xem [PLUGIN.md](PLUGIN.md); `/aw-init` scaffold full flow sang project khác; `/access` đổi tool-permission posture. Doc precedence: [doc-precedence.md](.agent/docs/doc-precedence.md) (R-018).
 
 ---
 

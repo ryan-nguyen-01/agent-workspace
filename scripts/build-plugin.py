@@ -109,7 +109,9 @@ def dump(path: Path, data: dict) -> str:
 def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--check", action="store_true", help="verify wrapper matches source, no writes")
+    ap.add_argument("--force", action="store_true", help="overwrite even hand-edited manifests")
     args = ap.parse_args()
+    from _genlib import Generator
 
     version = framework_version()
     c = counts()
@@ -132,12 +134,14 @@ def main() -> int:
         return 0
 
     PLUGIN_DIR.mkdir(parents=True, exist_ok=True)
+    gen = Generator("build-plugin", force=args.force)
     for path, content in artifacts.items():
-        path.write_text(content, encoding="utf-8")
-    print(f"Wrote plugin wrapper to {PLUGIN_DIR.relative_to(ROOT)}/ (v{version})")
+        gen.write(path, content)
+    gen.flush()
+    print(f"Plugin wrapper → {PLUGIN_DIR.relative_to(ROOT)}/ (v{version})")
     print(f"  agents={c['agents']} skills={c['skills']} commands={c['commands']}")
     print("  install: /plugin marketplace add <repo> && /plugin install agent-workspace@agent-workspace")
-    return 0
+    return gen.report()
 
 
 if __name__ == "__main__":

@@ -18,7 +18,7 @@ Tool-specific entrypoints:
 - 12 workflow agents (see [.claude/agents/workflow/](.claude/agents/workflow/))
 - 19 specialist advisors (advisor-only, in-pipeline) at [.claude/agents/specialists/](.claude/agents/specialists/) — see [R-016](.agent/rules/16-specialist-advisory-rules.md)
 - 231 skills (12 workflow + 219 technical) at [.claude/skills/](.claude/skills/); discovery layer: [.agent/docs/skill-catalog.md](.agent/docs/skill-catalog.md)
-- 18 workflow rules at [.agent/rules/](.agent/rules/)
+- 19 workflow rules at [.agent/rules/](.agent/rules/)
 - 22 templates at [.agent/templates/](.agent/templates/)
 - 17 slash commands at [.claude/commands/](.claude/commands/)
 - 2 built-in cross-cutting coders: `coder-infra` and `coder-database` at [.claude/agents/coders/](.claude/agents/coders/)

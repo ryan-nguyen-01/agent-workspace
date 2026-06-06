@@ -35,6 +35,10 @@ For framework maintenance in framework-template/not_applied mode, do not read pr
 ```text
 Source type: HLD, LLD, ticket, text, bug report, incident
 Intent: feature, bugfix, refactor, migration, security, docs, test, ops
+Classification (two independent axes — adapted from ADLC waves):
+  - class: slice (small, level-1 test) | integration (large, full test + QC, demo/handoff point)
+  - cut:   vertical | horizontal-be | horizontal-fe   (horizontal-* must not mix BE + FE)
+  - target_count ≤ ~3 services/experiences (context-budget guard)
 Business goal
 Acceptance criteria
 Out of scope
@@ -48,6 +52,10 @@ Dev verification checklist
 QC focus areas
 Clarifying questions if blocked
 ```
+
+Set `classification.class` from size + how much verification/QC the change needs, and
+`classification.cut` from which layers it touches — keep them independent. `class: slice` aligns with
+fast-track eligibility; `class: integration` signals full QC + a handoff/demo point.
 
 ## Output
 

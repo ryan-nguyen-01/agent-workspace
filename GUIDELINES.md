@@ -58,7 +58,7 @@ Coordinator tự route đến đúng workflow agent:
 ```text
 .agent/
 ├── workflow.md                ← End-to-end workflow policy
-├── rules/{nn}-{name}.md       ← 18 workflow rules
+├── rules/{nn}-{name}.md       ← 19 workflow rules
 ├── templates/*.template.*     ← 22 artifact templates
 └── docs/                      ← Documentation + SVG workflow diagrams
 ```
@@ -203,7 +203,7 @@ Chi tiết: `.claude/agents/workflow/coordinator.agent.md`, `.claude/agents/work
 ### Khi thêm/sửa rule
 
 - Thêm/sửa `.agent/rules/{nn}-{name}.md`
-- Đảm bảo numbered prefix liên tục (00-17)
+- Đảm bảo numbered prefix liên tục (00-18)
 - Cập nhật rules table trong `CLAUDE.md`
 
 ### Khi thay đổi .runtime/context/ system
@@ -215,4 +215,4 @@ Chi tiết: `.claude/agents/workflow/coordinator.agent.md`, `.claude/agents/work
 ### Khi đổi counts (thêm/xóa resources)
 
 - Sync counts across: `README.md`, `CLAUDE.md`, `SETUP.md`, `GUIDELINES.md`
-- Hiện tại: 12 workflow agents + 2 built-in coders + 19 specialist advisors, 231 skills, 18 rules (19 files including README), 22 templates, 17 commands
+- Hiện tại: 12 workflow agents + 2 built-in coders + 19 specialist advisors, 231 skills, 19 rules (20 files including README), 22 templates, 17 commands

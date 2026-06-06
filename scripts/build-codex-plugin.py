@@ -110,7 +110,9 @@ def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--check", action="store_true", help="verify manifests in sync, no copy")
     ap.add_argument("--clean", action="store_true", help="remove generated marketplace tree")
+    ap.add_argument("--force", action="store_true", help="overwrite even hand-edited manifests")
     args = ap.parse_args()
+    from _genlib import Generator
 
     if args.clean:
         clean()
@@ -134,18 +136,19 @@ def main() -> int:
         print(f"[check] codex plugin manifests in sync (v{v}, skills src={src} copy={dst}){note}")
         return 0
 
+    gen = Generator("build-codex-plugin", force=args.force)
     for path, content in manifests.items():
-        path.parent.mkdir(parents=True, exist_ok=True)
-        path.write_text(content, encoding="utf-8")
+        gen.write(path, content)
+    gen.flush()
 
     # Real copy of skills into the plugin root (Codex won't follow symlinks).
     if SKILLS_DST.exists():
         shutil.rmtree(SKILLS_DST)
     shutil.copytree(SKILLS_SRC, SKILLS_DST)
     n = len(list(SKILLS_DST.rglob("SKILL.md")))
-    print(f"Wrote Codex marketplace (v{v}); copied {n} skills into {SKILLS_DST.relative_to(ROOT)}/ (gitignored)")
+    print(f"Codex marketplace (v{v}); copied {n} skills into {SKILLS_DST.relative_to(ROOT)}/ (gitignored)")
     print('  install: codex plugin marketplace add "$(pwd)/.codex/marketplace" && codex plugin add agent-workspace@agent-workspace')
-    return 0
+    return gen.report()
 
 
 if __name__ == "__main__":

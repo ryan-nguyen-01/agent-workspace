@@ -31,4 +31,5 @@ If a rule conflicts with workflow.md, workflow.md defines the state machine and 
 15-model-routing-observability-rules.md  Model profiles, activity dashboard, response UI, token/cost reporting
 16-specialist-advisory-rules.md  Specialist advisors: advisor-only contract, advisory artifacts, invocation
 17-hook-enforcement-rules.md     Tool-adapter hooks: scope/secret/destructive guards, profiles, Cursor/Claude parity
+18-doc-precedence-rules.md       Document tier model (T0–T3): one source per decision, higher tier wins
 ```

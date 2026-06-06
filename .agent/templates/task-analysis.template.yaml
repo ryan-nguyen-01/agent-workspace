@@ -7,6 +7,24 @@ intent: "feature|bugfix|refactor|migration|security|docs|test|ops|typo|comment|f
 summary: "{{SUMMARY}}"
 business_goal: "{{BUSINESS_GOAL}}"
 
+# Two-axis classification (adapted from ADLC wave model). The two axes are INDEPENDENT:
+# `class` decides size + how deep verification/QC goes; `cut` decides which layer(s) are touched.
+classification:
+  # class: depth of work + verification/QC.
+  #   slice       — small (~1 unit of work). Test cấp 1 (unit/build for BE; component/visual for FE).
+  #                 Often fast-track-eligible. No integration test, no demo.
+  #   integration — larger / cross-cutting. Full verification + QC (unit + integration + contract +
+  #                 component + e2e/a11y as applicable). Demo/handoff point.
+  class: "slice|integration"
+  # cut: which layer(s) the change touches. A horizontal-* task must not mix BE + FE.
+  #   vertical      — one feature end-to-end across layers/services (BE + FE + data).
+  #   horizontal-be — backend boundaries only (api/services/db), consumed by later FE.
+  #   horizontal-fe — frontend experiences only, consuming contracts already ACTIVE.
+  cut: "vertical|horizontal-be|horizontal-fe"
+  # Keep scope tight: at most ~3 target services/experiences per task (context-budget guard, R-014-20).
+  target_count: 0
+  reason: ""
+
 # Fast-track lane (workflow.md §6.2). Default false. When true, Coordinator skips
 # the R-011-10 user approval gate, and Coder Leader skips the full
 # implementation-plan.yaml. Applied-service fast-track still requires this

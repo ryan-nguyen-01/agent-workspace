@@ -27,7 +27,7 @@ REPORT_MD = ROOT / ".runtime" / "architecture-health-report.md"
 EXPECTED_COUNTS = {
     "agents": 33,
     "skills": 231,
-    "rules": 18,
+    "rules": 19,
     "templates": 22,
     "commands": 17,
 }

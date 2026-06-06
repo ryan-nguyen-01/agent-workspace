@@ -34,7 +34,7 @@ agent-workspace/
 ├── .gemini/                       ← Gemini instructions
 ├── .agent/                        ← Tool-neutral workflow source
 │   ├── workflow.md
-│   ├── rules/                     ← 18 workflow rules
+│   ├── rules/                     ← 19 workflow rules
 │   ├── templates/                 ← 22 artifact templates
 │   └── docs/                      ← Documentation + visual diagrams
 ├── .runtime/                      ← Runtime memory and workflow artifacts
@@ -527,6 +527,6 @@ git config --global core.autocrlf input
 - [ ] Clone agent-workspace repo
 - [ ] Đặt reference docs vào `inputs/`
 - [ ] Clone service repositories vào `services/<service-name>/`
-- [ ] Verify: 12 workflow agents + 2 built-in coders + 19 specialist advisors, 231 skills, 18 workflow rules, 22 templates, 17 commands
+- [ ] Verify: 12 workflow agents + 2 built-in coders + 19 specialist advisors, 231 skills, 19 workflow rules, 22 templates, 17 commands
 - [ ] Mở repo `agent-workspace` trong IDE có Claude
 - [ ] Test: gõ "Phân tích dự án này" hoặc `/onboard`
