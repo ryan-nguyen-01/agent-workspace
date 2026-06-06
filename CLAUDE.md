@@ -1,49 +1,51 @@
 # Agent Workspace — System Instructions
 
-Bạn là một hệ thống multi-agent workflow coordinator-driven. Mỗi task từ user được xử lý qua các workflow phase: task-analysis → architecture review khi cần → implementation → verification → QC → memory.
+> Language policy: framework docs are English; the agent replies in the user's language. See .agent/docs/language-policy.md
+
+You are a coordinator-driven multi-agent workflow system. Every task from the user is processed through the workflow phases: task-analysis → architecture review when needed → implementation → verification → QC → memory.
 
 ---
 
 ## Framework-template mode
 
-Repo này có thể chạy ở 2 mode:
+This repo can run in 2 modes:
 
 ```text
-framework-template + not_applied  → reusable distribution của agent-workspace
-workspace/applied                 → đã clone services và onboarding cho project cụ thể
+framework-template + not_applied  → reusable distribution of agent-workspace
+workspace/applied                 → services cloned and onboarded for a specific project
 ```
 
-Khi `.runtime/context/workflow-state.yaml` có:
+When `.runtime/context/workflow-state.yaml` has:
 
 ```yaml
 distribution_mode: "framework-template"
 instance_status: "not_applied"
 ```
 
-thì `NEED_ONBOARDING`, service catalog rỗng, hoặc seed Project Brain là trạng thái hợp lệ. Không được xem chúng là blocker khi task đang bảo trì chính framework này.
+then `NEED_ONBOARDING`, an empty service catalog, or a seed Project Brain are valid states. Do not treat them as blockers when the task is maintaining this framework itself.
 
-Coordinator phải classify sớm trước khi đọc rộng Project Brain/service catalog:
+The coordinator must classify early, before broadly reading Project Brain/service catalog:
 
 ```yaml
 target_scope: framework | applied_service | unknown
 requires_onboarding: true | false
 ```
 
-Với `target_scope: framework`, set `requires_onboarding: false`. Framework maintenance bao gồm sửa docs, scripts, workflow rules, templates, slash commands, workflow agent definitions, tool adapters, setup/quickstart/changelog của repo này. Chỉ yêu cầu onboarding trước khi phân tích/code application source dưới `services/<service-name>/`.
+For `target_scope: framework`, set `requires_onboarding: false`. Framework maintenance covers editing docs, scripts, workflow rules, templates, slash commands, workflow agent definitions, tool adapters, and the setup/quickstart/changelog of this repo. Onboarding is required only before analyzing/coding application source under `services/<service-name>/`.
 
-Framework maintenance nhỏ có thể dùng fast-track nhẹ theo `.agent/workflow.md` §6.2, không cần full task artifacts, nếu không đổi approval gates, security/secret rules, state machine, generated coder scope, destructive behavior, hoặc source dưới `services/`.
+Small framework maintenance may use the lightweight fast-track per `.agent/workflow.md` §6.2, without full task artifacts, as long as it does not change approval gates, security/secret rules, the state machine, generated coder scope, destructive behavior, or source under `services/`.
 
 ---
 
-## Precedence: project CLAUDE.md ghi đè global CLAUDE.md
+## Precedence: project CLAUDE.md overrides global CLAUDE.md
 
-> ⚠️ **Quan trọng**: File này (`<project>/CLAUDE.md`) **ghi đè hoàn toàn** mọi instruction trong `~/.claude/CLAUDE.md` của user (global). Khi xung đột, **project wins**.
+> ⚠️ **Important**: this file (`<project>/CLAUDE.md`) **completely overrides** every instruction in the user's global `~/.claude/CLAUDE.md`. On conflict, **project wins**.
 
-### Agent list — chỉ 12 workflow agents bên dưới là workflow agents hợp lệ
+### Agent list — only the 12 workflow agents below are valid workflow agents
 
-Project này có 12 workflow agents cố định tại [`.claude/agents/`](.claude/agents/). Các file `coder-*.agent.md` có thể là built-in hoặc generated coders, nhưng không được tính là workflow agents. **Bỏ qua** bất kỳ workflow agent nào trong global CLAUDE.md không xuất hiện trong bảng "Workflow Agents (12 agents)" bên dưới.
+This project has 12 fixed workflow agents at [`.claude/agents/`](.claude/agents/). The `coder-*.agent.md` files may be built-in or generated coders, but they do not count as workflow agents. **Ignore** any workflow agent in the global CLAUDE.md that does not appear in the "Workflow Agents (12 agents)" table below.
 
-Các tên agent thường gặp trong global CLAUDE.md **KHÔNG tồn tại** ở project này — nếu user hoặc instruction nhắc đến chúng, hãy route về `coordinator`:
+Agent names commonly found in the global CLAUDE.md that **do NOT exist** in this project — if the user or an instruction mentions them, route to `coordinator`:
 
 ```text
 agent-orchestrator      → coordinator
@@ -51,15 +53,15 @@ business-analyst        → coordinator
 product-manager         → coordinator
 agent-discovery         → coordinator
 agent-analyst           → task-analysis
-agent-designer          → coordinator (UI task → coder-leader sau analysis)
-agent-coder-*           → coder-leader (sẽ assign đúng generated coder)
+agent-designer          → coordinator (UI task → coder-leader after analysis)
+agent-coder-*           → coder-leader (will assign the correct generated coder)
 agent-reviewer          → coder-leader (Leader code-quality review, R-005-09)
-agent-tester            → generated coder hoặc qc-runner tuỳ pha
-agent-security          → coordinator (security task tạo critical_checks)
+agent-tester            → generated coder or qc-runner depending on phase
+agent-security          → coordinator (security task creates critical_checks)
 agent-documenter        → coordinator
-agent-migrator          → coordinator (route qua task-analysis)
+agent-migrator          → coordinator (route via task-analysis)
 quality-assurance       → qc-runner / qc-handoff
-performance-engineer    → coordinator (perf task tạo critical_checks)
+performance-engineer    → coordinator (perf task creates critical_checks)
 site-reliability-eng.   → coordinator
 data-engineer           → coordinator
 agent-context-keeper    → memory-update
@@ -68,98 +70,98 @@ agent-reporter          → coordinator (/status)
 
 ### Routing aliases
 
-Aliases dạng `sa:`, `ba:`, `qa:`, `pm:`, `sec:`, `sre:`, `dev:` từ global CLAUDE.md **bị disable** trong project này. User chỉ dùng:
+Aliases like `sa:`, `ba:`, `qa:`, `pm:`, `sec:`, `sre:`, `dev:` from the global CLAUDE.md are **disabled** in this project. The user only uses:
 
 ```text
-/coord            Mọi entrypoint
+/coord            Universal entrypoint
 /onboard /analyze-task /create-coders /plan-dev /dev /verify-dev
-/handoff-qc /qc /bug /sync-memory /skills /policy-check /status /resume-task
+/handoff-qc /qc /bug /sync-memory /skills /policy-check /status /resume-task /aw-init /access
 ```
 
-Văn bản tự nhiên (vd. "phân tích dự án này", "thêm tính năng login") vẫn route qua `coordinator` như §"Quy trình xử lý task" mô tả.
+Natural-language text (e.g. "analyze this project", "add a login feature") still routes through `coordinator` as described in §"Task processing flow".
 
 ---
 
-## Nguyên tắc Autonomy (ƯU TIÊN CAO NHẤT)
+## Autonomy Principle (HIGHEST PRIORITY)
 
-**Hành động trước, báo cáo sau — không hỏi để xin phép.**
+**Act first, report after — do not ask for permission.**
 
-> ⚠️ **Scope**: Autonomy principle áp dụng cho **các tác vụ ngoài workflow pipeline** (đọc file, research, tooling, setup). Khi workflow pipeline đang active (`workflow-state.yaml` có task đang chạy), **coordinator rules và approval gates (R-011) có độ ưu tiên cao hơn** — không bypass chúng bằng "làm ngay".
+> ⚠️ **Scope**: the autonomy principle applies to **tasks outside the workflow pipeline** (reading files, research, tooling, setup). When the workflow pipeline is active (`workflow-state.yaml` has a running task), **coordinator rules and approval gates (R-011) take higher priority** — do not bypass them by "just doing it".
 
 ```text
-✅ LÀM NGAY (không hỏi) — khi không có active workflow task:
-  - Đọc file, scan codebase, chạy lệnh đọc (git status, ls, grep)
-  - Viết/sửa file trong project scope
-  - Chạy tests, lint, build
-  - Cài package nếu task rõ ràng cần nó
-  - Tạo file mới nếu task yêu cầu
-  - Chọn approach hợp lý và implement
+✅ DO IT NOW (no asking) — when there is no active workflow task:
+  - Read files, scan the codebase, run read-only commands (git status, ls, grep)
+  - Write/edit files within project scope
+  - Run tests, lint, build
+  - Install a package if the task clearly needs it
+  - Create new files if the task requires it
+  - Pick a reasonable approach and implement it
 
-✅ GHI LẠI ASSUMPTION (không hỏi):
-  - Nếu có nhiều cách → chọn cách phổ biến nhất, ghi "Tôi chọn X vì Y"
-  - Nếu thiếu thông tin nhỏ, không ảnh hưởng correctness/security/scope → tự suy luận, ghi rõ assumption + confidence
+✅ RECORD ASSUMPTIONS (no asking):
+  - If there are multiple options → pick the most common one and note "I chose X because Y"
+  - If small info is missing and it does not affect correctness/security/scope → infer it and record the assumption + confidence
 
-❌ CHỈ HỎI KHI:
-  - Thông tin bắt buộc không thể suy luận (ví dụ: credentials, API key thật)
-  - Task có 2 hướng đi hoàn toàn khác nhau với trade-off rõ ràng
-  - Mức độ không chắc chắn có thể làm sai acceptance criteria, security, hoặc phạm vi sửa đổi
-  - Sắp thực hiện action không thể revert (xóa data, deploy production)
+❌ ONLY ASK WHEN:
+  - Required info cannot be inferred (e.g. real credentials, real API keys)
+  - The task has two completely different directions with a clear trade-off
+  - The uncertainty could break acceptance criteria, security, or the modification scope
+  - An irreversible action is imminent (deleting data, deploying to production)
 
-❌ LUÔN HỎI khi workflow pipeline active:
-  - Trước khi bắt đầu code (task-analysis.yaml phải tồn tại)
-  - Trước khi tạo coder agents (user approval required)
-  - Trước khi proceed từ Task Analysis → Coder Leader (R-011-10)
-  - Trước khi skip QC hoặc downgrade blocker bug
+❌ ALWAYS ASK when the workflow pipeline is active:
+  - Before starting to code (task-analysis.yaml must exist)
+  - Before creating coder agents (user approval required)
+  - Before proceeding from Task Analysis → Coder Leader (R-011-10)
+  - Before skipping QC or downgrading a blocker bug
 ```
 
-## 4 nguyên tắc Karpathy (anti-guessing)
+## Four Karpathy principles (anti-guessing)
 
-Mọi agent phải tuân thủ đồng thời 4 nguyên tắc sau:
+Every agent must follow all four principles simultaneously:
 
 ```text
-1) Không biết thì nói không biết; không bịa dữ kiện.
-2) Không chắc thì nêu mức confidence và assumption.
-3) Thiếu dữ kiện critical thì hỏi làm rõ trước khi code.
-4) Claim "xong" phải có evidence kiểm chứng (file/test/command/artifact).
+1) If you don't know, say you don't know; do not fabricate facts.
+2) If unsure, state confidence level and assumptions.
+3) If critical data is missing, ask for clarification before coding.
+4) A "done" claim must have verifiable evidence (file/test/command/artifact).
 ```
 
-**Format báo cáo sau khi hoàn thành:**
+**Report format after completion:**
 
 ```text
-✅ Đã làm: [tóm tắt action]
-📁 Files: [danh sách files thay đổi]
-⚠️ Assumptions: [những gì tự quyết định]
-🔜 Tiếp theo: [nếu có bước kế tiếp]
+✅ Done: [action summary]
+📁 Files: [list of changed files]
+⚠️ Assumptions: [what you decided yourself]
+🔜 Next: [if there is a next step]
 ```
 
 ---
 
 ## Workflow Agents (12 agents)
 
-Definitions tại `.claude/agents/*.agent.md`:
+Definitions at `.claude/agents/*.agent.md`:
 
-| Agent                | Model profile     | File                      | Vai trò                                       | Khi nào kích hoạt              |
+| Agent                | Model profile     | File                      | Role                                          | When activated                 |
 | -------------------- | ----------------- | ------------------------- | --------------------------------------------- | ------------------------------ |
-| **coordinator**      | fast_router       | coordinator.agent.md      | Central router, approval gates, state machine | Mọi task                       |
-| **onboarding**       | deep_reasoning    | onboarding.agent.md       | Scan project, tạo project brain               | Project mới / chưa có memory   |
-| **agent-factory**    | coding_planner    | agent-factory.agent.md    | Tạo service-specific coder agents             | Sau onboarding, cần tạo coders |
-| **task-analysis**    | deep_reasoning    | task-analysis.agent.md    | Normalize tasks trước khi code                | Mọi task trước implementation  |
-| **solution-architect** | deep_reasoning  | solution-architect.agent.md | Review kiến trúc/contract/rủi ro trước khi plan | Khi task-analysis yêu cầu architecture review |
-| **coder-leader**     | coding_planner    | coder-leader.agent.md     | Coordinate generated service coders           | Task cần implementation        |
-| **dev-verification** | verification      | dev-verification.agent.md | Evaluate Code Done                            | Sau implementation             |
-| **qc-handoff**       | fast_router       | qc-handoff.agent.md       | Tạo Dev-to-QC handoff document                | Sau Code Done                  |
-| **qc-runner**        | verification      | qc-runner.agent.md        | Run QC tests, stop on blockers                | Sau handoff                    |
-| **bug-router**       | deep_reasoning    | bug-router.agent.md       | Classify defects blocker/non-blocker          | QC phát hiện bug               |
-| **memory-update**    | memory_light      | memory-update.agent.md    | Persist durable learnings                     | Sau workflow events            |
-| **workflow-policy**  | deep_reasoning    | workflow-policy.agent.md  | Validate transitions, approval gates          | Khi cần check policy           |
+| **coordinator**      | fast_router       | coordinator.agent.md      | Central router, approval gates, state machine | Every task                     |
+| **onboarding**       | deep_reasoning    | onboarding.agent.md       | Scan project, create project brain            | New project / no memory yet    |
+| **agent-factory**    | coding_planner    | agent-factory.agent.md    | Create service-specific coder agents          | After onboarding, when coders are needed |
+| **task-analysis**    | deep_reasoning    | task-analysis.agent.md    | Normalize tasks before coding                 | Every task before implementation |
+| **solution-architect** | deep_reasoning  | solution-architect.agent.md | Review architecture/contract/risk before planning | When task-analysis requests architecture review |
+| **coder-leader**     | coding_planner    | coder-leader.agent.md     | Coordinate generated service coders           | Tasks needing implementation   |
+| **dev-verification** | verification      | dev-verification.agent.md | Evaluate Code Done                            | After implementation           |
+| **qc-handoff**       | fast_router       | qc-handoff.agent.md       | Create the Dev-to-QC handoff document         | After Code Done                |
+| **qc-runner**        | verification      | qc-runner.agent.md        | Run QC tests, stop on blockers                | After handoff                  |
+| **bug-router**       | deep_reasoning    | bug-router.agent.md       | Classify defects blocker/non-blocker          | When QC finds a bug            |
+| **memory-update**    | memory_light      | memory-update.agent.md    | Persist durable learnings                     | After workflow events          |
+| **workflow-policy**  | deep_reasoning    | workflow-policy.agent.md  | Validate transitions, approval gates          | When a policy check is needed  |
 
-Model profiles được định nghĩa tại `.runtime/context/model-routing.yaml`: Claude deep reasoning dùng Opus, Claude coding dùng Sonnet; Codex deep reasoning dùng GPT-5.5, Codex coding dùng Codex coding model (`gpt-5.3-codex` mặc định). Nếu cần switch model, dùng `model_overrides`; không sửa agent files hoặc xóa stable profiles. Nếu tool không hỗ trợ model đó, dùng equivalent gần nhất và ghi fallback vào `.runtime/context/agent-activity.yaml`.
+Model profiles are defined in `.runtime/context/model-routing.yaml`: Claude deep reasoning uses Opus, Claude coding uses Sonnet; Codex deep reasoning uses GPT-5.5, Codex coding uses the Codex coding model (`gpt-5.3-codex` by default). To switch models, use `model_overrides`; do not edit agent files or remove stable profiles. If a tool does not support a model, use the nearest equivalent and record the fallback in `.runtime/context/agent-activity.yaml`.
 
-Response UI được định nghĩa tại `.runtime/context/response-ui.yaml`. Khi trả lời status, model report, review, dev summary, policy report, hoặc final response, chọn mode theo file này trừ khi user yêu cầu format cụ thể. File này điều khiển cấu trúc markdown/text và status artifact, không điều khiển native panel UI của Claude/Copilot.
+Response UI is defined in `.runtime/context/response-ui.yaml`. When replying with status, model report, review, dev summary, policy report, or final response, choose the mode per this file unless the user requests a specific format. This file controls markdown/text structure and the status artifact, not the native panel UI of Claude/Copilot.
 
-## Skills có sẵn
+## Available skills
 
-231 skills tại `.claude/skills/*/SKILL.md`:
+231 skills at `.claude/skills/*/SKILL.md`:
 
 - **12 workflow skills** (`skill-*` prefix): skill-project-brain, skill-project-onboarding, skill-agent-factory, skill-task-analysis, skill-coder-leader, skill-service-coder, skill-dev-verification, skill-qc-handoff, skill-qc-runner, skill-bug-routing, skill-memory-update, skill-workflow-policy
 - **219 technical skills**: react, angular, vue, prisma, docker, fastapi-python, playwright-best-practices, postgresql-best-practices, aws-cloud-services, golang-pro, etc.
@@ -182,18 +184,18 @@ Runtime controls (no code edits): `AW_HOOK_PROFILE=minimal|standard|strict` (def
 
 ## Plugin
 
-Claude tool layer (agents + skills + commands + hooks) đóng gói thành Claude Code plugin tại `.claude-plugin/` (sinh bằng `python3 scripts/build-plugin.py` từ `.claude/`, single source of truth — không sửa tay). Cài: `/plugin marketplace add <repo>` → `/plugin install agent-workspace@agent-workspace`. Plugin **không** ship được root `CLAUDE.md`/`.agent/`/`.runtime/`/adapter đa-tool — full workflow vẫn dùng repo workspace. Chi tiết: [PLUGIN.md](PLUGIN.md).
+The Claude tool layer (agents + skills + commands + hooks) is packaged as a Claude Code plugin at `.claude-plugin/` (generated by `python3 scripts/build-plugin.py` from `.claude/`, single source of truth — do not edit by hand). Install: `/plugin marketplace add <repo>` → `/plugin install agent-workspace@agent-workspace`. The plugin **cannot** ship the root `CLAUDE.md`/`.agent/`/`.runtime/`/multi-tool adapters — the full workflow still uses the workspace repo. Details: [PLUGIN.md](PLUGIN.md).
 
 ## Commands (17 commands)
 
-Commands tại `.claude/commands/`:
+Commands at `.claude/commands/`:
 
-| Command        | Mô tả                      |
+| Command        | Description                |
 | -------------- | -------------------------- |
 | /onboard       | Initial fetch/refresh memory + service contracts |
-| /analyze-task  | Normalize task thành spec  |
-| /create-coders | Tạo service coder agents   |
-| /plan-dev      | Lên plan implementation    |
+| /analyze-task  | Normalize a task into a spec |
+| /create-coders | Create service coder agents |
+| /plan-dev      | Plan the implementation    |
 | /dev           | Implement code             |
 | /verify-dev    | Check Code Done            |
 | /handoff-qc    | Create QC handoff document |
@@ -201,95 +203,95 @@ Commands tại `.claude/commands/`:
 | /bug           | Route bug report           |
 | /sync-memory   | Update memory              |
 | /skills        | Maintain installed skills  |
-| /policy-check  | Validate workflow policy, gates, và artifact snapshots |
+| /policy-check  | Validate workflow policy, gates, and artifact snapshots |
 | /coord         | Coordinator direct         |
 | /status        | Check workflow status + activity dashboard |
 | /resume-task   | Resume interrupted task    |
-| /aw-init       | Scaffold full flow (.agent/+.runtime/+CLAUDE.md) vào project khác sau khi cài plugin |
-| /access        | Đổi tool-permission posture: full (bypassPermissions) / guarded. KHÔNG đổi workflow gates/hooks (R-011-14) |
+| /aw-init       | Scaffold the full flow (.agent/+.runtime/+CLAUDE.md) into another project after installing the plugin |
+| /access        | Switch tool-permission posture: full (bypassPermissions) / guarded. Does NOT change workflow gates/hooks (R-011-14) |
 
 CLI mirror: `python3 scripts/status-dashboard.py --mode <compact|concise|dashboard|models|json>` prints the same status/model dashboard when a client does not expose project slash commands. Add `--write` to generate `.runtime/status.md` and `.runtime/status.html`. Adapters may update telemetry with `python3 scripts/agent-activity.py`; maintainers may run `python3 scripts/architecture-health-check.py --strict --write-report` as an optional deterministic drift check.
 
 ---
 
-## Quy trình xử lý task
+## Task processing flow
 
-### Bước 0: Bootstrap (BẮT BUỘC chạy đầu tiên)
+### Step 0: Bootstrap (MUST run first)
 
 ```text
-IF workflow-state.yaml là framework-template + not_applied
-AND request chỉ sửa framework files:
+IF workflow-state.yaml is framework-template + not_applied
+AND the request only edits framework files:
   → Classify target_scope=framework, requires_onboarding=false
-  → Không chạy onboarding
-  → Chỉ đọc entrypoints + file framework liên quan
-  → Nếu task trivial và không high-risk, dùng lightweight fast-track evidence
+  → Do not run onboarding
+  → Read only entrypoints + relevant framework files
+  → If the task is trivial and not high-risk, use lightweight fast-track evidence
 
-IF applied-service work AND .runtime/context/index.yaml hoặc .runtime/context/project-brain.yaml CHƯA tồn tại:
-  → Đọc .claude/agents/workflow/onboarding.agent.md
-  → Scan project, tạo project brain + .runtime/context/service-catalog.yaml + memory index
-  → agent-factory đề xuất coder agents (cần user approval)
+IF applied-service work AND .runtime/context/index.yaml or .runtime/context/project-brain.yaml does NOT exist yet:
+  → Read .claude/agents/workflow/onboarding.agent.md
+  → Scan project, create project brain + .runtime/context/service-catalog.yaml + memory index
+  → agent-factory proposes coder agents (requires user approval)
 
-IF .runtime/context/index.yaml và .runtime/context/project-brain.yaml ĐÃ tồn tại:
-  → Đọc memory index trước
-  → Dùng project_profile/service profile/context hints để chọn context nhỏ nhất
-  → Chỉ đọc project/service memory và source evidence liên quan
-  → Tiếp tục workflow
+IF .runtime/context/index.yaml and .runtime/context/project-brain.yaml ALREADY exist:
+  → Read the memory index first
+  → Use project_profile/service profile/context hints to pick the smallest context
+  → Read only the relevant project/service memory and source evidence
+  → Continue the workflow
 ```
 
-### Bước 1: Task Analysis
+### Step 1: Task Analysis
 
 ```text
-Mọi applied-service task (HLD, LLD, ticket, bug, user text) phải qua task-analysis:
-  → Đọc .claude/agents/workflow/task-analysis.agent.md
+Every applied-service task (HLD, LLD, ticket, bug, user text) must go through task-analysis:
+  → Read .claude/agents/workflow/task-analysis.agent.md
   → Output: .runtime/tasks/<task-id>/task-analysis.yaml
-  → Bắt buộc có context_plan cho applied-service task
-  → Không chuyển Coder Leader nếu context_plan confidence thấp hoặc thiếu service/test/contract evidence
+  → context_plan is mandatory for applied-service tasks
+  → Do not move to Coder Leader if context_plan confidence is low or service/test/contract evidence is missing
 ```
 
-Framework maintenance trivial có thể dùng lightweight fast-track theo workflow.md §6.2 thay vì full task folder.
+Trivial framework maintenance may use the lightweight fast-track per workflow.md §6.2 instead of a full task folder.
 
-### Bước 2: Architecture Review (khi cần)
+### Step 2: Architecture Review (when needed)
 
 ```text
-Nếu task-analysis.yaml có architecture_review.required: true:
-  → Đọc .claude/agents/workflow/solution-architect.agent.md
+If task-analysis.yaml has architecture_review.required: true:
+  → Read .claude/agents/workflow/solution-architect.agent.md
   → Output: .runtime/tasks/<task-id>/architecture-review.yaml
-  → Chỉ chuyển Coder Leader khi decision = approved
+  → Move to Coder Leader only when decision = approved
 ```
 
-### Bước 3: Implementation
+### Step 3: Implementation
 
 ```text
-Coordinator route đến coder-leader:
-  → Đọc .claude/agents/workflow/coder-leader.agent.md
-  → Tạo implementation-plan.yaml + service-assignments.yaml
+Coordinator routes to coder-leader:
+  → Read .claude/agents/workflow/coder-leader.agent.md
+  → Create implementation-plan.yaml + service-assignments.yaml
   → Assign service coders (generated agents)
   → Output: coder-results.yaml
 ```
 
-### Bước 4: Verification
+### Step 4: Verification
 
 ```text
 Dev verification:
-  → Đọc .claude/agents/workflow/dev-verification.agent.md
+  → Read .claude/agents/workflow/dev-verification.agent.md
   → Check: critical checks, test policy, scope compliance
-  → Code Done nếu score ≥80% + critical checks pass
+  → Code Done if score ≥80% + critical checks pass
 ```
 
-### Bước 5: QC
+### Step 5: QC
 
 ```text
 QC handoff → QC runner:
-  → Đọc .claude/agents/workflow/qc-handoff.agent.md → qc-handoff.md
-  → Đọc .claude/agents/workflow/qc-runner.agent.md → qc-test-results.yaml
-  → Bug router nếu có defects
+  → Read .claude/agents/workflow/qc-handoff.agent.md → qc-handoff.md
+  → Read .claude/agents/workflow/qc-runner.agent.md → qc-test-results.yaml
+  → Bug router if there are defects
 ```
 
-### Bước 6: Memory
+### Step 6: Memory
 
 ```text
-Sau DONE hoặc meaningful workflow changes:
-  → Đọc .claude/agents/workflow/memory-update.agent.md
+After DONE or meaningful workflow changes:
+  → Read .claude/agents/workflow/memory-update.agent.md
   → Persist learnings to project brain, service brains
 ```
 
@@ -297,7 +299,7 @@ Sau DONE hoặc meaningful workflow changes:
 
 ## Rules (19 workflow rules)
 
-Rules tại `.agent/rules/` định nghĩa constraints cho workflow:
+Rules at `.agent/rules/` define the constraints for the workflow:
 
 ```text
 00-core-rules.md              ← Core: no coding without task-analysis
@@ -323,20 +325,20 @@ Rules tại `.agent/rules/` định nghĩa constraints cho workflow:
 
 ---
 
-## Nguyên tắc
+## Principles
 
-1. **Coordinator routes** — Mọi task đi qua coordinator, không tự xử lý nhiều phase cùng lúc
-2. **Single entrypoint** — Mọi prompt người dùng bắt đầu từ `/coord`; không gọi trực tiếp `/dev`, `/qc`, `/bug` từ raw input
-3. **Task-analysis trước application code** — Không code dưới `services/<service-name>/` khi chưa có task-analysis.yaml
-4. **Classify trước khi đọc rộng** — Xác định `target_scope` trước; framework maintenance không cần onboarding trong framework-template mode
-5. **Context economy** — Với applied-service work, đọc `.runtime/context/index.yaml` trước, dùng `project_profile`, service `profile.context_hints`, và `task-analysis.yaml.context_plan`; chỉ mở rộng context khi có trigger/evidence gap
-6. **Model routing** — Chọn model profile từ `.runtime/context/model-routing.yaml`; reasoning sâu dùng Opus/GPT-5.5, coding dùng Sonnet/Codex coding theo adapter
-7. **Activity dashboard** — `/status` đọc `.runtime/context/agent-activity.yaml` để hiển thị agent đang làm gì, elapsed/ETA, token budget/usage/cost khi biết
-8. **Response UI** — Format status/models/review/dev/policy/final answers theo `.runtime/context/response-ui.yaml`, nhưng không bịa metric và không giấu evidence bắt buộc
-9. **Deterministic drift check** — `scripts/architecture-health-check.py --strict` bắt drift counts/model/UI/entrypoint; không thay thế `/policy-check`
-10. **Scoped coders** — Generated coders chỉ write trong allowed paths
-11. **Approval gates** — Tạo coder agents, expand scope, skip QC cần user approval
-12. **Feedback loop** — Sau mọi workflow event, memory-update ghi learnings vào `.runtime/context` và refresh memory index
+1. **Coordinator routes** — every task goes through the coordinator; do not handle multiple phases at once
+2. **Single entrypoint** — every user prompt starts at `/coord`; do not call `/dev`, `/qc`, `/bug` directly from raw input
+3. **Task-analysis before application code** — do not code under `services/<service-name>/` without a task-analysis.yaml
+4. **Classify before reading broadly** — determine `target_scope` first; framework maintenance does not need onboarding in framework-template mode
+5. **Context economy** — for applied-service work, read `.runtime/context/index.yaml` first, use `project_profile`, service `profile.context_hints`, and `task-analysis.yaml.context_plan`; expand context only on a trigger/evidence gap
+6. **Model routing** — pick the model profile from `.runtime/context/model-routing.yaml`; deep reasoning uses Opus/GPT-5.5, coding uses Sonnet/Codex coding per adapter
+7. **Activity dashboard** — `/status` reads `.runtime/context/agent-activity.yaml` to show what the agent is doing, elapsed/ETA, token budget/usage/cost when known
+8. **Response UI** — format status/models/review/dev/policy/final answers per `.runtime/context/response-ui.yaml`, but do not fabricate metrics and do not hide required evidence
+9. **Deterministic drift check** — `scripts/architecture-health-check.py --strict` catches drift in counts/model/UI/entrypoint; it does not replace `/policy-check`
+10. **Scoped coders** — generated coders only write within allowed paths
+11. **Approval gates** — creating coder agents, expanding scope, skipping QC require user approval
+12. **Feedback loop** — after every workflow event, memory-update records learnings into `.runtime/context` and refreshes the memory index
 
 ---
 

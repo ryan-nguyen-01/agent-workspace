@@ -2,13 +2,13 @@
 
 ![Folder structure](diagrams/06-folder-structure.svg)
 
-Tài liệu này giải thích các folder chính của `agent-workspace`: `.agent`, `.runtime`, `.claude`, `inputs`, và `services`.
+This document explains the main folders of `agent-workspace`: `.agent`, `.runtime`, `.claude`, `inputs`, and `services`.
 
-## 1. Agent Workspace là gì?
+## 1. What is Agent Workspace?
 
-`agent-workspace` là **workspace điều phối workflow agentic development**. Nó không phải source code ứng dụng. Source code ứng dụng được clone vào `services/<service-name>/`.
+`agent-workspace` is a **workspace for orchestrating the agentic development workflow**. It is not application source code. Application source code is cloned into `services/<service-name>/`.
 
-Workspace này tách 3 lớp:
+This workspace separates 3 layers:
 
 ```text
 .agent/      Workflow source: workflow, rules, templates, docs

@@ -5,7 +5,11 @@
 [![Skills](https://img.shields.io/badge/Skills-231-green)](#231-skills)
 [![Stars](https://img.shields.io/github/stars/ryan-nguyen-01/agent-workspace?style=social)](https://github.com/ryan-nguyen-01/agent-workspace)
 
-> **Cách viết tài liệu**: Phần giải thích cho người đọc dùng tiếng Việt, viết như ghi chú của maintainer cho team dùng thật. Giữ nguyên tiếng Anh cho command, file path, agent id, model profile, workflow state, rule id, skill name, YAML key, tên tool, và thuật ngữ AI/tooling đóng vai trò contract. Tránh văn phong quảng cáo, tránh câu kiểu AI tạo sẵn, và không dịch các contract term mà tool cần đọc chính xác.
+> **Language policy** ([.agent/docs/language-policy.md](.agent/docs/language-policy.md)): all framework
+> documents (rules, workflow, agent/command definitions, templates, entry points, playbooks) are written
+> in **English** so AI agents read them with the least ambiguity. The **conversation follows the user** —
+> if the user writes in Vietnamese, the agent replies in Vietnamese. Identifiers (paths, agent ids, rule
+> ids, YAML keys, command/tool names) stay English as contract tokens.
 
 `agent-workspace` là workspace để điều phối AI coding tools theo một quy trình cố định. Nó giữ Project Brain, rule, command, agent contract, task artifact và feedback memory ở một chỗ, để mỗi lần làm việc không phải bắt đầu lại từ đầu.
 
