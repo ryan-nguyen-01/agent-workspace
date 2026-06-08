@@ -3,7 +3,7 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![Agents](https://img.shields.io/badge/Agents-33-blue)](#agents)
 [![Skills](https://img.shields.io/badge/Skills-231-green)](#skills)
-[![Stars](https://img.shields.io/github/stars/ryan-nguyen-01/maestro?style=social)](https://github.com/ryan-nguyen-01/agent-workspace)
+[![Stars](https://img.shields.io/github/stars/ryan-nguyen-01/maestro?style=social)](https://github.com/ryan-nguyen-01/maestro)
 
 > **Language policy** ([.maestro/engine/docs/language-policy.md](.maestro/engine/docs/language-policy.md)):
 > framework documents, workflow rules, agent definitions, command definitions, templates, entry points,
