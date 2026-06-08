@@ -89,3 +89,10 @@ Require explicit user approval for destructive or outward-facing actions (deploy
 If uncertain, mark the fact unknown, cite the missing evidence, and ask the user through Coordinator.
 Do not fabricate exact elapsed time or ETA; write unknown or clearly marked estimates.
 ```
+
+## Key files (Kiro file references)
+
+#[[file:.maestro/INSTRUCTIONS.md]]
+#[[file:.maestro/engine/workflow.md]]
+#[[file:.maestro/methodology.yaml]]
+#[[file:COMMAND.md]]

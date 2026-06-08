@@ -27,9 +27,9 @@ check).
 `scripts/hooks/{scope,secret,destructive}-guard.py` enforce scope/secret/destructive rules as hard
 blocks. Runtime profiles (from the ECC pattern): `MAESTRO_HOOK_PROFILE=minimal|standard|strict`
 (default `standard`) and `MAESTRO_DISABLED_HOOKS=ids`. Claude wires them in `.claude/settings.json`;
-Cursor mirrors them in `.cursor/hooks/`. Kiro agent hooks (`.kiro/hooks/`) are event-triggered agent
-prompts — they assist but do not hard-block; deterministic enforcement still comes from the steering
-policy and the Python guards.
+Cursor mirrors them in `.cursor/hooks/`. Kiro agent hooks (`.kiro/hooks/*.kiro.hook`) support
+file save/create/delete and pre/post-tool-use triggers; here they run agent-assist automations
+(drift check, secret scan). Deterministic hard blocks remain in the Python guards + steering policy.
 
 ## When generating an app
 

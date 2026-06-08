@@ -1,11 +1,10 @@
 {
-  "_comment": "Verify schema against current Kiro agent-hook docs before relying on in CI. Kiro-only; mirrors scripts/hooks + .cursor/hooks intent.",
   "enabled": true,
   "name": "Maestro drift check",
-  "description": "When framework engine files change, run the architecture health check and report drift.",
+  "description": "When framework engine/agent/command/script files are saved, run the architecture health check and report drift.",
   "version": "1",
   "when": {
-    "type": "fileEdited",
+    "type": "fileSave",
     "patterns": [
       ".maestro/engine/**",
       ".claude/agents/**",
