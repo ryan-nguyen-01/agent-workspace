@@ -1,0 +1,4 @@
+{
+  "_comment": "Kiro MCP server configuration. Project-level MCP servers for this workspace. Add servers as needed; none required by the framework itself. Verify schema against current Kiro MCP docs.",
+  "mcpServers": {}
+}
