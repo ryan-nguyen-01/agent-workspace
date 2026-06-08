@@ -10,6 +10,7 @@ Tool-specific entrypoints:
 - Cursor: [.cursor/rules/maestro.mdc](.cursor/rules/maestro.mdc)
 - Gemini: [.gemini/GEMINI.md](.gemini/GEMINI.md)
 - GitHub Copilot: [.github/copilot-instructions.md](.github/copilot-instructions.md)
+- Kiro: [.kiro/steering/maestro.md](.kiro/steering/maestro.md)
 
 ## What this repo is
 
