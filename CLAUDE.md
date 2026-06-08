@@ -71,6 +71,7 @@ Aliases like `sa:`, `ba:`, `qa:`, `pm:`, `sec:`, `sre:`, `dev:` from the global 
 /coord            Universal entrypoint
 /ship             Autonomous build-to-done (Safe Autopilot, R-019)
 /git              Git-flow workflow: branch/commit/sync/PR (R-020)
+/overview         Full project briefing (identity, status, structure, git)
 /onboard /analyze-task /create-coders /plan-dev /dev /verify-dev
 /handoff-qc /qc /bug /sync-memory /skills /policy-check /status /resume-task /maestro-init /access
 ```
@@ -189,7 +190,7 @@ The Claude tool layer is packaged as a Claude Code plugin at `.claude-plugin/`. 
 `/maestro-init` to create the target project's `.maestro/` control plane and managed instruction block without
 replacing existing project configuration. Details: [PLUGIN.md](PLUGIN.md).
 
-## Commands (19 commands)
+## Commands (20 commands)
 
 Commands at `.claude/commands/`:
 
@@ -211,6 +212,7 @@ Commands at `.claude/commands/`:
 | /skills        | Maintain installed skills  |
 | /policy-check  | Validate workflow policy, gates, and artifact snapshots |
 | /status        | Check workflow status + activity dashboard |
+| /overview      | Full project briefing: identity, status, requirements/design, structure, git |
 | /resume-task   | Resume interrupted task    |
 | /maestro-init       | Install the `.maestro/` control plane and managed instruction block into a target project |
 | /access        | Switch tool-permission posture: full (bypassPermissions) / guarded. Does NOT change workflow gates/hooks (R-011-14) |

@@ -22,7 +22,7 @@ REGISTRY = ROOT / ".maestro" / "registry"
 CONFIG = ROOT / ".maestro" / "config"
 RUNTIME = ROOT / ".maestro" / "runtime"
 WORK = ROOT / ".maestro" / "work"
-SUPPORTED_MODES = {"compact", "concise", "dashboard", "models", "json"}
+SUPPORTED_MODES = {"compact", "concise", "dashboard", "models", "json", "overview"}
 
 
 def load_yaml(path: Path) -> dict[str, Any]:
@@ -740,10 +740,103 @@ def apply_line_budget(lines: list[str], budget: int | None) -> list[str]:
     return lines[: budget - 1] + [f"... truncated by response-ui line_budget={budget}"]
 
 
+def _git(args: list[str]) -> str:
+    import subprocess
+    try:
+        return subprocess.run(
+            ["git", "-C", str(ROOT)] + args, capture_output=True, text=True, timeout=10
+        ).stdout.strip()
+    except Exception:
+        return ""
+
+
+def render_overview(snapshot: dict[str, Any]) -> str:
+    state = snapshot["state"]
+    project = load_yaml(ROOT / ".maestro" / "project.yaml")
+    methodology = load_yaml(ROOT / ".maestro" / "methodology.yaml")
+    ws = project.get("workspace", {}) if isinstance(project.get("workspace"), dict) else {}
+    prod = project.get("product", {}) if isinstance(project.get("product"), dict) else {}
+
+    # framework structure counts
+    ad = ROOT / ".claude" / "agents"
+    wf = len(list((ad / "workflow").glob("*.agent.md")))
+    sp = len(list((ad / "specialists").rglob("*.agent.md")))
+    cd = len(list((ad / "coders").glob("*.agent.md")))
+    skills = len(list((ROOT / ".claude" / "skills").rglob("SKILL.md")))
+    rules = len([p for p in (ROOT / ".maestro" / "engine" / "rules").glob("*.md") if p.name != "README.md"])
+    templates = len([p for p in (ROOT / ".maestro" / "engine" / "templates").iterdir() if p.is_file()])
+    commands = len([p for p in (ROOT / ".claude" / "commands").glob("*.md") if p.name != "README.md"])
+
+    def _docs(sub: str) -> int:
+        d = ROOT / "docs" / sub
+        return len([p for p in d.rglob("*.md") if p.name != "README.md"]) if d.exists() else 0
+
+    prototype = (ROOT / "docs" / "experience" / "wireframes" / "index.html").exists()
+    autopilot = state.get("autopilot", {}) if isinstance(state.get("autopilot"), dict) else {}
+
+    lines: list[str] = ["Maestro — Project Overview", "=" * 26, ""]
+    lines += [
+        "Project",
+        f"- workspace: {fmt(ws.get('name'), fmt(ws.get('id')))}",
+        f"- product: {fmt(prod.get('display_name'), 'not-configured')} (lifecycle={fmt(prod.get('lifecycle'))}, status={fmt(prod.get('status'))})",
+        f"- component roots: apps, services, packages, infra, tests",
+        "",
+        "Methodology & mode",
+        f"- methodology: {fmt(methodology.get('methodology'))}",
+        f"- execution mode: {fmt(state.get('active_execution_mode'), fmt(state.get('default_execution_mode')))}",
+        f"- verification owner: {fmt(state.get('verification_owner'))}",
+        f"- access mode: {fmt(state.get('access_mode'), 'guarded')}",
+        "",
+        "Workflow status",
+        f"- state: {fmt(state.get('current_state'))}",
+        f"- active task: {fmt(state.get('active_task_id'), 'none')} | run: {fmt(snapshot.get('active_run_id'), 'none')} | active runs: {len(snapshot.get('active_runs', []))}",
+        f"- autopilot: {'ON' if autopilot.get('enabled') else 'off'}"
+        + (f" (stage={fmt(autopilot.get('current_stage'))}, attempt={fmt(autopilot.get('attempt'))})" if autopilot.get('enabled') else ""),
+        f"- activity: {fmt(snapshot['activity'].get('status'), 'idle')} | running agents: {fmt(snapshot['totals'].get('running_agents'), '0')}",
+        f"- next action: {next_command(snapshot)}",
+        "",
+        "Knowledge",
+        f"- project brain: {fmt(snapshot.get('project_brain_status'))}",
+        f"- components detected: {fmt(snapshot.get('components_detected'))}",
+        f"- active coder agents: {fmt(snapshot.get('active_coder_agents'))}",
+        "",
+        "Requirements & design (docs)",
+        f"- product docs (BRD/PRD): {_docs('product')} | requirements (US/UC/BR/NFR/RTM): {_docs('requirements')}",
+        f"- architecture docs: {_docs('architecture')} | experience/UX docs: {_docs('experience')}",
+        f"- UI prototype: {'present' if prototype else 'none'} (docs/experience/wireframes/index.html)",
+        "",
+        "Framework structure",
+        f"- agents: {wf + sp + cd} ({wf} workflow + {cd} coders + {sp} specialists)",
+        f"- skills: {skills} | rules: {rules} | templates: {templates} | commands: {commands}",
+        "",
+        "Git",
+    ]
+    if (ROOT / ".git").exists():
+        branch = _git(["branch", "--show-current"]) or "(detached)"
+        dirty = len([l for l in _git(["status", "--porcelain"]).splitlines() if l.strip()])
+        last = _git(["log", "--oneline", "-1"]) or "(no commits)"
+        ab = _git(["rev-list", "--left-right", "--count", "@{u}...HEAD"]) or ""
+        sync = ""
+        if ab and "\t" in ab:
+            behind, ahead = ab.split("\t")[:2]
+            sync = f" | ahead {ahead}, behind {behind}"
+        lines += [
+            f"- branch: {branch}{sync}",
+            f"- uncommitted files: {dirty}",
+            f"- last commit: {last}",
+        ]
+    else:
+        lines += ["- not a git repo (run /git branch to start Git-flow)"]
+    lines += ["", "Health check: python3 scripts/architecture-health-check.py --strict"]
+    return "\n".join(lines)
+
+
 def render(mode: str | None, show_models: bool) -> str:
     snapshot = status_snapshot()
     selected_mode = mode or response_default_mode(snapshot["response_ui"])
     snapshot["selected_mode"] = selected_mode
+    if selected_mode == "overview":
+        return render_overview(snapshot)
     if selected_mode == "compact":
         return render_compact(snapshot)
     if selected_mode == "json":
@@ -1116,7 +1209,7 @@ def main() -> int:
     parser = argparse.ArgumentParser(description="Render maestro status dashboard.")
     parser.add_argument(
         "--mode",
-        choices=["compact", "concise", "dashboard", "models", "json"],
+        choices=["compact", "concise", "dashboard", "models", "json", "overview"],
         help="Response UI mode. Defaults to .maestro/config/response-ui.yaml defaults.status_mode.",
     )
     parser.add_argument("--models", action="store_true", help="Show full agent-to-model-profile mapping.")

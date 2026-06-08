@@ -223,6 +223,7 @@ For status in Codex or any terminal, `python3 scripts/status-dashboard.py --mode
 /resume-task
 /policy-check
 /status
+/overview
 ```
 
 ## Safe Default

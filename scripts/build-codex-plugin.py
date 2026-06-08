@@ -57,8 +57,8 @@ def manifest(v: str) -> dict:
             "across frameworks, databases, cloud, security, testing, and the maestro workflow."
         ),
         "author": {"name": "maestro"},
-        "homepage": "https://github.com/ryan-nguyen-01/agent-workspace",
-        "repository": "https://github.com/ryan-nguyen-01/agent-workspace",
+        "homepage": "https://github.com/ryan-nguyen-01/maestro",
+        "repository": "https://github.com/ryan-nguyen-01/maestro",
         "license": "MIT",
         "keywords": ["workflow", "multi-agent", "coordinator", "skills", "code-review", "specialists"],
         "skills": "./skills/",
