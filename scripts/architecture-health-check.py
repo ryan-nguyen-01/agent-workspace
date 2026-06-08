@@ -183,6 +183,12 @@ ENTRYPOINT_REQUIREMENTS = {
         ".maestro/config/response-ui.yaml",
         "scripts/status-dashboard.py",
     ],
+    ".kiro/steering/maestro.md": [
+        ".maestro/config/model-routing.yaml",
+        ".maestro/runtime/agent-activity.yaml",
+        ".maestro/config/response-ui.yaml",
+        "scripts/status-dashboard.py",
+    ],
 }
 
 STALE_TEXT_PATTERNS = [

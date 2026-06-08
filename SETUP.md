@@ -33,6 +33,7 @@ maestro/
 ├── .codex/                        Codex instructions and generated prompts
 ├── .cursor/                       Cursor rules and hooks
 ├── .gemini/                       Gemini instructions
+├── .kiro/                         Kiro adapter: steering, specs, hooks, settings
 ├── docs/                          Official product documentation
 ├── apps/                          Product applications
 ├── services/                      Deployable services

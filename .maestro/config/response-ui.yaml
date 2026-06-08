@@ -133,6 +133,9 @@ tool_overrides:
   gemini:
     instruction_file: ".gemini/GEMINI.md"
     support_level: "best-effort"
+  kiro:
+    instruction_file: ".kiro/steering/maestro.md"
+    support_level: "best-effort-with-hooks"
 
 customization:
   safe_to_edit:
