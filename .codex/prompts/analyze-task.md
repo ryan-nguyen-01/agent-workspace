@@ -1,14 +1,14 @@
 ---
-description: "agent-workspace /analyze-task — Normalize HLD, LLD, ticket, bug report, incident, or direct text into task-analysis.yaml."
+description: "maestro /analyze-task — Normalize HLD, LLD, ticket, bug report, incident, or direct text into task-analysis.yaml."
 argument-hint: "[request or args]"
 ---
 
-You are running the agent-workspace `/analyze-task` workflow command inside Codex.
+You are running the maestro `/analyze-task` workflow command inside Codex.
 
 Follow `.codex/AGENTS.md` (or `AGENTS.md`) routing and the framework rules. Route every
 request through the coordinator model; do not bypass approval gates, security/secret rules,
-or the task-analysis source-edit gate. If the agent-workspace framework files
-(`.agent/`, `.runtime/`, `.claude/commands/analyze-task.md`) are present, defer to them as the
+or the task-analysis source-edit gate. If the maestro framework files
+(`.maestro/engine/`, `.maestro/registry/`, `.maestro/knowledge/`, `.maestro/work/`, `.maestro/runtime/`, `.claude/commands/analyze-task.md`) are present, defer to them as the
 authoritative contract — this prompt is a portable mirror.
 
 User input for this command: $ARGUMENTS
@@ -22,7 +22,7 @@ User input for this command: $ARGUMENTS
 
 Normalize HLD, LLD, ticket, bug report, incident, or direct text into task-analysis.yaml.
 
-For trivial framework maintenance in framework-template/not_applied mode, this command may produce lightweight evidence instead of a full task folder when workflow.md §6.2 and R-004-12 allow it.
+For trivial framework maintenance, this command may produce lightweight evidence instead of a full task folder when workflow.md §6.2 and R-004-12 allow it.
 
 ## Responsible agent
 
@@ -45,14 +45,14 @@ task-analysis
    - do not create the full task folder
    - record target_scope, fast_track reason, changed_files, and verification evidence in the response or task note
    - stop before planning/dev/QC artifacts
-3. For applied-service tasks, Coordinator assigns a unique task_id: TASK-YYYYMMDD-NNN-slug.
-4. Create .runtime/tasks/<task_id>/.
+3. For product-component tasks, Coordinator assigns a unique task_id: TASK-YYYYMMDD-NNN-slug.
+4. Create .maestro/work/tasks/<task_id>/.
 5. Store original input as task-input.md.
 6. Create task.yaml from task.template.yaml if missing.
 7. Append task-updates.yaml with task creation/update event.
 8. Identify source type and intent.
 9. Define business goal and acceptance criteria.
-10. Identify impacted services.
+10. Identify impacted components.
 11. Build context_plan with bounded memory/source/skill budgets, required evidence, excluded paths, expansion triggers, unresolved context, and confidence.
 12. Identify contract changes, risks, blockers, critical checks, dev verification checklist, and QC focus.
 13. Capture assumptions and unknowns with confidence markers.
@@ -64,7 +64,7 @@ task-analysis
 
 ```text
 Critical requirement is unclear
-Impacted service cannot be inferred
+Impacted component cannot be inferred
 Security-sensitive requirement lacks enough detail
 ```
 
@@ -72,8 +72,8 @@ Security-sensitive requirement lacks enough detail
 
 Task Analysis must populate reuse_and_convention_analysis in task-analysis.yaml:
 
-- Relevant project flows from .runtime/context/project-brain.yaml and .runtime/context/architecture.md.
-- Relevant service flows from .runtime/context/services/<service>.yaml.
+- Relevant project flows from .maestro/knowledge/project.yaml and .maestro/knowledge/architecture.md.
+- Relevant component flows from .maestro/knowledge/components/<component-id>.yaml.
 - Reusable assets that service coders should use.
 - Coding conventions that affect the implementation.
 - Anti-patterns to avoid.
@@ -81,11 +81,11 @@ Task Analysis must populate reuse_and_convention_analysis in task-analysis.yaml:
 
 If the task clearly needs a new cross-service reusable asset, mark Coder Leader review required before implementation.
 
-For framework maintenance, use the directly relevant framework rule/template/command/script files as evidence. Do not open project brain, service catalog, agent registry, or service brains unless the task directly edits those contracts.
+For framework maintenance, use the directly relevant framework rule/template/command/script files as evidence. Do not open project brain, component registry, agent registry, or component knowledge files unless the task directly edits those contracts.
 
 ## Context plan
 
-For applied-service tasks, Task Analysis must populate `context_plan` before Coder Leader runs. The context plan is the bounded context pack for the rest of the workflow:
+For product-component tasks, Task Analysis must populate `context_plan` before Coder Leader runs. The context plan is the bounded context pack for the rest of the workflow:
 
 - Memory/source files required for the task.
 - Files explicitly excluded to reduce token use.

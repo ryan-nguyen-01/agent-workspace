@@ -1,9 +1,9 @@
 {
-  "name": "agent-workspace",
+  "name": "maestro",
   "version": "1.8.0",
-  "description": "Coordinator-driven multi-agent workflow for software engineering: 33 agents (12 workflow + 2 built-in coders + 19 specialist advisors), 231 skills, 17 commands, and deterministic scope/secret/destructive hooks. Claude tool layer of the agent-workspace framework.",
+  "description": "Coordinator-driven multi-agent workflow for software engineering: 34 agents (12 workflow + 3 built-in coders + 19 specialist advisors), 231 skills, 19 commands, and deterministic scope/secret/destructive hooks. Claude tool layer of the maestro framework.",
   "author": {
-    "name": "agent-workspace"
+    "name": "maestro"
   },
   "keywords": [
     "workflow",

@@ -8,7 +8,7 @@ category: workflow
 
 Use after task completion, bug discovery, decisions, or scope changes.
 
-Always read and refresh `.runtime/context/index.yaml` so future agents can select relevant memory without rereading the whole brain.
+Always read and refresh `.maestro/knowledge/index.yaml` so future agents can select relevant memory without rereading the whole project knowledge base.
 
 ## Store
 
@@ -20,7 +20,7 @@ bug root cause patterns
 QC blocker rules
 generated coder scope updates
 user-approved workflow exceptions
-actionable user feedback from .runtime/context/feedback/inbox.md
+actionable user feedback from .maestro/memory/project/feedback/inbox.md
 promoted reusable learnings into feedback/patterns.md and feedback/anti-patterns.md
 ```
 
@@ -52,11 +52,11 @@ Update only durable knowledge. Do not store speculative patterns without confide
 
 When user/team reports AI mistakes or omissions:
 
-1. Capture raw feedback in `.runtime/context/feedback/inbox.md`.
+1. Capture raw feedback in `.maestro/memory/project/feedback/inbox.md`.
 2. For coding errors, require `root_cause`, `prevention_rule`, `regression_check`, and `recurrence_key`.
 3. During `/sync-memory`, triage feedback:
    - recurring mistakes -> `feedback/anti-patterns.md`
    - validated fixes/best practices -> `feedback/patterns.md`
 4. Record `source_artifact`, `source_bug` when available, and `confidence` in memory updates.
 5. Mark processed inbox entries as `promoted` or `closed`.
-6. Refresh `.runtime/context/index.yaml` or record why it did not change.
+6. Refresh `.maestro/knowledge/index.yaml` or record why it did not change.

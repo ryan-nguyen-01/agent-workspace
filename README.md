@@ -1,605 +1,414 @@
-# agent-workspace
+# maestro
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
-[![Agents](https://img.shields.io/badge/Agents-12-blue)](#12-workflow-agents)
-[![Skills](https://img.shields.io/badge/Skills-231-green)](#231-skills)
-[![Stars](https://img.shields.io/github/stars/ryan-nguyen-01/agent-workspace?style=social)](https://github.com/ryan-nguyen-01/agent-workspace)
+[![Agents](https://img.shields.io/badge/Agents-33-blue)](#agents)
+[![Skills](https://img.shields.io/badge/Skills-231-green)](#skills)
+[![Stars](https://img.shields.io/github/stars/ryan-nguyen-01/maestro?style=social)](https://github.com/ryan-nguyen-01/agent-workspace)
 
-> **Language policy** ([.agent/docs/language-policy.md](.agent/docs/language-policy.md)): all framework
-> documents (rules, workflow, agent/command definitions, templates, entry points, playbooks) are written
-> in **English** so AI agents read them with the least ambiguity. The **conversation follows the user** —
-> if the user writes in Vietnamese, the agent replies in Vietnamese. Identifiers (paths, agent ids, rule
-> ids, YAML keys, command/tool names) stay English as contract tokens.
+> **Language policy** ([.maestro/engine/docs/language-policy.md](.maestro/engine/docs/language-policy.md)):
+> framework documents, workflow rules, agent definitions, command definitions, templates, entry points,
+> and methodology playbooks are written in English so AI agents read them with minimal ambiguity. The
+> conversation follows the user. Identifiers such as paths, agent ids, rule ids, YAML keys, command
+> names, and tool names remain English contract tokens.
 
-`agent-workspace` là workspace để điều phối AI coding tools theo một quy trình cố định. Nó giữ Project Brain, rule, command, agent contract, task artifact và feedback memory ở một chỗ, để mỗi lần làm việc không phải bắt đầu lại từ đầu.
+`maestro` is a product-development control plane for building and operating real software with
+AI agents. It keeps product code, official documentation, design decisions, work history, runtime state,
+and agent memory in separate, auditable domains.
 
-## Điểm vào tài liệu
+The root name stays stable as `maestro`. The actual product identity and namespace live in
+`.maestro/project.yaml`.
 
-| Bạn cần | Đọc file |
+## Documentation Entry Points
+
+| Need | File |
 | --- | --- |
-| Khởi tạo workspace điều phối nhanh | [QUICKSTART.md](QUICKSTART.md) |
-| Danh sách slash command | [COMMAND.md](COMMAND.md) |
-| Hiểu tổng quan framework | [README.md](README.md) |
-| Cài đặt, upgrade, validation chi tiết | [SETUP.md](SETUP.md) |
-| Entry point cho AI agent không phải Claude | [AGENTS.md](AGENTS.md) |
-| Entry point cho Claude Code | [CLAUDE.md](CLAUDE.md) |
-| Entry point cho Codex | [.codex/AGENTS.md](.codex/AGENTS.md) |
-| Entry point cho Cursor | [.cursor/rules/agent-workspace.mdc](.cursor/rules/agent-workspace.mdc) |
-| Entry point cho Gemini | [.gemini/GEMINI.md](.gemini/GEMINI.md) |
-| Nguồn chuẩn của workflow | [.agent/workflow.md](.agent/workflow.md) |
-| Phân biệt workflow/built-in/generated agents | [.agent/docs/agent-taxonomy.md](.agent/docs/agent-taxonomy.md) |
+| Fast workspace startup | [QUICKSTART.md](QUICKSTART.md) |
+| Slash command index | [COMMAND.md](COMMAND.md) |
+| Framework overview | [README.md](README.md) |
+| Install, upgrade, and validation guide | [SETUP.md](SETUP.md) |
+| Entry point for non-Claude AI agents | [AGENTS.md](AGENTS.md) |
+| Entry point for Claude Code | [CLAUDE.md](CLAUDE.md) |
+| Entry point for Codex | [.codex/AGENTS.md](.codex/AGENTS.md) |
+| Entry point for Cursor | [.cursor/rules/maestro.mdc](.cursor/rules/maestro.mdc) |
+| Entry point for Gemini | [.gemini/GEMINI.md](.gemini/GEMINI.md) |
+| Workflow source of truth | [.maestro/engine/workflow.md](.maestro/engine/workflow.md) |
+| Agent taxonomy | [.maestro/engine/docs/agent-taxonomy.md](.maestro/engine/docs/agent-taxonomy.md) |
 
----
+## Why This Workspace Exists
 
-## Vì sao cần workspace này
+AI coding tools are powerful, but in a real codebase the same problems repeat:
 
-### Vấn đề với AI viết code hiện tại
+- Each conversation can start as a fresh context, so decisions, conventions, and known mistakes are easy to lose.
+- Agents may jump into code before analyzing requirements, impact, ownership, or test policy.
+- Without explicit write scope, agents may edit files outside the task boundary.
+- Completion claims can happen without verification evidence.
+- Review feedback and bug root causes are often not recorded for future work.
 
-Khi dùng Claude, Codex, Cursor, Copilot hoặc các AI coding tool khác trong một codebase thật, các lỗi sau rất dễ lặp lại:
+`maestro` adds a control plane before source edits happen.
 
-- Mỗi conversation thường bắt đầu như một context mới. Những quyết định cũ, quy ước code và lỗi đã gặp dễ bị quên.
-- AI có thể nhảy thẳng vào sửa code trước khi phân tích yêu cầu, phạm vi ảnh hưởng hoặc test policy.
-- Nếu không có write scope rõ ràng, AI có thể sửa file ngoài phạm vi task.
-- Không phải lúc nào cũng có bước kiểm tra trước khi kết luận "xong".
-- Feedback sau bug hoặc review thường không được ghi lại để lần sau tránh lặp.
+| Problem | Workspace mechanism |
+| --- | --- |
+| Agents forget durable context | `.maestro/knowledge/` and `.maestro/memory/` preserve reusable project knowledge |
+| Every task is treated the same | `direct`, `assisted`, and `governed` modes scale process to task risk |
+| Agents do not know write boundaries | Component registry and scoped coder agents define read/write scope |
+| Quality gates are inconsistent | Dev Verification and QC Runner require evidence before handoff |
+| Mistakes repeat | Memory Update promotes root causes, patterns, and anti-patterns |
+| Context grows too large | Indexes, context hints, and task `context_plan` limit what agents read |
+| Large tasks are not decomposed | Initiative -> Epic -> Task -> Subtask contracts create bounded work |
+| Product documentation is missing | `docs/` stores PRD, feature, user story, flow, HLD, LLD, ADR, quality, and runbook artifacts |
 
-### Giải pháp: Workflow do coordinator điều phối
+## Execution Modes
 
-Workspace này thêm một lớp điều phối trước khi AI sửa code:
+| Mode | Use When | Verification |
+| --- | --- | --- |
+| `direct` | Small, fast work where the user can verify quickly | User or shared |
+| `assisted` | Bounded work that may need resume, progress, or lightweight evidence | Agent or shared |
+| `governed` | High-risk, cross-component, security, migration, production, or compliance work | Agent evidence plus required gates |
 
-| Vấn đề                 | Giải pháp                                                                                       |
-| ---------------------- | ----------------------------------------------------------------------------------------------- |
-| AI không nhớ context   | **Project Brain** lưu lại thông tin bền vững của project                                        |
-| AI không có quy trình  | **12 workflow agents** chia rõ trách nhiệm từng bước                                             |
-| AI không biết giới hạn | **Generated service coders** với `allowed_write_paths` và `forbidden_paths` giới hạn theo service |
-| Không có quality gate  | **Dev Verification** và **QC Runner** tạo điểm kiểm tra trước khi giao                          |
-| Không học từ sai lầm   | **Memory Update** ghi lại pattern, anti-pattern và bug root cause                                |
-| Context quá lớn / tốn token | **Context economy** dùng index, context hints và task `context_plan` để giới hạn file cần đọc |
+The methodology router can select `risk-based-routing`, `spec-driven-development`,
+`enterprise-agent-governance`, or `eval-driven-ai` based on the task and the artifact requirements.
+These names are workspace overlays mapped to current
+production-agent patterns in
+[industry-alignment.md](docs/governance/methodologies/industry-alignment.md): durable workflows,
+human-in-the-loop, artifact management, eval-driven AI, trace evidence, plugins, hooks, and governed
+enterprise autonomy.
 
-### Mục tiêu thiết kế
+The operating model is run-centric: a task describes intended work; a run records one execution
+attempt with checkpoints, trace links, eval evidence, approvals, and reports when needed.
+Agents can use `python3 scripts/agent-run.py create|heartbeat|checkpoint|complete` to maintain
+`.maestro/work/runs/` without depending on a specific coding harness.
 
-```text
-Không tối ưu cho demo nhanh.
-Tối ưu cho việc dùng AI trong codebase cần kiểm soát, review và audit.
-```
+## System Architecture
 
-Nếu bạn chỉ cần thử ý tưởng nhỏ, repo này có thể hơi nặng. Nó phù hợp hơn khi team muốn AI làm việc có scope, có evidence, có bước verify và có memory để lần sau không lặp lại cùng lỗi.
+![System overview](.maestro/engine/docs/diagrams/01-system-overview.svg)
 
----
+See [visual-flow.md](.maestro/engine/docs/visual-flow.md) for all workflow diagrams.
 
-## Kiến trúc hệ thống
+## Current Counts
 
-![System overview](.agent/docs/diagrams/01-system-overview.svg)
+| Area | Count |
+| --- | --- |
+| Framework agents | 34: 12 workflow agents, 3 built-in coders, 19 specialist advisors |
+| Skills | 231: 12 workflow skills plus 219 technical skills |
+| Rules | 19 |
+| Templates | 51 |
+| Commands | 17 |
 
-> Chi tiết tất cả sơ đồ workflow: [visual-flow.md](.agent/docs/visual-flow.md)
+The deterministic guard for these counts is `python3 scripts/architecture-health-check.py --strict`.
 
----
-
-## Thống kê
-
-| Hạng mục         | Số lượng                          |
-| ---------------- | --------------------------------- |
-| Agent workflow   | 12                                |
-| Specialist advisors | 19 (advisor-only)              |
-| Skills           | 231 (12 workflow + 219 technical) |
-| Rules            | 19                                |
-| Template         | 22                                |
-| Command          | 16                                |
-| Built-in coders  | 2 cross-cutting coders            |
-| Agent sinh tự động | Tạo theo service sau onboarding  |
-
----
-
-## Cấu trúc thư mục
-
-```text
-agent-workspace/
-├── CLAUDE.md                          ← Entry point (Claude đọc file này đầu tiên)
-├── AGENTS.md                          ← Entry point chung cho AI coding agents
-├── COMMAND.md                         ← Slash command index
-├── GUIDELINES.md                      ← Cách dùng nhanh + semantics
-├── SETUP.md                           ← Hướng dẫn cài đặt chi tiết
-├── README.md                          ← File này
-├── .codex/                            ← Codex-specific instructions
-├── .cursor/                           ← Cursor rules
-├── .gemini/                           ← Gemini-specific instructions
-├── .agent/                            ← Tool-neutral workflow source
-│   ├── workflow.md                    ← End-to-end workflow policy
-│   ├── rules/                         ← 19 workflow rules (00-18)
-│   ├── templates/                     ← 22 artifact templates
-│   └── docs/                          ← Tài liệu + sơ đồ trực quan
-├── .runtime/                          ← Runtime memory, task artifacts, bug records
-│   ├── context/                       ← Project brain, service contracts, workflow state
-│   ├── tasks/                         ← Per-task artifacts
-│   └── bugs/                          ← Bug tracking
-├── .claude/                           ← Claude adapter
-│   ├── agents/                        ← agents grouped by class (see README in folder)
-│   │   ├── workflow/                   ← 12 workflow agents (coordinator, task-analysis, ...)
-│   │   ├── coders/                     ← built-in (coder-infra, coder-database) + generated coders
-│   │   └── specialists/               ← 19 specialist advisors, grouped by category
-│   │       ├── architecture/  quality-security/  product/
-│   │       └── data-ai/  ops-devex/  research-qa/
-│   │
-│   ├── skills/                        ← 231 skill definitions
-│   │   ├── skill-project-brain/SKILL.md
-│   │   ├── skill-task-analysis/SKILL.md
-│   │   ├── react/SKILL.md
-│   │   ├── docker/SKILL.md
-│   │   └── ... (231 skills)
-│   │
-│   ├── commands/                      ← 17 workflow commands
-│   │   ├── onboard.md
-│   │   ├── analyze-task.md
-│   │   ├── dev.md
-│   │   └── ...
-│   │
-│   └── settings.json                  ← Claude Code settings
-├── inputs/                            ← USER drops reference docs (PRD/HLD/ADR/OpenAPI/glossary/runbooks)
-│   ├── README.md                      ← Convention guide
-│   ├── product/                       PRD, business specs, user stories
-│   ├── architecture/                  HLD, LLD, ADRs, system diagrams
-│   ├── api/                           OpenAPI/Swagger specs, contracts
-│   ├── domain/                        Domain models, glossary, business rules
-│   ├── runbooks/                      Ops playbooks, incident response
-│   └── misc/                          Uncategorized
-├── services/                          ← Local empty/ignored workspace for cloned service repos
-```
-
----
-
-## 12 Agent Trong Workflow
-
-| Agent                | Model profile  | File                      | Vai trò                                                                      |
-| -------------------- | -------------- | ------------------------- | ---------------------------------------------------------------------------- |
-| **Coordinator**      | fast_router    | coordinator.agent.md      | Router trung tâm: route task, kiểm tra Project Brain, enforce approval gate |
-| **Onboarding**       | deep_reasoning | onboarding.agent.md       | Quét project, tạo Project Brain, service catalog, test policy                |
-| **Agent Factory**    | coding_planner | agent-factory.agent.md    | Tạo coder agent theo service sau khi có user approval                        |
-| **Task Analysis**    | deep_reasoning | task-analysis.agent.md    | Chuẩn hóa HLD/LLD/ticket/bug thành task spec có cấu trúc                    |
-| **Solution Architect** | deep_reasoning | solution-architect.agent.md | Review rủi ro kiến trúc cross-service/API/data/event/security/infra trước khi planning |
-| **Coder Leader**     | coding_planner | coder-leader.agent.md     | Điều phối generated service coders: plan, assign, tích hợp, review architecture/code quality |
-| **Dev Verification** | verification   | dev-verification.agent.md | Gate sẵn sàng output: critical checks, runtime evidence, test policy, score ≥80% |
-| **QC Handoff**       | fast_router    | qc-handoff.agent.md       | Tạo tài liệu bàn giao Dev-to-QC bắt buộc sau Code Done                       |
-| **QC Runner**        | verification   | qc-runner.agent.md        | Chạy QC test từ handoff, dừng khi có blocker bug                             |
-| **Bug Router**       | deep_reasoning | bug-router.agent.md       | Phân loại defect thành blocker/non-blocker và route hướng fix                |
-| **Memory Update**    | memory_light   | memory-update.agent.md    | Lưu durable learnings sau các workflow event có ý nghĩa                      |
-| **Workflow Policy**  | deep_reasoning | workflow-policy.agent.md  | Kiểm tra state transition, approval gate, và tuân thủ policy                 |
-
-Model defaults live in `.runtime/context/model-routing.yaml`: Claude deep reasoning uses Opus, Claude coding uses Sonnet; Codex deep reasoning uses GPT-5.5, Codex coding uses the configured Codex coding model (`gpt-5.3-codex` by default).
-
-Muốn switch model, chỉnh `.runtime/context/model-routing.yaml.model_overrides` thay vì sửa agent files hoặc xóa stable model profiles. Override hợp lệ giữ nguyên profile contract (`deep_reasoning`, `coding`, `fast`) và thêm `reason` khi policy yêu cầu.
-
----
-
-## Workflow chính
-
-### Luồng 1: Onboarding (dự án mới / chưa có memory)
+## Folder Structure
 
 ```text
-User mở project → gõ task bất kỳ
-  │
-  ├─ coordinator        → Phát hiện chưa có project brain
-  ├─ onboarding         → Quét cấu trúc repo, nhận diện stack, tạo Project Brain
-  ├─ agent-factory      → Đề xuất coder agents (cần user approval)
-  │
-  └─ Sẵn sàng → coordinator xử lý task tiếp theo
+maestro/
+├── .maestro/                         Product-development control plane
+│   ├── INSTRUCTIONS.md          Stable harness entry
+│   ├── project.yaml             Product identity and naming standard
+│   ├── methodology.yaml         Risk routing, spec-driven, eval-driven, governance routing
+│   ├── engine/                  Canonical control plane: workflow, rules, templates, docs
+│   ├── registry/                Components, agents, skills, inputs, artifacts
+│   ├── knowledge/               Durable project and component knowledge
+│   ├── work/                    Initiative, epic, task, subtask, run, bug evidence
+│   ├── design/                  Design artifact index
+│   ├── decision/                ADR and decision index
+│   ├── memory/                  Project, task, and local session memory
+│   ├── observability/           Traces, evals, reports, audit views
+│   ├── governance/              Agent governance, approvals, risk indexes
+│   ├── history/                 Compatibility timeline and event log
+│   └── runtime/                 Local-only active state, cache, reports
+├── .claude/                     Native Claude agents, skills, commands, hooks
+├── .codex/ .cursor/ .gemini/    Other tool adapters
+├── docs/                        Official product documentation
+├── apps/                        Product applications, for example `<project>-web-app`
+├── services/                    Deployable services, for example `<project>-auth-service`
+├── packages/                    Shared libraries and design systems
+├── infra/                       Deployable infrastructure and environments
+├── tests/                       System, contract, performance, and E2E suites
+└── inputs/                      User-provided references pending curation
 ```
 
-### Luồng 2: Implement tính năng (workflow đầy đủ)
+## Product Documentation Roots
 
-```yaml
-User: "Thêm tính năng login bằng Google OAuth"
-  │
-  ├─ 1. coordinator     → Xác định hướng xử lý và gate cần qua
-  ├─ 2. task-analysis   → Chuẩn hóa yêu cầu vào task-analysis.yaml
-  ├─ 3. solution-architect → Review kiến trúc nếu task có rủi ro
-  ├─ 4. coder-leader    → Lập plan và chia việc cho service coders
-  ├─ 5. [service coders]→ Sửa code trong phạm vi được phép
-  ├─ 6. coder-leader    → Review lại kiến trúc và chất lượng code
-  ├─ 7. dev-verification→ Kiểm tra evidence, critical checks và test policy
-  ├─ 8. qc-handoff      → Tạo tài liệu bàn giao sang QC
-  ├─ 9. qc-runner       → Chạy QC theo handoff
-  ├─ 10. bug-router     → Route bug nếu QC phát hiện lỗi
-  ├─ 11. memory-update  → Lưu bài học cần dùng lại
-  │
-  └─ DONE
-```
+| Root | Purpose |
+| --- | --- |
+| `docs/product/prds/` | Product requirements and outcomes |
+| `docs/requirements/features/` | Feature scope, business rules, acceptance criteria |
+| `docs/requirements/user-stories/` | User value and testable acceptance criteria |
+| `docs/requirements/use-cases/` | Actor-system behavior |
+| `docs/requirements/non-functional/` | Performance, reliability, security, compliance |
+| `docs/experience/` | User journeys, flows, wireframes, UI specifications |
+| `docs/architecture/high-level-design/` | System boundaries and major decisions |
+| `docs/architecture/low-level-design/` | Implementation-level design |
+| `docs/architecture/decisions/` | ADRs |
+| `docs/governance/methodologies/` | Risk-Based Workflow Routing, Spec-Driven Development, Eval-Driven AI Development, Enterprise Agent Governance |
+| `docs/governance/methodologies/industry-alignment.md` | Mapping from workspace methods to production-agent patterns |
+| `docs/governance/enterprise-agent-governance/` | Governance Policy, Mission, Behavior Contract, Autonomy Policy, Agent Definition, Eval Suite, Audit Log, Interaction Protocol |
+| `docs/operations/runbooks/` | Operational procedures and recovery |
 
-### Luồng 3: Vòng lặp fix bug
+## Agents
+
+| Agent | Profile | Role |
+| --- | --- | --- |
+| Coordinator | `fast_router` | Routes tasks, checks project state, and enforces workflow gates |
+| Onboarding | `deep_reasoning` | Scans project structure and creates durable project knowledge |
+| Agent Factory | `coding_planner` | Creates scoped coder agents after user approval |
+| Task Analysis | `deep_reasoning` | Converts tickets, HLDs, LLDs, bugs, and text into structured task specs |
+| Solution Architect | `deep_reasoning` | Reviews cross-service, API, data, event, security, or infra risks |
+| Coder Leader | `coding_planner` | Plans, assigns, integrates, and reviews coder work |
+| Dev Verification | `verification` | Checks Code Done evidence, critical checks, and test policy |
+| QC Handoff | `fast_router` | Creates Dev-to-QC handoff documents |
+| QC Runner | `verification` | Runs QC from handoff and stops on blocker bugs |
+| Bug Router | `deep_reasoning` | Classifies defects and routes fixes |
+| Memory Update | `memory_light` | Persists reusable learnings after meaningful workflow events |
+| Workflow Policy | `deep_reasoning` | Validates state transitions, artifacts, and approval gates |
+
+Two built-in cross-cutting coders are available before generated service coders:
+
+- `coder-infra`: Terraform/IaC, Kubernetes, Docker, CI/CD.
+- `coder-database`: schemas, migrations, queries, indexes.
+
+Nineteen specialist advisors live under `.claude/agents/specialists/`. They are advisor-only and do
+not write application code, assign coder work, or mark Code Done.
+
+## Workflow
+
+### Onboarding
 
 ```text
-QC Runner phát hiện bug
-  │
-  ├─ bug-router         → Phân loại: blocker / non-blocker
-  │  ├─ Blocker         → Dừng QC và route lại coder-leader
-  │  └─ Non-blocker     → QC tiếp tục ở các case không bị ảnh hưởng
-  │
-  ├─ coder-leader       → Giao phần fix và review lại
-  ├─ dev-verification   → Verify lại output
-  ├─ qc-runner          → Retest
-  │
-  └─ Hết blocker → memory-update
+User opens workspace and requests analysis
+  -> coordinator detects missing or stale project knowledge
+  -> onboarding scans docs, inputs, components, stack, and conventions
+  -> agent-factory proposes scoped coder agents when needed
+  -> coordinator can route the next task
 ```
 
----
-
-## Service Coder Sinh Tự Động
-
-`agent-factory` tạo coder agents riêng cho từng service sau khi onboarding hoàn tất và user approve.
-
-`coder-infra` và `coder-database` là **built-in cross-cutting coders** được ship sẵn với framework. Chúng không phải generated service coders từ onboarding; chúng chỉ được Coder Leader dùng khi task có scope hạ tầng hoặc database phù hợp.
-
-### Đặc điểm
-
-- Mỗi coder có **allowed_read_paths**, **allowed_write_paths**, **forbidden_paths**
-- Mỗi coder có **test_policy** và **escalation rules**
-- Không tạo full-repo coders — mỗi coder chỉ cover 1 service
-- Scope expansion cần user approval
-
-### Quy ước đặt tên
+### Governed Feature Delivery
 
 ```text
-coder-<service-slug>.agent.md
+User request
+  -> coordinator selects methodology and execution mode
+  -> task-analysis writes task-analysis.yaml
+  -> solution-architect reviews risky architecture when required
+  -> coder-leader creates the implementation plan and assignments
+  -> scoped coders edit only allowed paths
+  -> coder-leader integrates and reviews work
+  -> dev-verification checks evidence and test policy
+  -> qc-handoff creates handoff
+  -> qc-runner executes QC
+  -> bug-router routes defects if needed
+  -> memory-update records durable learnings
+  -> DONE
 ```
 
-### Ví dụ: Project e-commerce
+### Bug Loop
 
 ```text
-Phát hiện stack: NestJS + React + PostgreSQL + Redis
-
-Được tạo:
-  coder-api.agent.md          ← Backend API service
-  coder-web.agent.md          ← Frontend React app
-  coder-shared.agent.md       ← Shared packages
+QC Runner finds a defect
+  -> bug-router classifies blocker or non-blocker
+  -> coder-leader assigns the fix
+  -> dev-verification verifies the fix
+  -> qc-runner retests
+  -> memory-update stores root cause and prevention when useful
 ```
 
----
+## Generated Service Coders
 
-## 16 Quy Tắc Workflow
+`agent-factory` creates component-specific coder agents after onboarding and user approval.
 
-Các rule tại `.agent/rules/` định nghĩa constraint và governance cho workflow:
-
-| Rule  | File                          | Mô tả                                                 |
-| ----- | ----------------------------- | ----------------------------------------------------- |
-| R-000 | 00-core-rules.md              | Đọc workflow trước; không code khi chưa có analysis   |
-| R-001 | 01-project-brain-rules.md     | Project Brain là nguồn memory chính                   |
-| R-002 | 02-onboarding-rules.md        | Onboarding chỉ quét, không sửa code                   |
-| R-003 | 03-agent-factory-rules.md     | Tạo agent cần user approval                           |
-| R-004 | 04-task-analysis-rules.md     | Task phải được chuẩn hóa trước khi code               |
-| R-005 | 05-coder-leader-rules.md      | Điều phối khi task ảnh hưởng nhiều service            |
-| R-006 | 06-service-coder-rules.md     | Service coder chỉ write trong scope được phép         |
-| R-007 | 07-dev-verification-rules.md  | Code Done cần score và critical checks                |
-| R-008 | 08-qc-rules.md                | QC chạy sau handoff và dừng khi có blocker            |
-| R-009 | 09-bug-routing-rules.md       | Phân loại blocker / non-blocker                       |
-| R-010 | 10-memory-rules.md            | Khi nào và cách nào lưu memory                        |
-| R-011 | 11-approval-gates.md          | Các hành động cần user approval                       |
-| R-012 | 12-artifact-contracts.md      | Artifact bắt buộc theo từng workflow state            |
-| R-013 | 13-security-secret-rules.md   | Không ghi secret thật vào artifact                    |
-| R-014 | 14-skill-composition-rules.md | Skill là capability, không phải identity của agent    |
-
----
-
-## 231 Skill
-
-### 12 Workflow Skill (prefix `skill-*`)
-
-| Skill                    | Mô tả                                   |
-| ------------------------ | --------------------------------------- |
-| skill-project-brain      | Quản lý Project Brain dùng lại nhiều lần |
-| skill-project-onboarding | Tạo Project Brain từ lần quét ban đầu   |
-| skill-agent-factory      | Tạo coder agent theo từng service       |
-| skill-task-analysis      | Chuẩn hóa yêu cầu thành task spec       |
-| skill-coder-leader       | Điều phối các service coder             |
-| skill-service-coder      | Sửa code trong scope được phép          |
-| skill-dev-verification   | Đánh giá trạng thái Code Done           |
-| skill-qc-handoff         | Tạo tài liệu handoff sang QC            |
-| skill-qc-runner          | Chạy QC và ghi kết quả test             |
-| skill-bug-routing        | Phân loại và route defect               |
-| skill-memory-update      | Lưu các bài học cần dùng lại            |
-| skill-workflow-policy    | Kiểm tra transition và gate             |
-
-### 219 Skill kỹ thuật
-
-| Category            | Ví dụ skills                                                                      |
-| ------------------- | --------------------------------------------------------------------------------- |
-| Frontend Frameworks | react, angular, vue, svelte, next-best-practices, astro                           |
-| Backend Frameworks  | fastapi-python, nestjs-clean-typescript, java-spring-development, ruby-rails      |
-| Databases & ORM     | postgresql-best-practices, prisma, drizzle-orm, supabase, redis-best-practices    |
-| Mobile              | flutter, building-native-ui, expo-\*, android-development                         |
-| Cloud & DevOps      | aws-cloud-services, docker, cloudformation, lambda, azure-kubernetes              |
-| Testing             | playwright-best-practices, python-testing, rspec                                  |
-| Go Language         | go-concurrency, go-testing, go-error-handling, golang-pro                         |
-| CSS & Styling       | tailwindcss, scss-best-practices, styled-components-best-practices, shadcn        |
-| Architecture        | api-design-principles, microservices, loom-event-driven, cloud-solution-architect |
-| State Management    | redux-toolkit, zustand-state-management, react-query                              |
-| Payment             | stripe-best-practices, payment-integration, paypal-integration                    |
-| Knowledge Patches   | \*-knowledge-patch (latest framework/library updates)                             |
-
----
-
-## 16 Slash Command
-
-| Command        | File             | Mô tả                      |
-| -------------- | ---------------- | -------------------------- |
-| /onboard       | onboard.md       | Tạo hoặc refresh memory và service contract |
-| /analyze-task  | analyze-task.md  | Chuẩn hóa task thành spec  |
-| /create-coders | create-coders.md | Tạo service coder agents   |
-| /plan-dev      | plan-dev.md      | Lên plan implementation    |
-| /dev           | dev.md           | Implement code             |
-| /verify-dev    | verify-dev.md    | Kiểm tra trạng thái Code Done |
-| /handoff-qc    | handoff-qc.md    | Tạo tài liệu handoff sang QC |
-| /qc            | qc.md            | Chạy QC test               |
-| /bug           | bug.md           | Route bug report           |
-| /sync-memory   | sync-memory.md   | Cập nhật memory            |
-| /skills        | skills.md        | Bảo trì skills đã cài      |
-| /policy-check  | policy-check.md  | Kiểm tra workflow policy   |
-| /coord         | coord.md         | Gọi coordinator trực tiếp  |
-| /status        | status.md        | Xem workflow và activity dashboard |
-| /resume-task   | resume-task.md   | Tiếp tục task bị gián đoạn |
-
----
-
-## Memory Và Service
-
-Runtime được gom dưới `.runtime` để tách khỏi adapter của từng tool và không lẫn với source service:
+Naming convention:
 
 ```text
-.runtime/context/  ← bộ não bền vững, service contracts, workflow state, model routing, activity dashboard, response UI
-.runtime/tasks/    ← artifact theo task
-.runtime/bugs/     ← bug blocker/non-blocker
-services/         ← workspace rỗng/ignored để clone source service; không cần file scaffold bên trong
+coder-<component-slug>.agent.md
 ```
 
-Agent không đọc toàn bộ memory mỗi lần. Nó đọc `.runtime/context/index.yaml` trước, dùng `project_profile`, service `profile.context_hints`, và task `context_plan`, rồi chỉ mở các file liên quan đến task/service đang xử lý.
+Example:
 
-`/status` hiển thị dashboard từ `.runtime/context/agent-activity.yaml`: agent nào đang chạy, đang làm gì, model profile/model id khi biết, elapsed/ETA, token budget, token usage và cost nếu tool expose metrics. Nếu không có số liệu thật, status phải hiển thị `unknown` hoặc `estimated`, không bịa số chính xác.
+```text
+Detected stack: NestJS + React + PostgreSQL + Redis
 
-Response layout cho Claude/Codex/Cursor/Gemini/Copilot nằm trong `.runtime/context/response-ui.yaml`: compact, concise, dashboard, models, dev, review, policy. File này điều khiển cấu trúc markdown/text và line budget, không điều khiển native panel UI của từng tool.
+Generated:
+  coder-api.agent.md          Backend API service
+  coder-web.agent.md          Frontend React app
+  coder-shared.agent.md       Shared packages
+```
 
-Với tool không expose project slash command, dùng CLI mirror:
+Each coder has `allowed_read_paths`, `allowed_write_paths`, `forbidden_paths`, `test_policy`, and
+escalation rules. Scope expansion requires user approval.
+
+## Rules
+
+Rules under `.maestro/engine/rules/` define workflow constraints and governance:
+
+| Rule | Purpose |
+| --- | --- |
+| R-000 | Read workflow first; do not code before required analysis |
+| R-001 | Project Knowledge is the durable memory source |
+| R-002 | Onboarding scans and records; it does not edit product code |
+| R-003 | Agent creation requires user approval |
+| R-004 | Tasks must be normalized before governed coding |
+| R-005 | Coder Leader owns planning and cross-coder coordination |
+| R-006 | Service coders write only inside approved scope |
+| R-007 | Code Done requires evidence, score, and critical checks |
+| R-008 | QC runs after handoff and stops on blockers |
+| R-009 | Bugs are classified as blocker or non-blocker |
+| R-010 | Memory updates happen only for reusable learnings |
+| R-011 | Approval gates protect risky actions |
+| R-012 | Required artifacts depend on workflow state |
+| R-013 | Secrets and credentials must not be written to artifacts |
+| R-014 | Skills are capabilities, not agent identity |
+| R-015 | Model routing, activity, status, and response UI must not fabricate metrics |
+| R-016 | Specialist advisors are advisory only |
+| R-017 | Hooks enforce scope, secret, and destructive-command guardrails |
+| R-018 | Document precedence defines which source wins conflicts |
+
+## Skills
+
+Workflow skills with the `skill-*` prefix:
+
+| Skill | Purpose |
+| --- | --- |
+| `skill-project-brain` | Manage reusable Project Knowledge memory (legacy skill ID) |
+| `skill-project-onboarding` | Create Project Knowledge from the initial scan |
+| `skill-agent-factory` | Generate component coder agents |
+| `skill-task-analysis` | Normalize requests into task specs |
+| `skill-coder-leader` | Coordinate service coders |
+| `skill-service-coder` | Implement code inside approved scope |
+| `skill-dev-verification` | Assess Code Done readiness |
+| `skill-qc-handoff` | Create QC handoff |
+| `skill-qc-runner` | Run QC and record results |
+| `skill-bug-routing` | Classify and route defects |
+| `skill-memory-update` | Persist reusable learnings |
+| `skill-workflow-policy` | Validate transitions and gates |
+
+Technical skills cover frontend, backend, database, mobile, cloud, testing, security, payments,
+knowledge patches, and language-specific engineering practices.
+
+## Commands
+
+| Command | Purpose |
+| --- | --- |
+| `/coord` | Route a request through the coordinator |
+| `/onboard` | Build or refresh project knowledge |
+| `/analyze-task` | Normalize a request into a task spec |
+| `/create-coders` | Create service coder agents |
+| `/plan-dev` | Create an implementation plan |
+| `/dev` | Implement code |
+| `/verify-dev` | Check Code Done readiness |
+| `/handoff-qc` | Create QC handoff |
+| `/qc` | Run QC tests |
+| `/bug` | Route a bug report |
+| `/sync-memory` | Update durable memory |
+| `/skills` | Maintain installed skills |
+| `/policy-check` | Validate workflow policy |
+| `/status` | Show workflow and agent activity status |
+| `/resume-task` | Resume an interrupted task |
+| `/maestro-init` | Initialize the `.maestro/` control plane in another project |
+| `/access` | Adjust Claude Code tool-permission posture |
+
+## Memory And Registry
+
+The control plane separates data by lifecycle:
+
+```text
+.maestro/registry/          Addresses and capabilities for components, agents, skills, inputs, artifacts
+.maestro/knowledge/         Durable project facts, conventions, architecture, component knowledge
+.maestro/work/              Initiative, epic, task, subtask, bug, and evidence
+.maestro/memory/tasks/      Continuation handoffs and summaries for long tasks
+.maestro/memory/sessions/   Local short-term memory, not committed
+.maestro/runtime/           Local active state, telemetry, cache, reports, not committed
+docs/                  Official product documentation
+```
+
+Agents do not read all memory every time. They read `.maestro/knowledge/index.yaml` first, use project and
+component context hints, then open only the files needed for the active task.
+
+## Task Artifacts
+
+Each task has a folder under `.maestro/work/tasks/`:
+
+```text
+.maestro/work/tasks/<task_id>/        TASK-YYYYMMDD-NNN-slug
+├── task-input.md                Original user input
+├── task.yaml                    Task manifest and artifact paths
+├── task-updates.yaml            Append-only updates
+├── task-analysis.yaml           Normalized task spec
+├── architecture-review.yaml     Architecture gate when required
+├── implementation-plan.yaml     Coder Leader plan
+├── service-assignments.yaml     Coder assignments
+├── coder-results.yaml           Coder outputs
+├── dev-verification.yaml        Code Done evidence
+├── qc-handoff.md                Dev-to-QC handoff
+├── qc-test-results.yaml         QC results
+├── bugs.yaml                    Task-local bug index
+└── memory-updates.yaml          Learnings to persist
+```
+
+## Tool Support
+
+| Tool | Integration |
+| --- | --- |
+| Claude Code | Reads `CLAUDE.md` and `.claude/` |
+| Codex | Reads `.codex/AGENTS.md` and `AGENTS.md` |
+| Cursor | Reads `.cursor/rules/maestro.mdc` and Cursor rules |
+| Gemini | Reads `.gemini/GEMINI.md` |
+| GitHub Copilot | Reads `.github/copilot-instructions.md` |
+| Other agents | Read `AGENTS.md` |
+
+No package or server is required. The framework is a set of Markdown, YAML, and script contracts that
+AI tools read and follow.
+
+## Quick Start
+
+Detailed setup: [SETUP.md](SETUP.md)
+
+Fast usage guide: [GUIDELINES.md](GUIDELINES.md)
+
+Workspace startup: [QUICKSTART.md](QUICKSTART.md)
 
 ```bash
-python3 scripts/status-dashboard.py --mode <compact|concise|dashboard|models|json>
-python3 scripts/status-dashboard.py --mode dashboard --write
-python3 scripts/agent-activity.py start --agent-id coordinator --phase routing --current-action "Classifying request"
-python3 scripts/architecture-health-check.py --strict --write-report
+git clone <repo-url> ~/Downloads/maestro
+cd ~/Downloads/maestro
 ```
 
-`status-dashboard.py --write` tạo `.runtime/status.md` và `.runtime/status.html` từ cùng nguồn dữ liệu status; HTML dùng style `github-readme-card` với tab bar, hero banner, metric cards, và raw status audit block. Đây là artifact đọc lại, không phải source of truth. `agent-activity.py` giúp adapter cập nhật activity/heartbeat mà không bịa token/cost. `architecture-health-check.py` là safety net deterministic cho drift counts/model/UI/entrypoint; nó không thay thế `/policy-check`.
-
-Memory tự động tạo bởi onboarding, duy trì bởi memory-update:
+Then:
 
 ```text
-.runtime/context/
-├── index.yaml                ← Routing index để tránh đọc toàn bộ memory
-├── project-brain.yaml        ← Project memory
-├── architecture.md           ← Architecture/flow notes
-├── conventions.md            ← Coding conventions
-├── common/generics.md        ← Reusable asset index
-├── services/<service>.yaml   ← Per-service brain files
-└── feedback/
-    ├── inbox.md              ← Raw user/team feedback
-    ├── patterns.md           ← Good patterns to reuse
-    └── anti-patterns.md      ← Mistakes to avoid
+1. Configure product key, display name, and component namespace in `.maestro/project.yaml`.
+2. Create or mount components such as `apps/nova-web-app`, `services/nova-auth-service`, and `packages/nova-design-system`.
+3. Register components in `.maestro/registry/components.yaml`.
+4. Put official product documents in `docs/`; put external references in `inputs/`.
+5. Run `/onboard` when durable component knowledge is needed.
+6. Start work through `/coord`.
 ```
 
-Service control plane cũng nằm trong `.runtime/context`, không nằm trong `services/`:
+Example requests:
 
 ```text
-.runtime/context/
-├── service-catalog.yaml      ← service.path, boundaries, coder candidates
-├── agent-registry.yaml       ← Active generated coders
-├── test-policy.yaml          ← Test requirements per service
-└── skill-registry.yaml       ← Skill selection registry
+"Analyze this project"          -> onboarding
+"Implement API /orders"         -> coordinator -> task-analysis -> coder-leader
+"Check if the code is ready"    -> dev-verification
 ```
 
-Khởi tạo memory: `/onboard <service-path>`.
+## File Reference
 
-Sau khi có cập nhật: dùng `/sync-memory --files <paths> --services <service-ids>` cho thay đổi nhỏ, hoặc `/onboard --refresh <service>` khi cấu trúc service/test policy thay đổi.
+| File | Meaning |
+| --- | --- |
+| `CLAUDE.md` | Claude Code entry point |
+| `AGENTS.md` | General AI-agent entry point |
+| `COMMAND.md` | Canonical slash command index |
+| `.maestro/INSTRUCTIONS.md` | Stable `.maestro/` entry |
+| `.maestro/engine/workflow.md` | Workflow source of truth |
+| `.maestro/engine/rules/*.md` | Workflow constraints |
+| `.maestro/engine/templates/*.template.*` | Artifact templates |
+| `.maestro/registry/*.yaml` | Component, agent, skill, input, and artifact routing |
+| `.maestro/knowledge/index.yaml` | Memory routing index |
+| `.maestro/config/model-routing.yaml` | Model profile and override contract |
+| `.maestro/config/response-ui.yaml` | Response layout contract |
+| `.claude/commands/*.md` | Claude slash commands |
+| `.claude/skills/*/SKILL.md` | Skill definitions |
 
----
+## License
 
-## Artifact Theo Task (.runtime/tasks/)
+MIT License. See [LICENSE](LICENSE).
 
-Mỗi task có một folder riêng trong `.runtime/tasks/`. Folder này lưu input, analysis, plan, kết quả verify, QC và memory update của task đó.
-
-```text
-.runtime/tasks/<task_id>/              ← TASK-YYYYMMDD-NNN-slug
-├── task-input.md             ← Nội dung user gửi ban đầu
-├── task.yaml                 ← Manifest của task và đường dẫn artifact
-├── task-updates.yaml         ← Log cập nhật theo thời gian
-├── task-analysis.yaml        ← Task spec đã được chuẩn hóa
-├── architecture-review.yaml  ← Gate kiến trúc khi cần
-├── implementation-plan.yaml  ← Plan của coder-leader
-├── service-assignments.yaml  ← Coder nào xử lý phần nào
-├── coder-results.yaml        ← Kết quả từ các coder
-├── dev-verification.yaml     ← Kết quả đánh giá Code Done
-├── qc-handoff.md             ← Handoff sang QC
-├── qc-test-results.yaml      ← Kết quả QC
-├── bugs.yaml                 ← Index bug của task
-└── memory-updates.yaml       ← Bài học cần lưu lại
-```
-
----
-
-## Ma Trận Hỗ Trợ
-
-### Sẵn sàng theo quy mô
-
-| Quy mô                 | Hỗ trợ        |
-| ---------------------- | ------------- |
-| MVP (< 100 users)      | Phù hợp nếu muốn giữ workflow rõ ràng |
-| Startup (100-1K users) | Phù hợp cho team nhỏ dùng AI hằng ngày |
-| Growth (1K-10K users)  | Phù hợp khi cần kiểm soát scope và QC |
-| Scale (10K+ users)     | Dùng được, nhưng nên tùy chỉnh policy theo team |
-
-### Mức hỗ trợ tech stack
-
-| Nhóm                | Hỗ trợ                                                                                |
-| ------------------- | ------------------------------------------------------------------------------------- |
-| Web (SPA, SSR, SSG) | React, Next.js, Vue, Nuxt, Angular, Svelte, SvelteKit, Astro, HTMX                    |
-| Mobile              | React Native, Expo, Flutter                                                           |
-| Backend API         | NestJS, Express, Fastify, FastAPI, Django, Spring Boot, Gin, Axum, Ruby on Rails, Koa |
-| Database            | PostgreSQL, MySQL, MongoDB, Redis, Elasticsearch, DynamoDB, Supabase                  |
-| ORM                 | Prisma, Drizzle, TypeORM, SQLAlchemy                                                  |
-| Message Queue       | Kafka, RabbitMQ, BullMQ, AWS SQS                                                      |
-| Infrastructure      | Docker, Kubernetes, GitHub Actions, AWS, Azure                                        |
-| Cloud               | AWS (S3, Lambda, DynamoDB, CloudFormation, Cognito), Azure (AKS, Functions, Foundry)  |
-
-### Mức hỗ trợ bảo mật
-
-| Lớp          | Skill                                                       |
-| ------------ | ----------------------------------------------------------- |
-| Architecture | Defense in depth, zero-trust, encryption, STRIDE            |
-| Application  | OWASP Top 10, injection, IDOR, CSRF, SSRF, mass assignment  |
-| API          | GraphQL depth/complexity, rate limiting, OpenAPI validation |
-| Auth         | JWT, OAuth2, RBAC, Better Auth                              |
-| Container    | Image scanning, non-root, read-only FS, supply chain        |
-| Payment      | Stripe, PayPal integration, PCI compliance                  |
-
----
-
-## Điều Kiện Trước Khi Dùng
-
-Trước khi dùng agent-workspace, mở root workspace bằng một AI coding tool có thể đọc instruction files:
-
-| Tool                          | Cách tích hợp                                                                       |
-| ----------------------------- | ----------------------------------------------------------------------------------- |
-| **Claude Code**               | Đọc `CLAUDE.md` và `.claude/`                                                       |
-| **Codex**                     | Đọc `.codex/AGENTS.md` và `AGENTS.md`                                               |
-| **Cursor**                    | Đọc `.cursor/rules/agent-workspace.mdc`                                             |
-| **Gemini**                    | Đọc `.gemini/GEMINI.md`                                                             |
-| **VS Code + GitHub Copilot**  | Đọc `.github/copilot-instructions.md`                                               |
-| **Agent khác**                | Đọc `AGENTS.md`                                                                     |
-
-> Không cần cài package hay server riêng — agent-workspace là tập hợp markdown files mà AI đọc và tuân theo.
-
----
-
-## Bắt Đầu
-
-> Cài đặt chi tiết: **[SETUP.md](SETUP.md)**
-> Cách dùng nhanh: **[GUIDELINES.md](GUIDELINES.md)**
-> Khởi động nhanh workspace: **[QUICKSTART.md](QUICKSTART.md)**
-
-### 1. Thiết lập
-
-```bash
-# Clone workspace
-git clone <repo-url> ~/Downloads/agent-workspace
-cd ~/Downloads/agent-workspace
-```
-
-### 2. Thêm inputs và services
-
-`agent-workspace` là workspace điều phối. Không copy `.claude/` sang từng service repo. Clone service repos vào `services/`, đặt tài liệu tham chiếu vào `inputs/`, rồi chạy onboarding trong workspace này.
-
-```text
-1. Đặt PRD, HLD, ADR, OpenAPI, glossary, runbooks vào `inputs/`.
-2. Clone hoặc đặt application repos vào `services/<service-name>/`.
-3. Mở chính repo `agent-workspace` trong IDE/Claude Code.
-4. Chạy `/coord` hoặc `/onboard`.
-5. Review Project Brain, service catalog, test policy, và coder candidates.
-6. Approve `/create-coders` cho service-specific coder cần thiết.
-7. Bắt đầu task qua `/coord`.
-```
-
-### 3. Ví dụ nhanh
-
-**Khi không có workflow rõ ràng:**
-
-```yaml
-User: "Thêm API tạo order"
-AI:   → Viết code ngay, không hỏi, không phân tích, không test
-      → Có thể sửa cả file không liên quan
-      → Không verify, không QC
-```
-
-**Khi chạy qua agent-workspace:**
-
-```text
-User:          "Thêm API tạo order"
-coordinator:   → đọc Project Brain, route đến task-analysis
-task-analysis: → phân tích impact, risk, acceptance criteria
-               → [chờ user approve]
-coder-leader:  → assign coder-order (chỉ write src/orders/**)
-coder-order:   → implement theo conventions đã ghi trong memory
-dev-verif.:    → check critical checks, test policy, score
-qc-runner:     → chạy test cases, dừng nếu có blocker
-memory-update: → ghi lại bài học cần dùng lần sau
-               → DONE
-```
-
-### 4. Sử dụng
-
-Mở project trong IDE tích hợp Claude và gõ bằng ngôn ngữ tự nhiên:
-
-```text
-"Phân tích dự án này"                    → onboarding
-"Implement API /orders"                  → coordinator → task-analysis → coder-leader
-"Kiểm tra code đã sẵn sàng chưa"        → dev-verification
-```
-
-Hoặc dùng command:
-
-```text
-/onboard                                 → Quét project, tạo brain
-/analyze-task                            → Chuẩn hóa task
-/dev                                     → Implement
-/verify-dev                              → Kiểm tra Code Done
-/qc                                      → Chạy QC
-```
-
-### 5. Workflow tự động
-
-```text
-coordinator → onboarding (nếu project mới)
-           → task-analysis → coder-leader → [service coders]
-           → dev-verification → qc-handoff → qc-runner
-           → memory-update → DONE
-```
-
-> **Lưu ý**: `@` trong Claude Code dùng để reference files, không phải gọi agents.
-
----
-
-## Tham Chiếu File
-
-| File                                 | Mô tả                                                              |
-| ------------------------------------ | ------------------------------------------------------------------ |
-| `CLAUDE.md`                          | **Entry point** — Claude đọc file này đầu tiên, chứa routing logic |
-| `COMMAND.md`                         | **Command index** — danh sách slash commands canonical             |
-| `.claude/agents/{role}.agent.md`     | Định nghĩa từng workflow agent                                     |
-| `.claude/skills/{skill}/SKILL.md`    | Định nghĩa từng skill                                              |
-| `.agent/rules/{nn}-{name}.md`       | Workflow rule và constraint                                        |
-| `.agent/templates/*.template.*`     | Template artifact                                                  |
-| `.claude/commands/*.md`              | Workflow command                                                   |
-| `.agent/docs/visual-flow.md`        | **Sơ đồ trực quan** — sơ đồ workflow bằng SVG                      |
-| `.agent/docs/folder-guide.md`       | Giải thích chi tiết từng folder/file trong `.claude`               |
-| `.agent/docs/deep-onboarding.md`    | Tiêu chuẩn deep onboarding                                         |
-| `.agent/docs/skill-composition.md`  | Tiêu chuẩn skill composition                                       |
-| `.agent/docs/external-skills.md`    | Registry external skills đã cài                                    |
-| `.agent/docs/architecture-guide.md` | **Kiến trúc hệ thống** — layer, data flow, security model          |
-| `.agent/docs/workflow-reference.md` | **Tham chiếu workflow** — state, transition, command, gate         |
-| `.agent/docs/agent-catalog.md`      | **Catalog agent** — 12 workflow agents + generated coders          |
-| `.agent/docs/agent-taxonomy.md`     | **Taxonomy agent** — workflow, built-in coders, generated coders, specialist advisors |
-| `.agent/docs/skill-guide.md`        | **Hướng dẫn skill** — 231 skills, category, composition            |
-| `.agent/docs/skill-catalog.md`      | **Catalog skill** — 231 skills phân loại theo domain (generated)   |
-| `.claude/agents/specialists/README.md` | **Catalog specialist** — 19 advisors, quick-selection theo domain |
-| `.agent/docs/diagrams/*.svg`        | Sơ đồ workflow SVG + legacy full flow                              |
-
----
-
-Framework hiện có 12 workflow agents, 2 built-in cross-cutting coders, 19 specialist advisors, 231 skills, 19 rules, 22 templates và 17 commands. Deterministic guardrails: `scripts/hooks/` (scope/secret/destructive). Cài Claude tool layer qua plugin: xem [PLUGIN.md](PLUGIN.md); `/aw-init` scaffold full flow sang project khác; `/access` đổi tool-permission posture. Doc precedence: [doc-precedence.md](.agent/docs/doc-precedence.md) (R-018).
-
----
-
-## Giấy Phép
-
-MIT License — xem [LICENSE](LICENSE) để biết thêm chi tiết.
-
-Project này là **open framework**. Bạn có thể:
-
-- Dùng trong dự án thương mại
-- Fork và tùy chỉnh cho team
-- Thêm skills/agents riêng
-- Đóng góp ngược lại qua Pull Request
+This is an open framework. You may use it in commercial projects, fork it for a team, add private
+skills or agents, and contribute improvements through pull requests.

@@ -1,114 +1,94 @@
 # Quickstart
 
-Use this when setting up `agent-workspace` as the coordination workspace for one or more service repositories.
+Use `maestro` as the stable root for one product. The root name does not change; product
+identity and component naming come from `.maestro/project.yaml`.
 
-## Read This First
+## 1. Create The Workspace
 
-| Need | Read |
-|---|---|
-| Start a workspace quickly | `QUICKSTART.md` |
-| Slash commands | `COMMAND.md` |
-| Understand the framework | `README.md` |
-| Install/upgrade details | `SETUP.md` |
-| AI-agent entrypoint | `AGENTS.md` |
-| Claude Code entrypoint | `CLAUDE.md` |
-| Workflow source of truth | `.agent/workflow.md` |
-
-## 1. Clone Workspace
+Clone the distribution or run `/maestro-init` in an existing project after installing the plugin:
 
 ```bash
-git clone <repo-url> ~/Downloads/agent-workspace
-cd ~/Downloads/agent-workspace
+git clone <repo-url> maestro
+cd maestro
+
+# Existing project alternative:
+python3 <maestro>/scripts/maestro-init.py --from <maestro> --to . \
+  --project-key nova --project-name "Nova"
 ```
 
-Optional: if you do not want to push or pull the `agent-workspace`
-framework repo itself, detach only the workspace root from Git:
+Initialization preserves existing `CLAUDE.md`, `AGENTS.md`, `.claude/`, and source files. It appends a
+managed instruction block and keeps runtime/session state local.
+
+## 2. Configure Product Identity
+
+Set `.maestro/project.yaml`:
+
+```yaml
+product:
+  id: "nova"
+  key: "nova"
+  display_name: "Nova"
+  status: "configured"
+
+naming:
+  component_namespace: "nova"
+```
+
+## 3. Add Product Components
+
+Create or mount components under the appropriate root:
+
+```text
+apps/nova-web-app/
+services/nova-auth-service/
+services/nova-billing-service/
+packages/nova-design-system/
+infra/nova-platform/
+tests/nova-system-tests/
+```
+
+Register every component in `.maestro/registry/components.yaml`. Components may be folders in one
+monorepo or independent repositories.
+
+## 4. Add Product Documentation
+
+Official artifacts live under `docs/`:
+
+```text
+docs/product/prds/
+docs/requirements/features/
+docs/requirements/user-stories/
+docs/experience/user-flows/
+docs/experience/ui-specifications/
+docs/architecture/high-level-design/
+docs/architecture/low-level-design/
+docs/architecture/decisions/
+docs/quality/
+docs/operations/runbooks/
+```
+
+Put external or uncurated references under `inputs/`; onboarding distills relevant facts into
+`.maestro/knowledge/`.
+
+## 5. Choose Execution Depth
+
+Start through Coordinator:
+
+```text
+/coord <request>
+```
+
+- `direct`: fast, low-risk work; user may own verification when agent access is limited.
+- `assisted`: resumable work with task, progress, verification, and continuation memory.
+- `governed`: high-risk or cross-component work with decomposition, analysis, approvals, and QC.
+
+Large work is decomposed as `Initiative -> Epic -> Task -> Subtask`. When a conversation becomes too
+long, the agent writes a checkpoint and continuation handoff before starting a new session.
+
+## 6. Verify The Workspace
 
 ```bash
-scripts/remove-workspace-git.sh
-```
-
-This keeps Git metadata inside `services/<service-name>/` untouched, so service
-repos can still be committed and pushed normally.
-
-## 2. Add Project Inputs
-
-Put reference docs under `inputs/`:
-
-```text
-inputs/product/       PRD, user stories
-inputs/architecture/  HLD, LLD, ADRs
-inputs/api/           OpenAPI, Swagger, contracts
-inputs/domain/        Glossary, business rules
-inputs/runbooks/      Ops playbooks
-```
-
-## 3. Clone Services
-
-Clone or place application repositories under `services/`:
-
-```bash
-git clone <api-repo-url> services/api
-git clone <web-repo-url> services/web
-git clone <worker-repo-url> services/worker
-```
-
-`services/` can be empty in the framework template. No placeholder files are required inside it; each cloned service repository keeps its own Git metadata.
-
-## 4. Onboard
-
-Open `agent-workspace` in your AI coding environment and start through Coordinator:
-
-```text
-/coord
-```
-
-or:
-
-```text
-/onboard
-```
-
-Review the generated project brain, service catalog, test policy, and coder candidates.
-
-## 5. Approve Coders
-
-Approve only the service coders you want generated:
-
-```text
-/create-coders
-```
-
-Built-in coders are already available:
-
-- `coder-infra` for Terraform/IaC, Kubernetes, Docker, CI/CD.
-- `coder-database` for schema, migrations, queries, indexes.
-
-## 6. Run Work
-
-Start all implementation requests through Coordinator:
-
-```text
-/coord Implement <task>
-```
-
-Expected flow:
-
-```text
-coordinator
-→ task-analysis
-→ coder-leader
-→ scoped coder(s)
-→ dev-verification
-→ qc-handoff
-→ qc-runner
-→ memory-update
-```
-
-Check status and model routing from any terminal:
-
-```bash
-python3 scripts/status-dashboard.py --mode <compact|concise|dashboard|models|json>
-python3 scripts/status-dashboard.py --mode dashboard --write
+python3 scripts/build-skill-catalog.py --check
+python3 scripts/status-dashboard.py --mode dashboard
 python3 scripts/architecture-health-check.py --strict
 ```

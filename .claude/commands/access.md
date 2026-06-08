@@ -31,7 +31,7 @@ allowlist works for all users (including root) and keeps the hooks active.
 2. The script writes:
    - .claude/settings.json  permissions.allow  (grants Bash + file tools for full, removed for guarded;
      also strips any unsafe legacy permissions.defaultMode=bypassPermissions)
-   - .runtime/context/workflow-state.yaml  access_mode  (for /status visibility)
+   - .maestro/runtime/workflow-state.yaml  access_mode  (for /status visibility)
 3. A permission-mode change applies to NEW sessions; for the current session use the harness
    permission UI (Shift+Tab) if immediate effect is needed.
 ```
@@ -40,7 +40,7 @@ allowlist works for all users (including root) and keeps the hooks active.
 
 ```text
 - Workflow approval gates (R-011): create coders, Task Analysis -> Coder Leader, skip QC,
-  downgrade blocker, expand scope, switch distribution_mode — the agent still ASKS for each.
+  downgrade blocker, expand scope, workflow policy/state-machine changes — the agent still ASKS for each.
 - scope-guard / secret-guard / destructive-guard hooks — still block (R-006, R-013, R-011-07).
 - Production deployment and irreversible data actions — still require explicit user approval.
 ```

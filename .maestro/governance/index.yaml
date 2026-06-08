@@ -1,0 +1,18 @@
+schema_version: "1.0"
+role: "governance-index"
+
+official_docs:
+  root: "docs/governance"
+  methodologies: "docs/governance/methodologies"
+  enterprise_agent_governance: "docs/governance/enterprise-agent-governance"
+
+domains:
+  agents:
+    root: ".maestro/governance/agents"
+    purpose: "Production-agent ownership, lifecycle, and contract indexes."
+  approvals:
+    root: ".maestro/governance/approvals"
+    purpose: "Approval decisions and gate references."
+  risk:
+    root: ".maestro/governance/risk"
+    purpose: "Risk classification, escalation, and exception indexes."

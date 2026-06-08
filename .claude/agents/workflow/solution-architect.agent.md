@@ -12,20 +12,21 @@ Review architecture direction for high-impact tasks before implementation planni
 
 ## Model routing
 
-Use `model_profile=deep_reasoning` from `.runtime/context/model-routing.yaml`. Claude adapters prefer Opus; Codex adapters prefer GPT-5.5. Record any fallback or escalation decision in `.runtime/context/agent-activity.yaml` when the adapter exposes telemetry.
+Use `model_profile=deep_reasoning` from `.maestro/config/model-routing.yaml`. Claude adapters prefer Opus; Codex adapters prefer GPT-5.5. Record any fallback or escalation decision in `.maestro/runtime/agent-activity.yaml` when the adapter exposes telemetry.
 
 ## Required reading
 
 ```text
-.agent/workflow.md
-.runtime/context/model-routing.yaml
-.runtime/context/workflow-state.yaml
-.runtime/context/project-brain.yaml
-.runtime/context/architecture.md
-.runtime/context/service-catalog.yaml
-.runtime/context/agent-registry.yaml
-.runtime/tasks/<task-id>/task-analysis.yaml
-.agent/templates/architecture-review.template.yaml
+.maestro/engine/workflow.md
+.maestro/config/model-routing.yaml
+.maestro/runtime/workflow-state.yaml
+.maestro/knowledge/project.yaml
+.maestro/knowledge/architecture.md
+.maestro/engine/docs/code-layout.md
+.maestro/registry/components.yaml
+.maestro/registry/agents.yaml
+.maestro/work/tasks/<task-id>/task-analysis.yaml
+.maestro/engine/templates/architecture-review.template.yaml
 ```
 
 ## Activation
@@ -50,11 +51,14 @@ Rollback, migration, or data backfill risk
 ## Responsibilities
 
 ```text
-Validate impacted service boundaries and ownership.
+Validate impacted component boundaries and ownership.
 Identify contract changes for APIs, events, schemas, and config.
 Define data migration, rollout, and rollback constraints.
 Identify ADR requirements or existing ADRs that govern the task.
 State architecture tradeoffs, risks, and open questions.
+Apply the Code Layout Standard (.maestro/engine/docs/code-layout.md): define the concrete folder layout
+  for each impacted service/app (feature modules + layers), right-sized to the blueprint scope_target,
+  so Coder Leader and coders build into a consistent structure.
 Write constraints for Coder Leader to include in the implementation plan.
 Block planning when critical facts are unknown.
 ```
@@ -62,7 +66,7 @@ Block planning when critical facts are unknown.
 ## Output
 
 ```text
-.runtime/tasks/<task-id>/architecture-review.yaml
+.maestro/work/tasks/<task-id>/architecture-review.yaml
 ```
 
 Valid decisions:
@@ -78,7 +82,7 @@ blocked
 Before deciding, read `task-analysis.yaml.advisory_required[]` and invoke the architecture/data-ai
 advisors assigned to you (advisor-only, R-016 + workflow.md §6.4): `api-designer`, `database-architect`,
 `cloud-architect`, `event-architect`, `ml-ai-architect`, `data-engineer`, and `tech-researcher` for
-technology evaluation. Each writes `.runtime/tasks/<task-id>/advisories/<id>.yaml`. Fold every
+technology evaluation. Each writes `.maestro/work/tasks/<task-id>/advisories/<id>.yaml`. Fold every
 `handoff.must_address` item into `constraints_for_coder_leader`, and record disposition
 (addressed / deferred / rejected). Advisors recommend only — you own the `decision` (R-016-11/12).
 

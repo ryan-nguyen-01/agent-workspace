@@ -1,17 +1,17 @@
 {
-  "name": "agent-workspace",
+  "name": "maestro",
   "owner": {
-    "name": "agent-workspace"
+    "name": "maestro"
   },
   "metadata": {
-    "description": "agent-workspace framework — Claude tool layer.",
+    "description": "maestro framework — Claude tool layer.",
     "version": "1.8.0"
   },
   "plugins": [
     {
-      "name": "agent-workspace",
+      "name": "maestro",
       "source": "./",
-      "description": "Agents, skills, commands, and enforcement hooks for the agent-workspace workflow."
+      "description": "Agents, skills, commands, and enforcement hooks for the maestro workflow."
     }
   ]
 }

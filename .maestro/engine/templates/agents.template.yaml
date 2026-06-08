@@ -1,0 +1,212 @@
+version: 1
+project: "{{PROJECT_NAME}}"
+generated_at: "{{GENERATED_AT}}"
+source: ".maestro/knowledge/project.yaml"
+status: "candidate|active|disabled"
+
+agents:
+  # Built-in cross-cutting coders shipped with maestro.
+  # These are not generated from workspace onboarding.
+  - id: "coder-infra"
+    type: "cross-cutting-coder"
+    origin: "built-in"
+    scope_class: "cross-cutting"
+    model_profile: "coding"
+    model_routing_source: ".maestro/config/model-routing.yaml"
+    requires_project_onboarding: false
+    status: "active"
+    service_id: "_infra"
+    service_name: "Infrastructure (cross-cutting)"
+    agent_file: ".claude/agents/coders/coder-infra.agent.md"
+    scope_file: null
+    approval:
+      required: false
+      approved_by: "framework"
+      approved_at: "{{GENERATED_AT}}"
+    permissions:
+      allowed_read_paths:
+        - "**/*"
+      allowed_write_paths:
+        - "terraform/**"
+        - "infra/**"
+        - "iac/**"
+        - "modules/**"
+        - "environments/**"
+        - "**/*.tf"
+        - "**/*.tfvars"
+        - "**/.terraform.lock.hcl"
+        - "k8s/**"
+        - "kubernetes/**"
+        - "helm/**"
+        - "charts/**"
+        - "**/*.k8s.yaml"
+        - "**/kustomization.yaml"
+        - "**/Dockerfile"
+        - "**/Dockerfile.*"
+        - "**/docker-compose.yml"
+        - "**/docker-compose.*.yml"
+        - "**/.dockerignore"
+        - ".github/workflows/**"
+        - ".gitlab-ci.yml"
+        - ".circleci/**"
+        - "ci/**"
+        - "Jenkinsfile"
+        - "azure-pipelines.yml"
+      forbidden_paths:
+        - "src/**"
+        - "app/**"
+        - "services/*/src/**"
+        - "services/*/app/**"
+        - "packages/*/src/**"
+        - "apps/*/src/**"
+        - "db/**"
+        - "**/migrations/**"
+        - "schema/**"
+        - "**/schema.prisma"
+        - "alembic/**"
+        - "sql/**"
+        - "**/.env"
+        - "**/.env.*"
+        - "**/secrets/**"
+        - "**/*.pem"
+        - "**/*.key"
+        - ".claude/**"
+        - ".maestro/engine/**"
+        - ".maestro/**"
+        - ".codex/**"
+        - ".cursor/**"
+        - ".gemini/**"
+        - ".github/copilot-instructions.md"
+        - "inputs/**"
+      requires_leader_approval:
+        - "production environment changes"
+        - "destructive Terraform operations (destroy, taint, force-replace)"
+        - "IAM policy that grants * or wildcard resource"
+        - "new external service integration (new cloud provider, new SaaS)"
+        - "expanding allowed_write_paths beyond this contract"
+    test_policy:
+      unit_tests_required: false
+      allow_new_test_files: false
+      manual_verification_required: true
+      dev_done_threshold: 0.80
+    handoff_required: true
+
+  - id: "coder-database"
+    type: "cross-cutting-coder"
+    origin: "built-in"
+    scope_class: "cross-cutting"
+    model_profile: "coding"
+    model_routing_source: ".maestro/config/model-routing.yaml"
+    requires_project_onboarding: false
+    status: "active"
+    service_id: "_database"
+    service_name: "Database (cross-cutting)"
+    agent_file: ".claude/agents/coders/coder-database.agent.md"
+    scope_file: null
+    approval:
+      required: false
+      approved_by: "framework"
+      approved_at: "{{GENERATED_AT}}"
+    permissions:
+      allowed_read_paths:
+        - "**/*"
+      allowed_write_paths:
+        - "db/**"
+        - "database/**"
+        - "databases/**"
+        - "schema/**"
+        - "schemas/**"
+        - "sql/**"
+        - "queries/**"
+        - "**/migrations/**"
+        - "**/migrate/**"
+        - "**/alembic/**"
+        - "alembic/**"
+        - "flyway/**"
+        - "liquibase/**"
+        - "**/schema.prisma"
+        - "**/prisma/**"
+        - "**/drizzle/**"
+        - "**/knexfile.*"
+        - "**/sequelize/**"
+        - "**/typeorm/**"
+        - "**/db/schema/**"
+        - "**/database/schema/**"
+        - "**/db/**/tests/**"
+        - "**/database/**/tests/**"
+        - "**/sql/**/tests/**"
+        - "**/fixtures/db/**"
+      forbidden_paths:
+        - "src/api/**"
+        - "src/controllers/**"
+        - "src/routes/**"
+        - "src/pages/**"
+        - "src/components/**"
+        - "app/**"
+        - "frontend/**"
+        - "services/*/src/api/**"
+        - "services/*/src/controllers/**"
+        - "packages/*/src/ui/**"
+        - "apps/*/src/**"
+        - "terraform/**"
+        - "infra/**"
+        - "iac/**"
+        - "k8s/**"
+        - "kubernetes/**"
+        - "helm/**"
+        - "charts/**"
+        - "**/Dockerfile"
+        - "**/docker-compose*.yml"
+        - ".github/workflows/**"
+        - "**/.env"
+        - "**/.env.*"
+        - "**/secrets/**"
+        - "**/*.pem"
+        - "**/*.key"
+        - ".claude/**"
+        - ".maestro/engine/**"
+        - ".maestro/**"
+        - ".codex/**"
+        - ".cursor/**"
+        - ".gemini/**"
+        - ".github/copilot-instructions.md"
+        - "inputs/**"
+      requires_leader_approval:
+        - "destructive migration (drop table, drop column, truncate, irreversible data rewrite)"
+        - "production data backfill or long-running migration"
+        - "schema change that breaks an existing API/application contract"
+        - "new database engine, external datastore, or managed database service"
+        - "expanding allowed_write_paths beyond this contract"
+    test_policy:
+      unit_tests_required: false
+      allow_new_test_files: false
+      manual_verification_required: true
+      dev_done_threshold: 0.80
+    handoff_required: true
+
+  # Generated service coder created after workspace onboarding and user approval.
+  - id: "coder-{{SERVICE_SLUG}}"
+    type: "service-coder"
+    origin: "generated"
+    model_profile: "coding"
+    model_routing_source: ".maestro/config/model-routing.yaml"
+    status: "candidate|active|disabled"
+    service_id: "{{SERVICE_ID}}"
+    service_name: "{{SERVICE_NAME}}"
+    agent_file: ".claude/agents/coders/coder-{{SERVICE_SLUG}}.agent.md"
+    scope_file: ".maestro/knowledge/components/{{SERVICE_ID}}.yaml"
+    approval:
+      required: true
+      approved_by: "{{APPROVED_BY}}"
+      approved_at: "{{APPROVED_AT}}"
+    permissions:
+      allowed_read_paths: []
+      allowed_write_paths: []
+      forbidden_paths: []
+      requires_leader_approval: []
+    test_policy:
+      unit_tests_required: false
+      allow_new_test_files: false
+      manual_verification_required: true
+      dev_done_threshold: 0.80
+    handoff_required: true

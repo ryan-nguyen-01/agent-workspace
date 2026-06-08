@@ -1,4 +1,4 @@
-# Codex CLI project-level configuration for agent-workspace.
+# Codex CLI project-level configuration for maestro.
 # Schema verified against https://developers.openai.com/codex/config-reference.
 #
 # IMPORTANT: project-level config (.codex/config.toml) is loaded ONLY when the
@@ -17,13 +17,13 @@ project_doc_fallback_filenames = [
   ".codex/AGENTS.md",
   "CLAUDE.md",
   "COMMAND.md",
-  ".agent/workflow.md",
+  ".maestro/engine/workflow.md",
 ]
 
 # Files that signal "this is a project root" when Codex walks parent directories.
 project_root_markers = [
   "AGENTS.md",
-  ".agent/workflow.md",
+  ".maestro/engine/workflow.md",
 ]
 
 # Cap project doc read size to avoid blowing context on giant AGENTS.md.
@@ -33,16 +33,22 @@ project_doc_max_bytes = 65536
 # workspace-write is policy support, not the final service write-scope gate.
 # Codex may still treat the trusted repository root as writable depending on
 # the active user config and CLI version. Service-level write scope remains
-# enforced by AGENTS.md, .codex/AGENTS.md, and .runtime/context/agent-registry.yaml.
+# enforced by AGENTS.md, .codex/AGENTS.md, and .maestro/registry/agents.yaml.
 sandbox_mode = "workspace-write"
 
 [sandbox_workspace_write]
 # Intended workspace-level writable roots. Application source under
 # services/<repo>/ is intentionally not listed here; generated coders manage
-# their own scopes via .runtime/context/agent-registry.yaml.
+# their own scopes via .maestro/registry/agents.yaml.
 writable_roots = [
-  ".runtime",
+  ".maestro",
+  "docs",
   "inputs",
+  "apps",
+  "services",
+  "packages",
+  "infra",
+  "tests",
 ]
 # Outbound network requires explicit approval per session.
 network_access = false
@@ -58,7 +64,7 @@ persistence = "save-all"
 max_bytes = 10485760   # 10 MB
 
 # ── Web search ───────────────────────────────────────────────────────────────
-# Off by default. Workflow agents pull from .runtime/context/ and inputs/, not
+# Off by default. Workflow agents pull from .maestro/ indexes and inputs/, not
 # the open web. Enable per-session if a task needs it.
 web_search = "disabled"
 

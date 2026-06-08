@@ -20,22 +20,27 @@ from typing import Any
 
 
 ROOT = Path(__file__).resolve().parents[1]
-CONTEXT = ROOT / ".runtime" / "context"
-REPORT_JSON = ROOT / ".runtime" / "architecture-health-report.json"
-REPORT_MD = ROOT / ".runtime" / "architecture-health-report.md"
+ENGINE = ROOT / ".maestro" / "engine"
+KNOWLEDGE = ROOT / ".maestro" / "knowledge"
+REGISTRY = ROOT / ".maestro" / "registry"
+CONFIG = ROOT / ".maestro" / "config"
+RUNTIME = ROOT / ".maestro" / "runtime"
+WORK = ROOT / ".maestro" / "work"
+REPORT_JSON = RUNTIME / "reports" / "architecture-health-report.json"
+REPORT_MD = RUNTIME / "reports" / "architecture-health-report.md"
 
 EXPECTED_COUNTS = {
-    "agents": 33,
+    "agents": 34,
     "skills": 231,
-    "rules": 19,
-    "templates": 22,
-    "commands": 17,
+    "rules": 21,
+    "templates": 58,
+    "commands": 19,
 }
 
-# Framework-owned agents: 12 workflow + 19 specialist advisors + 2 built-in coders.
+# Framework-owned agents: 12 workflow + 19 specialist advisors + 3 built-in coders.
 # Generated service coders (coders/coder-<svc>.agent.md) are intentionally excluded so
 # this count stays stable in applied workspaces.
-BUILT_IN_CODERS = {"coder-infra", "coder-database"}
+BUILT_IN_CODERS = {"coder-infra", "coder-database", "coder-data"}
 EXPECTED_SPECIALIST_COUNT = 19
 SPECIALIST_CATEGORIES = {
     "architecture",
@@ -84,10 +89,13 @@ EXPECTED_RESPONSE_MODES = {
 
 EXPECTED_STATUS_JSON_KEYS = {
     "workflow_state",
-    "distribution_mode",
-    "instance_status",
+    "execution_mode",
+    "verification_owner",
+    "active_run_id",
+    "active_runs",
+    "project_knowledge",
     "project_brain",
-    "services_detected",
+    "components_detected",
     "active_coder_agents",
     "response_ui",
     "agent_model_profiles",
@@ -98,53 +106,81 @@ REQUIRED_PATHS = [
     "AGENTS.md",
     "CLAUDE.md",
     "COMMAND.md",
-    ".agent/workflow.md",
-    ".agent/rules/15-model-routing-observability-rules.md",
-    ".runtime/context/workflow-state.yaml",
-    ".runtime/context/model-routing.yaml",
-    ".runtime/context/agent-activity.yaml",
-    ".runtime/context/response-ui.yaml",
+    ".maestro/engine/workflow.md",
+    ".maestro/engine/rules/15-model-routing-observability-rules.md",
+    ".maestro/project.yaml",
+    ".maestro/methodology.yaml",
+    ".maestro/manifest.yaml",
+    ".maestro/observability/index.yaml",
+    ".maestro/governance/index.yaml",
+    ".maestro/registry/components.yaml",
+    ".maestro/registry/skills.yaml",
+    ".maestro/registry/artifacts.yaml",
+    ".maestro/knowledge/project.yaml",
+    ".maestro/work/index.yaml",
+    ".maestro/design/index.yaml",
+    ".maestro/decision/index.yaml",
+    ".maestro/engine/templates/workflow-state.template.yaml",
+    ".maestro/engine/templates/run.template.yaml",
+    ".maestro/engine/templates/trace-summary.template.yaml",
+    ".maestro/engine/templates/eval-run.template.yaml",
+    ".maestro/engine/templates/approval-record.template.yaml",
+    ".maestro/engine/templates/audit-view.template.md",
+    ".maestro/config/model-routing.yaml",
+    ".maestro/engine/templates/agent-activity.template.yaml",
+    ".maestro/engine/templates/active-context.template.yaml",
+    ".maestro/config/response-ui.yaml",
+    ".maestro/INSTRUCTIONS.md",
+    ".maestro/runtime/README.md",
+    ".maestro/work/runs/index.yaml",
     "scripts/status-dashboard.py",
     "scripts/agent-activity.py",
+    "scripts/agent-run.py",
     "scripts/architecture-health-check.py",
+    "docs/README.md",
+    "apps/README.md",
+    "services/README.md",
+    "packages/README.md",
+    "infra/README.md",
+    "tests/README.md",
 ]
 
 ENTRYPOINT_REQUIREMENTS = {
     "AGENTS.md": [
-        ".runtime/context/model-routing.yaml",
-        ".runtime/context/agent-activity.yaml",
-        ".runtime/context/response-ui.yaml",
+        ".maestro/config/model-routing.yaml",
+        ".maestro/runtime/agent-activity.yaml",
+        ".maestro/config/response-ui.yaml",
         "scripts/status-dashboard.py",
         "R-015-01..22",
     ],
     "CLAUDE.md": [
-        ".runtime/context/model-routing.yaml",
-        ".runtime/context/agent-activity.yaml",
-        ".runtime/context/response-ui.yaml",
+        ".maestro/config/model-routing.yaml",
+        ".maestro/runtime/agent-activity.yaml",
+        ".maestro/config/response-ui.yaml",
         "scripts/status-dashboard.py",
     ],
     ".codex/AGENTS.md": [
-        ".runtime/context/model-routing.yaml",
-        ".runtime/context/agent-activity.yaml",
-        ".runtime/context/response-ui.yaml",
+        ".maestro/config/model-routing.yaml",
+        ".maestro/runtime/agent-activity.yaml",
+        ".maestro/config/response-ui.yaml",
         "scripts/status-dashboard.py",
     ],
-    ".cursor/rules/agent-workspace.mdc": [
-        ".runtime/context/model-routing.yaml",
-        ".runtime/context/agent-activity.yaml",
-        ".runtime/context/response-ui.yaml",
+    ".cursor/rules/maestro.mdc": [
+        ".maestro/config/model-routing.yaml",
+        ".maestro/runtime/agent-activity.yaml",
+        ".maestro/config/response-ui.yaml",
         "scripts/status-dashboard.py",
     ],
     ".github/copilot-instructions.md": [
-        ".runtime/context/model-routing.yaml",
-        ".runtime/context/agent-activity.yaml",
-        ".runtime/context/response-ui.yaml",
+        ".maestro/config/model-routing.yaml",
+        ".maestro/runtime/agent-activity.yaml",
+        ".maestro/config/response-ui.yaml",
         "scripts/status-dashboard.py",
     ],
     ".gemini/GEMINI.md": [
-        ".runtime/context/model-routing.yaml",
-        ".runtime/context/agent-activity.yaml",
-        ".runtime/context/response-ui.yaml",
+        ".maestro/config/model-routing.yaml",
+        ".maestro/runtime/agent-activity.yaml",
+        ".maestro/config/response-ui.yaml",
         "scripts/status-dashboard.py",
     ],
 }
@@ -157,18 +193,14 @@ STALE_TEXT_PATTERNS = [
     re.compile(r"workflow-policy-check\.py"),
 ]
 
-SERVICES_PLACEHOLDER_FILE_REFERENCES = [
-    "services/README.md",
-    "services/.gitignore",
-]
-
 SERVICE_POLICY_DOCS = [
     "AGENTS.md",
     "README.md",
     "SETUP.md",
     "QUICKSTART.md",
     "GUIDELINES.md",
-    ".runtime/context/_README.md",
+    ".maestro/README.md",
+    "services/README.md",
 ]
 
 SECRET_PATTERNS = [
@@ -221,8 +253,8 @@ def count_files() -> dict[str, int]:
     return {
         "agents": count_framework_agents(),
         "skills": len(list((ROOT / ".claude" / "skills").rglob("SKILL.md"))),
-        "rules": len([p for p in (ROOT / ".agent" / "rules").glob("*.md") if p.name != "README.md"]),
-        "templates": len([p for p in (ROOT / ".agent" / "templates").iterdir() if p.is_file()]),
+        "rules": len([p for p in (ENGINE / "rules").glob("*.md") if p.name != "README.md"]),
+        "templates": len([p for p in (ENGINE / "templates").iterdir() if p.is_file()]),
         "commands": len([p for p in (ROOT / ".claude" / "commands").glob("*.md") if p.name != "README.md"]),
     }
 
@@ -280,7 +312,7 @@ def check_stale_text(findings: list[dict[str, str]]) -> None:
 
 
 def check_model_routing(findings: list[dict[str, str]]) -> None:
-    routing = load_yaml(CONTEXT / "model-routing.yaml")
+    routing = load_yaml(CONFIG / "model-routing.yaml")
     profiles = routing.get("model_profiles", {})
     if not isinstance(profiles, dict):
         add(findings, "error", "model-routing-invalid", "model_profiles is missing or not a map", "model-routing.yaml")
@@ -311,7 +343,7 @@ def check_model_routing(findings: list[dict[str, str]]) -> None:
             add(findings, "error", "agent-profile-invalid", f"{agent_id} uses unknown model_profile {profile}", "model-routing.yaml")
 
     built_in = agent_map.get("built_in_coders", {}) if isinstance(agent_map, dict) else {}
-    for coder in ("coder-infra", "coder-database"):
+    for coder in ("coder-infra", "coder-database", "coder-data"):
         cfg = built_in.get(coder) if isinstance(built_in, dict) else None
         profile = cfg.get("model_profile") if isinstance(cfg, dict) else None
         if profile not in profile_names:
@@ -341,8 +373,8 @@ def model_profile_map(agent_map: dict[str, Any], group_name: str) -> dict[str, s
 
 
 def check_model_routing_template(findings: list[dict[str, str]]) -> None:
-    runtime = load_yaml(CONTEXT / "model-routing.yaml")
-    template = load_yaml(ROOT / ".agent" / "templates" / "model-routing.template.yaml")
+    runtime = load_yaml(CONFIG / "model-routing.yaml")
+    template = load_yaml(ENGINE / "templates" / "model-routing.template.yaml")
     runtime_map = runtime.get("agent_model_map", {})
     template_map = template.get("agent_model_map", {})
     if not isinstance(runtime_map, dict) or not isinstance(template_map, dict):
@@ -451,7 +483,7 @@ def check_model_overrides(
                 check_override_reason(findings, "provider-override-reason-missing", cfg, f"{provider}.{provider_profile}", reason_required)
 
     agent_overrides = overrides.get("agent_overrides", {})
-    known_agent_ids = EXPECTED_WORKFLOW_AGENTS | {"coder-infra", "coder-database", "generated-service-coders"}
+    known_agent_ids = EXPECTED_WORKFLOW_AGENTS | {"coder-infra", "coder-database", "coder-data", "generated-service-coders"}
     if not isinstance(agent_overrides, dict):
         add(findings, "error", "agent-overrides-invalid", "agent_overrides must be a map", "model-routing.yaml")
     else:
@@ -498,7 +530,7 @@ def check_model_overrides(
 
 
 def check_response_ui(findings: list[dict[str, str]]) -> None:
-    response_ui = load_yaml(CONTEXT / "response-ui.yaml")
+    response_ui = load_yaml(CONFIG / "response-ui.yaml")
     modes = response_ui.get("modes", {})
     if not isinstance(modes, dict):
         add(findings, "error", "response-ui-invalid", "modes is missing or not a map", "response-ui.yaml")
@@ -527,10 +559,10 @@ def check_status_dashboard(findings: list[dict[str, str]]) -> None:
         except Exception as exc:  # noqa: BLE001 - surface exact smoke-test failure.
             add(findings, "error", "status-render-failed", f"status-dashboard render failed for {mode}: {exc}", "status-dashboard.py")
             continue
-        if "Agent Workspace Status" not in rendered and mode != "compact":
+        if "Maestro Status" not in rendered and mode != "compact":
             add(findings, "error", "status-render-invalid", f"status-dashboard output for {mode} is missing title", "status-dashboard.py")
         if mode == "dashboard":
-            required_fragments = ["Project Brain", "freshness:", "Response UI", "selected mode:"]
+            required_fragments = ["Project Knowledge", "freshness:", "Response UI", "selected mode:"]
             missing = [fragment for fragment in required_fragments if fragment not in rendered]
             if missing:
                 add(
@@ -548,12 +580,12 @@ def check_status_dashboard(findings: list[dict[str, str]]) -> None:
         response_ui = data.get("response_ui")
         if not isinstance(response_ui, dict) or not response_ui.get("selected_mode"):
             add(findings, "error", "status-json-response-ui-drift", "status json missing response_ui.selected_mode", "status-dashboard.py")
-        if data.get("project_brain") not in {"fresh", "stale", "missing", "template-seed", "unknown"}:
+        if data.get("project_brain") not in {"fresh", "stale", "missing", "unknown"}:
             add(findings, "error", "status-json-brain-drift", f"status json has invalid project_brain value: {data.get('project_brain')}", "status-dashboard.py")
     except Exception as exc:  # noqa: BLE001
         add(findings, "error", "status-json-invalid", f"status-dashboard json mode failed: {exc}", "status-dashboard.py")
 
-    response_ui = load_yaml(CONTEXT / "response-ui.yaml")
+    response_ui = load_yaml(CONFIG / "response-ui.yaml")
     artifacts = response_ui.get("status_artifacts", {}) if isinstance(response_ui, dict) else {}
     html_style = artifacts.get("html_style") if isinstance(artifacts, dict) else None
     for key in ("markdown", "html"):
@@ -561,9 +593,7 @@ def check_status_dashboard(findings: list[dict[str, str]]) -> None:
         if not raw:
             continue
         path = ROOT / str(raw)
-        if not path.exists():
-            add(findings, "error", "generated-status-missing", f"Generated status artifact missing: {raw}", str(raw))
-        else:
+        if path.exists():
             text = path.read_text(encoding="utf-8", errors="ignore")
             if "Generated at:" not in text:
                 add(findings, "error", "generated-status-stale-format", f"Generated status artifact lacks Generated at marker: {raw}", str(raw))
@@ -572,37 +602,32 @@ def check_status_dashboard(findings: list[dict[str, str]]) -> None:
 
 
 def check_services_workspace_policy(findings: list[dict[str, str]]) -> None:
-    combined_docs: list[str] = []
-    for raw in SERVICE_POLICY_DOCS:
-        path = ROOT / raw
-        if not path.exists():
-            continue
-        text = path.read_text(encoding="utf-8", errors="ignore")
-        combined_docs.append(text.lower())
-        for forbidden in SERVICES_PLACEHOLDER_FILE_REFERENCES:
-            if forbidden.lower() in text.lower():
-                add(
-                    findings,
-                    "error",
-                    "services-placeholder-doc-drift",
-                    f"{raw} references deprecated services placeholder file {forbidden}",
-                    raw,
-                )
-
-    combined = "\n".join(combined_docs)
-    policy_markers = [
-        "no placeholder files are required",
-        "không cần file scaffold",
-        "may be empty in framework-template mode",
-    ]
-    if not any(marker in combined for marker in policy_markers):
+    registry = load_yaml(REGISTRY / "components.yaml")
+    discovery = registry.get("discovery", {}) if isinstance(registry, dict) else {}
+    scan_roots = discovery.get("scan_roots", []) if isinstance(discovery, dict) else []
+    registered_roots = {
+        str(item.get("path"))
+        for item in scan_roots
+        if isinstance(item, dict) and item.get("path")
+    }
+    required_roots = {"apps", "services", "packages", "infra", "tests"}
+    if registered_roots != required_roots:
         add(
             findings,
             "error",
-            "services-empty-policy-missing",
-            "Docs must state that services/ may be empty and does not require placeholder files in framework-template mode",
-            "README.md/QUICKSTART.md/GUIDELINES.md",
+            "component-roots-drift",
+            f"components.yaml scan roots must be {sorted(required_roots)}, got {sorted(registered_roots)}",
+            ".maestro/registry/components.yaml",
         )
+    for root_name in required_roots:
+        if not (ROOT / root_name / "README.md").is_file():
+            add(
+                findings,
+                "error",
+                "component-root-missing",
+                f"Missing component root documentation: {root_name}/README.md",
+                root_name,
+            )
 
 
 def collect_task_bug_refs(value: Any) -> list[Any]:
@@ -654,22 +679,22 @@ def canonical_bug_path(ref: Any) -> Path | None:
     severity = (bug_ref_field(ref, "severity") or "").lower()
     candidate_dirs: list[Path]
     if severity == "blocker":
-        candidate_dirs = [ROOT / ".runtime" / "bugs" / "blockers"]
+        candidate_dirs = [WORK / "bugs" / "blockers"]
     elif severity in {"non-blocker", "non_blocker", "nonblocker"}:
-        candidate_dirs = [ROOT / ".runtime" / "bugs" / "non-blockers"]
+        candidate_dirs = [WORK / "bugs" / "non-blockers"]
     else:
-        candidate_dirs = [ROOT / ".runtime" / "bugs" / "blockers", ROOT / ".runtime" / "bugs" / "non-blockers"]
+        candidate_dirs = [WORK / "bugs" / "blockers", WORK / "bugs" / "non-blockers"]
 
     for directory in candidate_dirs:
         candidate = directory / f"{bug_id}.yaml"
         if candidate.exists():
             return candidate
-    matches = list((ROOT / ".runtime" / "bugs").glob(f"**/{bug_id}.yaml"))
+    matches = list((WORK / "bugs").glob(f"**/{bug_id}.yaml"))
     return matches[0] if matches else candidate_dirs[0] / f"{bug_id}.yaml"
 
 
 def check_bug_artifact_integrity(findings: list[dict[str, str]]) -> None:
-    tasks_root = ROOT / ".runtime" / "tasks"
+    tasks_root = WORK / "tasks"
     if not tasks_root.exists():
         return
     for bugs_index in tasks_root.glob("*/bugs.yaml"):
@@ -684,46 +709,46 @@ def check_bug_artifact_integrity(findings: list[dict[str, str]]) -> None:
                     findings,
                     "error",
                     "bug-canonical-missing",
-                    f"{rel_index} references {bug_id} but matching canonical .runtime/bugs artifact is missing",
+                    f"{rel_index} references {bug_id} but matching canonical .maestro/work/bugs artifact is missing",
                     rel_index,
                 )
 
 
 def check_feedback_loop_contract(findings: list[dict[str, str]]) -> None:
     required_fragments = {
-        ".agent/templates/bug.template.yaml": [
+        ".maestro/engine/templates/bug.template.yaml": [
             "prevention:",
             "root_cause:",
             "prevention_rule:",
             "regression_check:",
             "recurrence_key:",
         ],
-        ".agent/templates/dev-verification.template.yaml": [
+        ".maestro/engine/templates/dev-verification.template.yaml": [
             "feedback_loop:",
             "repeated_error_detected:",
             "new_coding_error_feedback:",
             "memory_update_required:",
         ],
-        ".agent/templates/memory-update.template.yaml": [
+        ".maestro/engine/templates/memory-update.template.yaml": [
             "coding-error-feedback",
             "coding_errors_captured:",
             "prevention_rules_added:",
             "regression_checks_added:",
         ],
-        ".agent/templates/agent-coder.template.md": [
+        ".maestro/engine/templates/agent-coder.template.md": [
             "feedback_preflight:",
             "coding_error_feedback:",
             "known_error_patterns:",
             "regression_checks:",
         ],
-        ".runtime/context/feedback/inbox.md": [
+        ".maestro/memory/project/feedback/inbox.md": [
             "coding-error",
             "root_cause:",
             "prevention_rule:",
             "regression_check:",
             "recurrence_key:",
         ],
-        ".runtime/context/feedback/anti-patterns.md": [
+        ".maestro/memory/project/feedback/anti-patterns.md": [
             "recurrence_key:",
             "prevention_rule:",
             "regression_check:",
@@ -747,7 +772,10 @@ def check_feedback_loop_contract(findings: list[dict[str, str]]) -> None:
 
 
 def check_agent_activity(findings: list[dict[str, str]]) -> None:
-    activity = load_yaml(CONTEXT / "agent-activity.yaml")
+    activity_path = RUNTIME / "agent-activity.yaml"
+    if not activity_path.is_file():
+        activity_path = ENGINE / "templates" / "agent-activity.template.yaml"
+    activity = load_yaml(activity_path)
     if not isinstance(activity, dict):
         add(findings, "error", "agent-activity-invalid", "agent-activity.yaml is not a map", "agent-activity.yaml")
         return
@@ -785,7 +813,7 @@ def check_specialists(findings: list[dict[str, str]]) -> None:
     if len(files) != EXPECTED_SPECIALIST_COUNT:
         add(findings, "error", "specialist-count-drift", f"specialist count drift: expected {EXPECTED_SPECIALIST_COUNT}, got {len(files)}", "specialists")
 
-    routing = load_yaml(CONTEXT / "model-routing.yaml")
+    routing = load_yaml(CONFIG / "model-routing.yaml")
     agent_map = routing.get("agent_model_map", {}) if isinstance(routing, dict) else {}
     advisors = agent_map.get("specialist_advisors", {}) if isinstance(agent_map, dict) else {}
     advisor_ids = set(advisors.keys()) if isinstance(advisors, dict) else set()
@@ -891,28 +919,51 @@ def check_plugin_wrapper(findings: list[dict[str, str]]) -> None:
 
 
 def check_skill_taxonomy(findings: list[dict[str, str]]) -> None:
-    tax_path = CONTEXT / "skill-taxonomy.yaml"
+    tax_path = REGISTRY / "skill-taxonomy.yaml"
     if not tax_path.is_file():
-        add(findings, "error", "skill-taxonomy-missing", "Missing .runtime/context/skill-taxonomy.yaml (run scripts/build-skill-catalog.py)", "skill-taxonomy.yaml")
+        add(findings, "error", "skill-taxonomy-missing", "Missing .maestro/registry/skill-taxonomy.yaml (run scripts/build-skill-catalog.py)", "skill-taxonomy.yaml")
         return
     tax = load_yaml(tax_path)
     total = tax.get("total_skills") if isinstance(tax, dict) else None
     actual = len(list((ROOT / ".claude" / "skills").rglob("SKILL.md")))
     if total != actual:
         add(findings, "error", "skill-taxonomy-stale", f"skill-taxonomy total_skills={total} but {actual} SKILL.md found; rerun scripts/build-skill-catalog.py", "skill-taxonomy.yaml")
-    if not (ROOT / ".agent" / "docs" / "skill-catalog.md").is_file():
-        add(findings, "error", "skill-catalog-missing", "Missing .agent/docs/skill-catalog.md", "skill-catalog.md")
+    if not (ENGINE / "docs" / "skill-catalog.md").is_file():
+        add(findings, "error", "skill-catalog-missing", "Missing .maestro/engine/docs/skill-catalog.md", "skill-catalog.md")
+
+    registry = load_yaml(REGISTRY / "skills.yaml")
+    catalog = registry.get("catalog", {}) if isinstance(registry, dict) else {}
+    if not isinstance(catalog, dict) or len(catalog) != actual:
+        add(
+            findings,
+            "error",
+            "skill-registry-incomplete",
+            f"skills.yaml catalog must address all {actual} skills; found {len(catalog) if isinstance(catalog, dict) else 0}",
+            ".maestro/registry/skills.yaml",
+        )
+        return
+    for skill_id, entry in catalog.items():
+        path = entry.get("path") if isinstance(entry, dict) else None
+        capability = entry.get("capability") if isinstance(entry, dict) else None
+        if not path or not (ROOT / str(path)).is_file() or not capability:
+            add(
+                findings,
+                "error",
+                "skill-registry-entry-invalid",
+                f"Skill {skill_id} must have an existing path and non-empty capability",
+                ".maestro/registry/skills.yaml",
+            )
 
 
 # Commands excluded from the Codex prompt surface (Claude-plugin-specific). Keep in sync with
 # scripts/build-codex-prompts.py EXCLUDE.
-CODEX_PROMPT_EXCLUDE = {"aw-init", "access"}
+CODEX_PROMPT_EXCLUDE = {"maestro-init", "access"}
 
 
 def check_codex_plugin(findings: list[dict[str, str]]) -> None:
     """Codex plugin manifests must exist + be valid. The skills copy is build-time/gitignored, so
     it is NOT required here — only the manifests are checked for drift parity with the Claude side."""
-    manifest = ROOT / ".codex" / "marketplace" / "plugins" / "agent-workspace" / ".codex-plugin" / "plugin.json"
+    manifest = ROOT / ".codex" / "marketplace" / "plugins" / "maestro" / ".codex-plugin" / "plugin.json"
     market = ROOT / ".codex" / "marketplace" / ".agents" / "plugins" / "marketplace.json"
     for raw, label in ((manifest, "codex-plugin"), (market, "codex-marketplace")):
         if not raw.is_file():
@@ -923,8 +974,8 @@ def check_codex_plugin(findings: list[dict[str, str]]) -> None:
         except Exception as exc:  # noqa: BLE001
             add(findings, "error", f"{label}-invalid", f"Cannot parse {raw.relative_to(ROOT)}: {exc}", raw.relative_to(ROOT).as_posix())
             continue
-        if data.get("name") != "agent-workspace":
-            add(findings, "error", f"{label}-name-drift", f"{raw.relative_to(ROOT)} name != agent-workspace", raw.relative_to(ROOT).as_posix())
+        if data.get("name") != "maestro":
+            add(findings, "error", f"{label}-name-drift", f"{raw.relative_to(ROOT)} name != maestro", raw.relative_to(ROOT).as_posix())
 
 
 def check_codex_prompts(findings: list[dict[str, str]]) -> None:
@@ -1036,7 +1087,7 @@ def run_checks() -> dict[str, Any]:
 def main() -> int:
     parser = argparse.ArgumentParser(description="Run deterministic architecture health checks.")
     parser.add_argument("--json", action="store_true", help="Print JSON report.")
-    parser.add_argument("--write-report", action="store_true", help="Write .runtime/architecture-health-report.json and .md.")
+    parser.add_argument("--write-report", action="store_true", help="Write .maestro/runtime/reports/architecture-health-report.json and .md.")
     parser.add_argument("--strict", action="store_true", help="Return non-zero on warnings as well as errors.")
     args = parser.parse_args()
 

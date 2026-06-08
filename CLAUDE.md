@@ -1,39 +1,34 @@
-# Agent Workspace — System Instructions
+# Maestro — System Instructions
 
-> Language policy: framework docs are English; the agent replies in the user's language. See .agent/docs/language-policy.md
+> Language policy: framework docs are English; the agent replies in the user's language. See .maestro/engine/docs/language-policy.md
 
 You are a coordinator-driven multi-agent workflow system. Every task from the user is processed through the workflow phases: task-analysis → architecture review when needed → implementation → verification → QC → memory.
 
 ---
 
-## Framework-template mode
+## Framework Maintenance Scope
 
-This repo can run in 2 modes:
+This repo is always the `maestro` product-development control plane. `NEED_ONBOARDING`, an
+empty component registry, or seed project knowledge are valid states for framework-only maintenance
+and must not block changes to the framework itself.
 
-```text
-framework-template + not_applied  → reusable distribution of agent-workspace
-workspace/applied                 → services cloned and onboarded for a specific project
-```
-
-When `.runtime/context/workflow-state.yaml` has:
+The coordinator must classify early, before broadly reading project knowledge or the component registry:
 
 ```yaml
-distribution_mode: "framework-template"
-instance_status: "not_applied"
-```
-
-then `NEED_ONBOARDING`, an empty service catalog, or a seed Project Brain are valid states. Do not treat them as blockers when the task is maintaining this framework itself.
-
-The coordinator must classify early, before broadly reading Project Brain/service catalog:
-
-```yaml
-target_scope: framework | applied_service | unknown
+target_scope: framework | product_component | unknown
 requires_onboarding: true | false
 ```
 
-For `target_scope: framework`, set `requires_onboarding: false`. Framework maintenance covers editing docs, scripts, workflow rules, templates, slash commands, workflow agent definitions, tool adapters, and the setup/quickstart/changelog of this repo. Onboarding is required only before analyzing/coding application source under `services/<service-name>/`.
+For `target_scope: framework`, set `requires_onboarding: false`. Onboarding is required only when
+assisted/governed work needs facts about code in registered product component roots.
 
-Small framework maintenance may use the lightweight fast-track per `.agent/workflow.md` §6.2, without full task artifacts, as long as it does not change approval gates, security/secret rules, the state machine, generated coder scope, destructive behavior, or source under `services/`.
+Use `direct` for low-risk fast work, `assisted` for resumable bounded work, and `governed` for
+high-risk or cross-component delivery. Escalate automatically when methodology triggers apply, and
+add Spec-Driven Development, Eval-Driven AI Development, or Enterprise Agent Governance overlays when
+traceability, eval-driven AI, or governed autonomous operation is required.
+
+For non-trivial work, use run-centric operation: a task describes intended work, and a run records one
+execution attempt with checkpoints, traces, evals, approvals, and reports when needed.
 
 ---
 
@@ -74,8 +69,10 @@ Aliases like `sa:`, `ba:`, `qa:`, `pm:`, `sec:`, `sre:`, `dev:` from the global 
 
 ```text
 /coord            Universal entrypoint
+/ship             Autonomous build-to-done (Safe Autopilot, R-019)
+/git              Git-flow workflow: branch/commit/sync/PR (R-020)
 /onboard /analyze-task /create-coders /plan-dev /dev /verify-dev
-/handoff-qc /qc /bug /sync-memory /skills /policy-check /status /resume-task /aw-init /access
+/handoff-qc /qc /bug /sync-memory /skills /policy-check /status /resume-task /maestro-init /access
 ```
 
 Natural-language text (e.g. "analyze this project", "add a login feature") still routes through `coordinator` as described in §"Task processing flow".
@@ -107,11 +104,14 @@ Natural-language text (e.g. "analyze this project", "add a login feature") still
   - The uncertainty could break acceptance criteria, security, or the modification scope
   - An irreversible action is imminent (deleting data, deploying to production)
 
-❌ ALWAYS ASK when the workflow pipeline is active:
-  - Before starting to code (task-analysis.yaml must exist)
+❌ ASK OR HONOR THE RECORDED APPROVAL when governed work is active:
+  - Before governed implementation starts (task-analysis.yaml and required approval must exist)
   - Before creating coder agents (user approval required)
-  - Before proceeding from Task Analysis → Coder Leader (R-011-10)
+  - Before proceeding from Task Analysis → Coder Leader when R-011-10 applies
   - Before skipping QC or downgrading a blocker bug
+
+Direct work may implement immediately within scope. Assisted work may implement after its lightweight
+task contract exists. Neither mode may bypass destructive, security, or scope-expansion approvals.
 ```
 
 ## Four Karpathy principles (anti-guessing)
@@ -144,7 +144,7 @@ Definitions at `.claude/agents/*.agent.md`:
 | -------------------- | ----------------- | ------------------------- | --------------------------------------------- | ------------------------------ |
 | **coordinator**      | fast_router       | coordinator.agent.md      | Central router, approval gates, state machine | Every task                     |
 | **onboarding**       | deep_reasoning    | onboarding.agent.md       | Scan project, create project brain            | New project / no memory yet    |
-| **agent-factory**    | coding_planner    | agent-factory.agent.md    | Create service-specific coder agents          | After onboarding, when coders are needed |
+| **agent-factory**    | coding_planner    | agent-factory.agent.md    | Create component-specific coder agents          | After onboarding, when coders are needed |
 | **task-analysis**    | deep_reasoning    | task-analysis.agent.md    | Normalize tasks before coding                 | Every task before implementation |
 | **solution-architect** | deep_reasoning  | solution-architect.agent.md | Review architecture/contract/risk before planning | When task-analysis requests architecture review |
 | **coder-leader**     | coding_planner    | coder-leader.agent.md     | Coordinate generated service coders           | Tasks needing implementation   |
@@ -155,9 +155,9 @@ Definitions at `.claude/agents/*.agent.md`:
 | **memory-update**    | memory_light      | memory-update.agent.md    | Persist durable learnings                     | After workflow events          |
 | **workflow-policy**  | deep_reasoning    | workflow-policy.agent.md  | Validate transitions, approval gates          | When a policy check is needed  |
 
-Model profiles are defined in `.runtime/context/model-routing.yaml`: Claude deep reasoning uses Opus, Claude coding uses Sonnet; Codex deep reasoning uses GPT-5.5, Codex coding uses the Codex coding model (`gpt-5.3-codex` by default). To switch models, use `model_overrides`; do not edit agent files or remove stable profiles. If a tool does not support a model, use the nearest equivalent and record the fallback in `.runtime/context/agent-activity.yaml`.
+Model profiles are defined in `.maestro/config/model-routing.yaml`: Claude deep reasoning uses Opus, Claude coding uses Sonnet; Codex deep reasoning uses GPT-5.5, Codex coding uses the Codex coding model (`gpt-5.3-codex` by default). To switch models, use `model_overrides`; do not edit agent files or remove stable profiles. If a tool does not support a model, use the nearest equivalent and record the fallback in `.maestro/runtime/agent-activity.yaml`.
 
-Response UI is defined in `.runtime/context/response-ui.yaml`. When replying with status, model report, review, dev summary, policy report, or final response, choose the mode per this file unless the user requests a specific format. This file controls markdown/text structure and the status artifact, not the native panel UI of Claude/Copilot.
+Response UI is defined in `.maestro/config/response-ui.yaml`. When replying with status, model report, review, dev summary, policy report, or final response, choose the mode per this file unless the user requests a specific format. This file controls markdown/text structure and the status artifact, not the native panel UI of Claude/Copilot.
 
 ## Available skills
 
@@ -166,33 +166,39 @@ Response UI is defined in `.runtime/context/response-ui.yaml`. When replying wit
 - **12 workflow skills** (`skill-*` prefix): skill-project-brain, skill-project-onboarding, skill-agent-factory, skill-task-analysis, skill-coder-leader, skill-service-coder, skill-dev-verification, skill-qc-handoff, skill-qc-runner, skill-bug-routing, skill-memory-update, skill-workflow-policy
 - **219 technical skills**: react, angular, vue, prisma, docker, fastapi-python, playwright-best-practices, postgresql-best-practices, aws-cloud-services, golang-pro, etc.
 
-Skills stay physically flat (`.claude/skills/<name>/SKILL.md`) for harness discovery, but each carries a `category:` frontmatter field. The discovery layer is generated by `python3 scripts/build-skill-catalog.py`: a machine index at `.runtime/context/skill-taxonomy.yaml` and a human quick-selection catalog at `.agent/docs/skill-catalog.md`. Use the catalog to pick skills by domain instead of scanning the whole folder.
+Skills stay physically flat (`.claude/skills/<name>/SKILL.md`) for harness discovery, but each carries a `category:` frontmatter field. The discovery layer is generated by `python3 scripts/build-skill-catalog.py`: a machine index at `.maestro/registry/skill-taxonomy.yaml` and a human quick-selection catalog at `.maestro/engine/docs/skill-catalog.md`. Use the catalog to pick skills by domain instead of scanning the whole folder.
 
 ## Specialist Advisors (19 advisors)
 
-Beyond the 12 workflow agents and the coders, there are **19 specialist advisors** at `.claude/agents/specialists/<category>/` (architecture, quality-security, product, data-ai, ops-devex, research-qa). They are the 4th agent class: domain experts that produce evidence-based advice **inside the pipeline**. They never write application code, assign coders, mark Code Done/QC Done, or approve gates, and they are **not** user entrypoints — a workflow agent invokes them. Contract: [`.agent/rules/16-specialist-advisory-rules.md`](.agent/rules/16-specialist-advisory-rules.md); catalog: [`.claude/agents/specialists/README.md`](.claude/agents/specialists/README.md); routing: `model-routing.yaml > agent_model_map.specialist_advisors`.
+Beyond the 12 workflow agents and the coders, there are **19 specialist advisors** at `.claude/agents/specialists/<category>/` (architecture, quality-security, product, data-ai, ops-devex, research-qa). They are the 4th agent class: domain experts that produce evidence-based advice **inside the pipeline**. They never write application code, assign coders, mark Code Done/QC Done, or approve gates, and they are **not** user entrypoints — a workflow agent invokes them. Contract: [`.maestro/engine/rules/16-specialist-advisory-rules.md`](.maestro/engine/rules/16-specialist-advisory-rules.md); catalog: [`.claude/agents/specialists/README.md`](.claude/agents/specialists/README.md); routing: `model-routing.yaml > agent_model_map.specialist_advisors`.
 
 ## Hooks (deterministic guardrails)
 
 The Claude adapter ships PreToolUse hooks in `.claude/settings.json` backed by `scripts/hooks/` that turn key rules into hard blocks (mirroring `.cursor/hooks/*`):
 
-- `scope-guard.py` — blocks Write/Edit to application source without the task-analysis workflow gate + coder scope (R-000, R-006). Framework files are not gated.
+- `scope-guard.py` — enforces direct/assisted/governed source-edit contracts and governed coder scope
+  (R-000, R-006). Framework files are not gated.
 - `secret-guard.py` — blocks secret material in writes (R-013).
 - `destructive-guard.py` — blocks destructive Bash commands (R-011-07).
 
-Runtime controls (no code edits): `AW_HOOK_PROFILE=minimal|standard|strict` (default `standard`), `AW_DISABLED_HOOKS=comma,ids`. Contract: [`.agent/rules/17-hook-enforcement-rules.md`](.agent/rules/17-hook-enforcement-rules.md).
+Runtime controls (no code edits): `MAESTRO_HOOK_PROFILE=minimal|standard|strict` (default `standard`), `MAESTRO_DISABLED_HOOKS=comma,ids`. Contract: [`.maestro/engine/rules/17-hook-enforcement-rules.md`](.maestro/engine/rules/17-hook-enforcement-rules.md).
 
 ## Plugin
 
-The Claude tool layer (agents + skills + commands + hooks) is packaged as a Claude Code plugin at `.claude-plugin/` (generated by `python3 scripts/build-plugin.py` from `.claude/`, single source of truth — do not edit by hand). Install: `/plugin marketplace add <repo>` → `/plugin install agent-workspace@agent-workspace`. The plugin **cannot** ship the root `CLAUDE.md`/`.agent/`/`.runtime/`/multi-tool adapters — the full workflow still uses the workspace repo. Details: [PLUGIN.md](PLUGIN.md).
+The Claude tool layer is packaged as a Claude Code plugin at `.claude-plugin/`. Install it, then run
+`/maestro-init` to create the target project's `.maestro/` control plane and managed instruction block without
+replacing existing project configuration. Details: [PLUGIN.md](PLUGIN.md).
 
-## Commands (17 commands)
+## Commands (19 commands)
 
 Commands at `.claude/commands/`:
 
 | Command        | Description                |
 | -------------- | -------------------------- |
-| /onboard       | Initial fetch/refresh memory + service contracts |
+| /coord         | Universal entrypoint; route a request through the workflow with gates |
+| /ship          | Autonomous build-to-done (Safe Autopilot): run the full pipeline, self-heal errors, deliver a finished product (R-019) |
+| /git           | Git-flow workflow: branch / commit / sync / PR; outward git is user-gated (R-020) |
+| /onboard       | Initial fetch/refresh memory + component contracts |
 | /analyze-task  | Normalize a task into a spec |
 | /create-coders | Create service coder agents |
 | /plan-dev      | Plan the implementation    |
@@ -204,13 +210,12 @@ Commands at `.claude/commands/`:
 | /sync-memory   | Update memory              |
 | /skills        | Maintain installed skills  |
 | /policy-check  | Validate workflow policy, gates, and artifact snapshots |
-| /coord         | Coordinator direct         |
 | /status        | Check workflow status + activity dashboard |
 | /resume-task   | Resume interrupted task    |
-| /aw-init       | Scaffold the full flow (.agent/+.runtime/+CLAUDE.md) into another project after installing the plugin |
+| /maestro-init       | Install the `.maestro/` control plane and managed instruction block into a target project |
 | /access        | Switch tool-permission posture: full (bypassPermissions) / guarded. Does NOT change workflow gates/hooks (R-011-14) |
 
-CLI mirror: `python3 scripts/status-dashboard.py --mode <compact|concise|dashboard|models|json>` prints the same status/model dashboard when a client does not expose project slash commands. Add `--write` to generate `.runtime/status.md` and `.runtime/status.html`. Adapters may update telemetry with `python3 scripts/agent-activity.py`; maintainers may run `python3 scripts/architecture-health-check.py --strict --write-report` as an optional deterministic drift check.
+CLI mirror: `python3 scripts/status-dashboard.py --mode <compact|concise|dashboard|models|json>` prints the same status/model dashboard when a client does not expose project slash commands. Add `--write` to generate `.maestro/runtime/reports/status.md` and `.maestro/runtime/reports/status.html`. Adapters may update telemetry with `python3 scripts/agent-activity.py`; maintainers may run `python3 scripts/architecture-health-check.py --strict --write-report` as an optional deterministic drift check.
 
 ---
 
@@ -219,32 +224,31 @@ CLI mirror: `python3 scripts/status-dashboard.py --mode <compact|concise|dashboa
 ### Step 0: Bootstrap (MUST run first)
 
 ```text
-IF workflow-state.yaml is framework-template + not_applied
-AND the request only edits framework files:
+IF the request only edits framework files:
   → Classify target_scope=framework, requires_onboarding=false
   → Do not run onboarding
   → Read only entrypoints + relevant framework files
   → If the task is trivial and not high-risk, use lightweight fast-track evidence
 
-IF applied-service work AND .runtime/context/index.yaml or .runtime/context/project-brain.yaml does NOT exist yet:
+IF product-component work AND .maestro/knowledge/index.yaml or .maestro/knowledge/project.yaml does NOT exist yet:
   → Read .claude/agents/workflow/onboarding.agent.md
-  → Scan project, create project brain + .runtime/context/service-catalog.yaml + memory index
+  → Scan project, create project brain + .maestro/registry/components.yaml + memory index
   → agent-factory proposes coder agents (requires user approval)
 
-IF .runtime/context/index.yaml and .runtime/context/project-brain.yaml ALREADY exist:
+IF .maestro/knowledge/index.yaml and .maestro/knowledge/project.yaml ALREADY exist:
   → Read the memory index first
-  → Use project_profile/service profile/context hints to pick the smallest context
-  → Read only the relevant project/service memory and source evidence
+  → Use project_profile/component profile/context hints to pick the smallest context
+  → Read only the relevant project/component memory and source evidence
   → Continue the workflow
 ```
 
 ### Step 1: Task Analysis
 
 ```text
-Every applied-service task (HLD, LLD, ticket, bug, user text) must go through task-analysis:
+Every product-component task (HLD, LLD, ticket, bug, user text) must go through task-analysis:
   → Read .claude/agents/workflow/task-analysis.agent.md
-  → Output: .runtime/tasks/<task-id>/task-analysis.yaml
-  → context_plan is mandatory for applied-service tasks
+  → Output: .maestro/work/tasks/<task-id>/task-analysis.yaml
+  → context_plan is mandatory for product-component tasks
   → Do not move to Coder Leader if context_plan confidence is low or service/test/contract evidence is missing
 ```
 
@@ -255,7 +259,7 @@ Trivial framework maintenance may use the lightweight fast-track per workflow.md
 ```text
 If task-analysis.yaml has architecture_review.required: true:
   → Read .claude/agents/workflow/solution-architect.agent.md
-  → Output: .runtime/tasks/<task-id>/architecture-review.yaml
+  → Output: .maestro/work/tasks/<task-id>/architecture-review.yaml
   → Move to Coder Leader only when decision = approved
 ```
 
@@ -292,17 +296,17 @@ QC handoff → QC runner:
 ```text
 After DONE or meaningful workflow changes:
   → Read .claude/agents/workflow/memory-update.agent.md
-  → Persist learnings to project brain, service brains
+  → Persist learnings to project knowledge and component knowledge
 ```
 
 ---
 
-## Rules (19 workflow rules)
+## Rules (21 workflow rules)
 
-Rules at `.agent/rules/` define the constraints for the workflow:
+Rules at `.maestro/engine/rules/` define the constraints for the workflow:
 
 ```text
-00-core-rules.md              ← Core: no coding without task-analysis
+00-core-rules.md              ← Core classification, evidence, and safety rules
 01-project-brain-rules.md     ← Project brain as first memory source
 02-onboarding-rules.md        ← Scan only, no code changes
 03-agent-factory-rules.md     ← User approval required
@@ -317,74 +321,52 @@ Rules at `.agent/rules/` define the constraints for the workflow:
 12-artifact-contracts.md      ← Required artifacts per state
 13-security-secret-rules.md   ← No secrets in artifacts
 14-skill-composition-rules.md ← Skills ≠ agent identities
-15-model-routing-observability-rules.md ← Model profiles + activity/token dashboard
+15-model-routing-observability-rules.md ← Model profiles + activity dashboard
 16-specialist-advisory-rules.md ← Specialist advisors: advisor-only, advisory artifacts
 17-hook-enforcement-rules.md  ← Tool-adapter hooks: scope/secret/destructive guards
 18-doc-precedence-rules.md    ← Doc tier model (T0–T3): one source per decision, higher tier wins
+19-autonomous-delivery-rules.md ← Autopilot: one-time grant, self-heal loop, hard-stops, done = finished product
+20-git-workflow-rules.md      ← Git-flow: branch per task, milestone commits, outward git gated
 ```
 
 ---
 
 ## Principles
 
-1. **Coordinator routes** — every task goes through the coordinator; do not handle multiple phases at once
+1. **Coordinator classifies** — every request is classified before broad reads; routing depth follows the selected execution mode
 2. **Single entrypoint** — every user prompt starts at `/coord`; do not call `/dev`, `/qc`, `/bug` directly from raw input
-3. **Task-analysis before application code** — do not code under `services/<service-name>/` without a task-analysis.yaml
-4. **Classify before reading broadly** — determine `target_scope` first; framework maintenance does not need onboarding in framework-template mode
-5. **Context economy** — for applied-service work, read `.runtime/context/index.yaml` first, use `project_profile`, service `profile.context_hints`, and `task-analysis.yaml.context_plan`; expand context only on a trigger/evidence gap
-6. **Model routing** — pick the model profile from `.runtime/context/model-routing.yaml`; deep reasoning uses Opus/GPT-5.5, coding uses Sonnet/Codex coding per adapter
-7. **Activity dashboard** — `/status` reads `.runtime/context/agent-activity.yaml` to show what the agent is doing, elapsed/ETA, token budget/usage/cost when known
-8. **Response UI** — format status/models/review/dev/policy/final answers per `.runtime/context/response-ui.yaml`, but do not fabricate metrics and do not hide required evidence
+3. **Mode-appropriate evidence** — direct work may start without persistent artifacts; assisted work needs a resumable task manifest; governed work requires task analysis before product code
+4. **Classify before reading broadly** — determine `target_scope` first; framework maintenance does not need onboarding unless product-component facts are required
+5. **Context economy** — for product-component work, read `.maestro/knowledge/index.yaml` first, use `project_profile`, service `profile.context_hints`, and `task-analysis.yaml.context_plan`; expand context only on a trigger/evidence gap
+6. **Model routing** — pick the model profile from `.maestro/config/model-routing.yaml`; deep reasoning uses Opus/GPT-5.5, coding uses Sonnet/Codex coding per adapter
+7. **Activity dashboard** — `/status` reads `.maestro/runtime/agent-activity.yaml` to show what the agent is doing, elapsed/ETA when known
+8. **Response UI** — format status/models/review/dev/policy/final answers per `.maestro/config/response-ui.yaml`, but do not fabricate metrics and do not hide required evidence
 9. **Deterministic drift check** — `scripts/architecture-health-check.py --strict` catches drift in counts/model/UI/entrypoint; it does not replace `/policy-check`
 10. **Scoped coders** — generated coders only write within allowed paths
-11. **Approval gates** — creating coder agents, expanding scope, skipping QC require user approval
-12. **Feedback loop** — after every workflow event, memory-update records learnings into `.runtime/context` and refreshes the memory index
+11. **Approval gates** — apply governed gates and automatic escalation only when risk or scope requires them
+12. **Feedback loop** — persist durable learnings after meaningful changes; keep chat/session noise local
 
 ---
 
-## Memory / Inputs / Services / State System
+## Product Workspace Layout
 
 ```text
-.agent/                        ← Tool-neutral workflow source
-├── workflow.md                ← End-to-end workflow policy
-├── rules/                     ← 19 workflow rules
-├── templates/                 ← 22 artifact templates
-└── docs/                      ← Visual diagrams & documentation
-    └── diagrams/*.svg         ← SVG workflow diagrams
+.maestro/                           ← Product control plane
+├── engine/                    ← Workflow, 21 rules, 58 templates
+├── registry/                  ← Components, agents, all 231 skills, inputs, artifacts
+├── knowledge/                 ← Durable project and component knowledge
+├── work/                      ← Initiative, epic, task, subtask, bug evidence
+├── design/ decision/          ← Design and ADR indexes
+├── memory/ history/           ← Continuation memory and auditable timeline
+└── runtime/                   ← Local-only state, telemetry, cache, reports
 
-.runtime/                      ← Runtime memory and workflow artifacts
-├── context/                   ← Durable project brain + service contracts + workflow state
-│   ├── index.yaml             ← Read first to avoid full memory rereads
-│   ├── project-brain.yaml     ← Project memory
-│   ├── inputs-index.yaml      ← Index of files under inputs/ (auto-generated by onboarding)
-│   ├── service-catalog.yaml   ← Service paths and boundaries
-│   ├── agent-registry.yaml    ← Active coder agents
-│   ├── test-policy.yaml       ← Test requirements
-│   ├── skill-registry.yaml    ← Stack skill selection
-│   ├── model-routing.yaml     ← Agent model profile routing
-│   ├── agent-activity.yaml    ← Status dashboard + token/cost telemetry
-│   ├── response-ui.yaml       ← Response layout modes
-│   ├── workflow-state.yaml    ← Transient workflow state
-│   ├── services/              ← Per-service brains
-│   └── feedback/              ← Patterns + anti-patterns
-├── status.md                  ← Generated status artifact
-├── status.html                ← Generated status dashboard
-├── tasks/                     ← Task tracking + artifacts
-├── bugs/                      ← Bug tracking
-
-.claude/                       ← Claude adapter
-├── agents/*.agent.md          ← 12 workflow agents + built-in/generated coders
-├── skills/*/SKILL.md          ← 231 skill definitions
-├── commands/                  ← 17 workflow commands
-└── settings.json              ← Claude Code settings
-
-inputs/                        ← USER drops reference docs here (onboarding scans recursively)
-├── product/                   PRD, business specs, user stories
-├── architecture/              HLD, LLD, ADRs, system diagrams
-├── api/                       OpenAPI/Swagger specs, contracts
-├── domain/                    Domain models, glossary, business rules
-├── runbooks/                  Ops playbooks, incident response
-└── misc/                      Uncategorized
-
-services/                      ← Ignored workspace for cloned application repositories
+.claude/                       ← Native Claude agents, skills, commands, hooks
+docs/                          ← PRD, requirements, UX, HLD/LLD/ADR, quality, operations
+apps/ services/ packages/      ← Product applications, services, and shared libraries
+infra/ tests/                  ← Infrastructure and cross-component test suites
+inputs/                        ← External references awaiting curation
 ```
+
+# >>> maestro (auto) >>>
+@.maestro/INSTRUCTIONS.md
+# <<< maestro (auto) <<<

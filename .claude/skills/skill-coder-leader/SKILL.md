@@ -16,7 +16,7 @@ Create implementation plan
 Create service assignments
 Sequence dependency-sensitive changes
 Resolve cross-service requests
-Collect coder handoff files (coder-handoff-<service>.yaml)
+Collect coder handoff files (coder-handoff-<component>.yaml)
 Review integration points across handoffs
 Review code quality and architecture alignment across coder outputs
 Consolidate into coder-results.yaml
@@ -28,7 +28,7 @@ Send to dev verification
 Mỗi service coder sau khi hoàn thành sẽ bàn giao qua file:
 
 ```text
-.runtime/tasks/<task-id>/coder-handoff-<service>.yaml
+.maestro/work/tasks/<task-id>/coder-handoff-<component>.yaml
 ```
 
 Coder Leader phải:
@@ -46,7 +46,7 @@ Coder Leader phải:
 When task-analysis.yaml contains design_references:
 
 ```text
-1. CHECK assets exist: .runtime/tasks/<task-id>/assets/
+1. CHECK assets exist: .maestro/work/tasks/<task-id>/assets/
    - design-context.md, mockup screenshots, screen-map.yaml
    - If missing → request Task Analysis to extract first
 
@@ -70,7 +70,7 @@ When task-analysis.yaml contains design_references:
 # task-analysis.yaml đã chứa design_references với local_assets
 
 # 1. CHECK assets
-ls .runtime/tasks/TASK-demo-figma/assets/
+ls .maestro/work/tasks/TASK-demo-figma/assets/
 → design-context.md, design-tokens.json, screen-map.yaml  ✓
 
 # 2. service-assignments.yaml
@@ -82,9 +82,9 @@ assignments:
       - ProductCard (2 variants: small + large)
       - NavArrow, SectionTitle
     design_assets:
-      tokens: ".runtime/tasks/TASK-demo-figma/assets/design-tokens.json"
-      context: ".runtime/tasks/TASK-demo-figma/assets/design-context.md"
-      screen_map: ".runtime/tasks/TASK-demo-figma/assets/screen-map.yaml"
+      tokens: ".maestro/work/tasks/TASK-demo-figma/assets/design-tokens.json"
+      context: ".maestro/work/tasks/TASK-demo-figma/assets/design-context.md"
+      screen_map: ".maestro/work/tasks/TASK-demo-figma/assets/screen-map.yaml"
     notes: |
       - Implement design tokens first (tailwind.config extend)
       - ProductCard reused across 3 sections — build once
@@ -98,7 +98,7 @@ assignments:
   ✓ ProductCard reused (not duplicated)
 ```
 
-See full example at `.runtime/tasks/TASK-demo-figma/`.
+See full example at `.maestro/work/tasks/TASK-demo-figma/`.
 
 ## Rules
 

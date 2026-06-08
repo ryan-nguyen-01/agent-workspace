@@ -1,6 +1,5 @@
 #!/usr/bin/env bash
-# preToolUse hook: block edits to application source unless an active
-# task-analysis.yaml exists. Schema per https://cursor.com/docs/agent/hooks.
+# preToolUse hook: enforce direct/assisted/governed source-edit contracts.
 #
 # Scope: Cursor IDE only. Other AI tools (Claude Code, Codex, Gemini, Copilot)
 # enforce the same gate via their own AGENTS.md / CLAUDE.md instructions.
@@ -16,7 +15,7 @@ init_stdin
 
 block() {
   cat >&2 <<EOF
-⛔ [agent-workspace] $1
+⛔ [maestro] $1
 ⛔ Blocked file: $FILE_PATH
 EOF
   exit 2
@@ -162,16 +161,39 @@ case "$REL_PATH" in
 esac
 REL_PATH=${REL_PATH#./}
 
-STATE_FILE=".runtime/context/workflow-state.yaml"
+STATE_FILE=".maestro/runtime/workflow-state.yaml"
 ACTIVE_TASK_ID=""
+EXECUTION_MODE=""
 
 if [ -f "$STATE_FILE" ]; then
+  EXECUTION_MODE=$(
+    sed -nE 's/^[[:space:]]*active_execution_mode:[[:space:]]*"?([^"#]+)"?[[:space:]]*(#.*)?$/\1/p' "$STATE_FILE" \
+      | head -1 \
+      | sed -E 's/^[[:space:]]+|[[:space:]]+$//g'
+  )
+  case "$EXECUTION_MODE" in
+    ""|"null"|"~")
+      EXECUTION_MODE=$(
+        sed -nE 's/^[[:space:]]*default_execution_mode:[[:space:]]*"?([^"#]+)"?[[:space:]]*(#.*)?$/\1/p' "$STATE_FILE" \
+          | head -1 \
+          | sed -E 's/^[[:space:]]+|[[:space:]]+$//g'
+      )
+      ;;
+  esac
   ACTIVE_TASK_ID=$(
     sed -nE 's/^[[:space:]]*active_task_id:[[:space:]]*"?([^"#]+)"?[[:space:]]*(#.*)?$/\1/p' "$STATE_FILE" \
       | head -1 \
       | sed -E 's/^[[:space:]]+|[[:space:]]+$//g'
   )
 fi
+
+[ -n "$EXECUTION_MODE" ] || EXECUTION_MODE="assisted"
+
+case "$EXECUTION_MODE" in
+  direct) exit 0 ;;
+  assisted|governed) ;;
+  *) block "Unknown execution mode '$EXECUTION_MODE'. Expected direct, assisted, or governed." ;;
+esac
 
 case "$ACTIVE_TASK_ID" in
   ""|"null"|"~")
@@ -186,10 +208,16 @@ case "$ACTIVE_TASK_ID" in
     ;;
 esac
 
-ACTIVE_TASK=".runtime/tasks/$ACTIVE_TASK_ID"
+ACTIVE_TASK=".maestro/work/tasks/$ACTIVE_TASK_ID"
 
 if [ ! -d "$ACTIVE_TASK" ]; then
   block "Active task folder does not exist: $ACTIVE_TASK. Run /coord then /analyze-task before editing source."
+fi
+
+if [ "$EXECUTION_MODE" = "assisted" ]; then
+  [ -f "$ACTIVE_TASK/task.yaml" ] || \
+    block "Assisted source edits require $ACTIVE_TASK/task.yaml for cross-conversation continuity."
+  exit 0
 fi
 
 TASK_ANALYSIS="$ACTIVE_TASK/task-analysis.yaml"
@@ -207,10 +235,10 @@ if grep -Eq '^[[:space:]]*fast_track:[[:space:]]*true' "$TASK_ANALYSIS"; then
   IS_FAST_TRACK=true
 fi
 
-# Every applied-service source edit needs a context plan, including fast-track.
+# Every product-component source edit needs a context plan, including fast-track.
 # Fast-track may skip the full implementation plan, not the context/evidence gate.
 grep -Eq '^[[:space:]]*context_plan:' "$TASK_ANALYSIS" || \
-  block "Applied-service source edits require task-analysis.yaml.context_plan before editing."
+  block "product-component source edits require task-analysis.yaml.context_plan before editing."
 
 CONTEXT_CONFIDENCE=$(
   awk '
@@ -282,10 +310,10 @@ if [ "$IS_FAST_TRACK" != true ]; then
     block "Standard implementation requires service-assignments.yaml before source edits."
 else
   [ -f "$ACTIVE_TASK/service-assignments.yaml" ] || \
-    block "Fast-track applied-service edits require lightweight service-assignments.yaml before source edits."
+    block "Fast-track product-component edits require lightweight service-assignments.yaml before source edits."
 fi
 
-REGISTRY_FILE=".runtime/context/agent-registry.yaml"
+REGISTRY_FILE=".maestro/registry/agents.yaml"
 if ! scope_allows_file "$REL_PATH" "$REGISTRY_FILE"; then
   block "No active coder in $REGISTRY_FILE allows writes to $REL_PATH, or the path is forbidden by that coder scope."
 fi

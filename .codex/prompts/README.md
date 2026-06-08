@@ -12,4 +12,4 @@ mkdir -p ~/.codex/prompts && cp .codex/prompts/*.md ~/.codex/prompts/
 Then in the Codex TUI: `/coord`, `/analyze-task`, `/dev`, `/qc`, … become available.
 
 These mirror the command entrypoints; the full stateful workflow still needs the
-agent-workspace repo + `AGENTS.md`. Do not edit these files by hand — rerun the generator.
+maestro repo + `AGENTS.md`. Do not edit these files by hand — rerun the generator.

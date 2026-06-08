@@ -1,14 +1,14 @@
 ---
-description: "agent-workspace /dev — Run implementation flow through Coder Leader and generated service coders."
+description: "maestro /dev — Run implementation flow through Coder Leader and generated service coders."
 argument-hint: "[request or args]"
 ---
 
-You are running the agent-workspace `/dev` workflow command inside Codex.
+You are running the maestro `/dev` workflow command inside Codex.
 
 Follow `.codex/AGENTS.md` (or `AGENTS.md`) routing and the framework rules. Route every
 request through the coordinator model; do not bypass approval gates, security/secret rules,
-or the task-analysis source-edit gate. If the agent-workspace framework files
-(`.agent/`, `.runtime/`, `.claude/commands/dev.md`) are present, defer to them as the
+or the task-analysis source-edit gate. If the maestro framework files
+(`.maestro/engine/`, `.maestro/registry/`, `.maestro/knowledge/`, `.maestro/work/`, `.maestro/runtime/`, `.claude/commands/dev.md`) are present, defer to them as the
 authoritative contract — this prompt is a portable mirror.
 
 User input for this command: $ARGUMENTS
@@ -22,7 +22,7 @@ User input for this command: $ARGUMENTS
 
 Run implementation flow through Coder Leader and generated service coders.
 
-This command is for applied-service implementation. Standard tasks require implementation-plan.yaml; applied-service fast-track requires only lightweight service-assignments.yaml. Framework-maintenance fast-track skips /dev and records changed files plus verification evidence directly.
+This command is for product-component implementation. Standard tasks require implementation-plan.yaml; product-component fast-track requires only lightweight service-assignments.yaml. Framework-maintenance fast-track skips /dev and records changed files plus verification evidence directly.
 
 ## Responsible agent
 
@@ -44,7 +44,7 @@ coder-leader
 
 ```text
 task-analysis.yaml exists
-implementation-plan.yaml exists unless applied-service fast_track: true
+implementation-plan.yaml exists unless product-component fast_track: true
 service-assignments.yaml exists
 active generated coder agents exist
 ```

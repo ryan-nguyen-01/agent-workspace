@@ -40,7 +40,7 @@ for agent in "${WORKFLOW_AGENTS[@]}"; do
   case "$FILE_PATH" in
     *"$agent"|"$agent")
       cat >&2 <<EOF
-⚠️  [agent-workspace] Editing framework workflow agent:
+⚠️  [maestro] Editing framework workflow agent:
     $FILE_PATH
 
 This file defines the AI workflow contract. Edits cascade to every project using

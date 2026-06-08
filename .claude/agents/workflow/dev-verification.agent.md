@@ -1,6 +1,6 @@
 ---
 name: dev-verification
-description: Evaluates whether implementation qualifies as Code Done using service test policy, critical checks, and >=80% dev verification score.
+description: Evaluates whether implementation qualifies as Code Done using component test policy, critical checks, and >=80% dev verification score.
 tools: Read, Write, Edit, Glob, Grep, Bash
 ---
 
@@ -12,7 +12,7 @@ Decide whether development output can move to QC.
 
 ## Model routing
 
-Use `model_profile=verification` from `.runtime/context/model-routing.yaml`. Verification defaults to the coding provider profile, with escalation to `deep_reasoning` only when evidence conflicts, a blocker classification is ambiguous, or safety/security/data-risk checks need deeper reasoning.
+Use `model_profile=verification` from `.maestro/config/model-routing.yaml`. Verification defaults to the coding provider profile, with escalation to `deep_reasoning` only when evidence conflicts, a blocker classification is ambiguous, or safety/security/data-risk checks need deeper reasoning.
 
 ## Scope boundary
 
@@ -25,18 +25,18 @@ Dev Verification may flag obvious code-quality risks, but does not replace Coder
 ## Required reading
 
 ```text
-.agent/workflow.md
-.runtime/context/model-routing.yaml
-.runtime/tasks/<task-id>/task-analysis.yaml
-.runtime/tasks/<task-id>/coder-results.yaml
-.runtime/context/feedback/patterns.md and anti-patterns.md when coder-results/task-analysis reference them
-.agent/templates/dev-verification.template.yaml
+.maestro/engine/workflow.md
+.maestro/config/model-routing.yaml
+.maestro/work/tasks/<task-id>/task-analysis.yaml
+.maestro/work/tasks/<task-id>/coder-results.yaml
+.maestro/memory/project/feedback/patterns.md and anti-patterns.md when coder-results/task-analysis reference them
+.maestro/engine/templates/dev-verification.template.yaml
 ```
 
 Conditional reads:
 
 ```text
-Read test-policy.yaml and agent-registry.yaml for applied-service implementation verification.
+Read test-policy.yaml and agents.yaml for product-component implementation verification.
 Read implementation-plan.yaml only when the standard pipeline created it.
 For framework-maintenance fast-track, dev-verification.yaml is not required; verify with the smallest applicable evidence such as markdown lint, shell syntax check, shellcheck, targeted grep, or git diff --check.
 ```
@@ -81,7 +81,7 @@ If the service cannot be started (missing env vars, DB not available):
 ## Output
 
 ```text
-.runtime/tasks/<task-id>/dev-verification.yaml
+.maestro/work/tasks/<task-id>/dev-verification.yaml
 ```
 
 When returning `NEEDS_FIX` or `DEV_BLOCKED` because implementation behavior is wrong, populate `feedback_loop.new_coding_error_feedback` with root cause, prevention rule, and regression check. If the error repeats a known anti-pattern, set `feedback_loop.repeated_error_detected: true` and route back to Coder Leader; do not report DEV_DONE.
@@ -91,7 +91,7 @@ When returning `NEEDS_FIX` or `DEV_BLOCKED` because implementation behavior is w
 Read `task-analysis.yaml.advisory_required[]` and invoke the verification-stage advisors assigned to you
 (advisor-only, R-016 + workflow.md §6.4): `security-auditor`, `performance-engineer`,
 `accessibility-auditor`, `sre-observability`, and `code-reviewer`. Each writes
-`.runtime/tasks/<task-id>/advisories/<id>.yaml`.
+`.maestro/work/tasks/<task-id>/advisories/<id>.yaml`.
 
 ```text
 - security-auditor MAY emit proposed_critical_checks → add them to your critical checks.
@@ -113,7 +113,7 @@ NEEDS_USER_DECISION
 
 ```text
 Do not lower critical check requirements to reach 80%.
-Do not create missing tests if service policy forbids them; report policy conflict.
+Do not create missing tests if component policy forbids them; report policy conflict.
 Do not replace Coder Leader architecture/code-quality review ownership.
 Do not ignore a repeated feedback anti-pattern just because the normal tests pass.
 Do not move to QC directly; Coordinator and QC Handoff handle that.

@@ -1,0 +1,331 @@
+version: 2
+project:
+  name: "maestro"
+  slug: "maestro"
+  repository_type: "workflow-framework"
+  primary_languages:
+    - "Markdown"
+    - "YAML"
+    - "JSON"
+    - "Shell"
+  frameworks: []
+  package_managers:
+    - "npm"
+  generated_at: "2026-05-17"
+  generated_by: "memory-structure-migration"
+
+project_profile:
+  archetypes:
+    - "workflow-framework"
+    - "docs-and-templates"
+  confidence: "high"
+  evidence:
+    - "AGENTS.md"
+    - ".maestro/engine/workflow.md"
+    - ".claude/agents/"
+  source_layout:
+    service_roots: []
+    app_roots: []
+    package_roots: []
+    shared_code_roots:
+      - ".maestro/engine"
+      - ".claude"
+      - ".codex"
+      - ".cursor"
+      - ".gemini"
+      - ".github"
+    infra_roots: []
+    data_roots: []
+    docs_roots:
+      - "README.md"
+      - "SETUP.md"
+      - "QUICKSTART.md"
+      - "inputs"
+    generated_or_vendor_roots: []
+  critical_manifests:
+    - "AGENTS.md"
+    - "CLAUDE.md"
+    - "COMMAND.md"
+    - ".maestro/engine/workflow.md"
+    - ".maestro/runtime/workflow-state.yaml"
+  boundary_strategy: "workspace-control-plane"
+  onboarding_scan_profile: "signature-first"
+
+memory:
+  role: "project-knowledge-base"
+  root: ".maestro/knowledge"
+  index: ".maestro/knowledge/index.yaml"
+  component_knowledge_root: ".maestro/knowledge/components"
+  component_roots_source: ".maestro/project.yaml"
+  state_file: ".maestro/runtime/workflow-state.yaml"
+  model_routing_file: ".maestro/config/model-routing.yaml"
+  agent_activity_file: ".maestro/runtime/agent-activity.yaml"
+  response_ui_file: ".maestro/config/response-ui.yaml"
+  read_policy:
+    - "Read .maestro/knowledge/index.yaml before opening large memory files."
+    - "Read only memory files whose tags, component_ids, or paths match the current task."
+    - "Do not rescan registered roots when the index and component knowledge are fresh enough."
+    - "Run /sync-memory after meaningful changes so the index and project knowledge stay current."
+
+context_economy:
+  goal: "High recall with bounded reads: agents start from indexes and expand only when confidence or task risk requires it."
+  default_context_budget:
+    coordinator_files: 4
+    task_analysis_files: 12
+    coder_leader_files: 16
+    service_coder_files: 20
+    verification_files: 12
+  always_read:
+    - ".maestro/engine/workflow.md"
+    - ".maestro/runtime/workflow-state.yaml"
+    - ".maestro/knowledge/index.yaml"
+  read_order:
+    - "task artifact or user input"
+    - "memory index rows matching tags/component_ids/paths"
+    - "project profile and component registry summaries"
+    - "impacted component knowledge summaries"
+    - "specific source files referenced by evidence"
+  expansion_triggers:
+    - "impacted component cannot be resolved"
+    - "acceptance criteria map to unknown files"
+    - "contract/schema/security/test policy risk is present"
+    - "confidence is low or evidence is stale"
+    - "implementation touches shared code or cross-component behavior"
+  stop_before_coding_when:
+    - "context_plan.confidence is low"
+    - "required evidence is missing"
+    - "component boundary is unknown"
+    - "test policy is unknown for an impacted component"
+  never_read_by_default:
+    - "node_modules"
+    - "vendor"
+    - "dist"
+    - "build"
+    - ".next"
+    - "coverage"
+    - ".git"
+    - "large generated files"
+
+freshness:
+  repo_reference: "unknown"
+  memory_epoch: 1
+  stale: true
+  stale_reasons:
+    - "Shared knowledge lives under .maestro/knowledge, work evidence under .maestro/work, and local execution state under .maestro/runtime."
+    - "Run /onboard or /sync-memory --refresh-index after adding real component projects."
+  partial_rescan_targets:
+    - ".maestro/engine"
+    - ".maestro/knowledge"
+    - ".maestro/registry"
+    - ".claude/agents"
+    - ".claude/skills"
+    - ".claude/commands"
+  # Drift detection fields consumed by Coordinator startup.
+  last_indexed_at: ""
+  stale_after_days: 14
+  tracked_paths:
+    - "services"
+    - "inputs"
+    - ".claude/agents"
+    - ".maestro/engine/rules"
+    - ".maestro/engine/templates"
+  last_drift_check_at: ""
+  last_drift_check_result: "unknown"
+
+# User-provided reference docs scanned by Onboarding (R-002-09..12).
+inputs:
+  root: "inputs"
+  index: ".maestro/registry/inputs.yaml"
+  categories: ["product", "architecture", "api", "domain", "runbooks", "misc"]
+  last_scanned_at: ""
+  file_count: 0
+
+# Conflicts between inputs/ and source code (R-002-11).
+conflicts: []
+
+architecture:
+  summary: "Coordinator-driven workflow framework with static agent definitions, durable memory, component coding contracts, workflow state, task artifacts, and QC/bug loops."
+  services:
+    - "maestro"
+  shared_libraries: []
+  databases: []
+  queues: []
+  external_integrations: []
+
+service_boundaries:
+  catalog: ".maestro/registry/components.yaml"
+  agent_registry: ".maestro/registry/agents.yaml"
+  test_policy: ".maestro/knowledge/test-policy.yaml"
+  rule: "Product code lives in the component path registered in .maestro/registry/components.yaml. Shared control-plane data lives under .maestro; local execution state lives under .maestro/runtime."
+
+policies:
+  workflow: "end-to-end"
+  coder_creation_requires_user_approval: true
+  code_done_threshold: 0.80
+  qc_handoff_required: true
+  blocker_stops_qc: true
+  non_blocker_allows_parallel_fix: true
+
+memory_rules:
+  never_store:
+    - secrets
+    - passwords
+    - raw tokens
+    - long logs
+    - temporary noisy output
+  store_when:
+    - architecture decision
+    - component boundary change
+    - test policy change
+    - bug root cause pattern
+    - user approved exception
+    - reusable coding convention
+    - durable user feedback
+
+deep_project_intelligence:
+  status: "partial"
+  reusable_assets:
+    utilities:
+      - path: ".maestro/engine/templates/agent-coder.template.md"
+        note: "Generated coder contract template."
+      - path: ".maestro/engine/templates/task-analysis.template.yaml"
+        note: "Task analysis artifact template."
+      - path: ".maestro/engine/templates/dev-verification.template.yaml"
+        note: "Dev verification artifact template."
+    shared_components: []
+    base_classes: []
+    hooks: []
+    middleware: []
+    validators: []
+    mappers_serializers: []
+    error_handling: []
+    logging: []
+    auth_helpers: []
+    db_transaction_helpers: []
+    event_queue_helpers: []
+    payment_helpers: []
+    notification_helpers: []
+    test_helpers: []
+  coding_conventions:
+    folder_structure:
+      - ".maestro/knowledge stores durable product and component facts."
+      - ".maestro/registry stores canonical component, agent, skill, input, and artifact addresses."
+      - ".maestro/work stores shared work decomposition and delivery evidence."
+      - ".maestro/runtime and .maestro/memory/sessions are local-only."
+      - "apps, services, packages, infra, and tests contain product implementation."
+      - ".claude/agents, .claude/skills, .maestro/engine/rules, .maestro/engine/templates, and .claude/commands are static workflow definitions."
+    naming_rules:
+      - "Agent files use *.agent.md."
+      - "Rules use nn-name.md."
+      - "Templates use *.template.(yaml|md)."
+      - "Component knowledge lives in .maestro/knowledge/components/<component-id>.yaml."
+      - "Component source paths must be recorded explicitly in .maestro/registry/components.yaml."
+    layering_rules:
+      - "Knowledge describes what the agent knows; the component registry describes where it may code; state describes where the workflow currently is."
+    api_patterns: []
+    validation_patterns: []
+    error_handling_patterns: []
+    logging_patterns: []
+    transaction_patterns: []
+    async_job_patterns: []
+    migration_patterns: []
+    testing_patterns: []
+    configuration_patterns: []
+  business_flows:
+    - id: "flow-onboarding"
+      name: "Project onboarding"
+      description: "Coordinator detects missing or stale project knowledge, runs onboarding, writes memory and component contracts, then requests approval for coder generation."
+      entrypoints:
+        - ".claude/commands/onboard.md"
+        - ".claude/agents/workflow/onboarding.agent.md"
+      services:
+        - "maestro"
+      steps:
+        - "Coordinator checks .maestro/knowledge/index.yaml and project.yaml freshness."
+        - "Onboarding scans approved project/component paths."
+        - "Onboarding writes memory and services artifacts."
+        - "Coordinator requests coder approval when component candidates exist."
+      data_entities:
+        - ".maestro/knowledge/project.yaml"
+        - ".maestro/knowledge/index.yaml"
+        - ".maestro/registry/components.yaml"
+        - ".maestro/registry/agents.yaml"
+      external_integrations: []
+      events_emitted: []
+      events_consumed: []
+      reusable_assets:
+        - ".maestro/engine/templates/project.template.yaml"
+        - ".maestro/engine/templates/component.template.yaml"
+      critical_checks:
+        - "Do not store secrets."
+        - "Do not invent component paths."
+      evidence:
+        - "README.md"
+        - ".maestro/engine/workflow.md"
+      confidence: "high"
+    - id: "flow-task-execution"
+      name: "Task execution flow"
+      description: "Coordinator routes tasks through analysis, planning, scoped component coding, verification, QC, and memory update."
+      entrypoints:
+        - ".claude/commands/coord.md"
+      services:
+        - "maestro"
+      steps:
+        - "Task Analysis creates task-analysis.yaml."
+        - "Coder Leader plans and assigns scoped component coders."
+        - "Service coders implement only allowed component paths."
+        - "Dev Verification checks readiness."
+        - "QC Handoff and QC Runner execute handoff/testing."
+        - "Memory Update persists durable learnings and refreshes memory index."
+      data_entities:
+        - ".maestro/work/tasks/<task-id>/*"
+      external_integrations: []
+      events_emitted: []
+      events_consumed: []
+      reusable_assets:
+        - ".maestro/engine/templates/task-analysis.template.yaml"
+        - ".maestro/engine/templates/dev-verification.template.yaml"
+        - ".maestro/engine/templates/qc-test-result.template.yaml"
+      critical_checks:
+        - "No coding before task-analysis.yaml."
+        - "No QC before qc-handoff.md."
+      evidence:
+        - "README.md"
+        - ".maestro/engine/README.md"
+      confidence: "high"
+  reuse_rules:
+    - rule: "Use .maestro/engine/templates for workflow artifacts before creating new formats."
+      existing_asset: "Artifact templates"
+      existing_path: ".maestro/engine/templates"
+      applies_to:
+        - "task artifacts"
+        - "workflow handoffs"
+      must_reuse: true
+      evidence:
+        - "README.md"
+        - ".maestro/engine/README.md"
+      confidence: "high"
+  anti_patterns:
+    - rule: "Do not create coder agents without user approval."
+      reason: "Approval gate is mandatory for scoped coder creation."
+      examples_to_avoid:
+        - "Creating coder-*.agent.md directly"
+      safer_alternative: "Use /create-coders after Coordinator approval."
+      evidence:
+        - ".maestro/engine/workflow.md"
+        - ".maestro/engine/rules/11-approval-gates.md"
+      confidence: "high"
+  evidence_index:
+    - topic: "Folder semantics and workflow overview"
+      paths:
+        - "README.md"
+        - "GUIDELINES.md"
+        - ".maestro/engine/docs/folder-guide.md"
+      reason: "Defines memory, component, state, and task artifact boundaries."
+      confidence: "high"
+    - topic: "Workflow policy and agent responsibilities"
+      paths:
+        - ".maestro/engine/workflow.md"
+        - ".claude/agents/*.agent.md"
+      reason: "Defines coordinator-driven workflow and agent roles."
+      confidence: "high"

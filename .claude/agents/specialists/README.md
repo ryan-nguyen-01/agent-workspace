@@ -1,11 +1,11 @@
 # Specialist Advisors
 
 19 domain experts operating as **in-pipeline advisors**: invoked by a workflow agent,
-producing an evidence-backed advisory artifact at `.runtime/tasks/<task-id>/advisories/<id>.yaml`, they do **not**
+producing an evidence-backed advisory artifact at `.maestro/work/tasks/<task-id>/advisories/<id>.yaml`, they do **not**
 write application code, do **not** assign coders, and do **not** mark Code Done/QC Done.
 
-Contract & limits: [`.agent/rules/16-specialist-advisory-rules.md`](../../../.agent/rules/16-specialist-advisory-rules.md).
-Template: [`.agent/templates/agent-specialist.template.md`](../../../.agent/templates/agent-specialist.template.md).
+Contract & limits: [`.maestro/engine/rules/16-specialist-advisory-rules.md`](../../../.maestro/engine/rules/16-specialist-advisory-rules.md).
+Template: [`.maestro/engine/templates/agent-specialist.template.md`](../../../.maestro/engine/templates/agent-specialist.template.md).
 
 ## Quick-selection
 
@@ -40,4 +40,4 @@ Template: [`.agent/templates/agent-specialist.template.md`](../../../.agent/temp
 2. Or a workflow agent (coordinator/solution-architect/coder-leader/dev-verification/qc-handoff) detects a domain risk and invokes it.
 3. The specialist writes the advisory → the downstream workflow agent reads it and resolves `handoff.must_address`.
 
-Advisories **create no new state machine** — they run as a sub-step inside existing states (ANALYZED, ARCHITECTURE_REVIEWING, DEV_VERIFYING, QC). See [`.agent/workflow.md`](../../../.agent/workflow.md).
+Advisories **create no new state machine** — they run as a sub-step inside existing states (ANALYZED, ARCHITECTURE_REVIEWING, DEV_VERIFYING, QC). See [`.maestro/engine/workflow.md`](../../../.maestro/engine/workflow.md).

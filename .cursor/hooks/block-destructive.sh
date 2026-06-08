@@ -42,7 +42,7 @@ DENIED_PATTERNS=(
 for pattern in "${DENIED_PATTERNS[@]}"; do
   if printf '%s' "$CMD" | grep -Eiq "$pattern"; then
     cat >&2 <<EOF
-⛔ [agent-workspace] Destructive command blocked.
+⛔ [maestro] Destructive command blocked.
 ⛔ Command : $CMD
 ⛔ Pattern : $pattern
 ⛔ Per R-011-07, destructive environment/data actions need explicit user approval.

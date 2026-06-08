@@ -12,16 +12,16 @@ Use the QC handoff to produce test cases, execute or record QC testing, and clas
 
 ## Model routing
 
-Use `model_profile=verification` from `.runtime/context/model-routing.yaml`. Escalate to `deep_reasoning` only for ambiguous blocker classification, security/data-loss risk, or conflicting QC evidence.
+Use `model_profile=verification` from `.maestro/config/model-routing.yaml`. Escalate to `deep_reasoning` only for ambiguous blocker classification, security/data-loss risk, or conflicting QC evidence.
 
 ## Required reading
 
 ```text
-.agent/workflow.md
-.runtime/context/model-routing.yaml
-.agent/templates/qc-test-result.template.yaml
-.agent/templates/bug.template.yaml
-.runtime/tasks/<task-id>/qc-handoff.md
+.maestro/engine/workflow.md
+.maestro/config/model-routing.yaml
+.maestro/engine/templates/qc-test-result.template.yaml
+.maestro/engine/templates/bug.template.yaml
+.maestro/work/tasks/<task-id>/qc-handoff.md
 ```
 
 Conditional reads:
@@ -45,12 +45,26 @@ Skip QC Runner entirely for framework-maintenance fast-track unless the task exp
 9. Write qc-delivery-report.md with link to the collection file, or note that collection generation was skipped.
 ```
 
+## Autopilot mode (R-019-QC1..4)
+
+When `workflow-state.yaml.autopilot.enabled` is true, act as a real end user and test hard:
+
+```text
+- Produce a FULL test plan from the approved blueprint covering every relevant dimension:
+  Functional, UI (states/forms/validation/responsive), API (success/validation/auth/status/contract/edge),
+  UX (real end-to-end flows + basic accessibility), Edge/negative, and Regression.
+- Log EVERY failure as a bug (blocker AND non-blocker) and loop qc -> bug-router -> dev fix -> re-QC.
+- QC_DONE only when every test case passes AND the QC bug log is empty — zero open bugs of ANY severity,
+  not just zero blockers. Never skip/delete a case or downgrade a real bug to reach zero (R-019-QC4).
+- Bounded by autopilot.max_attempts_per_stage; if a bug can't be fixed in the limit, escalate to the user.
+```
+
 ## Postman Collection Export
 
 After QC_DONE, read the API changes section from `qc-handoff.md` and generate a Postman 2.1 collection.
 
 ```text
-Output: .runtime/tasks/<task-id>/postman-collection.json
+Output: .maestro/work/tasks/<task-id>/postman-collection.json
 
 Collection structure:
   - info.name:    <task-id> — <task summary>
@@ -74,7 +88,7 @@ If no API changes in handoff: skip collection generation and note in delivery re
 
 ```text
 Stop current QC run
-Create .runtime/bugs/blockers/<bug-id>.yaml
+Create .maestro/work/bugs/blockers/<bug-id>.yaml
 Set task state BLOCKED_BY_BUG
 Return to Coder Leader through Coordinator
 ```
@@ -82,7 +96,7 @@ Return to Coder Leader through Coordinator
 ## Non-blocking bug response
 
 ```text
-Create .runtime/bugs/non-blockers/<bug-id>.yaml
+Create .maestro/work/bugs/non-blockers/<bug-id>.yaml
 Keep task in QC_TESTING
 Continue cases that are not blocked by the bug
 ```

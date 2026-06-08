@@ -4,7 +4,7 @@
 
 Create implementation plan and service assignments for an analyzed task.
 
-This command creates the standard applied-service plan. Applied-service fast-track may use it only to create a lightweight service-assignments.yaml; framework-maintenance fast-track skips it entirely.
+This command creates the standard product-component plan. product-component fast-track may use it only to create a lightweight service-assignments.yaml; framework-maintenance fast-track skips it entirely.
 
 ## Responsible agent
 
@@ -24,9 +24,9 @@ coder-leader
 
 ```text
 task-analysis.yaml exists
-task-analysis.yaml.context_plan exists for applied-service tasks
+task-analysis.yaml.context_plan exists for product-component tasks
 context_plan.confidence is medium or high
-agent-registry.yaml has active coder agents for impacted services
+agents.yaml has active coder agents for impacted components
 ```
 
 ## Workflow
@@ -34,7 +34,7 @@ agent-registry.yaml has active coder agents for impacted services
 ```text
 1. Read task-analysis.yaml.
 2. Read and apply context_plan before opening source files.
-3. Match impacted services to active coders.
+3. Match impacted components to active coders.
 4. Define implementation sequence.
 5. Define contract and integration checkpoints.
 6. For standard tasks, write implementation-plan.yaml, including any approved context expansion.
@@ -44,7 +44,7 @@ agent-registry.yaml has active coder agents for impacted services
 ## Stop conditions
 
 ```text
-No active coder for impacted service
+No active coder for impacted component
 context_plan missing, low confidence, or unresolved service/test/contract gaps
 Task requires forbidden scope
 Cross-service contract is ambiguous

@@ -1,23 +1,15 @@
-/services/*
-
-# Local Cursor hook/runtime diagnostics
-.agent/dirty-flags.log
-
+# >>> maestro local runtime >>>
+.maestro/runtime/*
+!.maestro/runtime/README.md
+.maestro/memory/sessions/*
+!.maestro/memory/sessions/README.md
+# <<< maestro local runtime <<<
 # Codex plugin: skills copied from .claude/skills by scripts/build-codex-plugin.py (single source = .claude/skills)
-.codex/marketplace/plugins/agent-workspace/skills/
+.codex/marketplace/plugins/maestro/skills/
 
 # macOS
 .DS_Store
 
-# Generated runtime reports/status (output of scripts, not seed state)
-.runtime/architecture-health-report.json
-.runtime/architecture-health-report.md
-.runtime/status.md
-.runtime/status.html
-
 # Python
 __pycache__/
 *.pyc
-
-# Generator hash manifest (R-018 conflict detection, local state)
-.runtime/context/.generated.json

@@ -1,4 +1,4 @@
-"""Shared helpers for Claude Code hooks in agent-workspace.
+"""Shared helpers for Claude Code hooks in maestro.
 
 Claude Code hook contract (PreToolUse):
   - Hook receives a JSON object on stdin:
@@ -8,8 +8,8 @@ Claude Code hook contract (PreToolUse):
   - Other   = non-blocking error (fail-open); stderr is surfaced as a warning.
 
 Execution profiles (learned from ECC hook runtime controls):
-  AW_HOOK_PROFILE = minimal | standard (default) | strict
-  AW_DISABLED_HOOKS = comma-separated hook ids to disable (e.g. "scope-guard,secret-guard")
+  MAESTRO_HOOK_PROFILE = minimal | standard (default) | strict
+  MAESTRO_DISABLED_HOOKS = comma-separated hook ids to disable (e.g. "scope-guard,secret-guard")
 
 These scripts have NO third-party dependencies (no jq, no PyYAML) so they run
 anywhere Python 3.8+ is available.
@@ -35,12 +35,12 @@ def read_payload() -> dict:
 
 
 def profile() -> str:
-    p = (os.environ.get("AW_HOOK_PROFILE") or "standard").strip().lower()
+    p = (os.environ.get("MAESTRO_HOOK_PROFILE") or "standard").strip().lower()
     return p if p in VALID_PROFILES else "standard"
 
 
 def hook_disabled(hook_id: str) -> bool:
-    disabled = os.environ.get("AW_DISABLED_HOOKS", "")
+    disabled = os.environ.get("MAESTRO_DISABLED_HOOKS", "")
     ids = {x.strip() for x in disabled.split(",") if x.strip()}
     return hook_id in ids
 
@@ -86,11 +86,11 @@ def allow() -> None:
 
 
 def block(reason: str) -> None:
-    sys.stderr.write(f"⛔ [agent-workspace] {reason}\n")
+    sys.stderr.write(f"⛔ [maestro] {reason}\n")
     sys.exit(2)
 
 
 def warn_fail_open(reason: str) -> None:
     """Non-blocking: surface a warning but let the tool proceed (exit 1)."""
-    sys.stderr.write(f"⚠️ [agent-workspace] {reason}\n")
+    sys.stderr.write(f"⚠️ [maestro] {reason}\n")
     sys.exit(1)

@@ -10,7 +10,7 @@ category: "product"
 
 > **Class:** Specialist Advisor (4th class). Operates as an **in-pipeline advisor** —
 > invoked by a workflow agent, produces an advisory artifact, is NOT a standalone entrypoint and does NOT
-> break the state machine. See `.agent/rules/16-specialist-advisory-rules.md`.
+> break the state machine. See `.maestro/engine/rules/16-specialist-advisory-rules.md`.
 
 ## Purpose
 
@@ -21,8 +21,8 @@ before/within the pipeline to reduce risk, not to make the changes yourself.
 
 ## Model routing
 
-Use `model_profile=coding` from `.runtime/context/model-routing.yaml` (`agent_model_map.specialist_advisors`).
-Claude adapters prefer `sonnet`. Record any fallback/escalation in `.runtime/context/agent-activity.yaml` when the adapter has telemetry.
+Use `model_profile=coding` from `.maestro/config/model-routing.yaml` (`agent_model_map.specialist_advisors`).
+Claude adapters prefer `sonnet`. Record any fallback/escalation in `.maestro/runtime/agent-activity.yaml` when the adapter has telemetry.
 
 ## When to use
 
@@ -48,17 +48,29 @@ Do not use for market scan/MVP validation (that is discovery-analyst) or roadmap
 
 ```text
 Inputs (read):
-  .agent/workflow.md
-  .runtime/context/workflow-state.yaml
-  .runtime/context/index.yaml
-  .runtime/context/model-routing.yaml
-  .runtime/tasks/<task-id>/task-analysis.yaml
-  .agent/templates/advisory.template.yaml
+  .maestro/engine/workflow.md
+  .maestro/runtime/workflow-state.yaml
+  .maestro/knowledge/index.yaml
+  .maestro/config/model-routing.yaml
+  .maestro/work/tasks/<task-id>/task-analysis.yaml
+  .maestro/engine/templates/advisory.template.yaml
   inputs/product/**            (PRD, business specs, user stories if any)
-  .runtime/tasks/<task-id>/advisories/discovery-analyst.yaml   (if present, to inherit context)
+  .maestro/work/tasks/<task-id>/advisories/discovery-analyst.yaml   (if present, to inherit context)
 
-Output (write exactly one file, your own):
-  .runtime/tasks/<task-id>/advisories/business-analyst.yaml   (per advisory.template.yaml)
+Output (write your advisory):
+  .maestro/work/tasks/<task-id>/advisories/business-analyst.yaml   (per advisory.template.yaml)
+
+BA documentation deliverable (BA Documentation Standard, .maestro/engine/docs/ba-documentation-standard.md)
+— requirement documents under docs/, NOT application source. When asked to produce/normalize requirements,
+write the standard docs from their templates into the matching folder, right-sized to scope_target:
+  docs/product/                         BRD (brd.template.md), PRD (prd.template.md)
+  docs/requirements/use-cases/          use-case.template.md
+  docs/requirements/user-stories/       user-story.template.md (INVEST + Given/When/Then)
+  docs/requirements/features/           business-rules.template.md
+  docs/requirements/non-functional/     nfr.template.md (measurable targets)
+  docs/requirements/requirements-traceability.md   requirements-traceability.template.md (RTM)
+These are documents in docs/ (not code under apps/services), so the advisor-only boundary (R-016) holds.
+Use stable IDs (<KEY>-BRD/PRD/UC/US/BR/NFR/RTM-NNN); build governed work only from approved requirements.
 
 Decision values: approved | recommendations | blocked
 ```
@@ -116,7 +128,7 @@ When done, report briefly per response-ui:
 
 ```text
 ✅ Advisory: Business Analyst — decision=<approved|recommendations|blocked>
-📁 Artifact: .runtime/tasks/<task-id>/advisories/business-analyst.yaml
+📁 Artifact: .maestro/work/tasks/<task-id>/advisories/business-analyst.yaml
 🔎 Findings: <n> (critical=<x>, high=<y>)
 ⚠️ Assumptions/confidence: <...>
 🔜 Returns to: task-analysis (augment, does not replace task-analysis.yaml)
@@ -128,7 +140,7 @@ When done, report briefly per response-ui:
 Do not write application/source code.
 Do not assign service coders or expand coder write scopes.
 Do not mark Code Done or QC Done; do not approve user gates.
-Do not write outside .runtime/tasks/<task-id>/advisories/business-analyst.yaml.
+Do not write outside .maestro/work/tasks/<task-id>/advisories/business-analyst.yaml.
 Do not create, edit, or replace task-analysis.yaml — task-analysis owns it; you only augment.
 Do not invent facts; mark unknown and request evidence (Four Karpathy principles).
 ```

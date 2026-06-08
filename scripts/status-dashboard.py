@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Render the agent-workspace status dashboard from runtime YAML files.
+"""Render the maestro status dashboard from runtime YAML files.
 
 This script is a tool-agnostic mirror of the /status command. It does not
 require third-party packages. It mutates files only when --write is passed.
@@ -17,7 +17,11 @@ from typing import Any
 
 
 ROOT = Path(__file__).resolve().parents[1]
-CONTEXT = ROOT / ".runtime" / "context"
+KNOWLEDGE = ROOT / ".maestro" / "knowledge"
+REGISTRY = ROOT / ".maestro" / "registry"
+CONFIG = ROOT / ".maestro" / "config"
+RUNTIME = ROOT / ".maestro" / "runtime"
+WORK = ROOT / ".maestro" / "work"
 SUPPORTED_MODES = {"compact", "concise", "dashboard", "models", "json"}
 
 
@@ -352,16 +356,6 @@ def project_brain_freshness(state: dict[str, Any], project_brain: dict[str, Any]
     if project_brain.get("_missing"):
         return "missing"
 
-    state_mode = state.get("distribution_mode")
-    state_instance = state.get("instance_status")
-    brain_mode = nested(project_brain, "distribution", "mode")
-    brain_instance = nested(project_brain, "distribution", "instance_status")
-    if (state_mode, state_instance) == ("framework-template", "not_applied") or (
-        brain_mode,
-        brain_instance,
-    ) == ("framework-template", "not_applied"):
-        return "template-seed"
-
     freshness = project_brain.get("freshness", {})
     if isinstance(freshness, dict):
         if freshness.get("stale") is True:
@@ -385,9 +379,9 @@ def project_brain_summary(project_brain: dict[str, Any]) -> dict[str, Any]:
     }
 
 
-def service_count(service_catalog: dict[str, Any]) -> int:
-    services = service_catalog.get("services", [])
-    return len(services) if isinstance(services, list) else 0
+def component_count(component_registry: dict[str, Any]) -> int:
+    components = component_registry.get("components", [])
+    return len(components) if isinstance(components, list) else 0
 
 
 def active_coder_count(agent_registry: dict[str, Any]) -> int:
@@ -405,14 +399,61 @@ def active_coder_count(agent_registry: dict[str, Any]) -> int:
     return total
 
 
+def normalized_id(value: Any) -> str | None:
+    if value in (None, "", "null", "~"):
+        return None
+    return str(value)
+
+
+def active_run_ids(run_index: dict[str, Any], state: dict[str, Any]) -> list[str]:
+    ids: list[str] = []
+
+    def append(value: Any) -> None:
+        run_id = normalized_id(value)
+        if run_id and run_id not in ids:
+            ids.append(run_id)
+
+    append(state.get("active_run_id"))
+    active = run_index.get("active", {}) if isinstance(run_index, dict) else {}
+    raw_ids = active.get("run_ids", []) if isinstance(active, dict) else []
+    if isinstance(raw_ids, list):
+        for run_id in raw_ids:
+            append(run_id)
+    return ids
+
+
+def run_summary(run_id: str) -> dict[str, Any]:
+    run = load_yaml(WORK / "runs" / run_id / "run.yaml")
+    if run.get("_missing"):
+        return {
+            "run_id": run_id,
+            "status": "missing",
+            "task_id": None,
+            "updated_at": None,
+            "summary": "run.yaml missing",
+            "phase": None,
+            "checkpoint_id": None,
+        }
+    current = run.get("current", {}) if isinstance(run.get("current"), dict) else {}
+    return {
+        "run_id": run_id,
+        "status": run.get("status", "unknown"),
+        "task_id": run.get("task_id"),
+        "updated_at": run.get("updated_at"),
+        "summary": run.get("summary") or current.get("action"),
+        "phase": current.get("phase"),
+        "checkpoint_id": current.get("checkpoint_id"),
+    }
+
+
 def status_artifact_paths(response_ui: dict[str, Any]) -> dict[str, Path]:
     artifacts = response_ui.get("status_artifacts", {})
     if not isinstance(artifacts, dict):
         artifacts = {}
 
     defaults = {
-        "markdown": ".runtime/status.md",
-        "html": ".runtime/status.html",
+        "markdown": ".maestro/runtime/reports/status.md",
+        "html": ".maestro/runtime/reports/status.html",
     }
     paths: dict[str, Path] = {}
     for key, fallback in defaults.items():
@@ -458,18 +499,22 @@ def age(updated_at: Any) -> str:
 
 
 def status_snapshot() -> dict[str, Any]:
-    state = load_yaml(CONTEXT / "workflow-state.yaml")
-    model_routing = load_yaml(CONTEXT / "model-routing.yaml")
-    activity = load_yaml(CONTEXT / "agent-activity.yaml")
-    response_ui = load_yaml(CONTEXT / "response-ui.yaml")
-    project_brain = load_yaml(CONTEXT / "project-brain.yaml")
-    service_catalog = load_yaml(CONTEXT / "service-catalog.yaml")
-    agent_registry = load_yaml(CONTEXT / "agent-registry.yaml")
+    state = load_yaml(RUNTIME / "workflow-state.yaml")
+    model_routing = load_yaml(CONFIG / "model-routing.yaml")
+    activity = load_yaml(RUNTIME / "agent-activity.yaml")
+    response_ui = load_yaml(CONFIG / "response-ui.yaml")
+    project_brain = load_yaml(KNOWLEDGE / "project.yaml")
+    component_registry = load_yaml(REGISTRY / "components.yaml")
+    agent_registry = load_yaml(REGISTRY / "agents.yaml")
+    run_index = load_yaml(WORK / "runs" / "index.yaml")
 
     totals = activity.get("totals", {}) if isinstance(activity.get("totals"), dict) else {}
     current_agents = activity.get("current_agents", [])
     if not isinstance(current_agents, list):
         current_agents = []
+    run_ids = active_run_ids(run_index, state)
+    active_runs = [run_summary(run_id) for run_id in run_ids]
+    active_run_id = normalized_id(state.get("active_run_id")) or (run_ids[0] if run_ids else None)
 
     return {
         "state": state,
@@ -477,11 +522,14 @@ def status_snapshot() -> dict[str, Any]:
         "activity": activity,
         "response_ui": response_ui,
         "project_brain": project_brain,
-        "service_catalog": service_catalog,
+        "component_registry": component_registry,
         "agent_registry": agent_registry,
+        "run_index": run_index,
+        "active_run_id": active_run_id,
+        "active_runs": active_runs,
         "project_brain_status": project_brain_freshness(state, project_brain),
         "project_brain_summary": project_brain_summary(project_brain),
-        "services_detected": service_count(service_catalog),
+        "components_detected": component_count(component_registry),
         "active_coder_agents": active_coder_count(agent_registry),
         "totals": totals,
         "current_agents": current_agents,
@@ -503,26 +551,22 @@ def render_compact(snapshot: dict[str, Any]) -> str:
     values = {
         "state": "state="
         + fmt(state.get("current_state"))
-        + " mode="
-        + fmt(state.get("distribution_mode"))
-        + "/"
-        + fmt(state.get("instance_status"))
-        + " brain="
+        + " execution="
+        + fmt(state.get("active_execution_mode"), state.get("default_execution_mode"))
+        + " knowledge="
         + fmt(snapshot.get("project_brain_status"))
         + " ui="
         + fmt(snapshot.get("selected_mode"), response_default_mode(snapshot["response_ui"]))
         + " task="
-        + fmt(state.get("active_task_id"), "none"),
+        + fmt(state.get("active_task_id"), "none")
+        + " run="
+        + fmt(snapshot.get("active_run_id"), "none"),
         "current_action": "activity="
         + fmt(activity.get("status"), "unknown")
         + " running="
         + fmt(totals.get("running_agents"), "0"),
         "blocker": "blocked=" + fmt(totals.get("blocked_agents"), "0"),
         "next": "next=" + next_command(snapshot),
-        "token_cost": "tokens="
-        + fmt(totals.get("actual_tokens_used"), "unknown")
-        + " cost="
-        + fmt(totals.get("actual_cost_usd"), "unknown"),
     }
     return " | ".join(values[section] for section in sections if section in values)
 
@@ -531,9 +575,9 @@ def render_dashboard(snapshot: dict[str, Any], mode: str, show_models: bool) -> 
     sections = response_sections(
         snapshot["response_ui"],
         mode,
-        ["workflow_state", "agent_activity", "model_profile", "elapsed_eta", "token_cost", "next_command"],
+        ["workflow_state", "agent_activity", "model_profile", "elapsed_eta", "next_command"],
     )
-    lines = ["Agent Workspace Status", "=" * 24]
+    lines = ["Maestro Status", "=" * 24]
     for section in sections:
         rendered = render_section(section, snapshot, show_models)
         if not rendered:
@@ -559,18 +603,30 @@ def render_section(section: str, snapshot: dict[str, Any], show_models: bool) ->
     project_brain = snapshot.get("project_brain_summary", {})
 
     if section == "workflow_state":
-        return [
+        lines = [
             "Workflow",
-            f"- mode: {fmt(state.get('distribution_mode'))} / {fmt(state.get('instance_status'))}",
             f"- state: {fmt(state.get('current_state'))}",
+            f"- execution mode: {fmt(state.get('active_execution_mode'), state.get('default_execution_mode'))}",
+            f"- verification owner: {fmt(state.get('verification_owner'), 'unknown')}",
             f"- active task: {fmt(state.get('active_task_id'), 'none')}",
-            f"- services detected: {fmt(snapshot.get('services_detected'), '0')}",
+            f"- active run: {fmt(snapshot.get('active_run_id'), 'none')}",
+            f"- active runs: {len(snapshot.get('active_runs', []))}",
+            f"- components detected: {fmt(snapshot.get('components_detected'), '0')}",
             f"- active coder agents: {fmt(snapshot.get('active_coder_agents'), '0')}",
         ]
+        for run in snapshot.get("active_runs", [])[:3]:
+            if isinstance(run, dict):
+                lines.append(
+                    "- run "
+                    + f"{fmt(run.get('run_id'))}: "
+                    + f"{fmt(run.get('status'))}"
+                    + (f" | {fmt(run.get('summary'))}" if run.get("summary") else "")
+                )
+        return lines
     if section == "project_brain":
         stale_reasons = project_brain.get("stale_reasons", []) if isinstance(project_brain, dict) else []
         lines = [
-            "Project Brain",
+            "Project Knowledge",
             f"- freshness: {fmt(snapshot.get('project_brain_status'), 'unknown')}",
             f"- memory epoch: {fmt(project_brain.get('memory_epoch') if isinstance(project_brain, dict) else None, 'unknown')}",
             f"- last indexed: {fmt(project_brain.get('last_indexed_at') if isinstance(project_brain, dict) else None, 'unknown')}",
@@ -642,14 +698,6 @@ def render_section(section: str, snapshot: dict[str, Any], show_models: bool) ->
         else:
             lines.append("- active agents: none")
         return lines
-    if section == "token_cost":
-        return [
-            "Token / Cost",
-            f"- actual tokens: {fmt(totals.get('actual_tokens_used'), 'unknown')}",
-            f"- estimated tokens: {fmt(totals.get('estimated_tokens_used'), 'unknown')}",
-            f"- actual cost USD: {fmt(totals.get('actual_cost_usd'), 'unknown')}",
-            f"- estimated cost USD: {fmt(totals.get('estimated_cost_usd'), 'unknown')}",
-        ]
     if section == "next_command":
         return ["Next", f"- {next_command(snapshot)}"]
     if section == "summary":
@@ -658,18 +706,15 @@ def render_section(section: str, snapshot: dict[str, Any], show_models: bool) ->
             f"- state={fmt(state.get('current_state'))}",
             f"- activity={fmt(activity.get('status'), 'unknown')}",
             f"- task={fmt(state.get('active_task_id'), 'none')}",
+            f"- run={fmt(snapshot.get('active_run_id'), 'none')}",
         ]
     if section == "verification":
-        return ["Verification", "- status dashboard data loaded from .runtime/context/"]
+        return ["Verification", "- status dashboard data loaded from .maestro knowledge, registry, and runtime domains"]
     return []
 
 
 def next_command(snapshot: dict[str, Any]) -> str:
     state = snapshot["state"].get("current_state")
-    mode = snapshot["state"].get("distribution_mode")
-    instance = snapshot["state"].get("instance_status")
-    if mode == "framework-template" and instance == "not_applied":
-        return "/coord <framework request> or /onboard after cloning services"
     if state == "NEED_ONBOARDING":
         return "/onboard"
     if state == "ONBOARDED":
@@ -706,11 +751,15 @@ def render(mode: str | None, show_models: bool) -> str:
         return json.dumps(
             {
                 "workflow_state": snapshot["state"].get("current_state"),
-                "distribution_mode": snapshot["state"].get("distribution_mode"),
-                "instance_status": snapshot["state"].get("instance_status"),
+                "execution_mode": snapshot["state"].get("active_execution_mode")
+                or snapshot["state"].get("default_execution_mode"),
+                "verification_owner": snapshot["state"].get("verification_owner"),
                 "active_task_id": snapshot["state"].get("active_task_id"),
+                "active_run_id": snapshot["active_run_id"],
+                "active_runs": snapshot["active_runs"],
+                "project_knowledge": snapshot["project_brain_status"],
                 "project_brain": snapshot["project_brain_status"],
-                "services_detected": snapshot["services_detected"],
+                "components_detected": snapshot["components_detected"],
                 "active_coder_agents": snapshot["active_coder_agents"],
                 "activity_status": snapshot["activity"].get("status"),
                 "totals": snapshot["totals"],
@@ -732,7 +781,7 @@ def current_utc_timestamp() -> str:
 
 def render_markdown_status(content: str, selected_mode: str, generated_at: str) -> str:
     return (
-        "# Agent Workspace Status\n\n"
+        "# Maestro Status\n\n"
         f"Generated by `scripts/status-dashboard.py --mode {selected_mode}`.\n\n"
         f"Generated at: `{generated_at}`.\n\n"
         "```text\n"
@@ -755,11 +804,11 @@ def render_html_metric_grid(snapshot: dict[str, Any]) -> str:
     return "\n        ".join(
         [
             html_status_card("Workflow", snapshot["state"].get("current_state"), "accent"),
-            html_status_card("Brain", snapshot.get("project_brain_status"), "ok"),
-            html_status_card("Services", snapshot.get("services_detected"), "neutral"),
+            html_status_card("Knowledge", snapshot.get("project_brain_status"), "ok"),
+            html_status_card("Components", snapshot.get("components_detected"), "neutral"),
             html_status_card("Active coders", snapshot.get("active_coder_agents"), "neutral"),
+            html_status_card("Active runs", len(snapshot.get("active_runs", [])), "neutral"),
             html_status_card("Running agents", totals.get("running_agents", 0), "neutral"),
-            html_status_card("Estimated tokens", totals.get("estimated_tokens_used", "unknown"), "neutral"),
         ]
     )
 
@@ -797,7 +846,7 @@ def render_html_status(content: str, selected_mode: str, generated_at: str) -> s
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Agent Workspace Status</title>
+  <title>Maestro Status</title>
   <style>
     :root {{
       color-scheme: dark;
@@ -1000,10 +1049,10 @@ def render_html_status(content: str, selected_mode: str, generated_at: str) -> s
         {tabs}
       </nav>
       <article class="readme" id="readme">
-        <div class="hero" aria-label="Agent Workspace banner">
-          <p class="hero-title">Agent Workspace</p>
+        <div class="hero" aria-label="Maestro banner">
+          <p class="hero-title">Maestro</p>
         </div>
-        <h1>Agent Workspace</h1>
+        <h1>Maestro</h1>
         <p class="subtitle">Generated by <strong>scripts/status-dashboard.py --mode {safe_mode}</strong> at {safe_generated_at}. This HTML is a styled mirror; runtime YAML remains the source of truth.</p>
 
         <section class="grid" aria-label="Status metrics">
@@ -1013,8 +1062,10 @@ def render_html_status(content: str, selected_mode: str, generated_at: str) -> s
         <section class="section" id="workflow">
           <h2>Workflow</h2>
           <ul class="facts">
-            <li><strong>Mode:</strong> {escape(fmt(state.get("distribution_mode")))} / {escape(fmt(state.get("instance_status")))}</li>
+            <li><strong>Execution:</strong> {escape(fmt(state.get("active_execution_mode"), state.get("default_execution_mode")))}</li>
+            <li><strong>Verification owner:</strong> {escape(fmt(state.get("verification_owner"), "unknown"))}</li>
             <li><strong>Active task:</strong> {escape(fmt(state.get("active_task_id"), "none"))}</li>
+            <li><strong>Active run:</strong> {escape(fmt(snapshot.get("active_run_id"), "none"))}</li>
             <li><strong>Next:</strong> {safe_next}</li>
           </ul>
         </section>
@@ -1032,7 +1083,6 @@ def render_html_status(content: str, selected_mode: str, generated_at: str) -> s
           <ul class="facts">
             <li><strong>Selected mode:</strong> {safe_mode}</li>
             <li><strong>Available modes:</strong> {safe_modes or "unknown"}</li>
-            <li><strong>Token/cost policy:</strong> exact values are shown only when adapter metrics are available.</li>
           </ul>
         </section>
 
@@ -1049,7 +1099,7 @@ def render_html_status(content: str, selected_mode: str, generated_at: str) -> s
 
 
 def write_status_artifacts(content: str, selected_mode: str) -> list[Path]:
-    response_ui = load_yaml(CONTEXT / "response-ui.yaml")
+    response_ui = load_yaml(CONFIG / "response-ui.yaml")
     paths = status_artifact_paths(response_ui)
     markdown_path = paths["markdown"]
     html_path = paths["html"]
@@ -1063,20 +1113,20 @@ def write_status_artifacts(content: str, selected_mode: str) -> list[Path]:
 
 
 def main() -> int:
-    parser = argparse.ArgumentParser(description="Render agent-workspace status dashboard.")
+    parser = argparse.ArgumentParser(description="Render maestro status dashboard.")
     parser.add_argument(
         "--mode",
         choices=["compact", "concise", "dashboard", "models", "json"],
-        help="Response UI mode. Defaults to .runtime/context/response-ui.yaml defaults.status_mode.",
+        help="Response UI mode. Defaults to .maestro/config/response-ui.yaml defaults.status_mode.",
     )
     parser.add_argument("--models", action="store_true", help="Show full agent-to-model-profile mapping.")
     parser.add_argument(
         "--write",
         action="store_true",
-        help="Write configured status artifacts (.runtime/status.md and .runtime/status.html by default).",
+        help="Write configured status artifacts (.maestro/runtime/reports/status.md and .maestro/runtime/reports/status.html by default).",
     )
     args = parser.parse_args()
-    selected_mode = args.mode or ("models" if args.models else response_default_mode(load_yaml(CONTEXT / "response-ui.yaml")))
+    selected_mode = args.mode or ("models" if args.models else response_default_mode(load_yaml(CONFIG / "response-ui.yaml")))
     content = render(mode=selected_mode, show_models=args.models)
     print(content)
     if args.write:

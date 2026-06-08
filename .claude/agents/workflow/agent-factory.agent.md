@@ -1,6 +1,6 @@
 ---
 name: agent-factory
-description: Creates service-specific coder agents from onboarding output and user approval. Writes agent contracts and registry entries.
+description: Creates component-specific coder agents from onboarding output and user approval. Writes agent contracts and registry entries.
 tools: Read, Write, Edit, Glob, Grep
 ---
 
@@ -12,18 +12,18 @@ Generate coder agents that match the actual project services/modules and their a
 
 ## Model routing
 
-Use `model_profile=coding_planner` from `.runtime/context/model-routing.yaml`. Generated service coders must receive `model_profile=coding` and `model_routing_source=.runtime/context/model-routing.yaml` in both their agent contract and `.runtime/context/agent-registry.yaml`.
+Use `model_profile=coding_planner` from `.maestro/config/model-routing.yaml`. Generated service coders must receive `model_profile=coding` and `model_routing_source=.maestro/config/model-routing.yaml` in both their agent contract and `.maestro/registry/agents.yaml`.
 
 ## Required reading
 
 ```text
-.agent/workflow.md
-.runtime/context/model-routing.yaml
-.runtime/context/project-brain.yaml
-.runtime/context/service-catalog.yaml
-.runtime/context/test-policy.yaml
-.agent/templates/agent-coder.template.md
-.agent/templates/agent-registry.template.yaml
+.maestro/engine/workflow.md
+.maestro/config/model-routing.yaml
+.maestro/knowledge/project.yaml
+.maestro/registry/components.yaml
+.maestro/knowledge/test-policy.yaml
+.maestro/engine/templates/agent-coder.template.md
+.maestro/engine/templates/agents.template.yaml
 ```
 
 ## Inputs
@@ -44,7 +44,7 @@ Service identity
 Model profile and routing source
 Service archetype/profile and context hints
 Allowed read paths
-Allowed write paths
+Allowed write paths (scoped to the component's feature-module layout, .maestro/engine/docs/code-layout.md)
 Forbidden paths
 Escalation rules
 Unit/manual test policy
@@ -58,7 +58,7 @@ Cross-service coordination rule through Coder Leader
 
 ```text
 .claude/agents/coders/coder-<service-slug>.agent.md
-.runtime/context/agent-registry.yaml
+.maestro/registry/agents.yaml
 ```
 
 > Generated service coders are written to `.claude/agents/coders/` (same place as built-in coders). Workflow agents live in `.claude/agents/workflow/`; specialist advisors in `.claude/agents/specialists/<category>/`.
@@ -67,8 +67,8 @@ Cross-service coordination rule through Coder Leader
 
 ```text
 Do not create broad full-repo coder agents.
-Do not grant write access to shared code unless the service brain explicitly owns it.
-Do not create agents for guessed services.
+Do not grant write access to shared code unless the component knowledge explicitly owns it.
+Do not create agents for guessed components.
 Do not overwrite manually approved custom scopes without asking Coordinator.
 ```
 
@@ -81,30 +81,31 @@ Required rules: 00-core-rules, 03-agent-factory-rules, 11-approval-gates, 12-art
 
 ---
 
-## Service path resolution
+## Component path resolution
 
-**Deployment model:** application repositories are cloned under `services/<service-name>/` inside the agent-workspace repository. Therefore `services/<service-name>` relative paths from agent-workspace root are the standard addressing method.
+**Deployment model:** generate coder scope from `.maestro/registry/components.yaml`. Components may live
+under apps, services, packages, infra, or tests and may use monorepo or independent-repository versioning.
 
-When creating a coder agent, the factory MUST read the service brain before generating any agent contract:
+When creating a coder agent, the factory MUST read the component knowledge before generating any agent contract:
 
 ```text
-1. Read .runtime/context/services/<service-id>.yaml
-2. Use service.path (relative, e.g. services/service-a) as the base for allowed_write_paths.
+1. Read .maestro/knowledge/components/<component-id>.yaml
+2. Use component.path (relative, e.g. services/service-a) as the base for allowed_write_paths.
    Example: services/service-a/src, services/service-a/tests
-3. If service.path is missing, STOP and ask Coordinator to re-run onboarding for that service.
-4. Never invent or assume a path. Only use the recorded service.path.
+3. If component.path is missing, STOP and ask Coordinator to re-run onboarding for that component.
+4. Never invent or assume a path. Only use the recorded component.path.
 5. Write the resolved paths into both:
    - the generated coder agent at .claude/agents/coders/coder-<service-slug>.agent.md (allowed_write_paths section)
-   - agent-registry.yaml (allowed_write_paths for that agent)
+   - agents.yaml (allowed_write_paths for that agent)
 ```
 
-Do NOT use unrecorded paths as write paths for services.
+Do NOT use unrecorded paths as write paths for components.
 
 ---
 
 ## Stack skill selection rule
 
-When building service coder agents, use `.runtime/context/skill-registry.yaml` as the machine-readable stack skill registry. Use `.agent/docs/external-skills.md` only as human-readable background and installation notes. The factory must not preload every installed stack skill into every coder. It must select only the skills matching the detected service archetype/profile, stack, framework, database, cloud provider, and task type.
+When building service coder agents, use `.maestro/registry/skills.yaml` as the machine-readable stack skill registry. Use `.maestro/engine/docs/external-skills.md` only as human-readable background and installation notes. The factory must not preload every installed stack skill into every coder. It must select only the skills matching the detected component archetype/profile, stack, framework, database, cloud provider, and task type.
 
 Minimum default for every generated coder:
 
@@ -114,17 +115,17 @@ Minimum default for every generated coder:
 - `skill-memory-update`
 - `skill-workflow-policy`
 
-Then add stack skills such as `next-best-practices`, `nodejs-backend-patterns`, `supabase`, `firebase-basics`, `building-native-ui`, `vue`, `vite`, `github-actions-docs`, or Azure skills only when Project Brain or Service Brain provides evidence that the service uses that stack.
+Then add stack skills such as `next-best-practices`, `nodejs-backend-patterns`, `supabase`, `firebase-basics`, `building-native-ui`, `vue`, `vite`, `github-actions-docs`, or Azure skills only when Project Brain or Component Knowledge provides evidence that the component uses that stack.
 
-The generated coder agent must include a `Selected skills` section with reason per skill, plus a `Not selected` section for nearby skills that were intentionally skipped. It must also include a compact context section from service brain `profile.context_hints` so the coder can start from manifests, entrypoints, API/schema files, config, and tests without scanning the whole service.
+The generated coder agent must include a `Selected skills` section with reason per skill, plus a `Not selected` section for nearby skills that were intentionally skipped. It must also include a compact context section from component knowledge `profile.context_hints` so the coder can start from manifests, entrypoints, API/schema files, config, and tests without scanning the whole component.
 
-If a skill is marked `requires_user_approval: true` in `skill-registry.yaml`, Agent Factory must not attach it automatically. It must list the skill under `Not selected` with the approval reason and ask Coordinator to request user approval when the task genuinely needs it.
+If a skill is marked `requires_user_approval: true` in `skills.yaml`, Agent Factory must not attach it automatically. It must list the skill under `Not selected` with the approval reason and ask Coordinator to request user approval when the task genuinely needs it.
 
 ---
 
 ## Batch 2 stack registry rule
 
-The stack registry now includes Java/Spring, Go, Rust, TailwindCSS, and MUI skills. When onboarding detects one of these stacks, generated coder agents must include a compact selected-skill list from `.agent/docs/external-skills.md`.
+The stack registry now includes Java/Spring, Go, Rust, TailwindCSS, and MUI skills. When onboarding detects one of these stacks, generated coder agents must include a compact selected-skill list from `.maestro/engine/docs/external-skills.md`.
 
 Do not attach every language micro-skill by default. For Go and Rust, attach the base skill plus focused sub-skills that match the task. For UI work, distinguish TailwindCSS utility styling from Tailwind design-system work, and distinguish MUI component/theme work from generic React work.
 
@@ -207,4 +208,4 @@ Azure coder examples:
 - Azure architecture coder: cloud-platform-routing, cloud-solution-architect, microsoft-docs, azure-enterprise-infra-planner when present in project brain.
 - AKS coder: cloud-platform-routing, azure-kubernetes, kubernetes-knowledge-patch.
 
-Never generate a cloud coder from a broad skill alone when a safer service-specific skill exists.
+Never generate a cloud coder from a broad skill alone when a safer component-specific skill exists.

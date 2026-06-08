@@ -1,7 +1,7 @@
 """Shared generator helper: write generated files with manual-edit (hash) conflict detection.
 
 Adapted from the ADLC sync pattern (per-file SHA256 manifest + conflict detection). Each generator
-records the SHA256 of what it last wrote in .runtime/context/.generated.json (gitignored, local).
+records the SHA256 of what it last wrote in .maestro/runtime/cache/generated.json (gitignored, local).
 Before overwriting, if the file on disk differs from BOTH the new content AND the last recorded hash,
 it was hand-edited — the generator refuses to clobber it unless --force (R-018-06).
 
@@ -27,7 +27,7 @@ import json
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
-MANIFEST = ROOT / ".runtime" / "context" / ".generated.json"
+MANIFEST = ROOT / ".maestro" / "runtime" / "cache" / "generated.json"
 
 
 def _sha(text: str) -> str:

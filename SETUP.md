@@ -1,159 +1,142 @@
-# Agent Workspace — Hướng dẫn cài đặt
+# Maestro Setup Guide
 
-## Documentation entry points
+## Documentation Entry Points
 
 | Need | File |
 | --- | --- |
-| Khởi tạo workspace nhanh | [QUICKSTART.md](QUICKSTART.md) |
+| Fast workspace startup | [QUICKSTART.md](QUICKSTART.md) |
 | Slash commands | [COMMAND.md](COMMAND.md) |
-| Tổng quan framework | [README.md](README.md) |
-| Cài đặt/upgrade/validation chi tiết | [SETUP.md](SETUP.md) |
-| Entry point cho AI agents | [AGENTS.md](AGENTS.md) |
-| Entry point cho Claude Code | [CLAUDE.md](CLAUDE.md) |
-| Workflow source of truth | [.agent/workflow.md](.agent/workflow.md) |
+| Framework overview | [README.md](README.md) |
+| Install, upgrade, and validation details | [SETUP.md](SETUP.md) |
+| Entry point for AI agents | [AGENTS.md](AGENTS.md) |
+| Entry point for Claude Code | [CLAUDE.md](CLAUDE.md) |
+| Workflow source of truth | [.maestro/engine/workflow.md](.maestro/engine/workflow.md) |
 
-## Yêu cầu
+## Requirements
 
-- Một AI coding tool có thể đọc instruction files: Claude Code, Codex, Cursor, Gemini, GitHub Copilot, Aider, Continue, Cody, hoặc tương đương
-- Git (để clone repo)
+- An AI coding tool that can read instruction files: Claude Code, Codex, Cursor, Gemini, GitHub Copilot, Aider, Continue, Cody, or an equivalent tool.
+- Git.
+- Python 3 for validation and local helper scripts.
 
----
-
-## Cấu trúc Agent Workspace
+## Workspace Shape
 
 ```text
-agent-workspace/
-├── CLAUDE.md                      ← Entry point (Claude đọc file này đầu tiên)
-├── AGENTS.md                      ← Entry point chung cho AI coding agents
-├── COMMAND.md                     ← Slash command index
-├── GUIDELINES.md                  ← Cách dùng nhanh
-├── SETUP.md                       ← File này
-├── README.md                      ← Tổng quan dự án
-├── .codex/                        ← Codex instructions
-├── .cursor/                       ← Cursor rules
-├── .gemini/                       ← Gemini instructions
-├── .agent/                        ← Tool-neutral workflow source
-│   ├── workflow.md
-│   ├── rules/                     ← 19 workflow rules
-│   ├── templates/                 ← 22 artifact templates
-│   └── docs/                      ← Documentation + visual diagrams
-├── .runtime/                      ← Runtime memory and workflow artifacts
-│   ├── context/                   ← Project brain + service contracts + workflow state + model/status/response UI telemetry
-│   ├── tasks/                     ← Task artifacts
-│   └── bugs/                      ← Bug reports
-├── .claude/                       ← Claude adapter
-│   ├── agents/                    ← 12 workflow agents + built-in/generated coders
-│   │   ├── coordinator.agent.md
-│   │   ├── onboarding.agent.md
-│   │   ├── agent-factory.agent.md
-│   │   ├── task-analysis.agent.md
-│   │   ├── solution-architect.agent.md
-│   │   ├── coder-leader.agent.md
-│   │   ├── dev-verification.agent.md
-│   │   ├── qc-handoff.agent.md
-│   │   ├── qc-runner.agent.md
-│   │   ├── bug-router.agent.md
-│   │   ├── memory-update.agent.md
-│   │   └── workflow-policy.agent.md
-│   │
-│   ├── skills/                    ← 231 skill definitions
-│   │   ├── skill-project-brain/SKILL.md      (12 workflow skills)
-│   │   ├── skill-task-analysis/SKILL.md
-│   │   ├── react/SKILL.md                    (219 technical skills)
-│   │   ├── prisma/SKILL.md
-│   │   └── ...
-│   │
-│   ├── commands/                  ← 17 workflow commands
-│   │   ├── onboard.md
-│   │   ├── dev.md
-│   │   └── ...
-│   └── settings.json
-├── inputs/                        ← User-provided reference docs (PRD, HLD, ADR, OpenAPI…)
-│   ├── product/                   PRD, business specs, user stories
-│   ├── architecture/              HLD, LLD, ADRs, system diagrams
-│   ├── api/                       OpenAPI/Swagger specs, contracts
-│   ├── domain/                    Domain models, glossary, business rules
-│   ├── runbooks/                  Ops playbooks, incident response
-│   └── misc/                      Uncategorized
-└── services/                      ← Ignored workspace for cloned application repos
+maestro/
+├── CLAUDE.md                      Claude Code entry point
+├── AGENTS.md                      General AI-agent entry point
+├── COMMAND.md                     Slash command index
+├── GUIDELINES.md                  Fast usage guide
+├── SETUP.md                       This file
+├── README.md                      Framework overview
+├── .maestro/                           Product-development control plane
+├── .claude/                       Claude adapter: agents, skills, commands, hooks
+├── .codex/                        Codex instructions and generated prompts
+├── .cursor/                       Cursor rules and hooks
+├── .gemini/                       Gemini instructions
+├── docs/                          Official product documentation
+├── apps/                          Product applications
+├── services/                      Deployable services
+├── packages/                      Shared libraries and design systems
+├── infra/                         Deployable infrastructure
+├── tests/                         System, contract, performance, and E2E tests
+└── inputs/                        User-provided reference documents
 ```
 
----
-
-## Cài Đặt Workspace
-
-`agent-workspace` là workspace điều phối. User clone repo này về, sau đó clone các application/service repositories vào `services/`. Không copy `.claude/` sang từng service repo, không cài global vào `~/.claude/`, và không dùng subtree/submodule để nhúng framework vào project khác.
-
-### 1. Clone agent-workspace
+## 1. Clone The Workspace
 
 ```bash
-git clone <repo-url> ~/Downloads/agent-workspace
-cd ~/Downloads/agent-workspace
+git clone <repo-url> ~/Downloads/maestro
+cd ~/Downloads/maestro
 ```
 
-Nếu user chỉ muốn commit/push trong từng service repo và không muốn workspace
-điều phối này còn là Git repo riêng, có thể detach root `.git`:
+`maestro` is the product workspace root. New code is created directly under the relevant
+component root. Existing code can be mounted or cloned into the proper root and registered in
+`.maestro/registry/components.yaml`.
+
+Do not copy `.claude/` into each component.
+
+If you only want to commit and push inside individual service repositories and do not want the root
+workspace to remain its own Git repository, detach the root `.git`:
 
 ```bash
 scripts/remove-workspace-git.sh
 ```
 
-Script này chỉ xóa `.git` ở root `agent-workspace`, không đụng vào
-`services/<service-name>/.git`. Có thể kiểm tra trước bằng:
+Preview first:
 
 ```bash
 scripts/remove-workspace-git.sh --dry-run
 ```
 
-Expected distribution shape:
+The script removes only the root `maestro/.git`. It does not touch
+`services/<service-name>/.git`.
+
+## 2. Verify Distribution Counts
 
 ```bash
 echo "Agents: $(find .claude/agents -name '*.agent.md' 2>/dev/null | wc -l | tr -d ' ')"
-echo "Skills: $(ls -d .claude/skills/*/SKILL.md 2>/dev/null | wc -l | tr -d ' ')"
-echo "Rules:  $(find .agent/rules -name '[0-9][0-9]-*.md' 2>/dev/null | wc -l | tr -d ' ')"
+echo "Skills: $(find .claude/skills -name SKILL.md 2>/dev/null | wc -l | tr -d ' ')"
+echo "Rules:  $(find .maestro/engine/rules -name '[0-9][0-9]-*.md' 2>/dev/null | wc -l | tr -d ' ')"
+echo "Templates: $(find .maestro/engine/templates -maxdepth 1 -type f 2>/dev/null | wc -l | tr -d ' ')"
+echo "Commands: $(find .claude/commands -maxdepth 1 -name '*.md' ! -name README.md 2>/dev/null | wc -l | tr -d ' ')"
 ```
+
+Expected:
 
 ```text
 Agents: 33
 Skills: 231
-Rules:  18
+Rules:  19
+Templates: 46
+Commands: 17
 ```
 
-### 2. Add user inputs
+Strict validation:
 
-Đặt tài liệu tham chiếu của dự án vào `inputs/`:
+```bash
+python3 scripts/architecture-health-check.py --strict
+```
+
+## 3. Add User Inputs
+
+Place project reference documents in `inputs/`:
 
 ```text
-inputs/product/       PRD, business specs, user stories
-inputs/architecture/  HLD, LLD, ADRs, system diagrams
+inputs/product/       PRDs, business specs, user stories
+inputs/architecture/  HLDs, LLDs, ADRs, system diagrams
 inputs/api/           OpenAPI/Swagger specs, contracts
 inputs/domain/        Domain models, glossary, business rules
-inputs/runbooks/      Ops playbooks, incident response
+inputs/runbooks/      Operations playbooks, incident response
 inputs/misc/          Uncategorized docs
 ```
 
-### 3. Clone services
+Onboarding scans `inputs/` and cites it as user-provided knowledge.
 
-Clone hoặc đặt source repositories vào `services/<service-name>/`:
+## 4. Add Product Components
+
+Create or mount source repositories into the right component roots:
 
 ```bash
-git clone <api-repo-url> services/api
-git clone <web-repo-url> services/web
-git clone <worker-repo-url> services/worker
+git clone <auth-repo-url> services/nova-auth-service
+git clone <web-repo-url> apps/nova-web-app
+git clone <design-system-repo-url> packages/nova-design-system
 ```
 
-`services/` được gitignored trong repo `agent-workspace`, nên source code của app không bị commit vào framework.
-Trong framework-template mode, `services/` có thể rỗng và không cần file scaffold bên trong; clone service repo thật vào đây khi áp dụng workspace.
+`services/` is a normal product root. A service can be tracked in the monorepo or as an independent
+repository, but it must be registered in `.maestro/registry/components.yaml` before agents rely on it.
 
-### 4. Onboard workspace
+During early framework maintenance, component roots may contain only README files. Register real components
+before onboarding.
 
-Mở chính repo `agent-workspace` trong IDE/Claude Code rồi chạy:
+## 5. Onboard The Workspace
+
+Open the root `maestro` folder in your AI coding tool and run:
 
 ```text
 /coord
 ```
 
-hoặc:
+or:
 
 ```text
 /onboard
@@ -162,371 +145,250 @@ hoặc:
 Recommended flow:
 
 ```text
-1. Clone agent-workspace.
-2. Put reference docs into inputs/.
-3. Clone application repositories into services/.
-4. Run /coord or /onboard from agent-workspace.
-5. Review project brain, service catalog, test policy, and coder candidates.
-6. Approve /create-coders only for services that should receive generated service coders.
+1. Clone maestro.
+2. Put reference documents into inputs/.
+3. Clone or create product components under apps/, services/, packages/, infra/, or tests/.
+4. Run /coord or /onboard from the workspace root.
+5. Review project knowledge, component registry, test policy, and coder candidates.
+6. Approve /create-coders only for components that should receive generated coder agents.
 7. Start implementation requests through /coord.
 ```
 
-Built-in cross-cutting coders are available before service-specific coder generation:
+Built-in cross-cutting coders are available before component-specific coder generation:
 
 - `coder-infra`: Terraform/IaC, Kubernetes, Docker, CI/CD.
-- `coder-database`: schema, migrations, queries, indexes.
+- `coder-database`: schemas, migrations, queries, indexes.
 
-They are marked `origin: "built-in"` in `.runtime/context/agent-registry.yaml` and do not mean the workspace has already been onboarded.
+They are marked `origin: "built-in"` in `.maestro/registry/agents.yaml` and do not mean the workspace has
+already been onboarded.
 
-### 5. Per-tool setup (optional)
+## 6. Per-Tool Setup
 
-Agent Workspace ship sẵn entrypoints cho 5 AI tools. Mỗi tool có convention riêng — phần này nói rõ những step **tool-specific** cần làm thủ công.
+Maestro ships entry points for multiple AI coding tools. Each tool has its own discovery rules.
 
-#### Claude Code
+### Claude Code
 
-Không cần setup thêm. Claude Code tự discover:
+No extra setup is required. Claude Code discovers:
 
-- `.claude/agents/**/*.agent.md` — 12 workflow agents + 2 built-in coders + 19 specialist advisors qua Agent tool
-- `.claude/skills/*/SKILL.md` — 231 skills qua Skill tool
-- `.claude/commands/*.md` — 17 slash commands (`/coord`, `/onboard`, …)
-- `CLAUDE.md` ở root — system instructions
+- `.claude/agents/**/*.agent.md`: 12 workflow agents, 3 built-in coders, and 19 specialist advisors.
+- `.claude/skills/*/SKILL.md`: 231 skills.
+- `.claude/commands/*.md`: 19 slash commands.
+- `CLAUDE.md`: root system instructions.
 
-#### Codex CLI
+### Codex CLI
 
-`.codex/AGENTS.md` được Codex đọc tự động.
+`.codex/AGENTS.md` is read automatically.
 
-Tuy nhiên **`.codex/config.toml` (project-level) BỊ IGNORE mặc định** vì Codex yêu cầu user phải trust project trước khi load config. Để kích hoạt:
+Project-level `.codex/config.toml` may be ignored until Codex trusts the project. To activate it, add
+the project to your user config:
 
 ```toml
-# Thêm vào ~/.codex/config.toml của bạn:
-[projects."/absolute/path/to/agent-workspace"]
+[projects."/absolute/path/to/maestro"]
 trust_level = "trusted"
 ```
 
-Hoặc đơn giản hơn: chạy `codex` lần đầu trong workspace và accept trust prompt khi Codex hỏi. Sau đó các lần sau Codex sẽ load `.codex/config.toml` (sandbox mode, project doc fallback, approval policy).
+You can also run `codex` once in the workspace and accept the trust prompt. After trust is granted,
+Codex loads `.codex/config.toml`.
 
-Nếu không trust, Codex vẫn dùng `.codex/AGENTS.md` (luôn đọc) nhưng bỏ qua `.codex/config.toml`. Workflow vẫn chạy được, chỉ mất phần sandbox/approval tinh chỉnh.
+Without trust, Codex still reads `.codex/AGENTS.md`, but it skips project-level sandbox and approval
+configuration. The workflow still works, but the tuned sandbox/approval posture is unavailable.
 
-Lưu ý: Codex sandbox là lớp hỗ trợ, không phải hard gate theo từng service. Source of truth cho write scope vẫn là `.runtime/context/workflow-state.yaml.active_task_id` và `.runtime/context/agent-registry.yaml.allowed_write_paths`.
+Codex sandboxing is a support layer, not the source of truth for component write scope. The source of
+truth is `.maestro/runtime/workflow-state.yaml.active_task_id` plus
+`.maestro/registry/agents.yaml.allowed_write_paths`.
 
-Verify project-level config schema tại [`developers.openai.com/codex/config-reference`](https://developers.openai.com/codex/config-reference).
-
-**Codex plugin (231 skills) + slash commands — tùy chọn.** Codex CLI 0.132+ có plugin system riêng.
-Cài skill layer của framework dưới dạng Codex plugin:
+Optional Codex plugin and slash commands:
 
 ```bash
-# 1. Sinh plugin (BẮT BUỘC chạy trước — bản copy skills bị gitignore, không có sẵn sau git clone/pull)
 python3 scripts/build-codex-plugin.py
-# 2. Add marketplace của repo + cài plugin
 codex plugin marketplace add "$(pwd)/.codex/marketplace"
-codex plugin add agent-workspace@agent-workspace
-# 3. Verify → (installed, enabled), 231 skills vào cache
-codex plugin list --marketplace agent-workspace
+codex plugin add maestro@maestro
+codex plugin list --marketplace maestro
+
+mkdir -p ~/.codex/prompts
+cp .codex/prompts/*.md ~/.codex/prompts/
 ```
 
-Lấy 15 workflow command thành Codex `/` slash command (custom prompts):
+Notes:
 
-```bash
-mkdir -p ~/.codex/prompts && cp .codex/prompts/*.md ~/.codex/prompts/
-```
+- Run `python3 scripts/build-codex-plugin.py` after each clone, pull, or skill edit. The copied skills
+  are gitignored.
+- `/maestro-init` and `/access` are Claude-specific and are not present in Codex prompts.
+- The Codex plugin ships skills only. The full workflow still needs `.maestro/`, routing, and workspace
+  documents.
 
-Lưu ý:
+### Cursor
 
-- Chạy lại `python3 scripts/build-codex-plugin.py` sau mỗi lần `git clone`/`git pull` (skills copy bị gitignore) và sau khi sửa skills.
-- `/aw-init` và `/access` là Claude-specific nên KHÔNG có trong Codex prompts.
-- Codex plugin chỉ ship skills; full workflow (`.agent/`, `.runtime/`, routing) vẫn cần làm việc trong repo này. Chi tiết: [`.codex/AGENTS.md`](.codex/AGENTS.md).
+Cursor discovers:
 
-#### Cursor
+- `.cursor/rules/*.mdc`: glob-targeted rule files.
+- `.cursor/hooks.json`: lifecycle hooks for edit and shell-command gates.
 
-Cursor tự discover:
+Hook scripts use `bash` plus portable `grep`/`sed`. `jq` is optional; if present, scripts use it for
+more robust JSON parsing.
 
-- `.cursor/rules/*.mdc` — 4 glob-targeted rule files (auto-apply theo file type bạn đang edit)
-- `.cursor/hooks.json` — lifecycle hooks (gating edits + shell commands)
+Cursor hooks run only in Cursor IDE. Claude Code, Codex, Gemini, and Copilot do not respect
+`.cursor/hooks.json`; those tools enforce workflow through their entrypoint documents.
 
-Hooks scripts dùng `bash` + `grep`/`sed` (BSD/GNU portable), không yêu cầu `jq`. Nếu hệ thống có `jq`, scripts dùng `jq` cho JSON parsing robust hơn — không có cũng OK.
+### Gemini Code Assist
 
-Hooks chỉ chạy trong **Cursor IDE**. Claude Code / Codex / Gemini KHÔNG respect `.cursor/hooks.json` — workflow gates ở các tool khác đến từ AGENTS.md / CLAUDE.md / `.codex/AGENTS.md` / `.gemini/GEMINI.md`.
+`.gemini/GEMINI.md` is read automatically. No additional setup is required.
 
-Schema verify tại [`cursor.com/docs/agent/hooks`](https://cursor.com/docs/agent/hooks).
+### GitHub Copilot
 
-#### Gemini Code Assist
-
-`.gemini/GEMINI.md` được Gemini đọc tự động. Không config thêm.
-
-#### GitHub Copilot
-
-`.github/copilot-instructions.md` được Copilot Chat đọc tự động. Không config thêm.
+`.github/copilot-instructions.md` is read automatically by Copilot Chat. No additional setup is required.
 
 ## Upgrade
 
-Upgrade framework bằng cách pull version mới trong chính workspace `agent-workspace`.
+Upgrade the framework by pulling the latest version in the root workspace:
 
 ```bash
-cd ~/Downloads/agent-workspace
+cd ~/Downloads/maestro
 git pull origin main
 ```
 
-Nếu workspace đã onboard và có generated coders/task history, kiểm tra các folder runtime này khi resolve conflict:
+If the workspace has been onboarded and contains generated coders or task history, review these paths
+carefully when resolving conflicts:
 
-| File/Folder                       | Lý do                                              |
-| --------------------------------- | -------------------------------------------------- |
-| `.runtime/context/`                | Brain, service contracts, workflow state, feedback |
-| `.runtime/tasks/`                  | Task history                                       |
-| `.runtime/bugs/`                   | Bug history                                        |
-| `.claude/agents/coders/coder-*.agent.md` | Generated service coders                    |
-| `.agent/rules/15-*.md` trở lên   | Custom rules                                       |
-| `inputs/`                         | User-provided reference docs (PRD/HLD/ADR/specs)   |
+| Path | Why It Matters |
+| --- | --- |
+| `.maestro/knowledge/` | Durable project and component knowledge |
+| `.maestro/work/tasks/` | Task history |
+| `.maestro/work/bugs/` | Bug history |
+| `.claude/agents/coders/coder-*.agent.md` | Generated service coders |
+| `.maestro/engine/rules/15-*.md` and above | Advanced/custom workflow rules |
+| `inputs/` | User-provided reference documents |
 
-### Kiểm tra version
+Check version:
 
 ```bash
-# Xem version hiện tại
 cat .claude/settings.json | grep version
-# hoặc
 head -5 CHANGELOG.md
 ```
 
----
+## Usage
 
-## Sử dụng
-
-### Cách gọi workflow
-
-Agent Workspace sử dụng **coordinator-driven workflow**. Bạn có thể giao tiếp bằng:
-
-#### 1. Ngôn ngữ tự nhiên (khuyến nghị)
-
-Claude tự động route qua coordinator đến đúng workflow agent:
+Maestro uses a coordinator-driven workflow. You can interact through natural language:
 
 ```text
-"Phân tích dự án này"                      → coordinator → onboarding
-"Thêm tính năng login bằng Google OAuth"   → coordinator → task-analysis → coder-leader → ...
-"Kiểm tra code đã sẵn sàng chưa"          → coordinator → dev-verification
-"Test tính năng vừa implement"             → coordinator → qc-runner
+"Analyze this project"                    -> coordinator -> onboarding
+"Add Google OAuth login"                  -> coordinator -> task-analysis -> coder-leader -> ...
+"Check if the code is ready"              -> coordinator -> dev-verification
+"Test the feature that was just built"    -> coordinator -> qc-runner
 ```
 
-#### 2. Slash commands (direct)
+Or call commands directly:
 
-Dùng commands để gọi trực tiếp workflow phase:
+```text
+/onboard                    -> Scan project and create project knowledge
+/analyze-task               -> Normalize task into a spec
+/create-coders              -> Create service coder agents
+/plan-dev                   -> Create implementation plan
+/dev                        -> Implement code
+/verify-dev                 -> Check Code Done
+/handoff-qc                 -> Create QC handoff
+/qc                         -> Run QC tests
+/bug                        -> Route bug report
+/sync-memory                -> Update memory
+/skills                     -> Maintain installed skills
+/policy-check               -> Validate workflow policy
+/coord                      -> Call coordinator directly
+/status                     -> Show workflow and activity dashboard
+/resume-task                -> Resume interrupted task
+```
+
+Terminal mirrors for tools without project slash commands:
 
 ```bash
-/onboard                    → Scan project, tạo project brain
-/analyze-task               → Normalize task thành spec
-/create-coders              → Tạo service coder agents
-/plan-dev                   → Lên plan implementation
-/dev                        → Implement code
-/verify-dev                 → Check Code Done
-/handoff-qc                 → Tạo QC handoff document
-/qc                         → Run QC tests
-/bug                        → Route bug report
-/sync-memory                → Update memory
-/skills                     → Maintain installed skills
-/policy-check               → Validate workflow policy
-/coord                      → Coordinator direct
-/status                     → Check workflow status + agent activity dashboard
 python3 scripts/status-dashboard.py --mode <compact|concise|dashboard|models|json>
 python3 scripts/status-dashboard.py --mode dashboard --write
 python3 scripts/agent-activity.py start --agent-id <agent> --phase <phase> --current-action <summary>
 python3 scripts/architecture-health-check.py --strict --write-report
-                            → Terminal dashboard mirror for tools without project slash commands
-/resume-task                → Resume interrupted task
 ```
-
-### Workflow tự động
-
-Khi giao task, coordinator tự động chạy workflow đầy đủ:
-
-```text
-1. coordinator        → Route task, check project brain
-2. task-analysis      → Normalize → task-analysis.yaml
-3. solution-architect → Review architecture khi task yêu cầu
-4. coder-leader       → Plan, assign service coders
-5. [service coders]   → Implement (scoped per service)
-6. dev-verification   → Check Code Done (≥80% + critical checks)
-7. qc-handoff         → Handoff document
-8. qc-runner          → Run QC tests
-9. bug-router         → Route defects (nếu có)
-10. memory-update     → Persist learnings
-```
-
----
-
-## Quick Reference
-
-| Tôi muốn...                    | Command / cách gọi |
-| ------------------------------ | ------------------ |
-| Scan project mới               | `/onboard`         |
-| Phân tích task trước khi code  | `/analyze-task`    |
-| Tạo coder agents cho project   | `/create-coders`   |
-| Implement feature              | `/dev`             |
-| Kiểm tra code đã sẵn sàng chưa | `/verify-dev`      |
-| Chạy QC tests                  | `/qc`              |
-| Báo bug                        | `/bug`             |
-| Quản lý/update skills          | `/skills`          |
-| Xem trạng thái workflow        | `/status`          |
-| Tiếp tục task bị gián đoạn     | `/resume-task`     |
-
----
-
-## Naming Conventions
-
-| Resource         | Format                              | Ví dụ                                |
-| ---------------- | ----------------------------------- | ------------------------------------ |
-| Agent definition | `{role}.agent.md`                   | `coordinator.agent.md`               |
-| Skill folder     | `{skill-name}/SKILL.md`             | `react/SKILL.md`                     |
-| Workflow skill   | `skill-{name}/SKILL.md`             | `skill-task-analysis/SKILL.md`       |
-| Rule             | `{nn}-{name}.md`                    | `00-core-rules.md`                   |
-| Template         | `{name}.template.{ext}`             | `task-analysis.template.yaml`        |
-| Command          | `{name}.md`                         | `dev.md`                             |
-| Generated coder  | `coder-{service}.agent.md`          | `coder-api.agent.md`                 |
-| Task folder      | `.runtime/tasks/{task_id}/`          | `.runtime/tasks/TASK-20260518-001-login/` |
-| Bug file         | `.runtime/bugs/{type}/{bug-id}.yaml` | `.runtime/bugs/blockers/BUG-001.yaml` |
-
----
 
 ## Troubleshooting
 
-### Claude không nhận agent-workspace
+### Claude Code Does Not See Maestro
 
-1. Kiểm tra file entry point:
+Check the root entry point:
 
 ```bash
-# CLAUDE.md phải có ở root workspace agent-workspace
 ls CLAUDE.md
 ```
 
-2. Kiểm tra cấu trúc:
+Check distribution counts:
 
 ```bash
-# Verify tất cả resources
-echo "Agents: $(find .claude/agents -name '*.agent.md' 2>/dev/null | wc -l | tr -d ' ')"
-echo "Skills: $(ls -d .claude/skills/*/SKILL.md 2>/dev/null | wc -l | tr -d ' ')"
-echo "Rules:  $(find .agent/rules -name '[0-9][0-9]-*.md' 2>/dev/null | wc -l | tr -d ' ')"
-echo "Templates: $(ls .agent/templates/* 2>/dev/null | wc -l | tr -d ' ')"
-echo "Commands: $(ls .claude/commands/*.md 2>/dev/null | wc -l | tr -d ' ')"
+python3 scripts/architecture-health-check.py --strict
 ```
 
-Expected:
+### Workflow Does Not Route Correctly
+
+1. Check `.maestro/knowledge/index.yaml`.
+2. Check `.maestro/knowledge/project.yaml`.
+3. If either is missing or stale, run `/onboard`.
+4. Check `.maestro/registry/agents.yaml` for active coders and write scope.
+
+### Service Coder Does Not Exist
+
+Generated service coders are created per project by Agent Factory. Run `/create-coders` after onboarding
+and approve only the coders the project needs.
+
+### Counts Do Not Match
+
+Common causes:
 
 ```text
-Agents: 33
-Skills: 231
-Rules:  18
-Templates: 22
-Commands: 15
+1. Pull or merge was incomplete.
+2. .claude/ or .maestro/ had unresolved conflicts.
+3. Skill, template, rule, or command counts changed but docs or health-check constants were not updated.
 ```
 
-### Workflow không chạy đúng
-
-1. Check memory index: `.runtime/context/index.yaml` phải tồn tại
-2. Check project brain: `.runtime/context/project-brain.yaml` phải tồn tại
-3. Nếu chưa có → chạy `/onboard` hoặc gõ "Phân tích dự án này"
-4. Check agent registry: `.runtime/context/agent-registry.yaml` phải list active coders
-
-### Lỗi "service coder không tồn tại"
-
-Generated service coders được tạo per-project bởi agent-factory.
-Chạy `/create-coders` để tạo coder agents cho project hiện tại.
-
----
-
-## Cập nhật
+Run:
 
 ```bash
-cd ~/Downloads/agent-workspace
-git pull
+python3 scripts/architecture-health-check.py --strict
 ```
 
-### Verify sau khi cập nhật
+### CLAUDE.md Is Not Read
 
 ```bash
-echo "=== Verification ==="
-echo "Agents: $(find .claude/agents -name '*.agent.md' 2>/dev/null | wc -l | tr -d ' ')"
-echo "Skills: $(ls -d .claude/skills/*/SKILL.md 2>/dev/null | wc -l | tr -d ' ')"
-echo "Rules:  $(find .agent/rules -name '[0-9][0-9]-*.md' 2>/dev/null | wc -l | tr -d ' ')"
-echo "Templates: $(ls .agent/templates/* 2>/dev/null | wc -l | tr -d ' ')"
-echo "Commands: $(ls .claude/commands/*.md 2>/dev/null | wc -l | tr -d ' ')"
-```
-
----
-
-## FAQ & Troubleshooting
-
-### Git conflict khi upgrade
-
-```bash
-git status
-# Resolve conflicts carefully. Do not overwrite runtime context/task history blindly.
-git add .
-git commit -m "chore: resolve agent-workspace upgrade conflicts"
-```
-
-### Permission denied
-
-```bash
-# macOS / Linux: .claude/ folder bị read-only
-chmod -R u+w .claude/
-
-# Hoặc nếu dùng sudo để clone:
-sudo chown -R $(whoami) .claude/
-```
-
-### Skills / agents count không đúng expected
-
-Nguyên nhân phổ biến:
-
-```text
-1. Pull/merge chưa đầy đủ.
-2. .claude/ bị xóa hoặc conflict chưa resolve.
-3. Skill/template/rule count thay đổi nhưng docs/config chưa cập nhật.
-```
-
-### CLAUDE.md không được Claude đọc
-
-```bash
-# Kiểm tra IDE đang mở đúng folder agent-workspace:
 pwd
 ls CLAUDE.md
-
-# Nếu dùng VS Code, đảm bảo open folder (không phải open file)
 ```
 
-### Onboarding chạy lại mỗi lần mở project
+Make sure the IDE opened the folder, not a single file.
 
-Project brain đã tồn tại nhưng coordinator vẫn trigger onboarding:
+### Onboarding Runs Every Time
+
+Check project knowledge:
 
 ```bash
-# Kiểm tra project brain
-cat .runtime/context/project-brain.yaml | head -5
-
-# Kiểm tra memory index
-cat .runtime/context/index.yaml | head -5
-
-# Nếu file rỗng hoặc corrupt → refresh:
-# Gõ: /sync-memory --refresh-index
-# Nếu service structure thay đổi → /onboard --refresh <service>
-
+cat .maestro/knowledge/project.yaml | head -5
+cat .maestro/knowledge/index.yaml | head -5
 ```
 
-### Windows: Line ending issues
+If files are empty or corrupt, run `/sync-memory --refresh-index`. If service structure changed, run
+`/onboard --refresh <service>`.
+
+### Windows Line Endings
 
 ```powershell
-# Git tự convert CRLF → gây lỗi khi Claude parse YAML
-# Fix: configure git trước khi clone
 git config --global core.autocrlf input
-
-# Hoặc thêm .gitattributes vào project:
-# *.md text eol=lf
-# *.yaml text eol=lf
 ```
 
----
+Recommended `.gitattributes`:
 
-## Checklist cài đặt
+```text
+*.md text eol=lf
+*.yaml text eol=lf
+```
 
-- [ ] Clone agent-workspace repo
-- [ ] Đặt reference docs vào `inputs/`
-- [ ] Clone service repositories vào `services/<service-name>/`
-- [ ] Verify: 12 workflow agents + 2 built-in coders + 19 specialist advisors, 231 skills, 19 workflow rules, 22 templates, 17 commands
-- [ ] Mở repo `agent-workspace` trong IDE có Claude
-- [ ] Test: gõ "Phân tích dự án này" hoặc `/onboard`
+## Setup Checklist
+
+- [ ] Clone the `maestro` repository.
+- [ ] Put reference documents into `inputs/`.
+- [ ] Clone or create product components under `apps/`, `services/`, `packages/`, `infra/`, or `tests/`.
+- [ ] Run `python3 scripts/architecture-health-check.py --strict`.
+- [ ] Open the root `maestro` folder in the AI coding tool.
+- [ ] Test with `"Analyze this project"` or `/onboard`.

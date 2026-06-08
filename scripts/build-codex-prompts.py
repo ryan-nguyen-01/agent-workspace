@@ -6,7 +6,7 @@ user-level custom prompts: a markdown file at `$CODEX_HOME/prompts/<name>.md` (d
 `~/.codex/prompts/<name>.md`) becomes the `/<name>` command in the Codex TUI.
 
 This script mirrors the workflow commands into self-contained Codex prompts so a Codex user
-gets `/coord`, `/analyze-task`, `/dev`, … globally — even outside the agent-workspace repo.
+gets `/coord`, `/analyze-task`, `/dev`, … globally — even outside the maestro repo.
 `.claude/commands/` stays the single source of truth; rerun to regenerate.
 
 Output: `.codex/prompts/<name>.md` in the repo. Install for global use:
@@ -17,7 +17,7 @@ Usage:
     python3 scripts/build-codex-prompts.py --check     # verify in sync, no writes
 
 Note: like the Claude plugin, these prompts deliver the command *entrypoints*. The full stateful
-workflow (project brain, .agent/, .runtime/) still requires the agent-workspace repo + AGENTS.md.
+workflow (project knowledge, registry, work, and runtime under .maestro/) still requires the maestro repo + AGENTS.md.
 """
 
 from __future__ import annotations
@@ -31,9 +31,9 @@ COMMANDS = ROOT / ".claude" / "commands"
 OUT = ROOT / ".codex" / "prompts"
 
 # Commands that are Claude-plugin-specific and do NOT work as Codex prompts.
-# `aw-init` scaffolds from ${CLAUDE_PLUGIN_ROOT} (Claude-only) and the Codex plugin ships only
-# skills (no .agent/ /.runtime/ /CLAUDE.md to copy) — so a Codex /aw-init would point at nothing.
-EXCLUDE = {"aw-init", "access"}
+# `maestro-init` scaffolds from ${CLAUDE_PLUGIN_ROOT} (Claude-only) and the Codex plugin ships only
+# skills (no .maestro/ control plane or CLAUDE.md to copy) — so a Codex /maestro-init would point at nothing.
+EXCLUDE = {"maestro-init", "access"}
 
 
 def purpose_of(text: str) -> str:
@@ -53,14 +53,15 @@ def render_prompt(name: str, command_text: str) -> str:
     desc = (purpose[:117] + "...") if len(purpose) > 120 else purpose
     return (
         f"---\n"
-        f"description: \"agent-workspace /{name} — {desc}\"\n"
+        f"description: \"maestro /{name} — {desc}\"\n"
         f"argument-hint: \"[request or args]\"\n"
         f"---\n\n"
-        f"You are running the agent-workspace `/{name}` workflow command inside Codex.\n\n"
+        f"You are running the maestro `/{name}` workflow command inside Codex.\n\n"
         f"Follow `.codex/AGENTS.md` (or `AGENTS.md`) routing and the framework rules. Route every\n"
         f"request through the coordinator model; do not bypass approval gates, security/secret rules,\n"
-        f"or the task-analysis source-edit gate. If the agent-workspace framework files\n"
-        f"(`.agent/`, `.runtime/`, `.claude/commands/{name}.md`) are present, defer to them as the\n"
+        f"or the task-analysis source-edit gate. If the maestro framework files\n"
+        f"(`.maestro/engine/`, `.maestro/registry/`, `.maestro/knowledge/`, `.maestro/work/`, `.maestro/runtime/`, "
+        f"`.claude/commands/{name}.md`) are present, defer to them as the\n"
         f"authoritative contract — this prompt is a portable mirror.\n\n"
         f"User input for this command: $ARGUMENTS\n\n"
         f"---\n"
@@ -92,7 +93,7 @@ def main() -> int:
         "```\n\n"
         "Then in the Codex TUI: `/coord`, `/analyze-task`, `/dev`, `/qc`, … become available.\n\n"
         "These mirror the command entrypoints; the full stateful workflow still needs the\n"
-        "agent-workspace repo + `AGENTS.md`. Do not edit these files by hand — rerun the generator.\n"
+        "maestro repo + `AGENTS.md`. Do not edit these files by hand — rerun the generator.\n"
     )
     artifacts[OUT / "README.md"] = readme
 

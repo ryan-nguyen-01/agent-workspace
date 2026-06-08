@@ -1,23 +1,33 @@
-# GitHub Copilot — Agent Workspace Instructions
+# GitHub Copilot — Maestro Instructions
 
 ## Project type
 
-This is **agent-workspace**: a coordinator-driven AI workflow workspace for software engineering.
+This is **maestro**: a product-development workspace with a coordinator-driven agent control plane.
 
-It is not an application repository. Application/service repositories are cloned under `services/<service-name>/`, while this repository holds the agent engine, workflow rules, memory, task artifacts, and service coder scopes.
+Product code lives in registered roots (`apps/`, `services/`, `packages/`, `infra/`, `tests/`).
+Official product documentation lives in `docs/`; `.maestro/` holds the development control plane.
 
-## Framework-template mode
+## Framework Maintenance Scope
 
-When `.runtime/context/workflow-state.yaml` has `distribution_mode: framework-template` and `instance_status: not_applied`, this repository is the reusable framework distribution. `NEED_ONBOARDING`, empty service catalogs, and seed Project Brain values are expected and must not block maintenance of framework files.
+This repository is the `maestro` product-development control plane. Do not use a distribution
+mode to decide routing. `NEED_ONBOARDING`, an empty component registry, and seed project knowledge are
+expected for framework-only maintenance and must not block maintenance of framework files.
 
 For framework maintenance, classify first:
 
 ```yaml
 target_scope: framework
 requires_onboarding: false
+methodology:
+  selected: risk-based-routing
+  overlays: []
+  industry_patterns: []
+run_required: false
 ```
 
-Framework maintenance covers docs, scripts, workflow rules, templates, slash commands, workflow agent definitions, and tool entrypoints in this repository. Do not require onboarding, service catalog, generated coders, or service brain freshness unless the task reads or writes application source under `services/<service-name>/`.
+Framework maintenance covers docs, scripts, workflow rules, templates, slash commands, workflow agent
+definitions, and tool entrypoints. Require onboarding only when assisted/governed product work depends
+on missing component facts.
 
 ## How to use this workspace
 
@@ -37,24 +47,30 @@ Do **not** jump directly to sub-agents (onboarding, coder-leader, qc-runner, etc
 
 ## Copilot operating rules
 
-- Open the `agent-workspace` root, not an individual service folder, when running workflow tasks.
-- Classify `target_scope` before broad Project Brain or service catalog reads.
+- Open the `maestro` root, not an individual service folder, when running workflow tasks.
+- Classify `target_scope` before broad project-knowledge or component-registry reads.
 - Do not copy `.claude/` into service repositories.
-- Do not modify application source before `task-analysis.yaml` exists and the workflow has moved into implementation.
-- For applied-service tasks, do not plan or code until `task-analysis.yaml.context_plan` exists with medium/high confidence.
-- Use signature-first context loading: Memory Index, project/service profile summaries, service context hints, then specific evidence files. Do not broad-scan source or skills by default.
-- Use `.runtime/context/model-routing.yaml` for model profiles and `.runtime/context/agent-activity.yaml` for `/status` activity/ETA/token/cost reporting.
-- Switch models through `.runtime/context/model-routing.yaml.model_overrides`; do not edit agent files or remove stable profiles to switch models.
-- Use `.runtime/context/response-ui.yaml` for markdown/text response structure and generated status artifacts. Copilot support is best-effort; do not claim native Copilot panel customization.
-- Framework-template maintenance may use workflow.md §6.2 lightweight fast-track evidence for trivial changes that do not affect approval gates, security rules, workflow state machine, generated coder scopes, destructive behavior, or application source under `services/`.
+- Select `direct`, `assisted`, or `governed` before editing source.
+- Add Spec-Driven Development, Eval-Driven AI Development, or Enterprise Agent Governance overlays
+  when traceability, eval-driven AI, or governed autonomous operation is required.
+- Create a run under `.maestro/work/runs/` when work needs pause/resume, multiple attempts, trace/eval
+  evidence, or human approval.
+- Direct low-risk work may omit persistent artifacts and must disclose user-owned verification.
+- Assisted work requires task.yaml; governed work requires task-analysis.yaml and context_plan.
+- Use signature-first context loading: Memory Index, project/component profile summaries, service context hints, then specific evidence files. Do not broad-scan source or skills by default.
+- Use `.maestro/config/model-routing.yaml` for model profiles and `.maestro/runtime/agent-activity.yaml` for `/status` activity/ETA reporting.
+- Switch models through `.maestro/config/model-routing.yaml.model_overrides`; do not edit agent files or remove stable profiles to switch models.
+- Use `.maestro/config/response-ui.yaml` for markdown/text response structure and generated status artifacts. Copilot support is best-effort; do not claim native Copilot panel customization.
+- Framework maintenance may use workflow.md §6.2 lightweight fast-track evidence for trivial changes that do not affect approval gates, security rules, workflow state machine, generated coder scopes, destructive behavior, or application source under `services/`.
 - If `task-analysis.yaml` requires architecture review, do not plan or code until `architecture-review.yaml` exists with `decision: approved`.
-- Generated service coders may write only inside paths approved in `.runtime/context/agent-registry.yaml`.
-- Specialist advisors live under `.claude/agents/specialists/<category>/` (19 advisor-only experts). Invoke them in-pipeline per `R-016` and `task-analysis.yaml.advisory_required`; they only write `.runtime/tasks/<task_id>/advisories/<id>.yaml`, never application code, never assign coders or mark gates, and are never a raw-user entrypoint.
-- Copilot has no hook runtime, so the scope/secret/destructive guardrails in `.claude/settings.json` + `scripts/hooks/` do not auto-enforce here. Follow `R-000`/`R-006`/`R-013`/`R-011-07` and `R-017` manually: no source edit without the task-analysis gate + coder scope, no secrets in writes, destructive commands need explicit user approval.
+- Generated service coders may write only inside paths approved in `.maestro/registry/agents.yaml`.
+- Specialist advisors live under `.claude/agents/specialists/<category>/` (19 advisor-only experts). Invoke them in-pipeline per `R-016` and `task-analysis.yaml.advisory_required`; they only write `.maestro/work/tasks/<task_id>/advisories/<id>.yaml`, never application code, never assign coders or mark gates, and are never a raw-user entrypoint.
+- Copilot has no hook runtime, so enforce the selected execution mode manually, never write secrets,
+  and require explicit approval for destructive actions.
 - Treat `inputs/` as read-only user reference docs.
-- Treat `.runtime/context/`, `.runtime/tasks/`, and `.runtime/bugs/` as workflow/runtime artifacts.
-- Do not store secrets, tokens, raw cookies, private keys, or long logs in `.runtime/` artifacts or tool adapter files.
-- Do not fabricate exact token usage, model cost, elapsed time, or ETA. If Copilot does not expose reliable metrics, write `unknown` or clearly marked estimates.
+- Treat `.maestro/knowledge/` and `.maestro/work/` as shared control-plane artifacts; `.maestro/runtime/` is local-only.
+- Do not store secrets, tokens, raw cookies, private keys, or long logs in `.maestro/`, product docs, or tool adapter files.
+- Do not fabricate exact elapsed time or ETA. If Copilot does not expose reliable metrics, write `unknown` or clearly marked estimates.
 - If uncertain, mark the fact `unknown` and ask the user or route to `/policy-check`.
 
 ## Key files
@@ -64,22 +80,22 @@ Do **not** jump directly to sub-agents (onboarding, coder-leader, qc-runner, etc
 | `COMMAND.md` | Canonical slash command index |
 | `CLAUDE.md` | Full system instructions and routing rules |
 | `AGENTS.md` | Cross-agent entrypoint for non-Claude tools |
-| `.agent/workflow.md` | End-to-end workflow policy |
-| `.runtime/context/workflow-state.yaml` | Current workflow state |
-| `.runtime/context/project-brain.yaml` | Durable workspace memory |
-| `.runtime/context/service-catalog.yaml` | Service inventory and source paths |
-| `.runtime/context/agent-registry.yaml` | Active coder agents and approved scopes |
-| `.runtime/context/skill-registry.yaml` | Skill selection and approval metadata |
-| `.runtime/context/model-routing.yaml` | Agent model profile routing |
-| `.runtime/context/agent-activity.yaml` | Agent activity dashboard, ETA, token/cost telemetry |
-| `.runtime/context/response-ui.yaml` | Response layout modes for chat/status/report outputs |
-| `.runtime/status.md` | Generated readable status artifact |
-| `.runtime/status.html` | Generated browser status dashboard |
+| `.maestro/engine/workflow.md` | End-to-end workflow policy |
+| `.maestro/runtime/workflow-state.yaml` | Current workflow state |
+| `.maestro/knowledge/project.yaml` | Durable workspace memory |
+| `.maestro/registry/components.yaml` | Service inventory and source paths |
+| `.maestro/registry/agents.yaml` | Active coder agents and approved scopes |
+| `.maestro/registry/skills.yaml` | Skill selection and approval metadata |
+| `.maestro/config/model-routing.yaml` | Agent model profile routing |
+| `.maestro/runtime/agent-activity.yaml` | Agent activity dashboard and ETA telemetry |
+| `.maestro/config/response-ui.yaml` | Response layout modes for chat/status/report outputs |
+| `.maestro/runtime/reports/status.md` | Generated readable status artifact |
+| `.maestro/runtime/reports/status.html` | Generated browser status dashboard |
 | `.claude/agents/workflow/coordinator.agent.md` | Coordinator agent definition |
 | `.claude/agents/workflow/solution-architect.agent.md` | Optional architecture review definition |
 | `.claude/agents/specialists/README.md` | Specialist advisor catalog (19 advisors, quick-selection) |
 | `scripts/hooks/` | Deterministic scope/secret/destructive guardrails (Claude adapter) |
-| `.agent/docs/skill-catalog.md` | Skill discovery catalog (231 skills by domain) |
+| `.maestro/engine/docs/skill-catalog.md` | Skill discovery catalog (231 skills by domain) |
 
 ## Commands
 
@@ -101,7 +117,7 @@ Do **not** jump directly to sub-agents (onboarding, coder-leader, qc-runner, etc
 /status         Print state banner and agent activity dashboard using response UI mode
 ```
 
-Terminal status mirror: `python3 scripts/status-dashboard.py --mode <compact|concise|dashboard|models|json>`; add `--write` to generate `.runtime/status.md` and `.runtime/status.html`. Optional helpers: `python3 scripts/agent-activity.py` for telemetry updates and `python3 scripts/architecture-health-check.py --strict` for deterministic drift checks.
+Terminal status mirror: `python3 scripts/status-dashboard.py --mode <compact|concise|dashboard|models|json>`; add `--write` to generate `.maestro/runtime/reports/status.md` and `.maestro/runtime/reports/status.html`. Optional helpers: `python3 scripts/agent-activity.py` for telemetry updates and `python3 scripts/architecture-health-check.py --strict` for deterministic drift checks.
 
 ## Workflow states (summary)
 
@@ -117,20 +133,20 @@ NEW → NEED_ONBOARDING → ONBOARDED → NEED_AGENT_CREATION_APPROVAL → AGENT
 
 On every new conversation, the coordinator will:
 
-1. Read `.agent/workflow.md` and `.runtime/context/workflow-state.yaml`
-2. Read `.runtime/context/index.yaml`, project brain, service catalog, and agent registry when present
+1. Read `.maestro/engine/workflow.md` and `.maestro/runtime/workflow-state.yaml`
+2. Read `.maestro/knowledge/index.yaml`, project knowledge, component registry, and agent registry when present
 3. Check brain freshness fields and registered coders
 4. Report current state, then process your request
 
 ## Workspace layout
 
 ```text
-agent-workspace/
-  .agent/        Tool-neutral workflow source
-  .runtime/      Memory, task artifacts, and bug records
+maestro/
+  .maestro/engine/        Tool-neutral workflow source
+  .maestro/runtime/      Memory, task artifacts, and bug records
   .claude/       Claude adapter
   inputs/        User-provided PRD/HLD/ADR/specs/runbooks
-  services/      Local clones of application repositories
+  services/      Registered deployable services, workers, and gateways
 ```
 
 ## Anti-guessing rules (Karpathy-aligned)

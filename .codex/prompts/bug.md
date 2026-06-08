@@ -1,14 +1,14 @@
 ---
-description: "agent-workspace /bug — Create or route blocker/non-blocker defects."
+description: "maestro /bug — Create or route blocker/non-blocker defects."
 argument-hint: "[request or args]"
 ---
 
-You are running the agent-workspace `/bug` workflow command inside Codex.
+You are running the maestro `/bug` workflow command inside Codex.
 
 Follow `.codex/AGENTS.md` (or `AGENTS.md`) routing and the framework rules. Route every
 request through the coordinator model; do not bypass approval gates, security/secret rules,
-or the task-analysis source-edit gate. If the agent-workspace framework files
-(`.agent/`, `.runtime/`, `.claude/commands/bug.md`) are present, defer to them as the
+or the task-analysis source-edit gate. If the maestro framework files
+(`.maestro/engine/`, `.maestro/registry/`, `.maestro/knowledge/`, `.maestro/work/`, `.maestro/runtime/`, `.claude/commands/bug.md`) are present, defer to them as the
 authoritative contract — this prompt is a portable mirror.
 
 User input for this command: $ARGUMENTS
@@ -41,9 +41,9 @@ bug-router
 ```text
 1. Classify defect as blocker or non-blocker.
 2. Write the canonical bug artifact:
-   - blocker: .runtime/bugs/blockers/<bug-id>.yaml
-   - non-blocker: .runtime/bugs/non-blockers/<bug-id>.yaml
-3. Update .runtime/tasks/<task-id>/bugs.yaml as the task-local bug index.
+   - blocker: .maestro/work/bugs/blockers/<bug-id>.yaml
+   - non-blocker: .maestro/work/bugs/non-blockers/<bug-id>.yaml
+3. Update .maestro/work/tasks/<task-id>/bugs.yaml as the task-local bug index.
    The task index must reference bug_id, severity, status, canonical_path, and retest_scope.
    Do not store the only bug detail copy in the task folder.
 4. For blocker, stop QC and route to Coder Leader.
