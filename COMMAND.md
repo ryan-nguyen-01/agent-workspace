@@ -44,6 +44,7 @@ Use natural-language intents such as `coord: framework <request>` when you want 
 | `/access` | Coordinator | Switch tool-permission posture: `full` (bypassPermissions) / `guarded`. Does not change workflow gates or hooks (R-011-14). |
 | `/policy-check` | Workflow Policy | Validate transition, approval gate, exception, or workflow artifact snapshot. |
 | `/status` | Coordinator | Print workflow state, project knowledge freshness, task, run, model routing, response UI mode, and agent activity dashboard. |
+| `/overview` | Coordinator | Full project briefing: identity, methodology/mode, workflow status, requirements/design artifacts, framework structure, and git state. |
 
 CLI mirror for tools that do not expose project slash commands:
 

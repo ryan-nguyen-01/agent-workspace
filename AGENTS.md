@@ -21,7 +21,7 @@ name stays stable while `.maestro/project.yaml` defines the product identity and
 - 231 skills (12 workflow + 219 technical) at [.claude/skills/](.claude/skills/); discovery layer: [.maestro/engine/docs/skill-catalog.md](.maestro/engine/docs/skill-catalog.md)
 - 21 workflow rules at [.maestro/engine/rules/](.maestro/engine/rules/)
 - 58 templates at [.maestro/engine/templates/](.maestro/engine/templates/)
-- 19 slash commands at [.claude/commands/](.claude/commands/)
+- 20 slash commands at [.claude/commands/](.claude/commands/)
 - 3 built-in cross-cutting coders: `coder-infra`, `coder-database`, and `coder-data` at [.claude/agents/coders/](.claude/agents/coders/)
 - Deterministic hook guardrails (scope/secret/destructive) at [scripts/hooks/](scripts/hooks/) — see [R-017](.maestro/engine/rules/17-hook-enforcement-rules.md)
 - Durable memory at [.maestro/knowledge/](.maestro/knowledge/)
@@ -140,6 +140,7 @@ Run any of these via the Claude Code CLI or by directly invoking the matching ag
 /access           Switch tool-permission posture: full / guarded (R-011-14)
 /policy-check     Validate transitions, exceptions, and artifact snapshots
 /status           Print state banner and agent activity dashboard using response UI mode
+/overview         Full project briefing: identity, status, requirements/design, structure, git
 ```
 
 For tools that do not expose project slash commands, `python3 scripts/status-dashboard.py --mode <compact|concise|dashboard|models|json>` renders the status/model dashboard from `.maestro/knowledge/`. Add `--write` to generate `.maestro/runtime/reports/status.md` and `.maestro/runtime/reports/status.html`. Tool adapters may update telemetry through `python3 scripts/agent-activity.py`; maintainers may run `python3 scripts/architecture-health-check.py --strict` as an optional deterministic drift check. Switch default models through `model-routing.yaml.model_overrides`, not by editing agent files.
