@@ -1,6 +1,6 @@
 ---
 name: skill-dev-verification
-description: Decide Code Done using critical checks, service test policy, scope compliance, and >=80% dev verification score.
+description: Decide Code Done using critical checks, component test policy, scope compliance, and >=80% dev verification score.
 category: workflow
 ---
 
@@ -42,7 +42,7 @@ Dev Verification must check whether coder outputs respected reusable assets and 
 Check:
 
 - Reusable assets from task-analysis.yaml were used or explicitly waived with reason.
-- New helpers do not duplicate known assets from common/generics.md or service_deep_intelligence.
+- New helpers do not duplicate known assets from common/generics.md or component_deep_intelligence.
 - Shared reusable assets were changed only inside approved scope.
 - Project conventions and anti-patterns were addressed in coder-results.yaml.
 

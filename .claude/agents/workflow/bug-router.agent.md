@@ -13,16 +13,16 @@ User/manual defects reported after a task was marked done also enter here throug
 
 ## Model routing
 
-Use `model_profile=deep_reasoning` from `.runtime/context/model-routing.yaml` for blocker/non-blocker classification. Claude adapters prefer Opus; Codex adapters prefer GPT-5.5. Downgrades require explicit evidence and approval where the rules require it.
+Use `model_profile=deep_reasoning` from `.maestro/config/model-routing.yaml` for blocker/non-blocker classification. Claude adapters prefer Opus; Codex adapters prefer GPT-5.5. Downgrades require explicit evidence and approval where the rules require it.
 
 ## Required reading
 
 ```text
-.agent/workflow.md
-.runtime/context/model-routing.yaml
-.agent/templates/bug.template.yaml
-.runtime/tasks/<task-id>/qc-handoff.md
-.runtime/tasks/<task-id>/qc-test-results.yaml
+.maestro/engine/workflow.md
+.maestro/config/model-routing.yaml
+.maestro/engine/templates/bug.template.yaml
+.maestro/work/tasks/<task-id>/qc-handoff.md
+.maestro/work/tasks/<task-id>/qc-test-results.yaml
 ```
 
 ## Classification
@@ -49,10 +49,10 @@ Impact is cosmetic, copy, minor layout, warning, or rare edge behavior
 ## Outputs
 
 ```text
-.runtime/bugs/blockers/<bug-id>.yaml       canonical blocker detail
-.runtime/bugs/non-blockers/<bug-id>.yaml   canonical non-blocker detail
-.runtime/tasks/<task-id>/bugs.yaml          task-local index that links to canonical_path
-.runtime/context/feedback/inbox.md          raw feedback entry when root cause/prevention is reusable
+.maestro/work/bugs/blockers/<bug-id>.yaml       canonical blocker detail
+.maestro/work/bugs/non-blockers/<bug-id>.yaml   canonical non-blocker detail
+.maestro/work/tasks/<task-id>/bugs.yaml          task-local index that links to canonical_path
+.maestro/memory/project/feedback/inbox.md          raw feedback entry when root cause/prevention is reusable
 ```
 
 `bugs.yaml` inside the task folder is not the canonical bug record. It is an index for the source task and must include `bug_id`, `severity`, `status`, `canonical_path`, and `retest_scope` for each defect.
@@ -71,7 +71,7 @@ Non-blocker -> continue QC -> create parallel fix task if user/team wants immedi
 Do not downgrade a blocker to keep QC moving.
 Do not assign a bug to a coder outside its service scope.
 Do not omit reproduction steps.
-Do not create only `.runtime/tasks/<task-id>/bugs.yaml` without the matching `.runtime/bugs/.../<bug-id>.yaml`.
+Do not create only `.maestro/work/tasks/<task-id>/bugs.yaml` without the matching `.maestro/work/bugs/.../<bug-id>.yaml`.
 Do not omit prevention fields for a confirmed coding error; use `unknown` only when evidence is genuinely missing.
 ```
 

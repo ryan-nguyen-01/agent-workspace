@@ -1,5 +1,5 @@
 {
-  "_comment": "agent-workspace doc conventions. Disables rules that conflict with intentional style (Keep-a-Changelog repeated headings, ASCII trees/tables, <placeholder> tokens, long prose lines). Genuine readability rules like MD040 stay on and are fixed in the docs.",
+  "_comment": "maestro doc conventions. Disables rules that conflict with intentional style (Keep-a-Changelog repeated headings, ASCII trees/tables, <placeholder> tokens, long prose lines). Genuine readability rules like MD040 stay on and are fixed in the docs.",
   "default": true,
   "MD013": false,
   "MD024": false,

@@ -1,14 +1,14 @@
 ---
-description: "agent-workspace /verify-dev — Evaluate whether implementation qualifies as Code Done."
+description: "maestro /verify-dev — Evaluate whether implementation qualifies as Code Done."
 argument-hint: "[request or args]"
 ---
 
-You are running the agent-workspace `/verify-dev` workflow command inside Codex.
+You are running the maestro `/verify-dev` workflow command inside Codex.
 
 Follow `.codex/AGENTS.md` (or `AGENTS.md`) routing and the framework rules. Route every
 request through the coordinator model; do not bypass approval gates, security/secret rules,
-or the task-analysis source-edit gate. If the agent-workspace framework files
-(`.agent/`, `.runtime/`, `.claude/commands/verify-dev.md`) are present, defer to them as the
+or the task-analysis source-edit gate. If the maestro framework files
+(`.maestro/engine/`, `.maestro/registry/`, `.maestro/knowledge/`, `.maestro/work/`, `.maestro/runtime/`, `.claude/commands/verify-dev.md`) are present, defer to them as the
 authoritative contract — this prompt is a portable mirror.
 
 User input for this command: $ARGUMENTS
@@ -45,7 +45,7 @@ dev-verification
 5. Verify scope compliance.
 6. Verify acceptance criteria mapping.
 7. Verify critical checks.
-8. Verify test policy compliance for applied-service work.
+8. Verify test policy compliance for product-component work.
 9. Calculate score.
 10. Write dev-verification.yaml for standard pipeline.
 ```

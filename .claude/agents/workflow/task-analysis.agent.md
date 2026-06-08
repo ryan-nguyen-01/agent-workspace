@@ -12,22 +12,27 @@ Turn any task source into a precise implementation spec that service coders can 
 
 ## Model routing
 
-Use `model_profile=deep_reasoning` from `.runtime/context/model-routing.yaml`. This agent owns ambiguity reduction, risk classification, and `context_plan`, so it should run on Opus for Claude adapters and GPT-5.5 for Codex adapters when those defaults are available.
+Use `model_profile=deep_reasoning` from `.maestro/config/model-routing.yaml`. This agent owns ambiguity reduction, risk classification, and `context_plan`, so it should run on Opus for Claude adapters and GPT-5.5 for Codex adapters when those defaults are available.
 
 ## Required reading
 
 ```text
-.agent/workflow.md
-.runtime/context/model-routing.yaml
-.agent/templates/task-analysis.template.yaml
+.maestro/engine/workflow.md
+.maestro/config/model-routing.yaml
+.maestro/engine/templates/task-analysis.template.yaml
 ```
 
 Conditional reads:
 
 ```text
-For applied-service tasks, read project-brain.yaml, service-catalog.yaml, agent-registry.yaml, and relevant service brain files through .runtime/context/index.yaml.
-Read `.runtime/context/feedback/patterns.md` and `.runtime/context/feedback/anti-patterns.md` only when index tags or task risk indicate reusable feedback is relevant.
-For framework maintenance in framework-template/not_applied mode, do not read project-brain.yaml, service-catalog.yaml, agent-registry.yaml, or service brains unless the requested change directly edits those contracts.
+For product-component tasks, read project.yaml, components.yaml, agents.yaml, and relevant component
+knowledge files through .maestro/knowledge/index.yaml.
+For requirement-driven tasks, read the approved BA documents (BA Documentation Standard,
+.maestro/engine/docs/ba-documentation-standard.md) under docs/product and docs/requirements, and derive
+acceptance_criteria from them; update the RTM status as the task progresses.
+Read `.maestro/memory/project/feedback/patterns.md` and `.maestro/memory/project/feedback/anti-patterns.md` only when index tags or task risk indicate reusable feedback is relevant.
+For framework maintenance, do not read project.yaml,
+components.yaml, agents.yaml, or component knowledge unless the requested change directly edits those contracts.
 ```
 
 ## Analysis dimensions
@@ -35,10 +40,14 @@ For framework maintenance in framework-template/not_applied mode, do not read pr
 ```text
 Source type: HLD, LLD, ticket, text, bug report, incident
 Intent: feature, bugfix, refactor, migration, security, docs, test, ops
+Classification (two independent axes — adapted from ADLC waves):
+  - class: slice (small, level-1 test) | integration (large, full test + QC, demo/handoff point)
+  - cut:   vertical | horizontal-be | horizontal-fe   (horizontal-* must not mix BE + FE)
+  - target_count <= ~3 components/experiences (context-budget guard)
 Business goal
 Acceptance criteria
 Out of scope
-Impacted services
+Impacted product components
 API/data/event contracts
 Dependencies and sequencing
 Risks and blockers
@@ -49,11 +58,15 @@ QC focus areas
 Clarifying questions if blocked
 ```
 
+Set `classification.class` from size + how much verification/QC the change needs, and
+`classification.cut` from which layers it touches — keep them independent. `class: slice` aligns with
+fast-track eligibility; `class: integration` signals full QC + a handoff/demo point.
+
 ## Output
 
 ```text
-.runtime/tasks/<task-id>/task-input.md
-.runtime/tasks/<task-id>/task-analysis.yaml
+.maestro/work/tasks/<task-id>/task-input.md
+.maestro/work/tasks/<task-id>/task-analysis.yaml
 ```
 
 Framework-maintenance fast-track output:
@@ -100,7 +113,7 @@ trivial fast-track tasks.
 Do not write implementation code.
 Do not assign service coders directly.
 Do not hide ambiguity; mark requires_user_clarification when needed.
-Do not skip impacted service analysis.
+Do not skip impacted component analysis.
 Do not invoke specialist advisors yourself for downstream-owned states; only set advisory_required[].
 ```
 
@@ -119,7 +132,7 @@ Required analysis additions:
 
 - Relevant business or technical flows from Project Brain and architecture.md.
 - Existing reusable assets that should be reused.
-- Service-specific coding flow and conventions.
+- Component-specific coding flow and conventions.
 - Feedback patterns to apply and known coding error patterns to avoid.
 - Anti-patterns to avoid.
 - Whether the task needs a new reusable asset and why Coder Leader must review it.
@@ -128,13 +141,13 @@ The output task-analysis.yaml must include reuse_and_convention_analysis.
 
 ## Context planning responsibilities
 
-Task Analysis owns the context plan for every applied-service task. Build it before any broad source reads:
+Task Analysis owns the context plan for every product-component task. Build it before any broad source reads:
 
 ```text
-1. Read .runtime/context/index.yaml.
-2. Read project_profile/service-catalog summaries only when the task is applied-service.
-3. Read relevant inputs-index rows and service brain summaries.
-4. Map acceptance criteria to impacted services and candidate files.
+1. Read .maestro/knowledge/index.yaml.
+2. Read project_profile/component-registry summaries only when the task is product-component.
+3. Read relevant inputs-index rows and component knowledge summaries.
+4. Map acceptance criteria to impacted components and candidate files.
 5. Produce task-analysis.yaml.context_plan with budgets, required evidence, excluded paths, expansion triggers, unresolved context, and confidence.
 ```
 
@@ -142,8 +155,8 @@ Default behavior:
 
 ```text
 Do not read all project brain sections.
-Do not read all service brains.
-Do not scan all services/ source.
+Do not read all component knowledge files.
+Do not scan all registered source roots.
 Do not load technical skills until context_plan identifies stack/task needs.
 ```
 
@@ -152,8 +165,8 @@ Stop before Coder Leader when:
 ```text
 context_plan.confidence is low
 required source evidence is missing
-service boundary is unknown
-test policy is unknown for impacted service
+component boundary is unknown
+test policy is unknown for an impacted component
 contract ownership is ambiguous
 ```
 
@@ -165,4 +178,4 @@ For framework maintenance, reuse_and_convention_analysis is required only when t
 
 Task Analysis must populate `architecture_review` in task-analysis.yaml.
 
-Set `architecture_review.required: true` when the task changes cross-service flows, public APIs, events, schemas, shared packages, runtime topology, security-sensitive surfaces, or migration/rollback strategy. Include the reason and trigger list so Coordinator can route to Solution Architect before Coder Leader.
+Set `architecture_review.required: true` when the task changes cross-component flows, public APIs, events, schemas, shared packages, runtime topology, security-sensitive surfaces, or migration/rollback strategy. Include the reason and trigger list so Coordinator can route to Solution Architect before Coder Leader.

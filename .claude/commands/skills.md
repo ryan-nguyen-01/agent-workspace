@@ -30,8 +30,8 @@ Allowed files:
 
 ```text
 .claude/skills/**
-.runtime/context/skill-registry.yaml
-.agent/docs/external-skills.md
+.maestro/registry/skills.yaml
+.maestro/engine/docs/external-skills.md
 skills-lock.json
 CHANGELOG.md
 ```
@@ -40,7 +40,7 @@ CHANGELOG.md
 
 ```text
 /skills status
-  Compare installed skill folders, skills-lock.json, and skill-registry.yaml.
+  Compare installed skill folders, skills-lock.json, and skills.yaml.
   Report missing SKILL.md files, registry-only skills, lock-only skills, and high/critical risk skills.
 
 /skills audit
@@ -58,21 +58,21 @@ CHANGELOG.md
   High/critical risk skills require separate approval per skill.
 
 /skills refresh-registry
-  Reconcile skill-registry.yaml and external-skills.md with the installed skill folders and skills-lock.json.
+  Reconcile skills.yaml and external-skills.md with the installed skill folders and skills-lock.json.
   Require approval before changing risk, approval, default_attach, or unavailable status.
 ```
 
 ## Workflow
 
 ```text
-1. Read skills-lock.json, .runtime/context/skill-registry.yaml, and .agent/docs/external-skills.md.
+1. Read skills-lock.json, .maestro/registry/skills.yaml, and .maestro/engine/docs/external-skills.md.
 2. Inspect only the relevant .claude/skills/<skill>/ folders.
 3. For status/audit, report findings only.
 4. For update/refresh-registry, create a proposed change summary first.
 5. Ask Coordinator for required user approval.
 6. After approval, update only allowed files.
-7. Record durable changes in CHANGELOG.md and, if selection behavior changed, .runtime/context/skill-registry.yaml.
-8. Never attach a new or updated skill to generated coders automatically; Agent Factory must re-evaluate through skill-registry.yaml.
+7. Record durable changes in CHANGELOG.md and, if selection behavior changed, .maestro/registry/skills.yaml.
+8. Never attach a new or updated skill to generated coders automatically; Agent Factory must re-evaluate through skills.yaml.
 ```
 
 ## Approval gates
@@ -81,7 +81,7 @@ CHANGELOG.md
 User approval is required before:
 - updating any installed skill content
 - changing skills-lock.json
-- changing risk/default_attach/requires_user_approval in skill-registry.yaml
+- changing risk/default_attach/requires_user_approval in skills.yaml
 - removing or marking a skill unavailable
 - updating all skills
 ```

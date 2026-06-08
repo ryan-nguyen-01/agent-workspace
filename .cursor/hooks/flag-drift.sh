@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# afterFileEdit hook: when .runtime/context/ files change, mark project brain
+# afterFileEdit hook: when .maestro/knowledge/ or .maestro/registry/ files change, mark project brain
 # freshness as stale so Coordinator surfaces it at next session.
 # Schema per https://cursor.com/docs/agent/hooks.
 #
@@ -17,12 +17,12 @@ FILE_PATH=$(json_field file_path)
 [ -z "$FILE_PATH" ] && exit 0
 
 case "$FILE_PATH" in
-  *".runtime/context/"*) ;;
+  *".maestro/knowledge/"*|*".maestro/registry/"*) ;;
   *) exit 0 ;;
 esac
 
 cd "${CURSOR_PROJECT_DIR:-.}" || exit 0
-BRAIN=".runtime/context/project-brain.yaml"
+BRAIN=".maestro/knowledge/project.yaml"
 [ ! -f "$BRAIN" ] && exit 0
 
 grep -q '^[[:space:]]*last_drift_check_result:[[:space:]]*"stale"' "$BRAIN" && exit 0
@@ -35,6 +35,6 @@ else
 fi
 
 if grep -q '^[[:space:]]*last_drift_check_result:[[:space:]]*"stale"' "$BRAIN"; then
-  echo "ℹ️  [agent-workspace] Brain marked stale after edit to $FILE_PATH. Coordinator will surface this at next session." >&2
+  echo "ℹ️  [maestro] Brain marked stale after edit to $FILE_PATH. Coordinator will surface this at next session." >&2
 fi
 exit 0

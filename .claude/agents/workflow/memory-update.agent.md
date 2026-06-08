@@ -1,6 +1,6 @@
 ---
 name: memory-update
-description: Updates durable project brain, service brain, task memory, agent registry, and bug patterns after meaningful workflow events.
+description: Updates durable project brain, component knowledge, task memory, agent registry, and bug patterns after meaningful workflow events.
 tools: Read, Write, Edit, Glob, Grep
 ---
 
@@ -12,21 +12,21 @@ Keep `memory` useful across new conversations so agents do not re-read the whole
 
 ## Model routing
 
-Use `model_profile=memory_light` from `.runtime/context/model-routing.yaml`. Escalate only if a memory update changes ownership, gates, service boundaries, or durable policy.
+Use `model_profile=memory_light` from `.maestro/config/model-routing.yaml`. Escalate only if a memory update changes ownership, gates, service boundaries, or durable policy.
 
 ## Required reading
 
 ```text
-.agent/workflow.md
-.runtime/context/model-routing.yaml
-.runtime/context/index.yaml
-.runtime/context/project-brain.yaml
-.runtime/context/service-catalog.yaml
-.runtime/context/agent-registry.yaml
-.runtime/context/feedback/inbox.md
-.runtime/context/feedback/patterns.md
-.runtime/context/feedback/anti-patterns.md
-.agent/templates/memory-update.template.yaml
+.maestro/engine/workflow.md
+.maestro/config/model-routing.yaml
+.maestro/knowledge/index.yaml
+.maestro/knowledge/project.yaml
+.maestro/registry/components.yaml
+.maestro/registry/agents.yaml
+.maestro/memory/project/feedback/inbox.md
+.maestro/memory/project/feedback/patterns.md
+.maestro/memory/project/feedback/anti-patterns.md
+.maestro/engine/templates/memory-update.template.yaml
 Relevant task artifacts
 ```
 
@@ -50,15 +50,15 @@ Actionable user feedback about AI mistakes or missing cases
 ## Outputs
 
 ```text
-.runtime/tasks/<task-id>/memory-updates.yaml
-.runtime/context/index.yaml
-.runtime/context/project-brain.yaml
-.runtime/context/services/<service>.yaml
-.runtime/context/agent-registry.yaml when agent scopes change
-.runtime/context/index.yaml context_economy and routing rows when source layout changes
-.runtime/context/feedback/patterns.md when reusable fixes are confirmed
-.runtime/context/feedback/anti-patterns.md when recurring mistakes are confirmed
-.agent/changelog.md for important workflow changes
+.maestro/work/tasks/<task-id>/memory-updates.yaml
+.maestro/knowledge/index.yaml
+.maestro/knowledge/project.yaml
+.maestro/knowledge/components/<component-id>.yaml
+.maestro/registry/agents.yaml when agent scopes change
+.maestro/knowledge/index.yaml context_economy and routing rows when source layout changes
+.maestro/memory/project/feedback/patterns.md when reusable fixes are confirmed
+.maestro/memory/project/feedback/anti-patterns.md when recurring mistakes are confirmed
+.maestro/engine/changelog.md for important workflow changes
 ```
 
 For coding errors, capture the smallest durable lesson:
@@ -68,7 +68,7 @@ recurrence_key: service|stack|symptom|root-cause
 root_cause: why the agent introduced or missed the bug
 prevention_rule: what future agents must do differently
 regression_check: test/manual check that catches the issue
-source_bug: .runtime/bugs/<severity>/<bug-id>.yaml when available
+source_bug: .maestro/work/bugs/<severity>/<bug-id>.yaml when available
 ```
 
 ## Must not

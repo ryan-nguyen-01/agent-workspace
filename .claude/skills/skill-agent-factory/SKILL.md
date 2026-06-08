@@ -1,6 +1,6 @@
 ---
 name: skill-agent-factory
-description: Generate service-specific coder agents from project brain and approved service scopes.
+description: Generate component-specific coder agents from project brain and approved component scopes.
 category: workflow
 ---
 
@@ -61,9 +61,9 @@ Layer 2: coordination skills when the service participates in a multi-service ta
 - `skill-qc-handoff`
 - `skill-bug-routing`
 
-Layer 3: stack-specific skills from `.runtime/context/skill-registry.yaml`.
+Layer 3: stack-specific skills from `.maestro/registry/skills.yaml`.
 
-- Select stack skills from Project Brain, Service Brain, task evidence, and skill-registry.yaml selection rules.
+- Select stack skills from Project Brain, Component Knowledge, task evidence, and skills.yaml selection rules.
 - Prefer the minimum useful set, not all installed skills.
 - If stack evidence is weak, ask the user before attaching broad or risky third-party skills.
 - Record the selected skills in the generated coder agent file and agent registry.
@@ -77,19 +77,20 @@ Coder generation is not complete until the generated agent states its service sc
 
 ## Workspace service write path rule
 
-**Deployment model:** application repositories are cloned under `services/<service-name>/` inside the agent-workspace repository.
+**Deployment model:** component paths come from `.maestro/registry/components.yaml`; they may live under
+apps, services, packages, infra, or tests and may be monorepo folders or independent repositories.
 
 ```text
-1. Read service.path (e.g. services/service-a) from services/<service-id>.yaml.
-2. Prefix all allowed_write_paths with service.path.
+1. Read component.path (e.g. services/service-a) from .maestro/knowledge/components/<component-id>.yaml.
+2. Prefix all allowed_write_paths with component.path.
    Good: services/service-a/src, services/service-a/tests
-   Bad:  src  (ambiguous — resolves inside agent-workspace, not the service)
-3. If service.path is empty or missing → stop, raise to Coordinator.
-4. Record the resolved paths in agent-registry.yaml alongside the coder entry.
+   Bad:  src  (ambiguous — resolves inside maestro, not the service)
+3. If component.path is empty or missing → stop, raise to Coordinator.
+4. Record the resolved paths in agents.yaml alongside the coder entry.
 5. Never default to unrecorded directories for services.
 ```
 
-The path recorded in the service brain during onboarding is the single source of truth.
+The path recorded in the component knowledge during onboarding is the single source of truth.
 
 ---
 
@@ -136,7 +137,7 @@ Selection rules:
 - Angular, Svelte, SvelteKit, and Astro services get their matching framework skill only when framework config or dependency evidence exists.
 - Mobile/native services get Flutter, Android/Kotlin, or Swift skills only when native project files prove the stack.
 - ORM/database skills are added by dependency evidence and task scope; do not add every database skill to every backend coder.
-- Skills with visible risk notes in <code>.agent/docs/external-skills.md</code> require explicit mention in the generated coder agent before use.
+- Skills with visible risk notes in <code>.maestro/engine/docs/external-skills.md</code> require explicit mention in the generated coder agent before use.
 
 Generated coder agents must list selected Batch 3 skills under <code>Selected skills</code> with a one-line reason for each.
 
@@ -144,7 +145,7 @@ Generated coder agents must list selected Batch 3 skills under <code>Selected sk
 
 ## Medusa stack selection extension
 
-When Project Brain or Service Brain detects MedusaJS, Agent Factory must generate focused coder agents based on the Medusa layer being changed.
+When Project Brain or Component Knowledge detects MedusaJS, Agent Factory must generate focused coder agents based on the Medusa layer being changed.
 
 Medusa backend coder:
 
@@ -168,7 +169,7 @@ Do not attach <code>learning-medusa</code> to production coder agents unless the
 
 ## Messaging, cache, and container stack selection extension
 
-Agent Factory must attach broker/cache/infra skills only when evidence exists in Project Brain or Service Brain.
+Agent Factory must attach broker/cache/infra skills only when evidence exists in Project Brain or Component Knowledge.
 
 Kafka coder:
 

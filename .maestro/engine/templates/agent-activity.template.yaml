@@ -1,0 +1,53 @@
+version: 1
+generated_at: "{{GENERATED_AT}}"
+generated_by: "coordinator"
+status: "idle|running|blocked"
+active_task_id: "{{TASK_ID_OR_NULL}}"
+active_run_id: "{{RUN_ID_OR_NULL}}"
+updated_at: "{{UPDATED_AT}}"
+updated_by: "{{AGENT_ID}}"
+
+dashboard:
+  mode: "text-status"
+  source_of_truth: ".maestro/runtime/agent-activity.yaml"
+  response_ui: ".maestro/config/response-ui.yaml"
+  rendered_by: "/status"
+  refresh_policy: "Read this file plus workflow-state.yaml. Do not scan task folders unless a task id is active or requested."
+
+automation:
+  update_cli: "python3 scripts/agent-activity.py <start|heartbeat|block|complete|reset>"
+  status_cli: "python3 scripts/status-dashboard.py --mode dashboard"
+  health_cli: "python3 scripts/architecture-health-check.py --strict"
+
+totals:
+  running_agents: 0
+  queued_agents: 0
+  blocked_agents: 0
+  completed_agents_last_24h: 0
+
+current_agents:
+  - agent_id: "{{AGENT_ID}}"
+    phase: "{{WORKFLOW_PHASE}}"
+    status: "queued|running|blocked|completed"
+    model_profile: "{{MODEL_PROFILE}}"
+    provider: "{{PROVIDER_OR_UNKNOWN}}"
+    model_id: "{{MODEL_ID_OR_UNKNOWN}}"
+    started_at: "{{STARTED_AT}}"
+    last_heartbeat_at: "{{UPDATED_AT}}"
+    elapsed_seconds: 0
+    eta_seconds: "unknown"
+    current_action: "{{CURRENT_ACTION}}"
+    active_file: "{{PATH_OR_NULL}}"
+    task_id: "{{TASK_ID_OR_NULL}}"
+    run_id: "{{RUN_ID_OR_NULL}}"
+    evidence:
+      - "{{FILE_OR_COMMAND_OR_ARTIFACT}}"
+
+recent_events:
+  - at: "{{ISO8601}}"
+    agent_id: "{{AGENT_ID}}"
+    event: "started|heartbeat|blocked|completed"
+    summary: "{{SHORT_SUMMARY}}"
+
+recording_policy:
+  no_secrets_rule: "Never paste raw prompts, raw logs, credentials, cookies, private keys, or long outputs into this file."

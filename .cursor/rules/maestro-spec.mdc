@@ -1,0 +1,42 @@
+---
+description: Framework engine editing rules (rules, templates, workflow.md, agents)
+globs: .maestro/engine/**, .claude/agents/**, .claude/commands/**, .claude/skills/**, scripts/hooks/**
+alwaysApply: false
+---
+
+# Engine editing rules
+
+These rules apply when editing the framework engine: workflow rules, templates, workflow spec, agent definitions, slash commands, or skills.
+
+Engine edits are framework maintenance. Require onboarding only when the task also depends on
+missing registered product-component facts.
+
+## Scope
+
+- `.maestro/engine/rules/`, `.maestro/engine/templates/`, `.maestro/engine/docs/`, `.maestro/engine/workflow.md` are **framework spec** — change cascades to every project using this framework.
+- `.claude/agents/workflow/<name>.agent.md` (coordinator, onboarding, task-analysis, coder-leader, dev-verification, qc-handoff, qc-runner, bug-router, memory-update, workflow-policy, agent-factory, solution-architect) are **workflow agent definitions** — owned by framework.
+- `.claude/agents/specialists/<category>/<name>.agent.md` are the **19 specialist advisors** (advisor-only, see R-016) — owned by framework. Categories: architecture, quality-security, product, data-ai, ops-devex, research-qa.
+- `.claude/agents/coders/coder-infra.agent.md`, `coder-database.agent.md`, and `coder-data.agent.md` are **built-in cross-cutting coders** — owned by framework.
+- `.claude/agents/coders/coder-<service>.agent.md` are **generated coders** — created by `agent-factory` after user approval.
+- `scripts/hooks/*` + `.claude/settings.json` PreToolUse are the **Claude enforcement hooks** (parity with `.cursor/hooks/*`, see R-017) — owned by framework.
+
+## Editing policy
+
+- Workflow rule changes require explicit user approval (R-011-08) and a CHANGELOG entry.
+- Trivial framework maintenance may use workflow.md §6.2 lightweight fast-track evidence instead of full task artifacts when it does not affect approval gates, security rules, state machine, generated coder scopes, destructive behavior, or application code.
+- Template additions/changes must keep backward compatibility (or bump a major version + migration note).
+- Slash command changes must preserve the contract documented in `COMMAND.md`.
+- Skill changes route through `/skills` command; do not mutate `skills-lock.json` or installed `SKILL.md` directly from implementation tasks (R-014-15).
+
+## Cross-tool consistency
+
+When changing engine files, also update:
+- `AGENTS.md` (root, tool-agnostic) — if user-facing contract changed.
+- `.codex/AGENTS.md`, `.cursor/rules/`, `.gemini/GEMINI.md`, `.github/copilot-instructions.md` — if tool-specific path references changed.
+- `.maestro/history/framework-changelog.md` and `CHANGELOG.md`.
+
+## Never
+
+- Do not delete workflow agents from `.claude/agents/workflow/` or specialist advisors from `.claude/agents/specialists/`.
+- Do not move framework engine paths without updating all references (the moves are tracked in CHANGELOG).
+- Do not bypass approval gates by editing rules to remove the check (R-011-08).

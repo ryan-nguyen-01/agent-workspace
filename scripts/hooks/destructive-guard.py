@@ -6,7 +6,7 @@ Destructive environment/data actions require explicit user approval through
 Coordinator; this hook is a guardrail, not the place to decide if cleanup is safe.
 
 Profiles: active in all profiles (minimal/standard/strict). Disable with
-AW_DISABLED_HOOKS=destructive-guard.
+MAESTRO_DISABLED_HOOKS=destructive-guard.
 """
 
 from __future__ import annotations

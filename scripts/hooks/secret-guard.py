@@ -9,7 +9,7 @@ Profiles:
   standard : block high-confidence secret patterns (private keys, tokens, provider keys)
   strict   : also block generic `password:`/`secret:` style assignments with a value
 
-Disable with AW_DISABLED_HOOKS=secret-guard.
+Disable with MAESTRO_DISABLED_HOOKS=secret-guard.
 """
 
 from __future__ import annotations
@@ -87,7 +87,7 @@ def main() -> int:
             _lib.block(
                 "Possible secret assignment blocked in strict profile (R-013).\n"
                 f"⛔ Matched: {m.group(0)[:60]}...\n"
-                "⛔ If this is a placeholder, use <PLACEHOLDER>/${ENV} form, or lower AW_HOOK_PROFILE to standard."
+                "⛔ If this is a placeholder, use <PLACEHOLDER>/${ENV} form, or lower MAESTRO_HOOK_PROFILE to standard."
             )
     return 0
 

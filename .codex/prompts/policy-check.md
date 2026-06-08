@@ -1,14 +1,14 @@
 ---
-description: "agent-workspace /policy-check — Validate workflow transitions, approval gates, exception requests, and recorded artifact snapshots without requiring ..."
+description: "maestro /policy-check — Validate workflow transitions, approval gates, exception requests, and recorded artifact snapshots without requiring ..."
 argument-hint: "[request or args]"
 ---
 
-You are running the agent-workspace `/policy-check` workflow command inside Codex.
+You are running the maestro `/policy-check` workflow command inside Codex.
 
 Follow `.codex/AGENTS.md` (or `AGENTS.md`) routing and the framework rules. Route every
 request through the coordinator model; do not bypass approval gates, security/secret rules,
-or the task-analysis source-edit gate. If the agent-workspace framework files
-(`.agent/`, `.runtime/`, `.claude/commands/policy-check.md`) are present, defer to them as the
+or the task-analysis source-edit gate. If the maestro framework files
+(`.maestro/engine/`, `.maestro/registry/`, `.maestro/knowledge/`, `.maestro/work/`, `.maestro/runtime/`, `.claude/commands/policy-check.md`) are present, defer to them as the
 authoritative contract — this prompt is a portable mirror.
 
 User input for this command: $ARGUMENTS
@@ -50,7 +50,7 @@ workflow-policy
 
 ## Snapshot consistency check
 
-Use this when validating a workspace migrated from an older framework version or a shared `.runtime/` evidence snapshot without `services/`.
+Use this when validating a workspace migrated from an older framework version or a shared `.maestro/runtime/` evidence snapshot without `services/`.
 
 ```text
 /policy-check snapshot --root .
@@ -72,16 +72,16 @@ This helper catches mechanical drift in counts, model routing, response UI, stat
 It fails when it finds any of these invariants broken:
 
 ```text
-workflow-state distribution_mode disagrees with Project Brain distribution.mode
-workflow-state instance_status is seed/not_applied while Project Brain says onboarded/applied
+workflow-state current_state or active_task_id disagrees with recorded task artifacts
+Project Knowledge boundary_strategy or component roots disagree with `.maestro/project.yaml` or the component registry when those facts are required
 DEV_DONE or later exists without dev-verification.yaml verdict/result DEV_DONE
 QC_DONE/PASS exists while required cases are blocked/pending/not_run/failed
 QC_DONE/PASS exists while notes still require manual/retest evidence
 task.yaml artifact manifest disagrees with files in the task folder
 agent-registry top-level status conflicts with active/approved coder entries
-applied-service task advances to PLANNED/IN_DEV without usable task-analysis.yaml.context_plan
+product-component task advances to PLANNED/IN_DEV without usable task-analysis.yaml.context_plan
 model-routing.yaml is missing when an agent claims a specific model profile
-agent-activity.yaml claims exact token/cost/ETA values without evidence or marks estimates as actual
+agent-activity.yaml claims exact ETA values without evidence or marks estimates as actual
 response-ui.yaml is missing when a tool entrypoint claims configurable response layout
 ```
 
@@ -89,31 +89,31 @@ response-ui.yaml is missing when a tool entrypoint claims configurable response 
 
 ```text
 transition:
-  - .runtime/context/workflow-state.yaml
+  - .maestro/runtime/workflow-state.yaml
   - requested transition/actor
   - relevant rule files only
 
 workspace:
-  - .runtime/context/workflow-state.yaml
-  - .runtime/context/project-brain.yaml
-  - .runtime/context/service-catalog.yaml
-  - .runtime/context/agent-registry.yaml
-  - .runtime/context/model-routing.yaml
-  - .runtime/context/agent-activity.yaml
-  - .runtime/context/response-ui.yaml
+  - .maestro/runtime/workflow-state.yaml
+  - .maestro/knowledge/project.yaml
+  - .maestro/registry/components.yaml
+  - .maestro/registry/agents.yaml
+  - .maestro/config/model-routing.yaml
+  - .maestro/runtime/agent-activity.yaml
+  - .maestro/config/response-ui.yaml
 
 snapshot:
-  - <root>/.runtime/context/workflow-state.yaml
-  - <root>/.runtime/context/project-brain.yaml
-  - <root>/.runtime/context/service-catalog.yaml
-  - <root>/.runtime/context/agent-registry.yaml
-  - <root>/.runtime/context/model-routing.yaml
-  - <root>/.runtime/context/agent-activity.yaml
-  - <root>/.runtime/context/response-ui.yaml
+  - <root>/.maestro/runtime/workflow-state.yaml
+  - <root>/.maestro/knowledge/project.yaml
+  - <root>/.maestro/registry/components.yaml
+  - <root>/.maestro/registry/agents.yaml
+  - <root>/.maestro/config/model-routing.yaml
+  - <root>/.maestro/runtime/agent-activity.yaml
+  - <root>/.maestro/config/response-ui.yaml
   - active task folder and workflow-state.parallel_tasks folders
 
 task:
-  - .runtime/tasks/<task-id>/task.yaml
+  - .maestro/work/tasks/<task-id>/task.yaml
   - task-updates.yaml
   - task-analysis.yaml
   - artifact files named by task.yaml or required by current state
@@ -124,14 +124,14 @@ task:
 When the user asks for a saved report, write YAML using:
 
 ```text
-.agent/templates/policy-check-report.template.yaml
+.maestro/engine/templates/policy-check-report.template.yaml
 ```
 
 Default report paths:
 
 ```text
-.runtime/policy-check-report.yaml
-.runtime/tasks/<task-id>/policy-check-report.yaml
+.maestro/runtime/reports/policy-check-report.yaml
+.maestro/work/tasks/<task-id>/policy-check-report.yaml
 ```
 
 ## Output format

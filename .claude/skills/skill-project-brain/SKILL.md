@@ -11,13 +11,13 @@ Use when checking, creating, refreshing, or querying `memory` memory.
 ## Core files
 
 ```text
-.runtime/context/project-brain.yaml
-.runtime/context/index.yaml
-.runtime/context/service-catalog.yaml
-.runtime/context/agent-registry.yaml
-.runtime/context/test-policy.yaml
-.runtime/context/workflow-state.yaml
-.runtime/context/services/<service>.yaml
+.maestro/knowledge/project.yaml
+.maestro/knowledge/index.yaml
+.maestro/registry/components.yaml
+.maestro/registry/agents.yaml
+.maestro/knowledge/test-policy.yaml
+.maestro/runtime/workflow-state.yaml
+.maestro/knowledge/components/<component-id>.yaml
 ```
 
 ## Rules
@@ -26,7 +26,7 @@ Use when checking, creating, refreshing, or querying `memory` memory.
 Read memory index before opening detailed memory files.
 Read project brain before scanning source.
 Prefer partial refresh over full rescan when stale areas are known.
-Refresh .runtime/context/index.yaml after durable memory changes.
+Refresh .maestro/knowledge/index.yaml after durable memory changes.
 Record confidence for inferred facts.
 Never store secrets, raw tokens, passwords, or long logs.
 Link durable facts to source task or onboarding evidence.

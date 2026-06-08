@@ -1,0 +1,23 @@
+schema_version: "1.0"
+trace_id: "{{TRACE_ID}}"
+run_id: "{{RUN_ID}}"
+task_id: "{{TASK_ID_OR_NULL}}"
+created_at: "{{CREATED_AT}}"
+created_by: "{{AGENT_ID}}"
+
+summary: "{{SUMMARY}}"
+sensitive_data_excluded: true
+
+events:
+  - at: "{{CREATED_AT}}"
+    agent_id: "{{AGENT_ID}}"
+    event: "trace.created"
+    input_ref: null
+    output_ref: null
+    tool_calls: []
+    handoffs: []
+    evidence: []
+
+decisions: []
+open_questions: []
+known_gaps: []

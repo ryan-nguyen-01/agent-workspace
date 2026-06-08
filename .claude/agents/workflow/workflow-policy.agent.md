@@ -13,30 +13,30 @@ Also validate migrated workspaces and artifact-only snapshots where application 
 
 ## Model routing
 
-Use `model_profile=deep_reasoning` from `.runtime/context/model-routing.yaml`. This agent resolves state disputes and policy contradictions, so Claude adapters prefer Opus and Codex adapters prefer GPT-5.5 when available.
+Use `model_profile=deep_reasoning` from `.maestro/config/model-routing.yaml`. This agent resolves state disputes and policy contradictions, so Claude adapters prefer Opus and Codex adapters prefer GPT-5.5 when available.
 
 ## Required reading
 
 ```text
-.agent/workflow.md
-.runtime/context/model-routing.yaml
-.runtime/context/workflow-state.yaml
-.agent/rules/07-dev-verification-rules.md
-.agent/rules/08-qc-rules.md
-.agent/rules/11-approval-gates.md
-.agent/rules/12-artifact-contracts.md
-.agent/rules/15-model-routing-observability-rules.md
-.agent/templates/policy-check-report.template.yaml
+.maestro/engine/workflow.md
+.maestro/config/model-routing.yaml
+.maestro/runtime/workflow-state.yaml
+.maestro/engine/rules/07-dev-verification-rules.md
+.maestro/engine/rules/08-qc-rules.md
+.maestro/engine/rules/11-approval-gates.md
+.maestro/engine/rules/12-artifact-contracts.md
+.maestro/engine/rules/15-model-routing-observability-rules.md
+.maestro/engine/templates/policy-check-report.template.yaml
 ```
 
-Read `.runtime/context/project-brain.yaml`, `.runtime/context/service-catalog.yaml`, `.runtime/context/agent-registry.yaml`, and task artifacts only when the requested check needs them.
+Read `.maestro/knowledge/project.yaml`, `.maestro/registry/components.yaml`, `.maestro/registry/agents.yaml`, and task artifacts only when the requested check needs them.
 
 ## Fast context loading
 
 ```text
 1. Read workflow-state.yaml first.
 2. Determine check scope: transition, exception, task, workspace, or snapshot.
-3. For framework-template/not_applied framework maintenance, do not load project brain or task folders unless the check is about mode repair or artifact drift.
+3. For framework maintenance, do not load project brain or task folders unless the check is about artifact drift or a contract that directly references them.
 4. For snapshot checks, detect whether services/ exists. If not, set services_available=false and validate recorded artifacts only.
 5. Open only the active task folder and task folders named in workflow-state.parallel_tasks unless the user asks for a full audit.
 ```
@@ -44,15 +44,16 @@ Read `.runtime/context/project-brain.yaml`, `.runtime/context/service-catalog.ya
 ## Invariant checklist
 
 ```text
-Mode consistency:
-  - workflow-state.distribution_mode must match project-brain.distribution.mode when Project Brain exists and is not a seed template.
-  - workflow-state.instance_status must not be not_applied when Project Brain says onboarded/applied and service-catalog.status is onboarded/ready.
+Workspace state consistency:
+  - workflow-state.current_state must be valid for the workflow state machine.
+  - workflow-state.active_task_id must match an existing task folder when it is not null.
+  - Project Brain boundary_strategy and component roots must align with `.maestro/project.yaml` and `.maestro/registry/components.yaml` when the check needs product-component facts.
 
 Transition and approval gates:
   - Current state allows requested transition.
   - Responsible agent is allowed to act in current state.
   - User approval exists for gated actions.
-  - Applied-service transitions into PLANNED/IN_DEV require task-analysis.yaml.context_plan with medium/high confidence and no unresolved service/test/contract blockers.
+  - product-component transitions into PLANNED/IN_DEV require task-analysis.yaml.context_plan with medium/high confidence and no unresolved service/test/contract blockers.
 
 Code Done gate:
   - DEV_DONE or later requires dev-verification.yaml.
@@ -69,9 +70,9 @@ QC Done gate:
 Artifact manifest consistency:
   - task.yaml artifacts.* entries must match files that exist in the task folder.
   - task-updates.yaml must not contradict task.yaml or workflow-state.yaml.
-  - task-analysis.yaml.context_plan exists for applied-service tasks and records any context expansion beyond budget.
+  - task-analysis.yaml.context_plan exists for product-component tasks and records any context expansion beyond budget.
   - model-routing.yaml exists when model/profile routing is claimed.
-  - agent-activity.yaml does not claim exact token/cost/ETA values without evidence.
+  - agent-activity.yaml does not claim exact ETA values without evidence.
   - response-ui.yaml exists when tool entrypoints claim configurable response layout.
 
 Agent registry consistency:
@@ -104,7 +105,7 @@ decision:
   required_next_action: <action>
 ```
 
-When a persistent report is needed, write it to `.runtime/policy-check-report.yaml` or `.runtime/tasks/<task-id>/policy-check-report.yaml` using `.agent/templates/policy-check-report.template.yaml`.
+When a persistent report is needed, write it to `.maestro/runtime/reports/policy-check-report.yaml` or `.maestro/work/tasks/<task-id>/policy-check-report.yaml` using `.maestro/engine/templates/policy-check-report.template.yaml`.
 
 ## Must not
 

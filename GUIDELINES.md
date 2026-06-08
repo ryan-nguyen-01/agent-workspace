@@ -1,218 +1,145 @@
-# Guidelines — agent-workspace (Single Source of Truth)
+# Guidelines
 
-Mục tiêu của file này: **giảm nhầm lẫn khi dùng thực tế** và thống nhất cách hiểu giữa các lớp chính:
-
-- `.agent/` (workflow source: workflow, rules, templates, docs)
-- `.runtime/` (runtime memory, task artifacts, bug records)
-- `.claude/` (Claude adapter: agents, skills, commands, settings)
-- `CLAUDE.md` (entrypoint + workflow routing)
-
----
-
-## Quick start (cách dùng nhanh nhất)
-
-Bạn có 2 cách gọi:
-
-### 1) Slash commands (khuyến nghị nhất)
-
-Dùng commands tại [COMMAND.md](COMMAND.md):
+## Core Model
 
 ```text
-/onboard           → Scan project, tạo project brain
-/analyze-task      → Normalize task thành spec
-/create-coders     → Tạo service coder agents
-/plan-dev          → Lên plan implementation
-/dev               → Implement code
-/verify-dev        → Check Code Done
-/handoff-qc        → Tạo QC handoff document
-/qc                → Run QC tests
-/bug               → Route bug report
-/sync-memory       → Update memory
-/skills            → Maintain installed skills
-/policy-check      → Validate workflow policy
-/coord             → Coordinator direct
-/status            → Check workflow status + agent activity dashboard
-/resume-task       → Resume interrupted task
+.maestro/        Product-development control plane
+.claude/    Native Claude tool layer
+docs/       Official product and engineering documentation
+apps/       User-facing applications
+services/   Deployable services, workers, and gateways
+packages/   Shared libraries, contracts, and design system
+infra/      Infrastructure and delivery platform
+tests/      Cross-component and system test suites
+inputs/     External references awaiting curation
 ```
 
-### 2) Ngôn ngữ tự nhiên
+The root remains `maestro`. Configure product identity and namespace in `.maestro/project.yaml`.
 
-Coordinator tự route đến đúng workflow agent:
+## `.maestro` Domains
+
+| Domain | Purpose | Git policy |
+| --- | --- | --- |
+| `engine/` | Workflow, rules, templates, internal framework docs | Shared |
+| `config/` | Model routing and response behavior | Shared |
+| `registry/` | Component, agent, skill, input, and artifact addresses | Shared |
+| `knowledge/` | Durable product and component facts | Shared |
+| `work/` | Initiative, epic, task, subtask, bug, verification evidence | Shared |
+| `design/` | Design artifact index and relationships | Shared |
+| `decision/` | ADR index and lifecycle | Shared |
+| `memory/project/` | Reusable patterns and feedback | Shared |
+| `memory/tasks/` | Task summaries and continuation handoffs | Shared |
+| `memory/sessions/` | Short-term conversation memory | Local |
+| `history/` | Timeline and auditable events | Shared |
+| `runtime/` | Active state, telemetry, cache, locks, reports | Local |
+
+Agents read `.maestro/INSTRUCTIONS.md`, then the relevant registry/index. They do not scan every skill,
+component, document, or memory file.
+
+## Execution Modes
+
+### Direct
+
+Use for low-risk, fast development. Persistent task artifacts are optional. The response must state
+what was not verified and list exact user checks when the agent cannot access the environment or data.
+
+### Assisted
+
+Use when work may span conversations or needs lightweight traceability. Required baseline:
 
 ```text
-"Phân tích dự án này"                    → coordinator → onboarding
-"Thêm tính năng login"                  → coordinator → task-analysis → coder-leader → ...
-"Kiểm tra code sẵn sàng chưa"           → coordinator → dev-verification
-"Test tính năng vừa implement"           → coordinator → qc-runner
-"Report bug trong payment module"        → coordinator → bug-router
+task.yaml
+progress.yaml
+verification.yaml
+.maestro/memory/tasks/<task-id>/handoff.md when the conversation is split
 ```
 
-> Lưu ý: `@` trong Claude Code dùng để **reference files**, không phải gọi agent.
+### Governed
 
----
+Use for security, privacy, data migration, public contracts, infrastructure/production changes,
+cross-component work, or parallel workstreams. It uses the full analysis, planning, implementation,
+verification, QC, and memory pipeline.
 
-## File/folder semantics (đúng khái niệm)
-
-### `.agent/` — workflow source
+## Work Decomposition
 
 ```text
-.agent/
-├── workflow.md                ← End-to-end workflow policy
-├── rules/{nn}-{name}.md       ← 18 workflow rules
-├── templates/*.template.*     ← 22 artifact templates
-└── docs/                      ← Documentation + SVG workflow diagrams
+Initiative -> Epic -> Task -> Subtask
 ```
 
-### `.runtime/` — runtime memory + artifacts
+Decompose before implementation when work spans sessions, has independent acceptance criteria,
+combines design and implementation, affects multiple components, requires rollout/migration, or can
+run in parallel. Do not nest subtasks; promote a complex subtask to a task.
+
+## Documentation And Design
+
+Official content belongs in `docs/`; `.maestro/registry/artifacts.yaml` indexes it.
+
+- PRD: `docs/product/prds/`
+- Features and user stories: `docs/requirements/`
+- User journeys, flows, wireframes, UI specs: `docs/experience/`
+- HLD, LLD, ADR: `docs/architecture/`
+- Quality, delivery, operations, governance: matching `docs/` domains
+- Methodology playbooks: `docs/governance/methodologies/`
+- Shared design tokens/components: `packages/<project>-design-system/`
+
+Do not duplicate authoritative document bodies under `.maestro/`.
+
+## Naming
+
+Use kebab-case and business capabilities:
 
 ```text
-.runtime/
-├── context/                   ← Project brain, service contracts, workflow state, model/status/response UI telemetry
-├── tasks/                     ← Task tracking + artifacts
-└── bugs/                      ← Bug tracking
+<project>-<channel>-app
+<project>-<capability>-service
+<project>-<capability>-worker
+<project>-<scope>-gateway
+<project>-<capability>
+<project>-design-system
 ```
 
-### `.claude/` — Claude adapter
+Avoid generic names such as `backend`, `common`, `utils`, `core-service`, or `service-1`.
+
+## Skills
+
+`.maestro/registry/skills.yaml` is the canonical address book for all installed skills. Each catalog entry
+contains its `path`, `category`, and `capability`; hand-maintained policy overrides add risk and
+approval metadata. Agents select candidates there before opening any `SKILL.md`.
+
+Regenerate and verify:
+
+```bash
+python3 scripts/build-skill-catalog.py --no-inject
+python3 scripts/build-skill-catalog.py --check
+```
+
+## Memory Continuity
+
+Before splitting a long conversation, write:
 
 ```text
-.claude/
-├── agents/*.agent.md          ← 12 workflow agents + built-in/generated coders
-├── skills/*/SKILL.md          ← 231 skill definitions
-├── commands/*.md              ← 17 workflow commands
-└── settings.json              ← Claude Code settings
+.maestro/work/tasks/<task-id>/checkpoints/<checkpoint-id>.yaml
+.maestro/memory/tasks/<task-id>/handoff.md
 ```
 
-- Không copy `.claude/`, `.agent/`, hoặc `.runtime/` sang từng service repo.
-- Mở chính workspace `agent-workspace`; clone application repositories vào `services/<service-name>/`.
-- `.runtime/` chứa context/task artifacts của workspace điều phối, không phải `.claude/`.
+The next session resumes from task manifest, handoff, checkpoint, and bounded references. Accepted
+decisions and resolved questions are not asked again unless new contradictory evidence appears.
 
-### `CLAUDE.md` — entrypoint + routing
+## Verification
 
-- Claude đọc file này trước để hiểu workflow, routing, và nguyên tắc autonomy.
-- Chứa: bảng agents, workflow phases, commands, rules, context system.
+Verification ownership is `agent`, `user`, or `shared`. Missing agent access must be recorded, never
+invented. Keep environment-specific pending checks in `verification.yaml`.
 
-### Tool-specific entrypoints
+## Maintenance
 
-- `AGENTS.md` — entrypoint chung cho Codex, Cursor, Gemini, Aider, Continue, Cody.
-- `.codex/AGENTS.md` — Codex-specific routing and task contract.
-- `.cursor/rules/agent-workspace.mdc` — Cursor always-on rule.
-- `.gemini/GEMINI.md` — Gemini-specific routing and task contract.
-- `.github/copilot-instructions.md` — GitHub Copilot instructions.
+After changing commands, skills, plugin wrappers, paths, or counts:
 
-### `.runtime/context/` — agent brain + service control plane
+```bash
+python3 scripts/build-plugin.py
+python3 scripts/build-codex-prompts.py
+python3 scripts/build-codex-plugin.py
+python3 scripts/build-skill-catalog.py --check
+python3 scripts/architecture-health-check.py --strict
+```
 
-- **Tự sinh ra** khi onboarding agent scan project.
-- Chứa memory và registry giúp agents làm việc:
-  - `index.yaml` — đọc trước để chọn đúng memory file, tránh đọc toàn bộ
-  - `project-brain.yaml` — Project memory
-  - `service-catalog.yaml` — service.path, boundaries, agent candidates
-  - `agent-registry.yaml` — Active coder agents
-  - `test-policy.yaml` — Test requirements
-  - `skill-registry.yaml` — Skill selection registry
-  - `workflow-state.yaml` — Current workflow state
-  - `services/<service>.yaml` — Per-service brains
-  - `feedback/` — Patterns + anti-patterns
-
-### `inputs/` — user-provided reference docs
-
-- User drop tài liệu project-level (PRD, HLD, ADR, OpenAPI specs, domain glossary, runbooks) vào đây.
-- Onboarding scan recursively, cite source vào `.runtime/context/project-brain.yaml` + `inputs-index.yaml`.
-- Subdirs: `product/`, `architecture/`, `api/`, `domain/`, `runbooks/`, `misc/`. Có thể để rỗng.
-- Khi nội dung thay đổi: chạy `/sync-memory --refresh-index` để agent re-scan.
-- **Khác với** `.runtime/tasks/<id>/task-input.md` (input theo từng task).
-
-### `services/` — local clone workspace
-
-- Thư mục rỗng/ignored để user `cd services` rồi clone source service vào.
-- Không cần file scaffold trong `services/`; framework template vẫn hợp lệ khi thư mục này rỗng.
-- Không lưu memory, registry, hoặc workflow state ở đây.
-- Không đẩy source code service lên repo `agent-workspace`.
-
----
-
-## Routing — nguyên tắc
-
-- **Coordinator là central router** — mọi task đi qua coordinator
-- Coordinator đọc memory index + project brain khi cần → xác định workflow phase → route đến agent phù hợp
-- Workflow tuần tự: task-analysis → coder-leader → dev-verification → QC → memory-update
-- **Không chắc thì hỏi, không đoán** — nếu thiếu dữ kiện ảnh hưởng correctness/security/scope thì hỏi user, không bịa facts/evidence
-- **Approval gates**: tạo coder agents, expand scope, skip QC cần user approval
-- **Task-analysis trước code**: không có task-analysis.yaml = không code
-- **Model routing/status/response UI**: model profile lấy từ `.runtime/context/model-routing.yaml`, `/status` đọc `.runtime/context/agent-activity.yaml`, response format đọc `.runtime/context/response-ui.yaml`; `scripts/agent-activity.py` cập nhật telemetry, `scripts/status-dashboard.py --write` tạo `.runtime/status.md/.html`, `scripts/architecture-health-check.py --strict` bắt drift deterministic
-
----
-
-## Token & memory policy (memory-first)
-
-Mục tiêu: **ít token, vẫn đúng** — đọc `.runtime/context/index.yaml` trước khi mở memory chi tiết hoặc scan repo.
-
-### Coordinator
-
-- Đọc theo thứ tự: `.runtime/context/index.yaml` → `.runtime/context/workflow-state.yaml` → `.runtime/context/project-brain.yaml` khi cần → `.runtime/context/service-catalog.yaml` / `.runtime/context/agent-registry.yaml` khi task cần code
-- Chỉ scan source code khi memory/service files không đủ thông tin hoặc bị stale
-- Route đến đúng agent dựa trên task type
-
-### Service coders (generated)
-
-- Chỉ nhận scoped memory/task context từ coder-leader
-- Chỉ write trong allowed paths (scoped per service)
-- Đọc service brain trước khi implement, nhưng chỉ service liên quan
-
-Chi tiết: `.claude/agents/workflow/coordinator.agent.md`, `.claude/agents/workflow/coder-leader.agent.md`
-
----
-
-## Generated agents (service coders)
-
-- Chỉ **agent-factory** được quyền tạo generated coder agents
-- Cần **user approval** trước khi tạo
-- Generated coders ghi vào `.claude/agents/coders/coder-{service}.agent.md`
-- Service brains ghi vào `.runtime/context/services/{service}.yaml`
-- Service coding contracts ghi vào `.runtime/context/`
-- Mỗi coder scoped: chỉ write trong allowed paths của service đó
-
----
-
-## Khi nào sửa file nào?
-
-- **Muốn đổi workflow routing / nguyên tắc** → sửa `CLAUDE.md`
-- **Muốn đổi vai trò agent** → sửa `.claude/agents/{role}.agent.md`
-- **Muốn đổi workflow rules** → sửa `.agent/rules/{nn}-{name}.md`
-- **Muốn đổi best practices chuyên môn** → dùng `/skills update <skill>` để sửa skill + lock/registry liên quan
-- **Muốn đổi cách setup cho người dùng** → sửa `SETUP.md`
-- **Muốn overview ngắn** → sửa `README.md`
-
----
-
-## Maintenance checklist (để docs không bị lệch)
-
-### Khi thêm/sửa workflow agent
-
-- Thêm/sửa `.claude/agents/{role}.agent.md`
-- Cập nhật bảng agents trong `CLAUDE.md`
-- Nếu có command mới → thêm `.claude/commands/{name}.md`
-- Nếu có rule mới → thêm `.agent/rules/{nn}-{name}.md`
-
-### Khi thêm/sửa skill
-
-- Dùng `/skills status` hoặc `/skills audit` trước khi sửa
-- Dùng `/skills update <skill>` cho skill hiện có, hoặc `/skills refresh-registry` sau khi thêm skill mới
-- Cập nhật `skills-lock.json`, `.runtime/context/skill-registry.yaml`, `.agent/docs/external-skills.md`, và `CHANGELOG.md` nếu behavior/risk thay đổi
-- Workflow skills dùng prefix `skill-`, technical skills dùng tên gốc
-
-### Khi thêm/sửa rule
-
-- Thêm/sửa `.agent/rules/{nn}-{name}.md`
-- Đảm bảo numbered prefix liên tục (00-17)
-- Cập nhật rules table trong `CLAUDE.md`
-
-### Khi thay đổi .runtime/context/ system
-
-- Cập nhật `.claude/agents/workflow/onboarding.agent.md` (nếu đổi cách scan)
-- Cập nhật templates tương ứng trong `.agent/templates/`
-- Cập nhật runtime tree trong `CLAUDE.md` và `GUIDELINES.md`
-
-### Khi đổi counts (thêm/xóa resources)
-
-- Sync counts across: `README.md`, `CLAUDE.md`, `SETUP.md`, `GUIDELINES.md`
-- Hiện tại: 12 workflow agents + 2 built-in coders + 19 specialist advisors, 231 skills, 18 rules (19 files including README), 22 templates, 17 commands
+Current distribution: 12 workflow agents, 19 specialist advisors, 3 built-in coders, 231 skills,
+21 rules, 58 templates, and 19 commands.

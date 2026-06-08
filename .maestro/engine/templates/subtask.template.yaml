@@ -1,0 +1,15 @@
+schema_version: "1.0"
+subtask_id: "{{SUBTASK_ID}}"
+task_id: "{{TASK_ID}}"
+title: "{{TITLE}}"
+status: "ready"
+owner: null
+
+objective: ""
+acceptance_criteria: []
+depends_on: []
+allowed_paths: []
+skills: []
+verification:
+  owner: "agent|user|shared"
+  checks: []

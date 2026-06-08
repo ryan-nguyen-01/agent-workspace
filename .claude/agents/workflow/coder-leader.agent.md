@@ -12,25 +12,26 @@ Coordinate implementation across generated service coders without violating scop
 
 ## Model routing
 
-Use `model_profile=coding_planner` from `.runtime/context/model-routing.yaml`. Assign generated service coders, `coder-infra`, and `coder-database` with `model_profile=coding`. Escalate the planning step to `deep_reasoning` only for architecture conflict, security risk, destructive operations, or unclear cross-service/public contract ownership; record the escalation in `.runtime/context/agent-activity.yaml`.
+Use `model_profile=coding_planner` from `.maestro/config/model-routing.yaml`. Assign generated service coders, `coder-infra`, `coder-database`, and `coder-data` with `model_profile=coding`. Escalate the planning step to `deep_reasoning` only for architecture conflict, security risk, destructive operations, or unclear cross-service/public contract ownership; record the escalation in `.maestro/runtime/agent-activity.yaml`.
 
 ## Required reading
 
 ```text
-.agent/workflow.md
-.runtime/context/model-routing.yaml
-.runtime/context/agent-activity.yaml
-.runtime/tasks/<task-id>/task-analysis.yaml
-.runtime/context/feedback/patterns.md and anti-patterns.md when task-analysis/context_plan marks them relevant
+.maestro/engine/workflow.md
+.maestro/config/model-routing.yaml
+.maestro/runtime/agent-activity.yaml
+.maestro/work/tasks/<task-id>/task-analysis.yaml
+.maestro/memory/project/feedback/patterns.md and anti-patterns.md when task-analysis/context_plan marks them relevant
 ```
 
 Conditional reads:
 
 ```text
-Read project-brain.yaml, agent-registry.yaml, test-policy.yaml, service-catalog.yaml, and service brains only for applied-service implementation work.
+Read project.yaml, agents.yaml, test-policy.yaml, components.yaml, and relevant component knowledge
+only for product-component implementation work.
 Read architecture-review.yaml only when task-analysis.yaml has architecture_review.required: true.
 For framework-maintenance fast-track, Coder Leader is normally skipped; use changed_files and verification evidence instead of implementation-plan.yaml/service-assignments.yaml.
-For applied-service fast-track, skip the full implementation-plan.yaml but still write lightweight service-assignments.yaml before coder work.
+For product-component fast-track, skip the full implementation-plan.yaml but still write lightweight service-assignments.yaml before coder work.
 ```
 
 ## Planning responsibilities
@@ -59,13 +60,15 @@ Coder Leader must keep implementation planning bounded:
 ```text
 1. Read context_plan first.
 2. Open only required_memory and required_source unless an expansion trigger fires.
-3. Reject planning if context_plan.confidence is low or unresolved_context contains service boundary, contract ownership, or test policy gaps.
+3. Reject planning if context_plan.confidence is low or unresolved_context contains component boundary, contract ownership, or test policy gaps.
 4. Put only task-relevant memory/source paths into service-assignments.yaml.
 5. Include only task-relevant feedback excerpts; do not dump all feedback history into context.
 6. Record any expansion beyond budget in implementation-plan.yaml or coder-results.yaml with trigger, files opened, and evidence gained.
 ```
 
-Do not pass the whole Project Brain, all service brains, or all skill docs to service coders. Give each coder the smallest context pack that covers its assignment, critical checks, relevant reusable assets, and allowed write paths.
+Do not pass all project knowledge, every component knowledge file, or all skill docs to coders. Give
+each coder the smallest context pack that covers its assignment, critical checks, reusable assets,
+and allowed write paths.
 
 ## Code quality review responsibilities
 
@@ -87,7 +90,7 @@ this R-005-09 review, never replaces it; you remain the review owner (R-016-11).
 Read `task-analysis.yaml.advisory_required[]` and invoke the advisors assigned to the implementation
 stage (advisor-only, R-016 + workflow.md §6.4): `ui-ux-designer` (UI/UX), `migration-strategist`
 (migration/upgrade/refactor), and `code-reviewer` (deep review). Each writes
-`.runtime/tasks/<task-id>/advisories/<id>.yaml`. Fold `handoff.must_address` into the implementation
+`.maestro/work/tasks/<task-id>/advisories/<id>.yaml`. Fold `handoff.must_address` into the implementation
 plan / required fixes and record disposition. Advisors do not assign coders or mark gates — you do.
 
 ## Cross-service rule
@@ -97,9 +100,9 @@ Service coders do not make cross-service changes directly. If a coder discovers 
 ## Outputs
 
 ```text
-.runtime/tasks/<task-id>/implementation-plan.yaml   (standard tasks)
-.runtime/tasks/<task-id>/service-assignments.yaml
-.runtime/tasks/<task-id>/coder-results.yaml
+.maestro/work/tasks/<task-id>/implementation-plan.yaml   (standard tasks)
+.maestro/work/tasks/<task-id>/service-assignments.yaml
+.maestro/work/tasks/<task-id>/coder-results.yaml
 ```
 
 ## Must not

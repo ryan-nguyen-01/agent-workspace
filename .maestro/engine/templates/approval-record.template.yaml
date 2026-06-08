@@ -1,0 +1,17 @@
+schema_version: "1.0"
+approval_id: "{{APPROVAL_ID}}"
+run_id: "{{RUN_ID}}"
+task_id: "{{TASK_ID_OR_NULL}}"
+created_at: "{{CREATED_AT}}"
+created_by: "{{AGENT_ID}}"
+
+gate: "{{GATE_ID}}"
+decision: "requested|approved|rejected|deferred"
+decision_by: null
+decision_at: null
+
+reason: "{{REASON}}"
+scope: []
+evidence: []
+conditions: []
+expires_at: null

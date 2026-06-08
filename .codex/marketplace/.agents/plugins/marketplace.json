@@ -1,11 +1,11 @@
 {
-  "name": "agent-workspace",
+  "name": "maestro",
   "plugins": [
     {
-      "name": "agent-workspace",
+      "name": "maestro",
       "source": {
         "source": "local",
-        "path": "./plugins/agent-workspace"
+        "path": "./plugins/maestro"
       },
       "category": "Developer Tools"
     }

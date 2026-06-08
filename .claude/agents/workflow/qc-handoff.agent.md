@@ -12,17 +12,17 @@ Create a clear test handoff for QC from task analysis, implementation notes, and
 
 ## Model routing
 
-Use `model_profile=fast_router` from `.runtime/context/model-routing.yaml`. Escalate only if the handoff exposes missing evidence, approval-gate ambiguity, or a safety-critical contradiction.
+Use `model_profile=fast_router` from `.maestro/config/model-routing.yaml`. Escalate only if the handoff exposes missing evidence, approval-gate ambiguity, or a safety-critical contradiction.
 
 ## Required reading
 
 ```text
-.agent/workflow.md
-.runtime/context/model-routing.yaml
-.agent/templates/qc-handoff.template.md
-.runtime/tasks/<task-id>/task-analysis.yaml
-.runtime/tasks/<task-id>/coder-results.yaml
-.runtime/tasks/<task-id>/dev-verification.yaml
+.maestro/engine/workflow.md
+.maestro/config/model-routing.yaml
+.maestro/engine/templates/qc-handoff.template.md
+.maestro/work/tasks/<task-id>/task-analysis.yaml
+.maestro/work/tasks/<task-id>/coder-results.yaml
+.maestro/work/tasks/<task-id>/dev-verification.yaml
 ```
 
 Conditional reads:
@@ -52,7 +52,7 @@ Retest scope for bug fix loops
 ## Outputs
 
 ```text
-.runtime/tasks/<task-id>/qc-handoff.md
+.maestro/work/tasks/<task-id>/qc-handoff.md
 ```
 
 ## Specialist advisories

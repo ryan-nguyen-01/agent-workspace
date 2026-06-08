@@ -1,89 +1,99 @@
 # inputs/
 
-Folder để user cung cấp **tài liệu project-level** cho agents đọc khi onboard và phân tích task. Khác với `services/` (chứa source code clone) và `.runtime/tasks/<id>/task-input.md` (input per-task).
+This folder stores **user-provided project-level reference documents** that agents should read during
+onboarding and task analysis. It is different from `services/`, which contains product source code, and
+from `.maestro/work/tasks/<id>/task-input.md`, which stores task-specific input.
 
-## Khi nào dùng
+## When To Use It
 
-Drop tài liệu vào đây khi:
-- Bắt đầu project mới và muốn agent hiểu business context trước khi đọc code
-- Có PRD/HLD/LLD/ADR không nằm trong repo source
-- Cung cấp API contract, OpenAPI spec, domain glossary
-- Share runbooks, ops playbooks, post-mortem reference
-- Đính kèm diagram (PNG/SVG/PDF) hoặc exported Figma
+Drop documents here when:
 
-Agent onboarding sẽ **scan toàn bộ** thư mục này và cite source path vào `.runtime/context/project-brain.yaml` + service brains.
+- You are starting a new project and want agents to understand business context before reading code.
+- PRD, HLD, LLD, or ADR documents live outside the product source repository.
+- You need to provide API contracts, OpenAPI specs, or a domain glossary.
+- You want to share runbooks, operations playbooks, or post-mortem references.
+- You have diagrams such as PNG, SVG, PDF, or exported Figma material.
 
-## Cấu trúc
+The onboarding agent scans this folder and cites source paths into `.maestro/knowledge/project.yaml` and
+related component knowledge.
+
+## Structure
 
 ```text
 inputs/
-├── README.md            ← file này
-├── product/             PRD, business specs, user stories, market analysis
-├── architecture/        HLD, LLD, ADRs, system diagrams, infrastructure docs
+├── README.md            This file
+├── product/             PRDs, business specs, user stories, market analysis
+├── architecture/        HLDs, LLDs, ADRs, system diagrams, infrastructure docs
 ├── api/                 OpenAPI/Swagger specs, Postman collections, API contracts
 ├── domain/              Domain models, glossary, business rules, data dictionary
-├── runbooks/            Ops playbooks, incident response, deployment guides
-└── misc/                Files chưa phân loại
+├── runbooks/            Operations playbooks, incident response, deployment guides
+└── misc/                Uncategorized files
 ```
 
-User không bắt buộc dùng đủ subdir — để trống cũng được. Nếu file không khớp category nào, đặt vào `misc/`.
+Using every subdirectory is optional. If a file does not clearly match a category, place it in `misc/`.
 
-## Định dạng được hỗ trợ
+## Supported Formats
 
-| Định dạng | Xử lý |
-|---|---|
-| `.md`, `.txt` | Đọc trực tiếp, parse heading + content |
-| `.yaml`, `.yml`, `.json` | Parse structured |
-| `.html` | Strip tags, lấy text |
-| `.pdf` | Đọc qua Read tool (giới hạn 20 trang/request) |
-| `.png`, `.jpg`, `.svg` | Đọc visual (multimodal) |
-| `.csv`, `.tsv` | Sample header + first rows |
-| Binary khác | Ghi metadata only (filename, size, mtime) |
+| Format | Handling |
+| --- | --- |
+| `.md`, `.txt` | Read directly, parse headings and content |
+| `.yaml`, `.yml`, `.json` | Parse as structured data |
+| `.html` | Strip tags and extract text |
+| `.pdf` | Read through the available document/read tool, subject to tool page limits |
+| `.png`, `.jpg`, `.svg` | Inspect visually when multimodal reading is available |
+| `.csv`, `.tsv` | Sample header and first rows |
+| Other binary files | Record metadata only: filename, size, and mtime |
 
-## Cách agent dùng
+## How Agents Use It
 
-**Onboarding agent** (run khi `/onboard`):
-1. Scan `inputs/` recursively (skip `.gitkeep`, hidden files)
-2. Mỗi file → tạo entry trong `.runtime/context/inputs-index.yaml` với `path`, `category`, `summary`, `last_modified`, `confidence`
-3. Trích key facts (architecture decisions, API contracts, business rules) vào `project-brain.yaml` với `source: inputs/<path>`
-4. Trích service-specific facts (vd. orders API spec) vào service brains
+**Onboarding agent** when `/onboard` runs:
 
-**Task-analysis agent**: đọc `inputs-index.yaml` trước, chỉ mở file relevant theo task intent.
+1. Scan `inputs/` recursively, skipping `.gitkeep` and hidden files.
+2. Create entries in `.maestro/registry/inputs.yaml` with `path`, `category`, `summary`, `last_modified`, and `confidence`.
+3. Extract key facts such as architecture decisions, API contracts, and business rules into `project.yaml` with `source: inputs/<path>`.
+4. Extract component-specific facts into component knowledge when relevant.
 
-**Service coders**: chỉ đọc file trong `inputs/api/` và `inputs/domain/` nếu task contract change.
+**Task Analysis agent:** read `inputs.yaml` first, then open only the files relevant to the task intent.
 
-## Confidence ranking
+**Service coders:** read `inputs/api/` and `inputs/domain/` only when the task changes contracts or domain behavior.
 
-Agent dùng heuristic:
+## Confidence Ranking
+
+Agents use this heuristic:
 
 ```text
-high      file mtime <= 90 days, format có cấu trúc (yaml/json/openapi)
-medium    file mtime <= 365 days, markdown có heading rõ
-low       file mtime > 365 days, không có metadata, hoặc misc/
+high      mtime <= 90 days and the format is structured, such as yaml/json/openapi
+medium    mtime <= 365 days and the markdown has clear headings
+low       mtime > 365 days, missing metadata, or stored under misc/
 ```
 
-Memory entries inferred từ `inputs/` luôn cite source. Nếu sau này code/code-review mâu thuẫn với `inputs/`, code thắng và agent flag cho user review.
+Memory entries inferred from `inputs/` must cite their source. If source code or code review evidence
+later conflicts with `inputs/`, code wins for technical truth and the agent should flag the conflict for
+user review.
 
-## Bảo mật
+## Security
 
-- **KHÔNG commit credentials, secrets, raw tokens** dưới bất kỳ hình thức nào. R-013 áp dụng cho cả `inputs/`.
-- Tài liệu confidential (vd. contract NDA, internal-only specs) → thêm vào `.gitignore` thủ công:
+- Do not commit credentials, secrets, raw tokens, or private keys in any form. R-013 applies to `inputs/`.
+- For confidential material such as NDA contracts or internal-only specs, add manual `.gitignore` rules:
+
   ```text
   inputs/product/confidential-*.md
   inputs/misc/legal-*
   ```
-- Khi commit lên public repo, audit `inputs/` trước.
 
-## Quan hệ với các folder khác
+- Audit `inputs/` before committing to a public repository.
+
+## Relationship To Other Folders
 
 ```text
-inputs/                    Tài liệu user cung cấp (project-level reference, persistent)
-services/<repo>/           Source code clone (gitignored, persistent)
-.runtime/tasks/<id>/        Artifact per-task (auto-generated, includes task-input.md per task)
-.runtime/context/           Memory được agent generate sau khi đọc các nguồn trên
+inputs/                    User-provided persistent project-level references
+services/<component>/      Product service source, tracked by monorepo or team policy
+.maestro/work/tasks/<id>/       Per-task artifacts, including task-input.md
+.maestro/knowledge/             Agent-generated distilled memory from the sources above
 ```
 
-Quy tắc:
-- `inputs/` là **source of truth của user-provided knowledge**.
-- `.runtime/context/` là **distilled brain agent** — không thay thế `inputs/`, chỉ cite nó.
-- Khi `inputs/` thay đổi, chạy `/sync-memory --refresh-index` để agent re-scan.
+Rules:
+
+- `inputs/` is the source of truth for user-provided knowledge.
+- `.maestro/knowledge/` is the distilled agent brain. It does not replace `inputs/`; it cites it.
+- When `inputs/` changes, run `/sync-memory --refresh-index` so agents rescan the references.

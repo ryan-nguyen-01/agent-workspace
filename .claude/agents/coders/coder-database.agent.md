@@ -14,26 +14,26 @@ service_id: _database
 service_name: Database (cross-cutting)
 service_type: cross-cutting-concern
 owner: coder-leader
-created_from: .agent/templates/agent-coder.template.md
+created_from: .maestro/engine/templates/agent-coder.template.md
 scope_class: cross-cutting   # Not service-bound. Applies to schemas, migrations, queries, and indexes.
 model_profile: coding
-model_routing_source: .runtime/context/model-routing.yaml
+model_routing_source: .maestro/config/model-routing.yaml
 ```
 
 ## Model routing
 
-Use `model_profile=coding` from `.runtime/context/model-routing.yaml`. Claude adapters prefer Sonnet for this agent; Codex adapters prefer the configured Codex coding model (`gpt-5.3-codex` by default). Escalate to `deep_reasoning` for destructive migrations, production data changes, compatibility risk, or unclear ownership, and record the reason in `.runtime/context/agent-activity.yaml`.
+Use `model_profile=coding` from `.maestro/config/model-routing.yaml`. Claude adapters prefer Sonnet for this agent; Codex adapters prefer the configured Codex coding model (`gpt-5.3-codex` by default). Escalate to `deep_reasoning` for destructive migrations, production data changes, compatibility risk, or unclear ownership, and record the reason in `.maestro/runtime/agent-activity.yaml`.
 
 ## Required reading
 
 ```text
-.agent/workflow.md
-.runtime/context/model-routing.yaml
-.runtime/context/agent-activity.yaml
-.runtime/context/project-brain.yaml
-.runtime/context/services/<service>.yaml   (only services whose data model is changing)
-.runtime/context/test-policy.yaml
-.runtime/tasks/<task-id>/service-assignments.yaml
+.maestro/engine/workflow.md
+.maestro/config/model-routing.yaml
+.maestro/runtime/agent-activity.yaml
+.maestro/knowledge/project.yaml
+.maestro/knowledge/components/<component-id>.yaml   (only services whose data model is changing)
+.maestro/knowledge/test-policy.yaml
+.maestro/work/tasks/<task-id>/service-assignments.yaml
 inputs/architecture/    (data architecture, ADRs, if present)
 inputs/domain/          (domain glossary and entity definitions, if present)
 inputs/api/             (contracts affected by schema/query changes, if present)
@@ -107,8 +107,8 @@ forbidden_paths:
   - "**/*.key"
   # Framework engine
   - ".claude/**"
-  - ".agent/**"
-  - ".runtime/**"
+  - ".maestro/engine/**"
+  - ".maestro/**"
   - ".codex/**"
   - ".cursor/**"
   - ".gemini/**"
@@ -140,7 +140,7 @@ contextual_skills:
     - query-expert
     - database-optimizer
   database_engine:
-    # Load only engines supported by project-brain/service-brain evidence.
+    # Load only engines supported by project brain/component knowledge evidence.
     - postgresql-best-practices
     - postgresql-knowledge-patch
     - mysql-best-practices
@@ -162,7 +162,7 @@ skill_selection_policy:
   load_optional_when_risk_or_artifact_requires: true
   budget: 5
   conflict_resolution: |
-    Select one database_engine family based on project-brain.persistence and service-brain stack evidence.
+    Select one database_engine family based on project-brain.persistence and component knowledge stack evidence.
     Select ORM skill only when the task touches that ORM's generated schema or migration surface.
   never_override_rules_or_permissions: true
 ```
@@ -207,7 +207,7 @@ critical_checks:
 1. Confirm the task touches schema, migration, query, index, seed, fixture, or ORM data model scope.
 2. If task also requires API/application changes, raise cross_service_request to Coder Leader.
 3. If task also requires infrastructure/provisioning changes, raise cross_service_request to coder-infra.
-4. Read project-brain.persistence, impacted service brains, and existing migration history.
+4. Read project-brain.persistence, impacted component knowledge files, and existing migration history.
 5. Confirm every intended write path is allowed.
 6. Preserve migration ordering, naming, transaction conventions, and rollback style.
 7. For schema changes: verify forward migration and rollback/downgrade path where the stack supports it.
@@ -237,7 +237,6 @@ decisions: []
 model_usage:
   model_profile: "coding"
   model_id: "unknown"
-  token_usage: "unknown"
 cross_service_requests: []
 critical_checks_passed: []
 critical_checks_failed: []
@@ -272,7 +271,7 @@ Record blocker_reason in coder-results.yaml.
 
 ```text
 - Reuse the existing migration generator/runner and naming convention.
-- Follow table, column, index, constraint, enum, and timestamp conventions from .runtime/context/conventions.md.
+- Follow table, column, index, constraint, enum, and timestamp conventions from .maestro/knowledge/conventions.md.
 - Prefer additive, backward-compatible migrations for zero-downtime rollout.
 - Add indexes only when backed by an access pattern or constraint.
 - Keep seeds and fixtures synthetic; never copy production data.

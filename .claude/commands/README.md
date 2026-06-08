@@ -8,9 +8,9 @@ Commands are user-facing entrypoints. They describe which agent owns the action,
 
 ```text
 /coord          Main coordinator entrypoint
-/onboard        Build or refresh Project Brain
-/create-coders  Generate scoped service coder agents after approval
-/status         Report workflow, brain, task, model routing, response UI, and agent activity dashboard
+/onboard        Build or refresh Project Knowledge
+/create-coders  Generate scoped component coder agents after approval
+/status         Report workflow, project knowledge, task, model routing, response UI, and agent activity dashboard
 /analyze-task   Normalize HLD/LLD/ticket/text into task-analysis.yaml
 /plan-dev       Build implementation plan and service assignments
 /dev            Run implementation through Coder Leader and service coders
@@ -21,7 +21,7 @@ Commands are user-facing entrypoints. They describe which agent owns the action,
 /sync-memory    Persist durable memory updates
 /skills         Maintain installed skills and skill registry metadata
 /resume-task    Continue a task from its current state
-/aw-init        Scaffold .agent/+.runtime/+CLAUDE.md into another project (post-plugin-install)
+/maestro-init        Install .maestro/ + component/doc roots + managed instruction block
 /access         Switch tool-permission posture: full (bypassPermissions) / guarded (R-011-14)
 /policy-check   Validate transition, gate, exception, or artifact snapshot
 ```

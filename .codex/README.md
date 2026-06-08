@@ -1,6 +1,6 @@
 # Codex Adapter
 
-This folder adapts `agent-workspace` for OpenAI Codex.
+This folder adapts `maestro` for OpenAI Codex.
 
 ## How Codex Reads This Repo
 
@@ -8,7 +8,7 @@ Codex reads `AGENTS.md` instruction files. It does not treat `.claude/commands/*
 
 When working in Codex:
 
-- Read `.codex/AGENTS.md`, root `AGENTS.md`, `CLAUDE.md`, `COMMAND.md`, and `.agent/workflow.md`.
+- Read `.codex/AGENTS.md`, root `AGENTS.md`, `CLAUDE.md`, `COMMAND.md`, and `.maestro/engine/workflow.md`.
 - Route natural-language work through the Coordinator semantics from `/coord`.
 - Use `.claude/commands/*.md` as workflow contracts, not as Codex TUI command registrations.
 - Use Codex built-in slash commands only for Codex controls such as `/model`, `/review`, `/plan`, `/status`, `/skills`, `/hooks`, `/mcp`, `/apps`, and `/plugins`.
@@ -16,7 +16,7 @@ When working in Codex:
 
 ## Sandbox Boundary
 
-`.codex/config.toml` can tighten the default Codex session after the project is trusted, but it is not the source of truth for service-level permissions. The hard workflow contract remains `.runtime/context/workflow-state.yaml.active_task_id` plus `.runtime/context/agent-registry.yaml.allowed_write_paths`.
+`.codex/config.toml` can tighten the default Codex session after the project is trusted, but it is not the source of truth for service-level permissions. The hard workflow contract remains `.maestro/runtime/workflow-state.yaml.active_task_id` plus `.maestro/registry/agents.yaml.allowed_write_paths`.
 
 ## Why `/coord` Does Not Appear
 

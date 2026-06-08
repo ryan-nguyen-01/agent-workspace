@@ -14,26 +14,26 @@ service_id: _infra
 service_name: Infrastructure (cross-cutting)
 service_type: cross-cutting-concern
 owner: coder-leader
-created_from: .agent/templates/agent-coder.template.md
+created_from: .maestro/engine/templates/agent-coder.template.md
 scope_class: cross-cutting   # Not service-bound. Applies across all services.
 model_profile: coding
-model_routing_source: .runtime/context/model-routing.yaml
+model_routing_source: .maestro/config/model-routing.yaml
 ```
 
 ## Model routing
 
-Use `model_profile=coding` from `.runtime/context/model-routing.yaml`. Claude adapters prefer Sonnet for this agent; Codex adapters prefer the configured Codex coding model (`gpt-5.3-codex` by default). Escalate to `deep_reasoning` for production changes, destructive operations, IAM/security risk, or multi-environment topology ambiguity, and record the reason in `.runtime/context/agent-activity.yaml`.
+Use `model_profile=coding` from `.maestro/config/model-routing.yaml`. Claude adapters prefer Sonnet for this agent; Codex adapters prefer the configured Codex coding model (`gpt-5.3-codex` by default). Escalate to `deep_reasoning` for production changes, destructive operations, IAM/security risk, or multi-environment topology ambiguity, and record the reason in `.maestro/runtime/agent-activity.yaml`.
 
 ## Required reading
 
 ```text
-.agent/workflow.md
-.runtime/context/model-routing.yaml
-.runtime/context/agent-activity.yaml
-.runtime/context/project-brain.yaml
-.runtime/context/services/<service>.yaml   (only services whose infra is changing)
-.runtime/context/test-policy.yaml
-.runtime/tasks/<task-id>/service-assignments.yaml
+.maestro/engine/workflow.md
+.maestro/config/model-routing.yaml
+.maestro/runtime/agent-activity.yaml
+.maestro/knowledge/project.yaml
+.maestro/knowledge/components/<component-id>.yaml   (only services whose infra is changing)
+.maestro/knowledge/test-policy.yaml
+.maestro/work/tasks/<task-id>/service-assignments.yaml
 inputs/architecture/    (HLD, infra diagrams, if present)
 inputs/runbooks/        (ops procedures, if present)
 ```
@@ -97,8 +97,8 @@ forbidden_paths:
   - "**/*.key"
   # Framework engine
   - ".claude/**"
-  - ".agent/**"
-  - ".runtime/**"
+  - ".maestro/engine/**"
+  - ".maestro/**"
   - ".codex/**"
   - ".cursor/**"
   - ".gemini/**"
@@ -199,7 +199,7 @@ critical_checks:
 1. Confirm the task touches infra/IaC/k8s/docker/ci, not application code.
 2. If task also requires app changes, raise cross_service_request to Coder Leader.
 3. If task also requires schema/migration, raise cross_service_request to coder-database.
-4. Read project-brain.architecture and impacted service brains for current infra topology.
+4. Read project-brain.architecture and impacted component knowledge files for current infra topology.
 5. Confirm every intended write path is allowed.
 6. For Terraform changes: run `terraform fmt`, `terraform validate`, `terraform plan` (dry-run) and capture plan output.
 7. For K8s manifests: run `kubectl --dry-run=client -o yaml` to validate; never `kubectl apply` from this agent.
@@ -229,7 +229,6 @@ decisions: []
 model_usage:
   model_profile: "coding"
   model_id: "unknown"
-  token_usage: "unknown"
 cross_service_requests: []
 critical_checks_passed: []
 critical_checks_failed: []
@@ -263,7 +262,7 @@ Record blocker_reason in coder-results.yaml.
 
 ```text
 - Reuse existing Terraform modules in `modules/` before writing new ones.
-- Follow naming conventions from `.runtime/context/conventions.md` (env_resource_purpose pattern).
+- Follow naming conventions from `.maestro/knowledge/conventions.md` (env_resource_purpose pattern).
 - Reuse Helm chart values structure; do not invent new structure.
 - Tag every cloud resource with project, env, owner, cost-center per project policy.
 - Pin provider versions and module sources; do not float on `~>` for production.

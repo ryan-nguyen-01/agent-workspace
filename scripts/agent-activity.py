@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Update `.runtime/context/agent-activity.yaml` without third-party packages.
+"""Update `.maestro/runtime/agent-activity.yaml` without third-party packages.
 
 This is an adapter-friendly helper for tools that can call a local command at
 phase start, heartbeat, block, or completion. It is intentionally narrow: it
@@ -19,8 +19,9 @@ from typing import Any
 
 
 ROOT = Path(__file__).resolve().parents[1]
-CONTEXT = ROOT / ".runtime" / "context"
-DEFAULT_ACTIVITY_FILE = CONTEXT / "agent-activity.yaml"
+CONFIG = ROOT / ".maestro" / "config"
+RUNTIME = ROOT / ".maestro" / "runtime"
+DEFAULT_ACTIVITY_FILE = RUNTIME / "agent-activity.yaml"
 MAX_TEXT_LEN = 500
 
 SECRET_PATTERNS = [
@@ -140,12 +141,13 @@ def seed_activity() -> dict[str, Any]:
         "generated_by": "agent-activity-cli",
         "status": "idle",
         "active_task_id": None,
+        "active_run_id": None,
         "updated_at": now_utc(),
         "updated_by": "agent-activity-cli",
         "dashboard": {
             "mode": "text-status",
-            "source_of_truth": ".runtime/context/agent-activity.yaml",
-            "response_ui": ".runtime/context/response-ui.yaml",
+            "source_of_truth": ".maestro/runtime/agent-activity.yaml",
+            "response_ui": ".maestro/config/response-ui.yaml",
             "rendered_by": "/status",
             "refresh_policy": "Read this file plus workflow-state.yaml. Do not scan task folders unless a task id is active or requested.",
         },
@@ -159,17 +161,10 @@ def seed_activity() -> dict[str, Any]:
             "queued_agents": 0,
             "blocked_agents": 0,
             "completed_agents_last_24h": 0,
-            "estimated_tokens_used": 0,
-            "actual_tokens_used": "unknown",
-            "estimated_cost_usd": "unknown",
-            "actual_cost_usd": "unknown",
         },
         "current_agents": [],
         "recent_events": [],
-        "token_accounting_policy": {
-            "actual_tokens_rule": "Only record actual token counts if the active tool exposes reliable usage metrics.",
-            "estimated_tokens_rule": "Estimate from prompt/output/artifact size when actual usage is unavailable, and mark source: estimated.",
-            "cost_rule": "Do not calculate exact spend without provider price table and actual token usage. Use unknown or estimated.",
+        "recording_policy": {
             "no_secrets_rule": "Never paste raw prompts, raw logs, credentials, cookies, private keys, or long outputs into this file.",
         },
     }
@@ -182,6 +177,7 @@ def ensure_activity(data: dict[str, Any]) -> dict[str, Any]:
     data.setdefault("generated_at", now_utc())
     data.setdefault("generated_by", "agent-activity-cli")
     data.setdefault("status", "idle")
+    data.setdefault("active_run_id", None)
     data.setdefault("dashboard", seed_activity()["dashboard"])
     data.setdefault("automation", seed_activity()["automation"])
     data.setdefault("totals", seed_activity()["totals"])
@@ -200,7 +196,7 @@ def ensure_activity(data: dict[str, Any]) -> dict[str, Any]:
 def model_profile_for_agent(agent_id: str, explicit_profile: str | None) -> str:
     if explicit_profile:
         return explicit_profile
-    routing = load_yaml(CONTEXT / "model-routing.yaml")
+    routing = load_yaml(CONFIG / "model-routing.yaml")
     agent_map = routing.get("agent_model_map", {}) if isinstance(routing, dict) else {}
     if isinstance(agent_map, dict):
         for group_name in ("workflow_agents", "built_in_coders"):
@@ -245,7 +241,7 @@ def model_id_for_profile(provider: str, profile: str, explicit_model_id: str | N
         return explicit_model_id
     if provider == "unknown" or profile == "unknown":
         return "unknown"
-    routing = load_yaml(CONTEXT / "model-routing.yaml")
+    routing = load_yaml(CONFIG / "model-routing.yaml")
     profiles = routing.get("model_profiles", {}) if isinstance(routing, dict) else {}
     defaults = routing.get("provider_defaults", {}) if isinstance(routing, dict) else {}
     if not isinstance(profiles, dict) or not isinstance(defaults, dict):
@@ -297,23 +293,12 @@ def refresh_totals(data: dict[str, Any]) -> None:
     running = sum(1 for agent in agents if agent.get("status") == "running")
     queued = sum(1 for agent in agents if agent.get("status") == "queued")
     blocked = sum(1 for agent in agents if agent.get("status") == "blocked")
-    estimated_tokens = 0
-    for agent in agents:
-        usage = agent.get("token_usage", {})
-        if isinstance(usage, dict):
-            tokens = usage.get("estimated_total_tokens")
-            if isinstance(tokens, int):
-                estimated_tokens += tokens
 
     totals = data.setdefault("totals", {})
     totals["running_agents"] = running
     totals["queued_agents"] = queued
     totals["blocked_agents"] = blocked
     totals.setdefault("completed_agents_last_24h", 0)
-    totals["estimated_tokens_used"] = estimated_tokens
-    totals.setdefault("actual_tokens_used", "unknown")
-    totals.setdefault("estimated_cost_usd", "unknown")
-    totals.setdefault("actual_cost_usd", "unknown")
 
     if blocked:
         data["status"] = "blocked"
@@ -325,15 +310,23 @@ def refresh_totals(data: dict[str, Any]) -> None:
 
 
 def state_active_task() -> str | None:
-    state = load_yaml(CONTEXT / "workflow-state.yaml")
+    state = load_yaml(RUNTIME / "workflow-state.yaml")
     task_id = state.get("active_task_id") if isinstance(state, dict) else None
     if task_id in (None, "", "null", "~"):
         return None
     return str(task_id)
 
 
+def state_active_run() -> str | None:
+    state = load_yaml(RUNTIME / "workflow-state.yaml")
+    run_id = state.get("active_run_id") if isinstance(state, dict) else None
+    if run_id in (None, "", "null", "~"):
+        return None
+    return str(run_id)
+
+
 def command_start(data: dict[str, Any], args: argparse.Namespace) -> str:
-    for label in ("agent_id", "phase", "current_action", "active_file"):
+    for label in ("agent_id", "phase", "current_action", "active_file", "run_id"):
         reject_unsafe_text(label, getattr(args, label, None))
     reject_unsafe_text("evidence", args.evidence)
 
@@ -341,6 +334,7 @@ def command_start(data: dict[str, Any], args: argparse.Namespace) -> str:
     provider = args.provider or "unknown"
     model_id = model_id_for_profile(provider, profile, args.model_id)
     task_id = args.task_id or state_active_task()
+    run_id = args.run_id or state_active_run()
     timestamp = now_utc()
 
     agent = {
@@ -357,19 +351,7 @@ def command_start(data: dict[str, Any], args: argparse.Namespace) -> str:
         "current_action": args.current_action,
         "active_file": args.active_file,
         "task_id": task_id,
-        "token_budget": {
-            "max_input_tokens": "unknown",
-            "max_output_tokens": "unknown",
-            "max_total_tokens": "unknown",
-        },
-        "token_usage": {
-            "source": "estimated" if args.estimated_tokens is not None else "unknown",
-            "actual_input_tokens": "unknown",
-            "actual_output_tokens": "unknown",
-            "estimated_total_tokens": args.estimated_tokens if args.estimated_tokens is not None else "unknown",
-            "actual_cost_usd": "unknown",
-            "estimated_cost_usd": "unknown",
-        },
+        "run_id": run_id,
         "evidence": args.evidence,
     }
 
@@ -379,6 +361,7 @@ def command_start(data: dict[str, Any], args: argparse.Namespace) -> str:
     else:
         data["current_agents"][index] = agent
     data["active_task_id"] = task_id
+    data["active_run_id"] = run_id
     data["updated_by"] = args.agent_id
     append_event(data, args.agent_id, "started", args.current_action)
     return f"started {args.agent_id}"
@@ -387,6 +370,7 @@ def command_start(data: dict[str, Any], args: argparse.Namespace) -> str:
 def command_heartbeat(data: dict[str, Any], args: argparse.Namespace) -> str:
     reject_unsafe_text("current_action", args.current_action)
     reject_unsafe_text("active_file", args.active_file)
+    reject_unsafe_text("run_id", args.run_id)
     reject_unsafe_text("evidence", args.evidence)
     index = current_agent_index(data, args.agent_id)
     if index is None:
@@ -396,11 +380,11 @@ def command_heartbeat(data: dict[str, Any], args: argparse.Namespace) -> str:
         agent["current_action"] = args.current_action
     if args.active_file is not None:
         agent["active_file"] = args.active_file
+    if args.run_id is not None:
+        agent["run_id"] = args.run_id
+        data["active_run_id"] = args.run_id
     if args.eta_seconds is not None:
         agent["eta_seconds"] = args.eta_seconds
-    if args.estimated_tokens is not None:
-        agent.setdefault("token_usage", {})["source"] = "estimated"
-        agent.setdefault("token_usage", {})["estimated_total_tokens"] = args.estimated_tokens
     if args.evidence:
         agent["evidence"] = args.evidence
     agent["last_heartbeat_at"] = now_utc()
@@ -429,6 +413,12 @@ def command_complete(data: dict[str, Any], args: argparse.Namespace) -> str:
     if index is None:
         raise SystemExit(f"No current agent found for {args.agent_id}; nothing to complete.")
     data["current_agents"].pop(index)
+    remaining_runs = [
+        agent.get("run_id")
+        for agent in data.get("current_agents", [])
+        if isinstance(agent, dict) and agent.get("run_id")
+    ]
+    data["active_run_id"] = remaining_runs[0] if remaining_runs else state_active_run()
     totals = data.setdefault("totals", {})
     completed = totals.get("completed_agents_last_24h", 0)
     totals["completed_agents_last_24h"] = completed + 1 if isinstance(completed, int) else 1
@@ -452,7 +442,7 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument(
         "--file",
         default=str(DEFAULT_ACTIVITY_FILE),
-        help="Activity YAML path. Defaults to .runtime/context/agent-activity.yaml.",
+        help="Activity YAML path. Defaults to .maestro/runtime/agent-activity.yaml.",
     )
     sub = parser.add_subparsers(dest="command", required=True)
 
@@ -464,17 +454,17 @@ def build_parser() -> argparse.ArgumentParser:
     start.add_argument("--provider", default="unknown")
     start.add_argument("--model-id")
     start.add_argument("--task-id")
+    start.add_argument("--run-id")
     start.add_argument("--active-file")
     start.add_argument("--eta-seconds", type=int)
-    start.add_argument("--estimated-tokens", type=int)
     start.add_argument("--evidence", action="append", default=[])
 
-    heartbeat = sub.add_parser("heartbeat", help="Update current action, ETA, tokens, or evidence.")
+    heartbeat = sub.add_parser("heartbeat", help="Update current action, ETA, or evidence.")
     add_common_agent_args(heartbeat)
     heartbeat.add_argument("--current-action")
     heartbeat.add_argument("--active-file")
+    heartbeat.add_argument("--run-id")
     heartbeat.add_argument("--eta-seconds", type=int)
-    heartbeat.add_argument("--estimated-tokens", type=int)
     heartbeat.add_argument("--evidence", action="append", default=[])
 
     block = sub.add_parser("block", help="Mark an active agent as blocked.")

@@ -1,6 +1,6 @@
 ---
 name: onboarding
-description: Scans the project to build the reusable project brain, service catalog, test policy, and coder-agent candidates. Does not create coder agents without approval.
+description: Scans registered product roots to build project and component knowledge, the component registry, test policy, and coder-agent candidates. Does not create coder agents without approval.
 tools: Read, Write, Edit, Glob, Grep, Bash
 ---
 
@@ -12,17 +12,17 @@ Create or refresh the project brain so future conversations do not rescan the re
 
 ## Model routing
 
-Use `model_profile=deep_reasoning` from `.runtime/context/model-routing.yaml`. Onboarding does broad project classification and context-economy indexing, so Claude adapters prefer Opus and Codex adapters prefer GPT-5.5 when available.
+Use `model_profile=deep_reasoning` from `.maestro/config/model-routing.yaml`. Onboarding does broad project classification and context-economy indexing, so Claude adapters prefer Opus and Codex adapters prefer GPT-5.5 when available.
 
 ## Required reading
 
 ```text
-.agent/workflow.md
-.runtime/context/model-routing.yaml
-.agent/templates/project-brain.template.yaml
-.agent/templates/service-brain.template.yaml
-.agent/templates/agent-registry.template.yaml
-.runtime/context/index.yaml when refreshing existing memory
+.maestro/engine/workflow.md
+.maestro/config/model-routing.yaml
+.maestro/engine/templates/project.template.yaml
+.maestro/engine/templates/component.template.yaml
+.maestro/engine/templates/agents.template.yaml
+.maestro/knowledge/index.yaml when refreshing existing memory
 ```
 
 ## Scan scope
@@ -38,21 +38,31 @@ User drops PRD, HLD, ADR, OpenAPI specs, domain glossary, runbooks into `inputs/
 2. For each file, read content (use Read tool; PDFs limited to first 20 pages, large files chunked).
 3. Categorize by subdir: product, architecture, api, domain, runbooks, misc.
 4. Extract durable facts:
-     - Architecture decisions and rationale -> project-brain.architecture
-     - Service responsibilities and boundaries -> service-catalog + service brains
-     - API/event/schema contracts -> service brains contracts section
-     - Business rules and domain terms -> project-brain.domain_glossary
-     - Ops procedures -> service brains operations section
-     - Risk areas, compliance requirements, security constraints -> project-brain.risks
+     - Architecture decisions and rationale -> project.yaml.architecture
+     - Component responsibilities and boundaries -> components.yaml + component knowledge
+     - API/event/schema contracts -> relevant component knowledge contracts section
+     - Business rules and domain terms -> project.yaml.domain_glossary
+     - Ops procedures -> relevant component knowledge operations section
+     - Risk areas, compliance requirements, security constraints -> project.yaml.risks
 5. Every extracted fact must cite source: "inputs/<relative-path>".
 6. Confidence:
      high   structured (yaml/json/openapi) and mtime <= 90d
      medium markdown with clear headings or mtime <= 365d
      low    older than 365d, unstructured, or in misc/
-7. Write inputs-index to .runtime/context/inputs-index.yaml (path, category, summary, mtime, confidence).
+7. Write inputs-index to .maestro/registry/inputs.yaml (path, category, summary, mtime, confidence).
 ```
 
-### Source B — source code (`services/<repo>/`, repo root)
+### Source B — registered product roots
+
+Read scan roots from `.maestro/project.yaml` and `.maestro/registry/components.yaml`:
+
+```text
+apps/
+services/
+packages/
+infra/
+tests/
+```
 
 ```text
 Repository type: monolith, modular monolith, monorepo, microservices
@@ -63,7 +73,7 @@ Database and migration conventions
 Environment and CI/CD configuration
 Test frameworks and whether tests are required
 Manual verification conventions
-Service/module boundaries
+Component/module boundaries
 Shared code ownership
 Risk areas and security-sensitive zones
 ```
@@ -81,9 +91,9 @@ docs-and-templates, plugin-extension, monorepo-platform, workflow-framework, unk
 Record the result in:
 
 ```text
-project-brain.yaml.project_profile
-.runtime/context/services/<service>.yaml.profile
-.runtime/context/index.yaml.context_economy
+project.yaml.project_profile
+.maestro/knowledge/components/<component-id>.yaml.profile
+.maestro/knowledge/index.yaml.context_economy
 ```
 
 Each archetype and boundary decision must include evidence paths and confidence. Mixed projects are normal; do not collapse a monorepo into one category if multiple archetypes are present.
@@ -94,11 +104,11 @@ Before deep reads, inspect only:
 
 ```text
 file tree shape
-service-catalog paths when refreshing
+registered component paths when refreshing
 package/build manifests and lockfiles
 route/API/schema/model files
 test config and CI/deploy config
-inputs-index.yaml rows
+inputs.yaml rows
 ```
 
 Use manifest semantics when available. Examples: `package.json`, `pyproject.toml`, `go.mod`, `pom.xml`, `build.gradle`, `Cargo.toml`, `pubspec.yaml`, `Package.swift`, `*.csproj`, `Dockerfile`, Terraform files, OpenAPI files, db migration folders, and CI workflow files.
@@ -110,7 +120,9 @@ node_modules, vendor, dist, build, .next, coverage, .git, generated files,
 large binary assets, lockfile bodies unless dependency evidence is required
 ```
 
-After the signature scan, choose the smallest deep-read set that can answer service boundaries, test policy, reusable assets, and coder candidates. If evidence is weak, mark `unknown` and `partial`; do not guess.
+After the signature scan, choose the smallest deep-read set that can answer component boundaries,
+test policy, reusable assets, and coder candidates. If evidence is weak, mark `unknown` and `partial`;
+do not guess.
 
 ### Conflict resolution
 
@@ -119,7 +131,7 @@ If `inputs/` and source code disagree (e.g. inputs says service uses Postgres, c
 ```text
 - Code wins for technical facts (stack, file paths, current behavior).
 - inputs/ wins for intent, business rules, target state, planned contracts.
-- Record the conflict in project-brain.yaml.conflicts[] with both sources cited, so user can resolve.
+- Record the conflict in project.yaml.conflicts[] with both sources cited, so user can resolve.
 ```
 
 ## Outputs
@@ -127,16 +139,16 @@ If `inputs/` and source code disagree (e.g. inputs says service uses Postgres, c
 Write or update:
 
 ```text
-.runtime/context/project-brain.yaml
-.runtime/context/index.yaml
-.runtime/context/inputs-index.yaml          (NEW — index of inputs/ files)
-.runtime/context/service-catalog.yaml
-.runtime/context/test-policy.yaml
-.runtime/context/services/<service>.yaml
-.runtime/context/agent-registry.yaml with candidate agents only when not approved yet
+.maestro/knowledge/project.yaml
+.maestro/knowledge/index.yaml
+.maestro/registry/inputs.yaml          (NEW — index of inputs/ files)
+.maestro/registry/components.yaml
+.maestro/knowledge/test-policy.yaml
+.maestro/knowledge/components/<component-id>.yaml
+.maestro/registry/agents.yaml with candidate agents only when not approved yet
 ```
 
-The Project Brain output must include:
+The Project Knowledge output must include:
 
 ```text
 project_profile.archetypes
@@ -149,7 +161,8 @@ context_economy.expansion_triggers
 context_economy.never_read_by_default
 ```
 
-Each service brain must include `profile.context_hints` so later agents can find entrypoints, manifests, API/schema files, config, and tests without broad scans.
+Each component knowledge file must include `profile.context_hints` so later agents can find entrypoints,
+manifests, API/schema files, config, and tests without broad scans.
 
 ## Incremental refresh modes
 
@@ -159,21 +172,21 @@ Onboarding supports three refresh granularities. Pick the smallest that covers t
 
 ```text
 Trigger: /onboard
-Reads:   inputs/ + source code (services/<repo>/ + repo root)
-Writes:  project-brain.yaml, service-catalog.yaml, test-policy.yaml,
-         services/<service>.yaml (all), inputs-index.yaml, agent-registry.yaml (candidates)
-When:    First time, or stack/architecture/services all changed.
+Reads:   inputs/ + registered component roots
+Writes:  project.yaml, components.yaml, test-policy.yaml,
+         components/<component-id>.yaml (all), inputs.yaml, agents.yaml (candidates)
+When:    First time, or stack/architecture/component boundaries changed.
 ```
 
-### Partial service refresh
+### Partial component refresh
 
 ```text
-Trigger: /onboard --refresh <service-id-or-path>
-         /sync-memory --scan --services <service-ids>
-Reads:   only the named service's source paths
-Writes:  services/<service>.yaml, project-brain.architecture.services[<id>],
-         service-catalog row for that service, freshness.last_indexed_at
-When:    One service's structure, API, schema, or test policy changed.
+Trigger: /onboard --refresh <component-id-or-path>
+         /sync-memory --scan --components <component-ids>
+Reads:   only the named component's source paths
+Writes:  components/<component-id>.yaml, project architecture,
+         the component-registry row, freshness.last_indexed_at
+When:    One component's structure, API, schema, UI, infrastructure, or test policy changed.
 ```
 
 ### Partial inputs/ refresh (R-002-09..12)
@@ -182,13 +195,13 @@ When:    One service's structure, API, schema, or test policy changed.
 Trigger: /sync-memory --scan --inputs
          /sync-memory --files inputs/<path> [inputs/<path>...]
 Reads:   inputs/ recursively (full --scan), or the named files (--files)
-Writes:  inputs-index.yaml (rebuild or update changed rows),
-         project-brain.inputs.last_scanned_at + file_count,
-         project-brain.conflicts[] when a fact disagrees with code,
-         project-brain.architecture/domain/risks sections where new facts apply,
-         services/<service>.yaml.contracts when api/ specs change
-Does not touch: services/<repo>/ scan, service-catalog stack detection,
-                test-policy.yaml, agent-registry.yaml.
+Writes:  inputs.yaml (rebuild or update changed rows),
+         project.yaml.inputs.last_scanned_at + file_count,
+         project.yaml.conflicts[] when a fact disagrees with code,
+         project.yaml.architecture/domain/risks sections where new facts apply,
+         components/<component-id>.yaml.contracts when api/ specs change
+Does not touch: product source scan, component-registry stack detection,
+                test-policy.yaml, agents.yaml.
 When:    User added/edited PRDs, HLDs, ADRs, OpenAPI specs, glossary,
          runbooks — but source code did NOT change.
 ```
@@ -198,7 +211,7 @@ When:    User added/edited PRDs, HLDs, ADRs, OpenAPI specs, glossary,
 For `--files` and `--scan --inputs`:
 
 ```text
-1. Load existing inputs-index.yaml.
+1. Load existing inputs.yaml.
 2. For each candidate file, compare mtime against indexed mtime.
 3. Skip files unchanged since last_scanned_at (mtime <= indexed_mtime AND content hash matches).
 4. For new files: add row with confidence per R-002-09 heuristic.
@@ -211,67 +224,70 @@ For `--files` and `--scan --inputs`:
 
 ## Freshness bookkeeping (R-001-12)
 
-When writing project-brain.yaml, the freshness block must include:
+When writing project.yaml, the freshness block must include:
 
 ```yaml
 freshness:
   last_indexed_at: "<today YYYY-MM-DD>"
   stale_after_days: 14            # raise for slow-moving projects
   tracked_paths:                  # directories whose mtimes signal drift
-    - <each service.path from service-catalog>
-    - <repo-root code dirs like src, packages, apps if present>
+    - <each component.path from components.yaml>
+    - <registered source roots>
   last_drift_check_at: "<today>"
   last_drift_check_result: "fresh"
   stale: false
 ```
 
 memory-update agent must refresh these same fields after /sync-memory --refresh-index.
-The Coordinator startup drift check reads these fields directly from project-brain.yaml.
+The Coordinator startup drift check reads these fields directly from project.yaml.
 
 ## Coder candidate format
 
 ```yaml
 agent_candidates:
-  - id: coder-<service-slug>
-    service: <service-id>
+  - id: coder-<component-slug>
+    component_id: <component-id>
     reason: <why this deserves a coder>
     allowed_write_paths: []
     requires_user_approval: true
 ```
 
-## Multi-service workspace support
+## Multi-component workspace support
 
-**Deployment model:** application repositories are cloned under `services/<service-name>/` inside the agent-workspace repository.
+**Deployment model:** product components live under the roots declared in `.maestro/project.yaml` and are
+registered in `.maestro/registry/components.yaml`. A component may be part of a monorepo or an independent repository.
 
 ```
-agent-workspace/
-  .claude/            ← brain & engine
-  inputs/             ← user reference docs
-  services/
-    service-a/        ← service project
-    service-b/        ← another service project
+maestro/
+  .claude/            ← native tool layer
+  .maestro/                ← product control plane
+  apps/               ← user-facing applications
+  services/           ← deployable services/workers/gateways
+  packages/           ← shared libraries/contracts/design system
+  infra/              ← infrastructure
+  tests/              ← cross-component test suites
 ```
 
-Use `services/<service-name>` relative paths by default.
+Use the registered component path; never infer that every component belongs under `services/`.
 
-When the user wants to add a service (`/onboard services/service-a` or just service name):
+When the user wants to add a component (`/onboard services/service-a` or just component name):
 
 ```text
-1. Confirm the service folder exists (services/service-a from agent-workspace root).
+1. Confirm the component folder exists (services/service-a from maestro root).
 2. Scan that directory for stack, entry points, APIs, test policy.
-3. Write the service brain to .runtime/context/services/<service-id>.yaml.
-4. Set service.path = "services/service-a"  (relative from agent-workspace root)
+3. Write the component knowledge to .maestro/knowledge/components/<component-id>.yaml.
+4. Set component.path = "services/service-a"  (relative from maestro root)
 5. Set boundaries.allowed_write_paths_for_coder using services/service-a as prefix.
-6. Add service to project-brain.yaml and .runtime/context/service-catalog.yaml.
+6. Add the component to project.yaml and .maestro/registry/components.yaml.
 ```
 
-If the service folder does NOT exist at `services/service-name`, ask the user:
+If the component folder does NOT exist at `services/service-name`, ask the user:
 
 ```
-"Folder services/service-a not found. Clone the service repository into services/ first."
+"Folder services/service-a not found. Clone the component repository into the registered root first."
 ```
 
-Never invent a path. Never assume a service lives outside `services/` unless service-catalog.yaml explicitly records that path.
+Never invent a path. Resolve every component from `components.yaml`; do not infer its root from its kind.
 
 ## Must not
 
@@ -302,10 +318,10 @@ Additional scan dimensions:
 
 Required output additions:
 
-- project-brain.yaml deep_project_intelligence.
-- .runtime/context/services/<service>.yaml service_deep_intelligence.
-- .runtime/context/common/generics.md reusable asset index.
-- .runtime/context/conventions.md project coding conventions.
-- .runtime/context/architecture.md business and technical flow memory.
+- project.yaml deep_project_intelligence.
+- .maestro/knowledge/components/<component-id>.yaml component_deep_intelligence.
+- .maestro/memory/project/common/generics.md reusable asset index.
+- .maestro/knowledge/conventions.md project coding conventions.
+- .maestro/knowledge/architecture.md business and technical flow memory.
 
 Onboarding must mark confidence for inferred facts and must not store large code snippets or secrets.

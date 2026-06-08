@@ -16,7 +16,7 @@ still run (destructive/secret/scope guards keep blocking).
 
 This writes both:
   - .claude/settings.json   permissions.allow   (+ removes any legacy defaultMode=bypassPermissions)
-  - .runtime/context/workflow-state.yaml   access_mode   (for /status visibility)
+  - .maestro/runtime/workflow-state.yaml   access_mode   (for /status visibility)
 
 Usage:
   python3 scripts/access-mode.py --status
@@ -33,7 +33,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 SETTINGS = ROOT / ".claude" / "settings.json"
-STATE = ROOT / ".runtime" / "context" / "workflow-state.yaml"
+STATE = ROOT / ".maestro" / "runtime" / "workflow-state.yaml"
 
 # Tools auto-approved in fullaccess. Bare tool names match all invocations of that tool.
 # PreToolUse hooks still run on allowed tools, so destructive/secret/scope guards keep blocking.
@@ -83,8 +83,8 @@ def set_state(mode: str) -> None:
     text = STATE.read_text(encoding="utf-8")
     if re.search(r"^access_mode:", text, re.M):
         text = re.sub(r"^access_mode:.*$", f'access_mode: "{mode}"', text, count=1, flags=re.M)
-    elif re.search(r"^distribution_mode:", text, re.M):
-        text = re.sub(r"^(distribution_mode:.*)$", rf'\1\naccess_mode: "{mode}"', text, count=1, flags=re.M)
+    elif re.search(r"^version:", text, re.M):
+        text = re.sub(r"^(version:.*)$", rf'\1\naccess_mode: "{mode}"', text, count=1, flags=re.M)
     else:
         text = f'access_mode: "{mode}"\n' + text
     STATE.write_text(text, encoding="utf-8")

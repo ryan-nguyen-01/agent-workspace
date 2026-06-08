@@ -27,7 +27,7 @@ dev-verification
 5. Verify scope compliance.
 6. Verify acceptance criteria mapping.
 7. Verify critical checks.
-8. Verify test policy compliance for applied-service work.
+8. Verify test policy compliance for product-component work.
 9. Calculate score.
 10. Write dev-verification.yaml for standard pipeline.
 ```

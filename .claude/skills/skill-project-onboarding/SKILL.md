@@ -6,7 +6,7 @@ category: workflow
 
 # Skill: Project Onboarding
 
-Use when `.runtime/context/project-brain.yaml` is missing, stale, or incomplete.
+Use when `.maestro/knowledge/project.yaml` is missing, stale, or incomplete.
 
 ## Scan order
 
@@ -25,11 +25,11 @@ Coding conventions from repeated patterns
 ## Output
 
 ```text
-project-brain.yaml
-.runtime/context/index.yaml
-.runtime/context/service-catalog.yaml
-.runtime/context/test-policy.yaml
-.runtime/context/services/<service>.yaml
+project.yaml
+.maestro/knowledge/index.yaml
+.maestro/registry/components.yaml
+.maestro/knowledge/test-policy.yaml
+.maestro/knowledge/components/<component-id>.yaml
 agent candidates requiring user approval
 ```
 
@@ -63,10 +63,10 @@ Evidence requirement:
 
 Output targets:
 
-- Structured summary in .runtime/context/project-brain.yaml under deep_project_intelligence.
-- Service-specific details in .runtime/context/services/<service>.yaml under service_deep_intelligence.
-- Service path and coding boundary contracts in .runtime/context/service-catalog.yaml.
-- Human-readable reusable assets in .runtime/context/common/generics.md.
-- Human-readable conventions in .runtime/context/conventions.md.
-- Business/technical flows in .runtime/context/architecture.md.
-- Selective-read routing metadata in .runtime/context/index.yaml.
+- Structured summary in .maestro/knowledge/project.yaml under deep_project_intelligence.
+- Component-specific details in .maestro/knowledge/components/<component-id>.yaml under component_deep_intelligence.
+- Service path and coding boundary contracts in .maestro/registry/components.yaml.
+- Human-readable reusable assets in .maestro/memory/project/common/generics.md.
+- Human-readable conventions in .maestro/knowledge/conventions.md.
+- Business/technical flows in .maestro/knowledge/architecture.md.
+- Selective-read routing metadata in .maestro/knowledge/index.yaml.

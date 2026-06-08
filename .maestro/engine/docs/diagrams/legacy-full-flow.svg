@@ -1,0 +1,183 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1800" height="1450" viewBox="0 0 1800 1450" role="img" aria-labelledby="title desc">
+  <title id="title">Project-Aware Dynamic Agent Workflow</title>
+  <desc id="desc">End-to-end workflow from user request to onboarding, coder agent creation, task analysis, development, QC, bug routing, and memory update.</desc>
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#b8b8b8"/>
+    </marker>
+    <marker id="arrow-green" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#7fcf9a"/>
+    </marker>
+    <marker id="arrow-red" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#e08b8b"/>
+    </marker>
+    <style>
+      .bg { fill: #141414; }
+      .panel { fill: #1b1b1b; stroke: #333; stroke-width: 2; rx: 18; }
+      .lane-title { fill: #f0f0f0; font-family: Arial, sans-serif; font-size: 22px; font-weight: 700; }
+      .box { fill: #303030; stroke: #666; stroke-width: 1.5; rx: 8; }
+      .box-core { fill: #30343a; stroke: #7c8796; }
+      .box-memory { fill: #26382b; stroke: #7fcf9a; }
+      .box-gate { fill: #203847; stroke: #8fb8d8; }
+      .box-warn { fill: #46301f; stroke: #d6a05f; }
+      .box-stop { fill: #432323; stroke: #e08b8b; }
+      .box-done { fill: #253848; stroke: #8fb8d8; }
+      .text { fill: #eeeeee; font-family: Arial, sans-serif; font-size: 17px; font-weight: 600; text-anchor: middle; dominant-baseline: middle; }
+      .small { fill: #d7d7d7; font-family: Arial, sans-serif; font-size: 14px; font-weight: 600; text-anchor: middle; dominant-baseline: middle; }
+      .edge { fill: none; stroke: #b8b8b8; stroke-width: 2; marker-end: url(#arrow); }
+      .edge-green { fill: none; stroke: #7fcf9a; stroke-width: 2.5; marker-end: url(#arrow-green); }
+      .edge-red { fill: none; stroke: #e08b8b; stroke-width: 2.5; marker-end: url(#arrow-red); }
+      .edge-dash { fill: none; stroke: #aaaaaa; stroke-width: 2; stroke-dasharray: 8 6; marker-end: url(#arrow); }
+      .label { fill: #f3f3f3; font-family: Arial, sans-serif; font-size: 15px; font-weight: 700; }
+      .label-green { fill: #a6e3b8; font-family: Arial, sans-serif; font-size: 15px; font-weight: 700; }
+      .label-red { fill: #f0a0a0; font-family: Arial, sans-serif; font-size: 15px; font-weight: 700; }
+      .note { fill: #bbbbbb; font-family: Arial, sans-serif; font-size: 14px; }
+    </style>
+  </defs>
+
+  <rect class="bg" width="1800" height="1450"/>
+  <rect class="panel" x="35" y="35" width="1730" height="1380"/>
+
+  <text class="lane-title" x="900" y="78" text-anchor="middle">Project-Aware Dynamic Agent System</text>
+  <text class="note" x="900" y="105" text-anchor="middle">Onboard project first, generate scoped coder agents after approval, then run task analysis, dev, QC, bug loop, and memory update.</text>
+
+  <!-- User and top task lane -->
+  <rect class="box" x="820" y="135" width="160" height="54"/>
+  <text class="text" x="900" y="162">User</text>
+
+  <rect class="box-core" x="1100" y="230" width="180" height="58"/>
+  <text class="text" x="1190" y="259">Task Intake</text>
+
+  <rect class="box-core" x="1070" y="345" width="240" height="58"/>
+  <text class="text" x="1190" y="374">Task Analysis Agent</text>
+
+  <rect class="box-memory" x="1060" y="460" width="260" height="58"/>
+  <text class="text" x="1190" y="489">Normalized Task Spec</text>
+
+  <rect class="box-core" x="1060" y="575" width="260" height="58"/>
+  <text class="text" x="1190" y="604">Coder Leader Agent</text>
+
+  <!-- Bootstrap lane -->
+  <text class="lane-title" x="335" y="245" text-anchor="middle">Bootstrap</text>
+  <rect class="box-core" x="250" y="305" width="210" height="58"/>
+  <text class="text" x="355" y="334">Coordinator Agent</text>
+
+  <rect class="box-gate" x="180" y="465" width="260" height="58"/>
+  <text class="text" x="310" y="494">Project Brain Check</text>
+
+  <rect class="box-core" x="155" y="640" width="270" height="58"/>
+  <text class="text" x="290" y="669">Onboarding Agent</text>
+
+  <rect class="box-memory" x="115" y="790" width="300" height="58"/>
+  <text class="text" x="265" y="819">Agent Candidate Report</text>
+
+  <rect class="box-warn" x="115" y="925" width="300" height="70"/>
+  <text class="text" x="265" y="950">Ask user:</text>
+  <text class="small" x="265" y="974">Create coder agents?</text>
+
+  <rect class="box-core" x="155" y="1085" width="270" height="58"/>
+  <text class="text" x="290" y="1114">Agent Factory</text>
+
+  <rect class="box-memory" x="510" y="1085" width="240" height="58"/>
+  <text class="text" x="630" y="1114">Agent Registry</text>
+
+  <rect class="box-memory" x="510" y="790" width="240" height="58"/>
+  <text class="text" x="630" y="819">Project Brain</text>
+
+  <!-- Coder agents -->
+  <rect class="box-core" x="560" y="720" width="270" height="58"/>
+  <text class="text" x="695" y="749">Service Coder Agent A</text>
+
+  <rect class="box-core" x="910" y="720" width="270" height="58"/>
+  <text class="text" x="1045" y="749">Service Coder Agent B</text>
+
+  <rect class="box-core" x="1260" y="720" width="270" height="58"/>
+  <text class="text" x="1395" y="749">Service Coder Agent C</text>
+
+  <rect class="box-gate" x="1015" y="880" width="350" height="58"/>
+  <text class="text" x="1190" y="909">Dev Verification Gate</text>
+
+  <rect class="box-gate" x="1020" y="990" width="340" height="72"/>
+  <text class="text" x="1190" y="1015">Dev test &gt;= 80%</text>
+  <text class="small" x="1190" y="1040">and no blocker</text>
+
+  <rect class="box-memory" x="1045" y="1120" width="290" height="58"/>
+  <text class="text" x="1190" y="1149">QC Handoff Doc</text>
+
+  <rect class="box-core" x="1080" y="1250" width="220" height="58"/>
+  <text class="text" x="1190" y="1279">QC Agent</text>
+
+  <!-- QC outcomes -->
+  <rect class="box-stop" x="790" y="1335" width="300" height="70"/>
+  <text class="text" x="940" y="1360">Create fix task</text>
+  <text class="small" x="940" y="1384">and stop QC flow</text>
+
+  <rect class="box-warn" x="1320" y="1335" width="320" height="70"/>
+  <text class="text" x="1480" y="1360">Create bug task</text>
+  <text class="small" x="1480" y="1384">and continue QC</text>
+
+  <rect class="box-done" x="1105" y="1335" width="170" height="70"/>
+  <text class="text" x="1190" y="1370">Task Done</text>
+
+  <rect class="box-memory" x="1080" y="1385" width="220" height="40"/>
+  <text class="small" x="1190" y="1405">Memory Update</text>
+
+  <!-- Main task arrows -->
+  <path class="edge" d="M 980 162 C 1080 170, 1190 180, 1190 230"/>
+  <path class="edge" d="M 1190 288 L 1190 345"/>
+  <path class="edge" d="M 1190 403 L 1190 460"/>
+  <path class="edge" d="M 1190 518 L 1190 575"/>
+
+  <!-- User to coordinator bootstrap curve -->
+  <path class="edge" d="M 820 162 C 520 190, 355 210, 355 305"/>
+  <path class="edge" d="M 355 363 L 310 465"/>
+  <path class="edge-red" d="M 310 523 L 290 640"/>
+  <text class="label-red" x="185" y="595">No knowledge / stale knowledge</text>
+  <path class="edge-green" d="M 440 494 C 535 540, 630 650, 630 790"/>
+  <text class="label-green" x="545" y="610">Knowledge exists</text>
+  <path class="edge" d="M 290 698 L 265 790"/>
+  <path class="edge" d="M 265 848 L 265 925"/>
+  <path class="edge" d="M 265 995 L 290 1085"/>
+  <path class="edge" d="M 425 1114 L 510 1114"/>
+  <path class="edge-green" d="M 630 1085 L 630 848"/>
+  <path class="edge-green" d="M 630 790 C 520 720, 410 620, 355 363"/>
+
+  <!-- Leader to coders -->
+  <path class="edge" d="M 1060 604 C 900 640, 735 650, 695 720"/>
+  <path class="edge" d="M 1150 633 C 1120 665, 1065 690, 1045 720"/>
+  <path class="edge" d="M 1240 633 C 1300 665, 1380 690, 1395 720"/>
+
+  <!-- Coders to dev gate -->
+  <path class="edge" d="M 695 778 C 780 840, 930 880, 1015 909"/>
+  <path class="edge" d="M 1045 778 C 1085 830, 1130 860, 1190 880"/>
+  <path class="edge" d="M 1395 778 C 1340 835, 1270 865, 1190 880"/>
+  <path class="edge" d="M 1190 938 L 1190 990"/>
+  <path class="edge-green" d="M 1190 1062 L 1190 1120"/>
+  <text class="label-green" x="1265" y="1094">Pass</text>
+  <path class="edge-red" d="M 1360 1026 C 1550 980, 1570 690, 1320 604"/>
+  <text class="label-red" x="1520" y="900">Not done</text>
+
+  <!-- QC path -->
+  <path class="edge" d="M 1190 1178 L 1190 1250"/>
+  <path class="edge-red" d="M 1080 1279 C 980 1290, 920 1310, 940 1335"/>
+  <text class="label-red" x="875" y="1298">Blocking bug</text>
+  <path class="edge" d="M 940 1335 C 930 1190, 980 1090, 1060 1010"/>
+  <path class="edge" d="M 940 1335 C 850 1220, 880 730, 1060 604"/>
+  <path class="edge" d="M 1300 1279 C 1370 1300, 1440 1315, 1480 1335"/>
+  <text class="label" x="1395" y="1304">Non-blocking bug</text>
+  <path class="edge" d="M 1480 1335 C 1560 1150, 1540 720, 1320 604"/>
+  <path class="edge-green" d="M 1190 1308 L 1190 1335"/>
+  <text class="label-green" x="1245" y="1328">Pass</text>
+  <path class="edge-green" d="M 1190 1405 C 900 1390, 740 1230, 630 1143"/>
+  <path class="edge-green" d="M 1190 1425 C 960 1430, 730 1010, 630 848"/>
+
+  <!-- Legend -->
+  <rect class="box-core" x="70" y="1280" width="36" height="24"/>
+  <text class="note" x="118" y="1298">Agent</text>
+  <rect class="box-gate" x="190" y="1280" width="36" height="24"/>
+  <text class="note" x="238" y="1298">Gate / decision</text>
+  <rect class="box-memory" x="350" y="1280" width="36" height="24"/>
+  <text class="note" x="398" y="1298">Memory / artifact</text>
+  <rect class="box-stop" x="545" y="1280" width="36" height="24"/>
+  <text class="note" x="593" y="1298">Stop / blocker</text>
+</svg>

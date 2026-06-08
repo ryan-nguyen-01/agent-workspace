@@ -30,7 +30,7 @@ dev-verification.yaml result is DEV_DONE
 2. Read implementation-plan.yaml only when standard pipeline created it.
 3. Read coder-results.yaml.
 4. Read dev-verification.yaml.
-5. Write .runtime/tasks/<task-id>/qc-handoff.md.
+5. Write .maestro/work/tasks/<task-id>/qc-handoff.md.
 6. Append task-updates.yaml with QC_READY transition.
 7. Return QC_READY.
 ```

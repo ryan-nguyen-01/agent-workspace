@@ -1,0 +1,43 @@
+bug_id: "BUG-{{ID}}"
+source_task: "{{TASK_ID}}"
+severity: "blocker|non-blocker"
+status: "open|assigned|fixed|retest|closed"
+found_by: "qc-runner|user|manual|dev-verification|coordinator"
+found_at: "{{FOUND_AT}}"
+canonical_path: ".maestro/work/bugs/{{blockers_or_non-blockers}}/BUG-{{ID}}.yaml"
+task_index_path: ".maestro/work/tasks/{{TASK_ID}}/bugs.yaml"
+
+title: "{{TITLE}}"
+summary: "{{SUMMARY}}"
+
+classification_reason: "{{WHY_BLOCKER_OR_NON_BLOCKER}}"
+impacted_components: []
+assigned_leader: "coder-leader"
+assigned_coder_agent: "coder-{{SERVICE_SLUG}}"
+
+steps_to_reproduce:
+  - "{{STEP_1}}"
+
+expected_result: "{{EXPECTED}}"
+actual_result: "{{ACTUAL}}"
+impact: "{{IMPACT}}"
+
+evidence:
+  environment: "local|dev|sit|other"
+  logs: []
+  screenshots: []
+  request_response_notes: []
+
+prevention:
+  root_cause: "{{ROOT_CAUSE}}"
+  recurrence_key: "{{SERVICE_OR_STACK}}|{{SYMPTOM}}|{{ROOT_CAUSE_CATEGORY}}"
+  prevention_rule: "{{WHAT_AGENT_MUST_DO_NEXT_TIME}}"
+  regression_check: "{{TEST_OR_MANUAL_STEP_THAT_CATCHES_THIS}}"
+  promote_to_feedback: true
+  feedback_target: ".maestro/memory/project/feedback/inbox.md"
+  memory_update_required: true
+
+routing:
+  qc_action: "stop_immediately|continue_unaffected_cases"
+  dev_action: "fix_before_qc_continues|fix_in_parallel"
+  retest_scope: []

@@ -5,12 +5,13 @@ Ports .cursor/hooks/check-task-analysis.sh to the Claude Code adapter. Turns the
 prompt-based scope rule (R-006) into a hard guardrail:
 
   - Only gates likely APPLICATION source (services/**, src/**, app/**, tests/**, ...).
-    Framework files (.agent/**, .claude/**, scripts/**, docs) are NOT gated, so
-    framework-template maintenance is unaffected.
-  - Requires an active TASK with task-analysis.yaml + context_plan (R-000-06),
-    architecture-review approval when required, and implementation/service-assignment
-    artifacts before source edits.
-  - Requires that some ACTIVE coder in agent-registry.yaml allows the path and does
+    Framework files (.maestro/engine/**, .claude/**, scripts/**, docs) are NOT gated, so
+    framework maintenance is unaffected.
+  - direct mode allows fast user-driven development without workflow artifacts.
+  - assisted mode requires a task manifest but not the governed artifact pipeline.
+  - governed mode requires task-analysis.yaml + context_plan (R-000-06),
+    architecture-review approval when required, and implementation/service-assignment artifacts.
+  - Requires that some ACTIVE coder in agents.yaml allows the path and does
     not forbid it (R-006).
 
 Profiles:
@@ -18,7 +19,7 @@ Profiles:
   standard : full gating, fail-closed on violation (default; mirrors Cursor failClosed:true).
   strict   : same as standard.
 
-Disable with AW_DISABLED_HOOKS=scope-guard.
+Disable with MAESTRO_DISABLED_HOOKS=scope-guard.
 """
 
 from __future__ import annotations
@@ -104,7 +105,7 @@ def block_section_has_items(text: str, key: str) -> bool:
 
 
 def scope_allows_file(rel_path: str, registry_text: str) -> bool:
-    """Replicate the indent-based scan of agent-registry.yaml active coders.
+    """Replicate the indent-based scan of agents.yaml active coders.
 
     Layout:
       agents:
@@ -177,16 +178,30 @@ def main() -> int:
     root = _lib.project_dir(payload)
     rel = _lib.rel_path(file_path, root)
 
-    state = read_text(root / ".runtime/context/workflow-state.yaml")
+    state = read_text(root / ".maestro/runtime/workflow-state.yaml")
+    execution_mode = yaml_scalar(state, "active_execution_mode")
+    if execution_mode in ("", "null", "~"):
+        execution_mode = yaml_scalar(state, "default_execution_mode") or "assisted"
+    if execution_mode == "direct":
+        return 0
+
     task_id = yaml_scalar(state, "active_task_id")
     if task_id in ("", "null", "~"):
         _lib.block("No active_task_id in workflow-state.yaml. Run /coord then /analyze-task before editing source.")
     if not task_id.startswith("TASK-"):
         _lib.block(f"Invalid active_task_id: {task_id}. Expected TASK-YYYYMMDD-NNN-slug.")
 
-    task_dir = root / ".runtime/tasks" / task_id
+    task_dir = root / ".maestro/work/tasks" / task_id
     if not task_dir.is_dir():
-        _lib.block(f"Active task folder missing: .runtime/tasks/{task_id}. Run /analyze-task first.")
+        _lib.block(f"Active task folder missing: .maestro/work/tasks/{task_id}. Run /analyze-task first.")
+
+    if execution_mode == "assisted":
+        if not (task_dir / "task.yaml").is_file():
+            _lib.block("Assisted source edits require task.yaml so work can continue across conversations.")
+        return 0
+
+    if execution_mode != "governed":
+        _lib.block(f"Unknown execution mode '{execution_mode}'. Expected direct, assisted, or governed.")
 
     ta_path = task_dir / "task-analysis.yaml"
     if not ta_path.is_file():
@@ -197,7 +212,7 @@ def main() -> int:
         _lib.block("Active task requires user clarification; source edits blocked until resolved.")
 
     if not re.search(r"^[ \t]*context_plan:", ta, re.M):
-        _lib.block("Applied-service source edits require task-analysis.yaml.context_plan before editing.")
+        _lib.block("product-component source edits require task-analysis.yaml.context_plan before editing.")
 
     confidence = yaml_scalar(ta, "confidence")
     if confidence not in ("high", "medium"):
@@ -232,11 +247,11 @@ def main() -> int:
             _lib.block("Standard implementation requires service-assignments.yaml before source edits.")
     else:
         if not (task_dir / "service-assignments.yaml").is_file():
-            _lib.block("Fast-track applied-service edits require lightweight service-assignments.yaml before source edits.")
+            _lib.block("Fast-track product-component edits require lightweight service-assignments.yaml before source edits.")
 
-    registry = read_text(root / ".runtime/context/agent-registry.yaml")
+    registry = read_text(root / ".maestro/registry/agents.yaml")
     if not scope_allows_file(rel, registry):
-        _lib.block(f"No active coder in agent-registry.yaml allows writes to {rel}, or it is forbidden by that coder scope (R-006).")
+        _lib.block(f"No active coder in .maestro/registry/agents.yaml allows writes to {rel}, or it is forbidden by that coder scope (R-006).")
 
     return 0
 

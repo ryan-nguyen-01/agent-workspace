@@ -1,14 +1,14 @@
 ---
-description: "agent-workspace /resume-task — Resume a task from its current state without rediscovering context from scratch."
+description: "maestro /resume-task — Resume a task from its current state without rediscovering context from scratch."
 argument-hint: "[request or args]"
 ---
 
-You are running the agent-workspace `/resume-task` workflow command inside Codex.
+You are running the maestro `/resume-task` workflow command inside Codex.
 
 Follow `.codex/AGENTS.md` (or `AGENTS.md`) routing and the framework rules. Route every
 request through the coordinator model; do not bypass approval gates, security/secret rules,
-or the task-analysis source-edit gate. If the agent-workspace framework files
-(`.agent/`, `.runtime/`, `.claude/commands/resume-task.md`) are present, defer to them as the
+or the task-analysis source-edit gate. If the maestro framework files
+(`.maestro/engine/`, `.maestro/registry/`, `.maestro/knowledge/`, `.maestro/work/`, `.maestro/runtime/`, `.claude/commands/resume-task.md`) are present, defer to them as the
 authoritative contract — this prompt is a portable mirror.
 
 User input for this command: $ARGUMENTS
@@ -38,7 +38,7 @@ coordinator
 ## Workflow
 
 ```text
-1. Resolve task_id and task folder under .runtime/tasks/<task_id>/.
+1. Resolve task_id and task folder under .maestro/work/tasks/<task_id>/.
 2. Read task.yaml first; if missing, reconstruct only from artifacts in that same folder.
 3. Read task-updates.yaml when present for state/artifact history.
 4. Determine current state.

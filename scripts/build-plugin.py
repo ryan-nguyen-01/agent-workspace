@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 """Generate the Claude Code plugin wrapper from the repo — single source of truth.
 
-agent-workspace is primarily a clone-and-work-inside workspace (it needs root CLAUDE.md,
-`.agent/`, `.runtime/`, and the multi-tool adapters that a plugin cannot ship). This script
+maestro is primarily a clone-and-work-inside workspace (it needs root CLAUDE.md,
+the `.maestro/` product-development control plane, and the multi-tool adapters that a plugin cannot ship). This script
 packages the *Claude tool layer* (agents + skills + commands + hooks) as an installable plugin
 WITHOUT duplicating content: the repo root itself becomes the plugin, and `plugin.json` points
 its component paths at the existing `.claude/` directories.
@@ -19,7 +19,7 @@ Usage:
 
 Install (for users, once published to a git remote):
   /plugin marketplace add <git-url-or-local-path>
-  /plugin install agent-workspace@agent-workspace
+  /plugin install maestro@maestro
 
 Note: the plugin delivers the Claude-facing agents/skills/commands/hooks. The full stateful
 workflow (project brain, task artifacts, CLAUDE.md precedence) still requires the workspace repo.
@@ -65,15 +65,15 @@ def translate_hooks() -> dict:
 
 def build_manifest(version: str, c: dict[str, int]) -> dict:
     return {
-        "name": "agent-workspace",
+        "name": "maestro",
         "version": version,
         "description": (
             "Coordinator-driven multi-agent workflow for software engineering: "
-            f"{c['agents']} agents (12 workflow + 2 built-in coders + 19 specialist advisors), "
+            f"{c['agents']} agents (12 workflow + 3 built-in coders + 19 specialist advisors), "
             f"{c['skills']} skills, {c['commands']} commands, and deterministic scope/secret/"
-            "destructive hooks. Claude tool layer of the agent-workspace framework."
+            "destructive hooks. Claude tool layer of the maestro framework."
         ),
-        "author": {"name": "agent-workspace"},
+        "author": {"name": "maestro"},
         "keywords": [
             "workflow", "multi-agent", "coordinator", "specialists",
             "code-review", "hooks", "skills",
@@ -89,14 +89,14 @@ def build_manifest(version: str, c: dict[str, int]) -> dict:
 
 def build_marketplace(version: str) -> dict:
     return {
-        "name": "agent-workspace",
-        "owner": {"name": "agent-workspace"},
-        "metadata": {"description": "agent-workspace framework — Claude tool layer.", "version": version},
+        "name": "maestro",
+        "owner": {"name": "maestro"},
+        "metadata": {"description": "maestro framework — Claude tool layer.", "version": version},
         "plugins": [
             {
-                "name": "agent-workspace",
+                "name": "maestro",
                 "source": "./",
-                "description": "Agents, skills, commands, and enforcement hooks for the agent-workspace workflow.",
+                "description": "Agents, skills, commands, and enforcement hooks for the maestro workflow.",
             }
         ],
     }
@@ -109,7 +109,9 @@ def dump(path: Path, data: dict) -> str:
 def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--check", action="store_true", help="verify wrapper matches source, no writes")
+    ap.add_argument("--force", action="store_true", help="overwrite even hand-edited manifests")
     args = ap.parse_args()
+    from _genlib import Generator
 
     version = framework_version()
     c = counts()
@@ -132,12 +134,14 @@ def main() -> int:
         return 0
 
     PLUGIN_DIR.mkdir(parents=True, exist_ok=True)
+    gen = Generator("build-plugin", force=args.force)
     for path, content in artifacts.items():
-        path.write_text(content, encoding="utf-8")
-    print(f"Wrote plugin wrapper to {PLUGIN_DIR.relative_to(ROOT)}/ (v{version})")
+        gen.write(path, content)
+    gen.flush()
+    print(f"Plugin wrapper → {PLUGIN_DIR.relative_to(ROOT)}/ (v{version})")
     print(f"  agents={c['agents']} skills={c['skills']} commands={c['commands']}")
-    print("  install: /plugin marketplace add <repo> && /plugin install agent-workspace@agent-workspace")
-    return 0
+    print("  install: /plugin marketplace add <repo> && /plugin install maestro@maestro")
+    return gen.report()
 
 
 if __name__ == "__main__":

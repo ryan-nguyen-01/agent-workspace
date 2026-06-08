@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Shared helpers for Cursor hooks in agent-workspace.
+# Shared helpers for Cursor hooks in maestro.
 # Sourced by other .cursor/hooks/*.sh scripts.
 #
 # Provides: read_stdin, json_field <key>

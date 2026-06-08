@@ -1,14 +1,14 @@
 ---
-description: "agent-workspace /qc — Run QC from handoff and classify bugs."
+description: "maestro /qc — Run QC from handoff and classify bugs."
 argument-hint: "[request or args]"
 ---
 
-You are running the agent-workspace `/qc` workflow command inside Codex.
+You are running the maestro `/qc` workflow command inside Codex.
 
 Follow `.codex/AGENTS.md` (or `AGENTS.md`) routing and the framework rules. Route every
 request through the coordinator model; do not bypass approval gates, security/secret rules,
-or the task-analysis source-edit gate. If the agent-workspace framework files
-(`.agent/`, `.runtime/`, `.claude/commands/qc.md`) are present, defer to them as the
+or the task-analysis source-edit gate. If the maestro framework files
+(`.maestro/engine/`, `.maestro/registry/`, `.maestro/knowledge/`, `.maestro/work/`, `.maestro/runtime/`, `.claude/commands/qc.md`) are present, defer to them as the
 authoritative contract — this prompt is a portable mirror.
 
 User input for this command: $ARGUMENTS
