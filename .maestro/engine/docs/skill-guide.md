@@ -1,6 +1,15 @@
 # Skill Guide
 
-![Skill composition](diagrams/08-skill-composition.svg)
+```mermaid
+flowchart LR
+  A["Agent"] --> RS["required_skills"]
+  A --> CS["contextual_skills (by stack)"]
+  A --> OS["optional_skills (on trigger)"]
+  RS --> B["Skill budget + selection policy"]
+  CS --> B
+  OS --> B
+  B --> EXEC["Agent executes (skills = knowledge, not agents — R-014)"]
+```
 
 This document explains how skills work, how they are organized, and how agents use them.
 

@@ -1,6 +1,13 @@
 # Deep Onboarding Standard
 
-![Deep onboarding](diagrams/07-deep-onboarding.svg)
+```mermaid
+flowchart TD
+  ST["Onboarding"] --> SC["Scan: stacks, components, conventions"]
+  SC --> KB["Write knowledge + test-policy"] --> IDX["Build memory index"]
+  IDX --> CAND["Propose coder candidates"] --> AP{"User approval"}
+  AP -->|yes| GEN["Agent Factory generates scoped coders"]
+  AP -->|no| HOLD["Hold"]
+```
 
 Deep onboarding extracts project-specific reusable knowledge. Its goal is to prevent generated coder agents from writing code that ignores existing helpers, conventions, and business flow.
 

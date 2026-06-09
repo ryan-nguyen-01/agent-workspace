@@ -1,6 +1,24 @@
 # Workflow Reference
 
-![State machine](diagrams/05-state-machine.svg)
+```mermaid
+stateDiagram-v2
+  [*] --> NEW
+  NEW --> ANALYZED
+  ANALYZED --> PLANNED
+  PLANNED --> IN_DEV
+  IN_DEV --> DEV_VERIFYING
+  DEV_VERIFYING --> DEV_BLOCKED
+  DEV_BLOCKED --> IN_DEV
+  DEV_VERIFYING --> DEV_DONE
+  DEV_DONE --> QC_TESTING
+  QC_TESTING --> BLOCKED_BY_BUG
+  BLOCKED_BY_BUG --> FIXING
+  FIXING --> QC_RETESTING
+  QC_RETESTING --> QC_TESTING
+  QC_TESTING --> QC_DONE
+  QC_DONE --> DONE
+  DONE --> [*]
+```
 
 This document is the reference for workflow states, transitions, commands, approval gates, and artifact requirements.
 
