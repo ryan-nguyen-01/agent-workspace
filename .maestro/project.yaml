@@ -39,3 +39,10 @@ component_roots:
 documentation:
   root: "docs"
   registry: ".maestro/registry/artifacts.yaml"
+
+git:
+  branching_model: "git-flow"     # git-flow | trunk-based | feature-branch
+  commit_convention: "conventional"
+  default_merge: "squash"         # into develop, unless release/hotfix
+  commit_attribution: false       # false = plain commits (NO Co-Authored-By trailer). true = append agent attribution.
+  attribution_trailer: ""         # used only when commit_attribution: true

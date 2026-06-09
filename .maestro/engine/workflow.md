@@ -791,7 +791,8 @@ Maestro uses Git-flow. Full contract: `.maestro/engine/rules/20-git-workflow-rul
 1. Branches: main (production, tagged), develop (integration). Work happens on feature/<task-id>-<slug>
    off develop; release/<version> and hotfix/<id> follow Git-flow. Never commit directly to main/develop.
 2. Commits: Conventional Commits (<type>(<scope>): summary), milestone-sized, each builds, body explains
-   why. End every commit body with: Co-Authored-By: Claude Opus 4.8 <noreply@anthropic.com>.
+   why. Commit attribution is per `.maestro/project.yaml.git.commit_attribution` (default false = plain
+   commits, no Co-Authored-By trailer); only append a trailer when the project turns it on (R-020-07).
 3. Never commit secrets/.env/raw tokens/large logs; respect .gitignore. Ask before git init on a
    non-repo; never commit pre-existing unrelated changes.
 4. Outward-facing git is gated (explicit user approval, R-020-10): push, opening/merging a PR, merging

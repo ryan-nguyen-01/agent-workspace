@@ -44,7 +44,7 @@ coordinator (runs the pipeline under an autonomy grant, R-019)
 2. Enable tool fullaccess for the run (/access full) so terminal/file calls do not prompt per call.
    The PreToolUse guards (scope/secret/destructive) still run (R-017).
 2b. Git (Git-flow, R-020-12): create feature/<task-id>-<slug> off develop and commit milestones LOCALLY
-   with conventional messages + attribution line. Never auto-push/PR/merge — those wait for the user.
+   with conventional messages (attribution per project.yaml git.commit_attribution, default off). Never auto-push/PR/merge — those wait for the user.
 3. Run the normal pipeline through coordinator; acceptance criteria come from the approved blueprint.
    Soft gates auto-approve and record (R-019-04).
 4. After each step, run real verification LOCALLY: build, lint (if configured), tests, and a local
