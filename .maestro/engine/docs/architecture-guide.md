@@ -1,17 +1,6 @@
 # Architecture Guide
 
-```mermaid
-flowchart TD
-  U["User — command or natural language"] --> C["Coordinator (single entrypoint)"]
-  C --> CL{"Classify: scope, execution_mode"}
-  CL -->|idea / greenfield| DG["Direction gate: Blueprint approval"]
-  CL -->|approved spec| TA["Task Analysis"]
-  DG -->|approved| TA
-  TA --> PL["Coder Leader: decompose + assign"] --> CO["Coders"]
-  CO --> DV["Dev Verification"] --> QC["QC Runner"]
-  QC -->|bug| BR["Bug Router"] --> CO
-  QC -->|pass| MEM["Memory Update"] --> DONE["DONE"]
-```
+> Diagram: see **[System overview](visual-flow.md#1-system-overview)** in visual-flow.md (Mermaid).
 
 This document describes the system architecture of the coordinator-driven multi-agent workflow.
 
@@ -94,14 +83,7 @@ See also: [agent-catalog.md](agent-catalog.md) for detailed agent descriptions.
 
 ## Knowledge architecture
 
-```mermaid
-flowchart TD
-  S["Request"] --> Q{"Project Brain fresh?"}
-  Q -->|"no / stale"| ON["Onboarding: scan project"] --> AF["Agent Factory: propose coders"]
-  AF -->|"user approval (R-011-01)"| RC["Coders ready"]
-  Q -->|yes| RC
-  Q -->|framework| FM["Skip onboarding"]
-```
+> Diagram: see **[Bootstrap](visual-flow.md#2-bootstrap-onboarding-and-coder-creation)** in visual-flow.md (Mermaid).
 
 The **project brain** is the central knowledge store. It is created by onboarding and maintained by memory update.
 
@@ -147,21 +129,7 @@ Fresh → proceed to task routing
 
 ## Execution architecture
 
-```mermaid
-flowchart TD
-  I["Idea or task"] --> DG{"Idea / greenfield?"}
-  DG -->|yes| BP["Blueprint gate → user approves (R-019-0a)"]
-  DG -->|approved spec| TA
-  BP -->|approved| TA["Task Analysis: AC + decompose (R-022)"]
-  TA --> PR{"Prerequisites ok? (R-021)"}
-  PR -->|missing| ASK["Refuse: report missing docs"]
-  PR -->|ok| PLAN["Coder Leader: tasks + context_bundle"] --> CODE["Coders build"]
-  CODE --> DV{"Dev Verification ≥80%"}
-  DV -->|fail| CODE
-  DV -->|Code Done| QC["QC Runner: full test cases"]
-  QC -->|bug| CODE
-  QC -->|"pass, 0 bugs"| DONE["DONE (local)"]
-```
+> Diagram: see **[Task execution pipeline](visual-flow.md#3-task-execution-full-pipeline)** in visual-flow.md (Mermaid).
 
 ### Task lifecycle
 
@@ -204,15 +172,7 @@ Package contracts  → shared library interfaces
 
 ## QC architecture
 
-```mermaid
-flowchart TD
-  HO["QC Handoff"] --> QC["QC Runner: full test cases (R-022-08)"]
-  QC --> R{"Result"}
-  R -->|blocker| SB["Stop"] --> BR["Bug Router"]
-  R -->|non-blocker| BR
-  BR --> FIX["Dev fix"] --> RT["Re-QC: bug + regression"] --> R
-  R -->|"all pass, 0 open bugs"| QD["QC_DONE"]
-```
+> Diagram: see **[QC and bug routing](visual-flow.md#4-qc-and-bug-routing)** in visual-flow.md (Mermaid).
 
 ### Blocker vs non-blocker
 
@@ -237,25 +197,7 @@ QC_DONE requires:
 
 ## State machine
 
-```mermaid
-stateDiagram-v2
-  [*] --> NEW
-  NEW --> ANALYZED
-  ANALYZED --> PLANNED
-  PLANNED --> IN_DEV
-  IN_DEV --> DEV_VERIFYING
-  DEV_VERIFYING --> DEV_BLOCKED
-  DEV_BLOCKED --> IN_DEV
-  DEV_VERIFYING --> DEV_DONE
-  DEV_DONE --> QC_TESTING
-  QC_TESTING --> BLOCKED_BY_BUG
-  BLOCKED_BY_BUG --> FIXING
-  FIXING --> QC_RETESTING
-  QC_RETESTING --> QC_TESTING
-  QC_TESTING --> QC_DONE
-  QC_DONE --> DONE
-  DONE --> [*]
-```
+> Diagram: see **[State machine](visual-flow.md#5-state-machine)** in visual-flow.md (Mermaid).
 
 Valid task states and their transitions:
 

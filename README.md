@@ -81,18 +81,7 @@ Agents can use `python3 scripts/agent-run.py create|heartbeat|checkpoint|complet
 
 ## System Architecture
 
-```mermaid
-flowchart TD
-  U["User — command or natural language"] --> C["Coordinator (single entrypoint)"]
-  C --> CL{"Classify: scope, execution_mode"}
-  CL -->|idea / greenfield| DG["Direction gate: Blueprint approval"]
-  CL -->|approved spec| TA["Task Analysis"]
-  DG -->|approved| TA
-  TA --> PL["Coder Leader: decompose + assign"] --> CO["Coders"]
-  CO --> DV["Dev Verification"] --> QC["QC Runner"]
-  QC -->|bug| BR["Bug Router"] --> CO
-  QC -->|pass| MEM["Memory Update"] --> DONE["DONE"]
-```
+> Diagram: see **[System overview](.maestro/engine/docs/visual-flow.md#1-system-overview)** in visual-flow.md (Mermaid).
 
 See [visual-flow.md](.maestro/engine/docs/visual-flow.md) for all workflow diagrams.
 

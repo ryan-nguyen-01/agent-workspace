@@ -1,73 +1,83 @@
 # Visual Workflow
 
 Flow diagrams for Maestro, written in **Mermaid** (text) so both humans and AI agents can read and
-update them. They render in GitHub, Kiro, VS Code, and most Markdown viewers. These reflect the current
-architecture (Direction gate, prerequisites, decomposition, real-user QC, Git-flow).
+update them. They reflect the current architecture: Direction gate, prerequisites, decomposition,
+real-user QC, Git-flow.
+
+> Rendering: GitHub, Kiro, and most viewers render Mermaid natively. **VS Code's built-in Markdown
+> preview does NOT** — install the "Markdown Preview Mermaid Support" extension, or view the file on
+> GitHub.
 
 ## 1. System overview
 
 ```mermaid
 flowchart TD
-  U["User — command OR natural language"] --> C["Coordinator (single entrypoint)"]
-  C --> CL{"Classify: target_scope, execution_mode"}
-  CL -->|framework maintenance| FM["Targeted edits + lightweight evidence"]
-  CL -->|idea / greenfield product| DG["Direction gate: Blueprint approval"]
-  CL -->|approved spec / ticket| TA["Task Analysis"]
+  U["User: command or natural language"] --> C["Coordinator: single entrypoint"]
+  C --> CL{"Classify scope and mode"}
+  CL -->|framework| FM["Targeted edits"]
+  CL -->|idea or greenfield| DG["Direction gate: Blueprint approval"]
+  CL -->|approved spec| TA["Task Analysis"]
   DG -->|approved| TA
-  TA --> SA["Solution Architect (when needed)"]
-  SA --> PL["Coder Leader: decompose + assign"]
-  PL --> CO["Service / built-in coders"]
+  TA --> SA["Solution Architect when needed"]
+  SA --> PL["Coder Leader: decompose and assign"]
+  PL --> CO["Service and built-in coders"]
   CO --> DV["Dev Verification"]
-  DV --> QC["QC Runner (full test cases)"]
-  QC -->|bug| BR["Bug Router"] --> CO
-  QC -->|pass, 0 bugs| MEM["Memory Update"] --> DONE["DONE"]
-  C -. reads .-> KB[("Knowledge / Registry / Rules")]
+  DV --> QC["QC Runner: full test cases"]
+  QC -->|bug| BR["Bug Router"]
+  BR --> CO
+  QC -->|pass| MEM["Memory Update"]
+  MEM --> DONE["DONE"]
+  C -.reads.-> KB[("Knowledge, Registry, Rules")]
 ```
 
-## 2. Bootstrap — onboarding and coder creation
+## 2. Bootstrap: onboarding and coder creation
 
 ```mermaid
 flowchart TD
-  S["Request"] --> Q{"Project Brain present & fresh?"}
-  Q -->|"no / stale (product work)"| ON["Onboarding: scan project"]
+  S["Request"] --> Q{"Project Brain fresh?"}
+  Q -->|no or stale| ON["Onboarding: scan project"]
   ON --> AF["Agent Factory: propose coders"]
-  AF -->|"user approval (R-011-01)"| RC["Coders ready"]
+  AF -->|user approval R-011-01| RC["Coders ready"]
   Q -->|yes| RC
-  Q -->|framework maintenance| FM["Skip onboarding"]
+  Q -->|framework| FM["Skip onboarding"]
 ```
 
-## 3. Task execution — full pipeline
+## 3. Task execution: full pipeline
 
 ```mermaid
 flowchart TD
-  I["Idea or task"] --> DG{"Idea / greenfield?"}
-  DG -->|yes| BP["Blueprint gate: scope, architecture, stack, UI/UX prototype → user approves (R-019-0a)"]
+  I["Idea or task"] --> DG{"Idea or greenfield?"}
+  DG -->|yes| BP["Blueprint gate: scope, architecture, stack, UI-UX. User approves. R-019-0a"]
   DG -->|approved spec| TA
-  BP -->|approved| TA["Task Analysis: acceptance criteria + decompose (R-022)"]
-  TA --> PR{"Prerequisites present & sufficient? (R-021)"}
-  PR -->|"missing / insufficient"| ASK["Refuse: report missing docs to user (no guessing)"]
-  PR -->|ok| ARC["Architecture review (when required)"]
-  ARC --> PLAN["Coder Leader: small tasks + context_bundle"]
+  BP -->|approved| TA["Task Analysis: AC plus decompose. R-022"]
+  TA --> PR{"Prerequisites ok? R-021"}
+  PR -->|missing| ASK["Refuse: report missing docs. No guessing"]
+  PR -->|ok| ARC["Architecture review when required"]
+  ARC --> PLAN["Coder Leader: small tasks plus context_bundle"]
   PLAN --> CODE["Coders build per Code Layout"]
-  CODE --> DV{"Dev Verification ≥80% + critical checks"}
+  CODE --> DV{"Dev Verification: min 80 percent plus critical checks"}
   DV -->|fail| CODE
   DV -->|Code Done| HO["QC Handoff"]
-  HO --> QC["QC Runner: full test cases per AC/endpoint/screen"]
-  QC -->|bug| BUG["Bug Router"] --> CODE
-  QC -->|"every case pass, 0 open bugs"| MEM["Memory Update"] --> DONE["DONE (local)"]
+  HO --> QC["QC Runner: full test cases"]
+  QC -->|bug| BUG["Bug Router"]
+  BUG --> CODE
+  QC -->|pass and zero bugs| MEM["Memory Update"]
+  MEM --> DONE["DONE local"]
 ```
 
 ## 4. QC and bug routing
 
 ```mermaid
 flowchart TD
-  HO["QC Handoff"] --> QC["QC Runner: derive full test cases (R-022-08) — per AC positive+negative; per endpoint success/validation/auth/error; per screen each state"]
+  HO["QC Handoff"] --> QC["QC Runner: derive full test cases. R-022-08"]
   QC --> R{"Result"}
-  R -->|blocker bug| SB["Stop immediately"] --> BR["Bug Router"]
-  R -->|non-blocker bug| BR
-  BR --> FIX["Dev fix"] --> RT["Re-QC: bug scope + regression"]
+  R -->|blocker bug| SB["Stop immediately"]
+  SB --> BR["Bug Router"]
+  R -->|non blocker bug| BR
+  BR --> FIX["Dev fix"]
+  FIX --> RT["Re-QC: bug scope plus regression"]
   RT --> R
-  R -->|"every case pass + zero open bugs (any severity)"| QD["QC_DONE"]
+  R -->|all pass and zero open bugs| QD["QC_DONE"]
 ```
 
 ## 5. State machine
@@ -75,11 +85,7 @@ flowchart TD
 ```mermaid
 stateDiagram-v2
   [*] --> NEW
-  NEW --> NEED_ONBOARDING
-  NEED_ONBOARDING --> ONBOARDED
-  ONBOARDED --> AGENTS_READY
-  AGENTS_READY --> READY_FOR_ANALYSIS
-  READY_FOR_ANALYSIS --> ANALYZED
+  NEW --> ANALYZED
   ANALYZED --> ARCHITECTURE_REVIEWING
   ARCHITECTURE_REVIEWING --> PLANNED
   ANALYZED --> PLANNED
@@ -88,8 +94,7 @@ stateDiagram-v2
   DEV_VERIFYING --> DEV_BLOCKED
   DEV_BLOCKED --> IN_DEV
   DEV_VERIFYING --> DEV_DONE
-  DEV_DONE --> QC_READY
-  QC_READY --> QC_TESTING
+  DEV_DONE --> QC_TESTING
   QC_TESTING --> BLOCKED_BY_BUG
   BLOCKED_BY_BUG --> FIXING
   FIXING --> QC_RETESTING
@@ -104,13 +109,13 @@ stateDiagram-v2
 
 ```mermaid
 flowchart TD
-  ST["Onboarding start"] --> SC["Scan repo: stacks, components, conventions"]
-  SC --> KB["Write knowledge: project.yaml, components, conventions, test-policy"]
+  ST["Onboarding start"] --> SC["Scan: stacks, components, conventions"]
+  SC --> KB["Write knowledge plus test-policy"]
   KB --> IDX["Build memory index"]
   IDX --> CAND["Propose coder candidates"]
   CAND --> AP{"User approval"}
   AP -->|yes| GEN["Agent Factory generates scoped coders"]
-  AP -->|no| HOLD["Hold — no generic coders created"]
+  AP -->|no| HOLD["Hold: no generic coders"]
 ```
 
 ## 7. Skill composition
@@ -118,39 +123,38 @@ flowchart TD
 ```mermaid
 flowchart LR
   A["Agent"] --> RS["required_skills"]
-  A --> CS["contextual_skills (by stack)"]
-  A --> OS["optional_skills (on trigger)"]
-  RS --> B["Skill budget + selection policy"]
+  A --> CS["contextual_skills by stack"]
+  A --> OS["optional_skills on trigger"]
+  RS --> B["Skill budget plus selection policy"]
   CS --> B
   OS --> B
-  B --> EXEC["Agent executes with composed skills"]
-  EXEC -. "skills are knowledge, not agents (R-014)" .-> EXEC
+  B --> EXEC["Agent executes. Skills are knowledge, not agents. R-014"]
 ```
 
-## 8. Principle flow — evidence & refusal
+## 8. Principle flow: evidence and refusal
 
 ```mermaid
 flowchart TD
-  REQ["Request"] --> K{"Enough info & prerequisites? (R-021)"}
-  K -->|"missing critical"| ASK["Ask / refuse: report the gap — never invent"]
+  REQ["Request"] --> K{"Enough info and prerequisites? R-021"}
+  K -->|missing critical| ASK["Ask or refuse: report the gap. Never invent"]
   K -->|ok| ACT["Act with evidence"]
   ACT --> EV{"Verifiable evidence?"}
   EV -->|no| NOCLAIM["Do NOT claim done"]
-  EV -->|yes| OK["Report done with evidence (Karpathy #4)"]
+  EV -->|yes| OK["Report done with evidence. Karpathy 4"]
 ```
 
-## 9. Direction gate (idea → approved blueprint)
+## 9. Direction gate: idea to approved blueprint
 
 ```mermaid
 flowchart TD
-  IDEA["User idea (chat or /ship)"] --> DISC["Discovery + architecture proposal"]
-  DISC --> BP["product-blueprint.yaml: scope (MVP/prod), architecture (mono/micro), tech stack, features→AC"]
+  IDEA["User idea: chat or ship"] --> DISC["Discovery plus architecture proposal"]
+  DISC --> BP["product-blueprint.yaml: scope, architecture, stack, features to AC"]
   BP --> UX{"Has UI?"}
-  UX -->|yes| PROTO["UI/UX HTML/CSS prototype (docs/experience/wireframes)"]
-  UX -->|no| REV{"User reviews & approves?"}
+  UX -->|yes| PROTO["UI-UX HTML CSS prototype in docs experience wireframes"]
+  UX -->|no| REV{"User reviews and approves?"}
   PROTO --> REV
   REV -->|changes requested| BP
-  REV -->|approved| BUILD["Build (normal chat: stop at gates · /ship: auto-run to done)"]
+  REV -->|approved| BUILD["Build. Normal chat stops at gates. Ship auto-runs to done"]
 ```
 
 ## 10. Git-flow
@@ -158,11 +162,11 @@ flowchart TD
 ```mermaid
 flowchart TD
   T["Task"] --> FB["feature branch off develop"]
-  FB --> CM["Milestone commits (Conventional, local) — attribution per git.commit_attribution"]
-  CM --> GATE{"Outward action? push / PR / merge / tag"}
-  GATE -->|"needs user approval (R-020-10)"| OK["User approves"]
-  OK --> PR["PR → squash merge → develop"]
-  PR --> REL["release branch → main + develop + tag"]
+  FB --> CM["Milestone commits: Conventional, local"]
+  CM --> GATE{"Outward action? push, PR, merge, tag"}
+  GATE -->|needs user approval R-020-10| OK["User approves"]
+  OK --> PR["PR then squash merge to develop"]
+  PR --> REL["release branch to main and develop plus tag"]
   REL --> HOT["hotfix off main when needed"]
 ```
 

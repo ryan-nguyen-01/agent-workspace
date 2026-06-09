@@ -1,15 +1,6 @@
 # Skill Composition Standard
 
-```mermaid
-flowchart LR
-  A["Agent"] --> RS["required_skills"]
-  A --> CS["contextual_skills (by stack)"]
-  A --> OS["optional_skills (on trigger)"]
-  RS --> B["Skill budget + selection policy"]
-  CS --> B
-  OS --> B
-  B --> EXEC["Agent executes (skills = knowledge, not agents — R-014)"]
-```
+> Diagram: see **[Skill composition](visual-flow.md#7-skill-composition)** in visual-flow.md (Mermaid).
 
 This document defines how skills work in `.claude`.
 

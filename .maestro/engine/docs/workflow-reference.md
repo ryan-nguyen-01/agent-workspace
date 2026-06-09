@@ -1,24 +1,6 @@
 # Workflow Reference
 
-```mermaid
-stateDiagram-v2
-  [*] --> NEW
-  NEW --> ANALYZED
-  ANALYZED --> PLANNED
-  PLANNED --> IN_DEV
-  IN_DEV --> DEV_VERIFYING
-  DEV_VERIFYING --> DEV_BLOCKED
-  DEV_BLOCKED --> IN_DEV
-  DEV_VERIFYING --> DEV_DONE
-  DEV_DONE --> QC_TESTING
-  QC_TESTING --> BLOCKED_BY_BUG
-  BLOCKED_BY_BUG --> FIXING
-  FIXING --> QC_RETESTING
-  QC_RETESTING --> QC_TESTING
-  QC_TESTING --> QC_DONE
-  QC_DONE --> DONE
-  DONE --> [*]
-```
+> Diagram: see **[State machine](visual-flow.md#5-state-machine)** in visual-flow.md (Mermaid).
 
 This document is the reference for workflow states, transitions, commands, approval gates, and artifact requirements.
 
