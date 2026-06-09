@@ -35,4 +35,5 @@ If a rule conflicts with workflow.md, workflow.md defines the state machine and 
 19-autonomous-delivery-rules.md  Autopilot: one-time grant, soft-gate auto-approve, self-heal loop, hard-stops, done = finished product
 20-git-workflow-rules.md         Git-flow: branch per task, milestone commits, outward git gated, autopilot local-only
 21-input-prerequisites-rules.md  Required inputs per phase/coder type; refuse on missing/insufficient, coordinator reports the gap
+22-artifact-granularity-rules.md Split docs per feature; complete Given/When/Then ACs; full QC test-case coverage (no sketchy/monolithic artifacts)
 ```

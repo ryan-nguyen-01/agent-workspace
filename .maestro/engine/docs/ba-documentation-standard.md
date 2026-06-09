@@ -28,6 +28,20 @@ Production: BRD + PRD + Use Cases + User Stories + Business Rules + full NFR + R
 Always:     every implementation task must trace to an approved requirement (RTM), or record why none.
 ```
 
+## Granularity & completeness (R-022)
+
+```text
+- SPLIT PER FEATURE — one unit per file, never crammed together:
+    one User Story per file   docs/requirements/user-stories/<KEY>-US-NNN-<slug>.md
+    one Use Case per file     docs/requirements/use-cases/<KEY>-UC-NNN-<slug>.md
+    Business Rules per area   docs/requirements/features/<KEY>-BR-NNN-<area>.md
+- COMPLETE, TESTABLE ACs — every story has multiple specific Given/When/Then ACs covering happy path +
+  at least one alternate/negative + at least one boundary/edge (>= 3 typical). Each AC has id
+  AC-<story>.<n>, concrete inputs/outputs, error codes from the Error Catalog. No vague ACs.
+- Write like a team: detailed and reviewable, not a one-paragraph summary for a multi-feature scope.
+  A thin/placeholder doc is insufficient (R-022-11) and is treated as a missing prerequisite (R-021).
+```
+
 ## ID & lifecycle conventions
 
 ```text

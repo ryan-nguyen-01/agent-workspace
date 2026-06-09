@@ -53,6 +53,10 @@ When `workflow-state.yaml.autopilot.enabled` is true, act as a real end user and
 - Produce a FULL test plan from the approved blueprint covering every relevant dimension:
   Functional, UI (states/forms/validation/responsive), API (success/validation/auth/status/contract/edge),
   UX (real end-to-end flows + basic accessibility), Edge/negative, and Regression.
+- Coverage MINIMUMS (R-022-08): derive cases systematically — every AC -> >=1 positive + >=1 negative/edge;
+  every endpoint -> success + validation + auth + not-found/error (Error Catalog codes); every screen ->
+  each state + primary interactions. The case count scales with ACs/endpoints/screens; a handful is NOT
+  enough. Each case records id, linked AC/endpoint/screen, steps, expected result, status, evidence (R-022-09).
 - Log EVERY failure as a bug (blocker AND non-blocker) and loop qc -> bug-router -> dev fix -> re-QC.
 - QC_DONE only when every test case passes AND the QC bug log is empty — zero open bugs of ANY severity,
   not just zero blockers. Never skip/delete a case or downgrade a real bug to reach zero (R-019-QC4).

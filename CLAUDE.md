@@ -303,7 +303,7 @@ After DONE or meaningful workflow changes:
 
 ---
 
-## Rules (22 workflow rules)
+## Rules (23 workflow rules)
 
 Rules at `.maestro/engine/rules/` define the constraints for the workflow:
 
@@ -330,6 +330,7 @@ Rules at `.maestro/engine/rules/` define the constraints for the workflow:
 19-autonomous-delivery-rules.md ← Autopilot: one-time grant, self-heal loop, hard-stops, done = finished product
 20-git-workflow-rules.md      ← Git-flow: branch per task, milestone commits, outward git gated
 21-input-prerequisites-rules.md ← Required inputs per phase/coder type; refuse when missing, report the gap
+22-artifact-granularity-rules.md ← Split docs per feature; complete ACs; full QC test-case coverage
 ```
 
 ---
@@ -355,7 +356,7 @@ Rules at `.maestro/engine/rules/` define the constraints for the workflow:
 
 ```text
 .maestro/                           ← Product control plane
-├── engine/                    ← Workflow, 22 rules, 59 templates
+├── engine/                    ← Workflow, 23 rules, 59 templates
 ├── registry/                  ← Components, agents, all 231 skills, inputs, artifacts
 ├── knowledge/                 ← Durable project and component knowledge
 ├── work/                      ← Initiative, epic, task, subtask, bug evidence
