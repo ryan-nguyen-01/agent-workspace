@@ -106,6 +106,7 @@ Natural-language text (e.g. "analyze this project", "add a login feature") still
   - An irreversible action is imminent (deleting data, deploying to production)
 
 ❌ ASK OR HONOR THE RECORDED APPROVAL when governed work is active:
+  - Before building an idea/greenfield product — run the Direction gate (Blueprint) and get user approval first, even in normal chat without a command (R-019-0a, workflow.md §6.0). Do not jump from a raw idea to coding.
   - Before governed implementation starts (task-analysis.yaml and required approval must exist)
   - Before creating coder agents (user approval required)
   - Before proceeding from Task Analysis → Coder Leader when R-011-10 applies
@@ -122,7 +123,7 @@ Every agent must follow all four principles simultaneously:
 ```text
 1) If you don't know, say you don't know; do not fabricate facts.
 2) If unsure, state confidence level and assumptions.
-3) If critical data is missing, ask for clarification before coding.
+3) If critical data is missing, ask for clarification before coding. Each phase/coder type has required inputs (BA, HLD, LLD, contracts, UI/UX prototype…): when they are missing or insufficient, refuse with a structured `blocked: missing_prerequisites` and report the gap — never invent contracts, acceptance criteria, schema, or business rules (R-021, `.maestro/engine/docs/input-prerequisites.md`).
 4) A "done" claim must have verifiable evidence (file/test/command/artifact).
 ```
 
@@ -244,6 +245,17 @@ IF .maestro/knowledge/index.yaml and .maestro/knowledge/project.yaml ALREADY exi
   → Continue the workflow
 ```
 
+### Step 0.5: Direction gate (Blueprint) — idea/greenfield, normal chat included
+
+```text
+If the user describes an idea / greenfield product to build (in natural language, with no approved
+spec/blueprint) — even without typing a command — run the Direction gate BEFORE coding (workflow.md
+§6.0, R-019-0a): propose scope (MVP vs production), architecture (monolith vs microservices), tech
+stack, features → acceptance criteria, and a UI/UX prototype for UI products; get the user's approval.
+Build only when the blueprint is approved. A precise, already-approved spec/ticket skips this and goes
+straight to task-analysis; a raw idea may NOT jump straight to coding.
+```
+
 ### Step 1: Task Analysis
 
 ```text
@@ -303,7 +315,7 @@ After DONE or meaningful workflow changes:
 
 ---
 
-## Rules (21 workflow rules)
+## Rules (23 workflow rules)
 
 Rules at `.maestro/engine/rules/` define the constraints for the workflow:
 
@@ -329,6 +341,8 @@ Rules at `.maestro/engine/rules/` define the constraints for the workflow:
 18-doc-precedence-rules.md    ← Doc tier model (T0–T3): one source per decision, higher tier wins
 19-autonomous-delivery-rules.md ← Autopilot: one-time grant, self-heal loop, hard-stops, done = finished product
 20-git-workflow-rules.md      ← Git-flow: branch per task, milestone commits, outward git gated
+21-input-prerequisites-rules.md ← Required inputs per phase/coder type; refuse when missing, report the gap
+22-artifact-granularity-rules.md ← Split docs per feature; complete ACs; full QC test-case coverage
 ```
 
 ---
@@ -354,7 +368,7 @@ Rules at `.maestro/engine/rules/` define the constraints for the workflow:
 
 ```text
 .maestro/                           ← Product control plane
-├── engine/                    ← Workflow, 21 rules, 58 templates
+├── engine/                    ← Workflow, 23 rules, 59 templates
 ├── registry/                  ← Components, agents, all 231 skills, inputs, artifacts
 ├── knowledge/                 ← Durable project and component knowledge
 ├── work/                      ← Initiative, epic, task, subtask, bug evidence

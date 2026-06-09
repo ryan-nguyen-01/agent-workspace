@@ -111,10 +111,13 @@ If onboarding found services but coder agents are not created:
 ## Routing rules
 
 ```text
+Idea-level / greenfield product build (raw idea in natural language, no approved spec/blueprint)
+  -> Direction gate (Blueprint) FIRST (workflow.md §6.0, R-019-0a): discovery + architecture + stack +
+     UI/UX proposal, get user approval BEFORE coding. Applies in normal chat too, not only /ship.
 Project setup or stale project knowledge for product-component work -> onboarding
 Framework maintenance -> targeted file reads + lightweight evidence when eligible
 Create coder agents -> agent-factory
-HLD, LLD, ticket, task text -> task-analysis
+HLD, LLD, ticket, approved spec/task text -> task-analysis
 Analyzed implementation task -> coder-leader
 Code Done decision -> dev-verification
 Dev to QC artifact -> qc-handoff
@@ -223,6 +226,25 @@ soft gates. When `workflow-state.yaml.autopilot.enabled` is true:
    only after the user confirms locally.
 ```
 
+## Readiness check (R-021)
+
+On every request that implies a workflow step (analyze, design, code, QC), check that the step's required
+inputs exist and are sufficient BEFORE routing into it (prerequisites matrix:
+`.maestro/engine/docs/input-prerequisites.md`). Required inputs differ by phase and by coder type
+(backend needs API contract + data model; frontend needs an approved UI/UX prototype + API contract;
+coder-data/database/infra need their listed docs).
+
+```text
+1. Map the request to the implied step and its required inputs.
+2. Compare required vs present (authoritative only — stale/draft/unapproved does not count, R-021-02).
+3. If anything is missing, DO NOT silently route in. Reply with: what you understood -> which step,
+   what is present, what is MISSING (each with how to produce it), and the single next action.
+4. Never invent the missing facts (contracts, acceptance criteria, schema, business rules, credentials).
+   Record only non-critical user-supplied facts as assumptions (R-021-06).
+```
+
+This is how normal chat tells the user exactly which document is missing to advance.
+
 ## Output contract
 
 Every coordinator response should include:
@@ -244,6 +266,10 @@ blocked: true|false
 block_reason: null|string
 policy_decision: allow|deny|needs_user_approval
 missing_artifacts: []
+readiness:                      # R-021 — what the implied next step needs
+  implied_step: <step-or-null>
+  present: []
+  missing: []                   # each: { doc, why, produce_with }
 ```
 
 ## State persistence obligation
@@ -275,5 +301,5 @@ Do not bypass coordinator-only mode by routing directly from user input to non-c
 
 ```text
 Primary commands: /coord, /ship, /git, /status, /resume-task
-Required rules: 00-core-rules, 01-project-brain-rules, 11-approval-gates, 12-artifact-contracts, 13-security-secret-rules, 15-model-routing-observability-rules, 19-autonomous-delivery-rules, 20-git-workflow-rules
+Required rules: 00-core-rules, 01-project-brain-rules, 11-approval-gates, 12-artifact-contracts, 13-security-secret-rules, 15-model-routing-observability-rules, 19-autonomous-delivery-rules, 20-git-workflow-rules, 21-input-prerequisites-rules
 ```

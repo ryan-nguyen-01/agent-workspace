@@ -83,6 +83,24 @@ skill_selection_policy:
   obey_context_plan_skill_budget: true
 ```
 
+## Required inputs (prerequisites, R-021)
+
+Before writing any code, confirm the documents this coder type needs exist and are authoritative
+(prerequisites matrix: `.maestro/engine/docs/input-prerequisites.md`). By coder type:
+frontend = BA (stories + acceptance criteria) + approved UI/UX prototype + design tokens + API contract +
+Error Code Catalog (ERR) + i18n keys (if localized);
+backend = HLD + LLD + API contract + data model + business rules + Error Code Catalog (ERR) + NFR;
+data/database/infra = their listed inputs (data model/LLD, migration policy, HLD/NFR).
+
+```text
+If a required input is missing or insufficient (stale/draft/unapproved/contradictory), DO NOT code and
+DO NOT invent it (contracts, acceptance criteria, schema, business rules). Return to Coder Leader:
+  status: blocked
+  block_reason: missing_prerequisites
+  missing: [ { doc, why, produce_with } ]
+Coder Leader routes the gap to the producing agent/command, then re-assigns.
+```
+
 ## Context pack
 
 Coder Leader assigns a compact context pack in `service-assignments.yaml`:
@@ -126,6 +144,8 @@ critical_checks:
 ## Work protocol
 
 ```text
+0. Verify required inputs (prerequisites) exist and are authoritative (R-021). If missing/insufficient,
+   return blocked: missing_prerequisites to Coder Leader and do not code.
 1. Confirm assignment belongs to {{SERVICE_ID}}.
 2. Confirm every intended write path is allowed.
 3. Stop and ask Coder Leader if another service or shared package must change.
@@ -146,6 +166,8 @@ Return this structure to Coder Leader. Coder Leader consolidates it into `.maest
 agent_id: coder-{{SERVICE_SLUG}}
 service_id: {{SERVICE_ID}}
 status: completed|blocked|needs_leader
+block_reason: null|missing_prerequisites|scope|other     # R-021
+missing_prerequisites: []                                # each: { doc, why, produce_with }
 changed_files: []
 verification:
   tests_run: []

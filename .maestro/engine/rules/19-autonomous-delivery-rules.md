@@ -14,8 +14,10 @@ autonomous grant) and is a property of the active run, not a permanent project s
 ## Blueprint gate (direction approval — the one upfront human decision)
 
 ```text
-R-019-0a: For idea-level or greenfield input, autopilot MUST NOT start building until the user
-  approves a Product Blueprint. First run discovery + architecture proposal (discovery-analyst,
+R-019-0a: For idea-level or greenfield product work — whether via /ship, /coord, or plain natural-language
+  chat — the system MUST NOT start building until the user approves a Product Blueprint (this gate is not
+  command-specific; see workflow.md §6.0). Autopilot auto-proceeds after approval; normal chat stops at
+  each later gate. First run discovery + architecture proposal (discovery-analyst,
   product-strategist, solution-architect advisories feed it) and write
   .maestro/work/tasks/<task-id>/product-blueprint.yaml from
   .maestro/engine/templates/product-blueprint.template.yaml. It MUST cover:

@@ -19,6 +19,7 @@ R-008-09: After QC_DONE, QC Runner must write qc-delivery-report.md summarizing 
 R-008-10: Framework-maintenance fast-track skips QC Runner unless the task explicitly changes QC policy, test behavior, or a runnable helper script with user-facing risk.
 R-008-11: QC_DONE/PASS is invalid when any required QC test case is blocked, pending, not_run, failed, or still marked as requiring manual/retest evidence.
 R-008-12: If interactive/manual verification cannot run, QC must return CONTINUE_TESTING or NEEDS_USER_DECISION unless the user explicitly approves deferring that check.
+R-008-13: Test cases are derived systematically and completely (R-022-08): every AC -> at least one positive + one negative/edge; every endpoint -> success/validation/auth/error (Error Catalog codes); every screen -> each state + primary interactions. The case count scales with the ACs/endpoints/screens; a low-coverage handful is rejected (not Done). Each case records id, linked AC/endpoint/screen, steps, expected result, status, evidence.
 ```
 
 ## Required artifacts

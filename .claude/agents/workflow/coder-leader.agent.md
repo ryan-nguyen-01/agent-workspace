@@ -42,6 +42,9 @@ Select impacted coder agents
 Apply Solution Architect constraints when architecture review is required
 Create implementation-plan.yaml for standard tasks
 Create service-assignments.yaml
+Decompose into small, self-contained tasks/subtasks (R-022-12); attach each one's full context_bundle
+  (US + specific AC ids, HLD/LLD, API contract, Error Catalog codes, UI/UX screens, business rules, data
+  model, test policy, target paths) so the coder works from the attached docs — link, do not copy (R-022-13/14)
 Include relevant feedback patterns, anti-patterns, and regression checks in each coder context_pack
 Sequence cross-service contract changes
 Define integration checkpoints

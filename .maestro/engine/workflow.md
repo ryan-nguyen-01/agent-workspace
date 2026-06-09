@@ -426,6 +426,27 @@ Task sources may be HLD, LLD, ticket text, bug report, production incident, or d
 Task analysis is mandatory for governed implementation. Assisted work needs a task manifest; direct
 work does not create workflow ceremony unless the user requests persistence.
 
+## 6.0. Direction gate (Blueprint) — applies in normal chat too, not only /ship
+
+This gate is NOT command-specific. Whenever the input is an idea-level / greenfield product build (the
+user describes what they want rather than handing over an already-approved spec), the coordinator runs
+the Direction gate BEFORE any coding — whether the user typed `/ship`, `/coord`, or just chatted in
+natural language.
+
+```text
+1. Produce product-blueprint.yaml (R-019-0a): scope (MVP vs production), architecture (monolith vs
+   microservices), tech stack, features -> acceptance criteria, and — for UI products — a viewable
+   UI/UX prototype (docs/experience/wireframes), all approved by the user BEFORE coding (R-019-0a-ui).
+2. Build only when status: approved. The approved blueprint is the acceptance-criteria contract;
+   task-analysis derives from it and decomposes into self-contained tasks (R-022).
+3. Difference by mode only — the gate itself is the same:
+   - Normal chat (/coord, governed/assisted): present the blueprint, STOP for approval, then proceed
+     step by step, pausing at each later gate (R-011) for the user.
+   - Autopilot (/ship): same blueprint approval, then auto-approve the soft gates and run to done (R-019).
+4. A precise, already-approved spec/ticket may skip the blueprint and go straight to task-analysis; an
+   idea/greenfield build may NOT skip it (do not jump from raw idea to coding).
+```
+
 ## 6.1. Architecture review lane
 
 Architecture review is an optional gate for tasks that can change system shape or high-risk contracts.
