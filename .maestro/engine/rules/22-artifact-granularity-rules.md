@@ -59,6 +59,24 @@ R-022-10: A QC pass with obviously low coverage relative to the ACs/endpoints/sc
   is not Done (R-019-QC3). Do not shrink the suite to pass faster.
 ```
 
+## Task decomposition & self-containment
+
+```text
+R-022-12: Decompose, do NOT cram a task. When a user story / feature needs more than one unit of work,
+  split it into multiple tasks (or a parent task with subtasks). The PARENT (the user story doc, or a
+  parent task) holds only its own summary + links to its child tasks — not the full content of every child.
+R-022-13: Each TASK/SUBTASK is small and self-contained and attaches its full document bundle, so the
+  executing agent works from the attached references (not from a giant blob). A task carries a
+  `context_bundle` with the exact docs its coder type needs (R-021): requirement (US id + the specific AC
+  ids), design (HLD/LLD ids), API contract, Error Catalog codes used, UI/UX screens (frontend), business
+  rules, data model (backend/data), test policy, and the target code paths it may write.
+R-022-14: Link, do not duplicate (R-018): the task references docs by id/path; it does not copy their
+  full body. Children link back to the parent (US) and the parent lists its children; the RTM ties
+  requirement -> tasks -> tests.
+R-022-15: A task with no context_bundle, or one that bundles unrelated features together, is invalid —
+  task-analysis/coder-leader must decompose and attach the proper documents before assigning a coder.
+```
+
 ## Insufficiency
 
 ```text

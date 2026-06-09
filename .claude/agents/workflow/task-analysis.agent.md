@@ -33,6 +33,12 @@ acceptance_criteria from them; update the RTM status as the task progresses.
 Check input prerequisites (R-021, .maestro/engine/docs/input-prerequisites.md): if requirements,
 contracts, or design needed for the downstream coder type are missing/insufficient, do not hand off —
 record `blocked: missing_prerequisites` with the gap so the coordinator can request the documents.
+Decompose, do not cram (R-022-12..15): when a user story / feature needs more than one unit of work,
+split it into multiple small tasks (or a parent task + subtasks). The parent holds only summary + child
+links; EACH task/subtask attaches a complete `context_bundle` (the specific US + AC ids, HLD/LLD, API
+contract, Error Catalog codes, UI/UX screens, business rules, data model, test policy, target paths) so
+its coder works from the attached docs. Link by id/path, never copy doc bodies (R-018). A task with no
+context_bundle or one that bundles unrelated features is invalid — decompose and attach first.
 Read `.maestro/memory/project/feedback/patterns.md` and `.maestro/memory/project/feedback/anti-patterns.md` only when index tags or task risk indicate reusable feedback is relevant.
 For framework maintenance, do not read project.yaml,
 components.yaml, agents.yaml, or component knowledge unless the requested change directly edits those contracts.

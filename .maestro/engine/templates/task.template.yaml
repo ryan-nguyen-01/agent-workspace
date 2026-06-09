@@ -35,6 +35,20 @@ traceability:
   decision_refs: []
   component_ids: []
 
+# Self-contained document bundle (R-022-13): the exact docs this task's coder works from.
+# Link by id/path — do NOT copy the doc bodies (R-022-14). Fill the entries the coder type needs (R-021).
+context_bundle:
+  requirement:                 # the user story + the SPECIFIC acceptance criteria this task implements
+    - { id: "<KEY>-US-NNN", acceptance_criteria: ["AC-NNN.1"], path: "docs/requirements/user-stories/..." }
+  design: []                   # HLD/LLD ids + paths (backend/infra) e.g. { id: "<KEY>-LLD-NNN", path: "..." }
+  api_contract: null           # path/id of the API contract this task uses
+  error_codes: []              # Error Catalog codes this task emits/handles (e.g. VALIDATION_FAILED)
+  ui_ux: []                    # frontend: screen/prototype paths under docs/experience/
+  business_rules: []           # <KEY>-BR-NNN ids that constrain this task
+  data_model: null             # backend/data: schema/LLD id or path
+  test_policy: ".maestro/knowledge/test-policy.yaml"
+  target_paths: []             # code-layout module paths this task may write (R-006 scope)
+
 artifacts:
   task_manifest: ".maestro/work/tasks/{{TASK_ID}}/task.yaml"
   task_updates: ".maestro/work/tasks/{{TASK_ID}}/task-updates.yaml"
