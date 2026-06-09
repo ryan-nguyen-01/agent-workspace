@@ -122,7 +122,7 @@ Every agent must follow all four principles simultaneously:
 ```text
 1) If you don't know, say you don't know; do not fabricate facts.
 2) If unsure, state confidence level and assumptions.
-3) If critical data is missing, ask for clarification before coding.
+3) If critical data is missing, ask for clarification before coding. Each phase/coder type has required inputs (BA, HLD, LLD, contracts, UI/UX prototype…): when they are missing or insufficient, refuse with a structured `blocked: missing_prerequisites` and report the gap — never invent contracts, acceptance criteria, schema, or business rules (R-021, `.maestro/engine/docs/input-prerequisites.md`).
 4) A "done" claim must have verifiable evidence (file/test/command/artifact).
 ```
 
@@ -303,7 +303,7 @@ After DONE or meaningful workflow changes:
 
 ---
 
-## Rules (21 workflow rules)
+## Rules (22 workflow rules)
 
 Rules at `.maestro/engine/rules/` define the constraints for the workflow:
 
@@ -329,6 +329,7 @@ Rules at `.maestro/engine/rules/` define the constraints for the workflow:
 18-doc-precedence-rules.md    ← Doc tier model (T0–T3): one source per decision, higher tier wins
 19-autonomous-delivery-rules.md ← Autopilot: one-time grant, self-heal loop, hard-stops, done = finished product
 20-git-workflow-rules.md      ← Git-flow: branch per task, milestone commits, outward git gated
+21-input-prerequisites-rules.md ← Required inputs per phase/coder type; refuse when missing, report the gap
 ```
 
 ---
@@ -354,7 +355,7 @@ Rules at `.maestro/engine/rules/` define the constraints for the workflow:
 
 ```text
 .maestro/                           ← Product control plane
-├── engine/                    ← Workflow, 21 rules, 58 templates
+├── engine/                    ← Workflow, 22 rules, 58 templates
 ├── registry/                  ← Components, agents, all 231 skills, inputs, artifacts
 ├── knowledge/                 ← Durable project and component knowledge
 ├── work/                      ← Initiative, epic, task, subtask, bug evidence

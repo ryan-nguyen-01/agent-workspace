@@ -25,7 +25,7 @@
   <text class="small" x="335" y="293">+ diagrams</text>
 
   <rect class="box gate" x="430" y="200" width="150" height="55"/><text class="text" x="505" y="227">rules/</text>
-  <text class="small" x="505" y="275">21 workflow rules</text>
+  <text class="small" x="505" y="275">22 workflow rules</text>
   <text class="small" x="505" y="293">policy constraints</text>
 
   <rect class="box neutral" x="90" y="325" width="150" height="55"/><text class="text" x="165" y="352">templates/</text>

@@ -30,6 +30,9 @@ knowledge files through .maestro/knowledge/index.yaml.
 For requirement-driven tasks, read the approved BA documents (BA Documentation Standard,
 .maestro/engine/docs/ba-documentation-standard.md) under docs/product and docs/requirements, and derive
 acceptance_criteria from them; update the RTM status as the task progresses.
+Check input prerequisites (R-021, .maestro/engine/docs/input-prerequisites.md): if requirements,
+contracts, or design needed for the downstream coder type are missing/insufficient, do not hand off —
+record `blocked: missing_prerequisites` with the gap so the coordinator can request the documents.
 Read `.maestro/memory/project/feedback/patterns.md` and `.maestro/memory/project/feedback/anti-patterns.md` only when index tags or task risk indicate reusable feedback is relevant.
 For framework maintenance, do not read project.yaml,
 components.yaml, agents.yaml, or component knowledge unless the requested change directly edits those contracts.
