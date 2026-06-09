@@ -24,9 +24,15 @@ R-021-03: If a required input is missing or insufficient, the agent returns deci
   reason: missing_prerequisites and a structured `missing[]` list (doc, why, produce_with), plus what is
   present and the next_action. It must NOT proceed, and must NOT invent the missing facts (contracts,
   acceptance criteria, schema, business rules, credentials).
-R-021-04: Coders refuse at assignment time: a service/backend coder without an API contract + data model,
-  a frontend coder without an approved UI/UX prototype + API contract, coder-data/coder-database/coder-infra
-  without their listed inputs — return blocked: missing_prerequisites to Coder Leader (R-006). Do not write code.
+R-021-04: Coders refuse at assignment time when their type's documents are missing (matrix in
+  input-prerequisites.md):
+    - Frontend: BA (stories + acceptance criteria) + approved UI/UX prototype + API contract + Error
+      Code Catalog (ERR) + i18n keys when localized.
+    - Backend/service: HLD + LLD + API contract + data model + business rules + ERR + NFR.
+    - coder-data: data model/LLD + business rules + entities; coder-database: data model/entities +
+      migration policy; coder-infra: HLD + NFR + deployment target.
+  If any are missing/insufficient, return blocked: missing_prerequisites to Coder Leader (R-006). Do not
+  write code and do not invent the contract, schema, error codes, or acceptance criteria.
 R-021-05: The coordinator runs a readiness check on every request that implies a step. If prerequisites
   for the implied step are unmet, it replies with the gap (what is present, what is missing + how to
   produce each, the single next action) and does not silently route into that step. Surface this in the

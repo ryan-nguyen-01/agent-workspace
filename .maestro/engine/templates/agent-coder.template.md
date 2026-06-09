@@ -86,9 +86,11 @@ skill_selection_policy:
 ## Required inputs (prerequisites, R-021)
 
 Before writing any code, confirm the documents this coder type needs exist and are authoritative
-(prerequisites matrix: `.maestro/engine/docs/input-prerequisites.md`). For a `{{SERVICE_TYPE}}` coder,
-typically: task-analysis acceptance criteria; the API contract; the data model (LLD) for backend/data;
-an approved UI/UX prototype + design tokens for frontend; business rules where logic depends on them.
+(prerequisites matrix: `.maestro/engine/docs/input-prerequisites.md`). By coder type:
+frontend = BA (stories + acceptance criteria) + approved UI/UX prototype + design tokens + API contract +
+Error Code Catalog (ERR) + i18n keys (if localized);
+backend = HLD + LLD + API contract + data model + business rules + Error Code Catalog (ERR) + NFR;
+data/database/infra = their listed inputs (data model/LLD, migration policy, HLD/NFR).
 
 ```text
 If a required input is missing or insufficient (stale/draft/unapproved/contradictory), DO NOT code and

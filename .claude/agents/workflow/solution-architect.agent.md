@@ -53,6 +53,8 @@ Rollback, migration, or data backfill risk
 ```text
 Validate impacted component boundaries and ownership.
 Identify contract changes for APIs, events, schemas, and config.
+Ensure the engineering contracts coders need exist (R-021): API contract, data model (LLD), and the
+  Error Code Catalog (error-catalog.template.md, shared by FE+BE). Flag any that are missing before planning.
 Define data migration, rollout, and rollback constraints.
 Identify ADR requirements or existing ADRs that govern the task.
 State architecture tradeoffs, risks, and open questions.

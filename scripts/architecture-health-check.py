@@ -33,7 +33,7 @@ EXPECTED_COUNTS = {
     "agents": 34,
     "skills": 231,
     "rules": 22,
-    "templates": 58,
+    "templates": 59,
     "commands": 20,
 }
 

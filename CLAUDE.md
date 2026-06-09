@@ -355,7 +355,7 @@ Rules at `.maestro/engine/rules/` define the constraints for the workflow:
 
 ```text
 .maestro/                           ← Product control plane
-├── engine/                    ← Workflow, 22 rules, 58 templates
+├── engine/                    ← Workflow, 22 rules, 59 templates
 ├── registry/                  ← Components, agents, all 231 skills, inputs, artifacts
 ├── knowledge/                 ← Durable project and component knowledge
 ├── work/                      ← Initiative, epic, task, subtask, bug evidence

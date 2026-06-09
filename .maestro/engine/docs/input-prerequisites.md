@@ -18,17 +18,26 @@ Contract: `.maestro/engine/rules/21-input-prerequisites-rules.md` (R-021).
 
 ## Prerequisites by coder type
 
-| Coder type | Required documents | Missing → produce with |
-|------------|--------------------|------------------------|
-| **Backend / service coder** | task-analysis acceptance criteria; **API contract** (endpoints/DTOs); **data model / schema (LLD)**; business rules (when logic depends on them); test policy | api-designer / HLD-LLD in `docs/architecture/`, `inputs/api/`; coder-database; business-analyst (business-rules) |
-| **Frontend coder** | **approved UI/UX prototype + design tokens** (`docs/experience/wireframes/`); **API contract** to call; acceptance criteria | ui-ux-designer (blueprint UI/UX gate); api-designer / HLD |
-| **coder-data** | **schema (LLD)**; business rules; entity definitions | coder-database; business-analyst; `inputs/domain/` |
-| **coder-database** | **data model / entities** (domain glossary, LLD/HLD); migration policy | solution-architect / database-architect; `docs/architecture/`, `inputs/domain/` |
-| **coder-infra** | deployment target; **NFR** (availability/scale/security); architecture (HLD) | solution-architect / cloud-architect; nfr doc; `docs/architecture/` |
+Legend of standard documents (each has a template under `.maestro/engine/templates/`):
+BA = BA docs (user stories/acceptance criteria, business rules) · HLD = High-Level Design (`hld`) ·
+LLD = Low-Level Design (`lld`) · API = API contract (endpoints/DTOs; api-designer/HLD-LLD) ·
+DATA = data model/schema (LLD + coder-database) · UX = approved UI/UX prototype + tokens
+(`docs/experience/wireframes/`) · ERR = Error Code Catalog (`error-catalog`) · NFR = non-functional
+requirements (`nfr`) · TP = test policy.
 
-> HLD = High-Level Design (`docs/architecture/high-level-design/`); LLD = Low-Level Design
-> (`docs/architecture/low-level-design/`). BA docs follow the BA Documentation Standard
-> (`.maestro/engine/docs/ba-documentation-standard.md`).
+| Coder type | Required documents (must be present + approved) | Missing → produce with |
+|------------|--------------------|------------------------|
+| **Frontend coder** | BA (stories + acceptance criteria) · **UX** (approved prototype + design tokens) · **API** contract · **ERR** (error code catalog, to render error states/messages) · i18n keys when localized · TP | business-analyst · ui-ux-designer · api-designer · error catalog owner (backend/solution-architect) |
+| **Backend / service coder** | **HLD** · **LLD** · **API** contract (endpoints/DTOs) · **DATA** (data model/schema) · BA business rules · **ERR** (codes to return) · **NFR** (perf/security) · TP | solution-architect (HLD/LLD) · api-designer · coder-database · business-analyst · error catalog |
+| **coder-data** | **DATA**/LLD (schema) · BA business rules · entity definitions · ERR (so seeded error-path data is valid) | coder-database · business-analyst · `inputs/domain/` |
+| **coder-database** | **DATA model / entities** (domain glossary, LLD/HLD) · migration policy · NFR (volume) | solution-architect / database-architect · `docs/architecture/`, `inputs/domain/` |
+| **coder-infra** | **HLD** · **NFR** (availability/scale/security) · deployment target | solution-architect / cloud-architect · nfr doc · `docs/architecture/` |
+
+> HLD = `docs/architecture/high-level-design/` (template `hld`); LLD =
+> `docs/architecture/low-level-design/` (template `lld`); ERR = Error Code Catalog (template
+> `error-catalog`, shared by FE+BE); UX = `docs/experience/wireframes/`. BA docs follow the BA
+> Documentation Standard (`.maestro/engine/docs/ba-documentation-standard.md`). A document that is
+> stale, draft, unapproved, or contradictory does NOT satisfy the prerequisite (R-021-02).
 
 ## Refusal protocol (structured "blocked: missing_prerequisites")
 

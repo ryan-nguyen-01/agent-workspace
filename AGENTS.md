@@ -21,7 +21,7 @@ name stays stable while `.maestro/project.yaml` defines the product identity and
 - 19 specialist advisors (advisor-only, in-pipeline) at [.claude/agents/specialists/](.claude/agents/specialists/) — see [R-016](.maestro/engine/rules/16-specialist-advisory-rules.md)
 - 231 skills (12 workflow + 219 technical) at [.claude/skills/](.claude/skills/); discovery layer: [.maestro/engine/docs/skill-catalog.md](.maestro/engine/docs/skill-catalog.md)
 - 22 workflow rules at [.maestro/engine/rules/](.maestro/engine/rules/)
-- 58 templates at [.maestro/engine/templates/](.maestro/engine/templates/)
+- 59 templates at [.maestro/engine/templates/](.maestro/engine/templates/)
 - 20 slash commands at [.claude/commands/](.claude/commands/)
 - 3 built-in cross-cutting coders: `coder-infra`, `coder-database`, and `coder-data` at [.claude/agents/coders/](.claude/agents/coders/)
 - Deterministic hook guardrails (scope/secret/destructive) at [scripts/hooks/](scripts/hooks/) — see [R-017](.maestro/engine/rules/17-hook-enforcement-rules.md)
