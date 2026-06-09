@@ -34,7 +34,7 @@ coordinator
 /git status                 Show branch, staged/unstaged, ahead/behind, and suggested next git action.
 /git branch <task-id>       Create feature/<task-id>-<slug> off develop (create develop off main if
                             missing, after confirming when the repo already exists). R-020-01/02.
-/git commit                 Commit staged work as a milestone: Conventional Commit + attribution line
+/git commit                 Commit staged work as a milestone: Conventional Commit (attribution per git.commit_attribution)
                             (R-020-05/06/07). Refuses secrets/large logs (R-020-08).
 /git sync                   Pull/rebase the current branch onto its base (develop) to stay current.
 /git pr                     Prepare a PR from pull-request.template.md (title/body/target). Pushing and
@@ -49,7 +49,7 @@ coordinator
 ```text
 1. Read 20-git-workflow-rules.md and the current repo state (branch, status, remote).
 2. Never commit directly to main or develop; always use a branch (R-020-03).
-3. Commit at milestones with conventional messages + Co-Authored-By line; never commit secrets.
+3. Commit at milestones with conventional messages; no Co-Authored-By trailer unless git.commit_attribution: true; never commit secrets.
 4. STOP and ask the user before any outward-facing action (push, PR, merge, tag, force push, history
    rewrite) — these are gated (R-020-10); destructive ones are also blocked by the destructive-guard hook.
 5. For autopilot runs, git stays local-only automatic: branch + milestone commits; push/PR/merge wait

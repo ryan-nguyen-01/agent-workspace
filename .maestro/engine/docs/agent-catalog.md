@@ -1,6 +1,6 @@
 # Agent Catalog
 
-![System overview](diagrams/01-system-overview.svg)
+> Diagram: see **[System overview](visual-flow.md#1-system-overview)** in visual-flow.md (Mermaid).
 
 This document is the detailed reference for all 12 workflow agents and the generated service coder pattern. For the 19 specialist advisors (4th agent class, advisor-only) see [`.claude/agents/specialists/README.md`](../../.claude/agents/specialists/README.md) and [agent-taxonomy.md](agent-taxonomy.md); for class definitions see [agent-taxonomy.md](agent-taxonomy.md).
 

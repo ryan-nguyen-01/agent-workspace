@@ -1,6 +1,6 @@
 # Workflow Reference
 
-![State machine](diagrams/05-state-machine.svg)
+> Diagram: see **[State machine](visual-flow.md#5-state-machine)** in visual-flow.md (Mermaid).
 
 This document is the reference for workflow states, transitions, commands, approval gates, and artifact requirements.
 

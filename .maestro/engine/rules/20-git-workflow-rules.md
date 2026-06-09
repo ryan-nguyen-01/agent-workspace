@@ -32,8 +32,10 @@ R-020-05: Conventional Commits: <type>(<scope>): <imperative summary>. Types: fe
   test, chore, perf, build, ci. Subject <= 72 chars, imperative mood, no trailing period.
 R-020-06: Commit in meaningful milestones, not one giant blob: a logical unit, after dev-verification
   passes, and after QC fixes. Each commit should build. Body explains WHY when not obvious.
-R-020-07: End every commit message body with the attribution line:
-  Co-Authored-By: Claude Opus 4.8 <noreply@anthropic.com>
+R-020-07: Commit attribution is configurable via `.maestro/project.yaml.git.commit_attribution`.
+  When false (default) write plain commits with NO `Co-Authored-By` / agent-attribution trailer.
+  When true, append the configured `git.attribution_trailer`. Respect the project setting; do not add
+  an attribution trailer the user has turned off.
 R-020-08: Never commit secrets, credentials, .env values, raw tokens, or large logs/binaries (R-013).
   Respect .gitignore; runtime/session state is already ignored. Stage only files relevant to the task.
 R-020-09: If the directory is not a git repo, ask the user before running `git init`. Do not commit
@@ -61,7 +63,7 @@ R-020-11: PRs use .maestro/engine/templates/pull-request.template.md. The PR bod
 R-020-12: Under an active autopilot grant, git is LOCAL-ONLY automatic:
   - At run start, create feature/<task-id>-<slug> off develop (create develop off main if missing,
     after confirming with the user when the repo already exists).
-  - Commit locally at each milestone (R-020-06) with conventional messages + attribution line.
+  - Commit locally at each milestone (R-020-06) with conventional messages (attribution per git.commit_attribution).
   - NEVER auto-push, auto-open/merge PRs, or merge into develop/main. Those stay user-gated (R-020-10).
 R-020-13: On DONE, the handover (R-019-12) proposes the integration step for the user: the branch name,
   a ready PR title/body (from the template), and the suggested merge target (develop). Pushing/opening

@@ -1,6 +1,6 @@
 # Maestro Folder Guide
 
-![Folder structure](diagrams/06-folder-structure.svg)
+> Folder layout is a text tree — see the workspace layout in `folder-guide.md` / `CLAUDE.md` (clearer than a diagram for directories).
 
 This document explains `.maestro`, `.claude`, `docs`, `inputs`, and the product component roots.
 
@@ -657,17 +657,9 @@ Folder of explanatory and visual documentation.
   deep-onboarding.md
   skill-composition.md
   external-skills.md
-  diagrams/
-    01-system-overview.svg
-    02-bootstrap-flow.svg
-    03-task-execution-flow.svg
-    04-qc-bug-routing.svg
-    05-state-machine.svg
-    06-folder-structure.svg
-    07-deep-onboarding.svg
-    08-skill-composition.svg
-    09-principle-flow.svg
 ```
+
+Flow diagrams live inline in `visual-flow.md` as **Mermaid** (text), not as image files.
 
 ### When to use?
 
@@ -691,7 +683,7 @@ An agent designer wants to adjust the architecture
 | `deep-onboarding.md`   | Deep onboarding standard                          |
 | `skill-composition.md` | Skill composition standard                        |
 | `external-skills.md`   | Registry of installed external skills             |
-| `diagrams/*.svg`       | Static images that Markdown preview renders directly |
+| `visual-flow.md`       | Mermaid flow diagrams (text, AI-readable; renders in Markdown) |
 
 ## 14. `.maestro/work/tasks/`
 

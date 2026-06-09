@@ -1,6 +1,6 @@
 # Skill Composition Standard
 
-![Skill composition](diagrams/08-skill-composition.svg)
+> Diagram: see **[Skill composition](visual-flow.md#7-skill-composition)** in visual-flow.md (Mermaid).
 
 This document defines how skills work in `.claude`.
 

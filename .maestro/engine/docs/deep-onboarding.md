@@ -1,6 +1,6 @@
 # Deep Onboarding Standard
 
-![Deep onboarding](diagrams/07-deep-onboarding.svg)
+> Diagram: see **[Deep onboarding](visual-flow.md#6-deep-onboarding)** in visual-flow.md (Mermaid).
 
 Deep onboarding extracts project-specific reusable knowledge. Its goal is to prevent generated coder agents from writing code that ignores existing helpers, conventions, and business flow.
 

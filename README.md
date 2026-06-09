@@ -81,7 +81,7 @@ Agents can use `python3 scripts/agent-run.py create|heartbeat|checkpoint|complet
 
 ## System Architecture
 
-![System overview](.maestro/engine/docs/diagrams/01-system-overview.svg)
+> Diagram: see **[System overview](.maestro/engine/docs/visual-flow.md#1-system-overview)** in visual-flow.md (Mermaid).
 
 See [visual-flow.md](.maestro/engine/docs/visual-flow.md) for all workflow diagrams.
 

@@ -1,203 +1,174 @@
-# Visual Workflow Design
+# Visual Workflow
 
-This document is the visual entry point for the Project-Aware Dynamic Agent System.
+Flow diagrams for Maestro, written in **Mermaid** (text) so both humans and AI agents can read and
+update them. They reflect the current architecture: Direction gate, prerequisites, decomposition,
+real-user QC, Git-flow.
 
-The workflow is split into smaller diagrams instead of one large canvas. This keeps each diagram readable in Markdown preview and avoids tangled arrows.
+> Rendering: GitHub, Kiro, and most viewers render Mermaid natively. **VS Code's built-in Markdown
+> preview does NOT** — install the "Markdown Preview Mermaid Support" extension, or view the file on
+> GitHub.
 
 ## 1. System overview
 
-![System overview](diagrams/01-system-overview.svg)
-
-Purpose: show the high-level agent architecture and the main responsibility boundary.
-Includes the optional External MCPs panel (Figma MCP) on the right side, showing connections to Task Analysis and Implementation phases.
-
-```text
-User
--> Coordinator
--> Project Brain / Agent Registry / Workflow Policy
--> Onboarding or Task Execution
--> QC / Bug Routing / Memory Update
+```mermaid
+flowchart TD
+  U["User: command or natural language"] --> C["Coordinator: single entrypoint"]
+  C --> CL{"Classify scope and mode"}
+  CL -->|framework| FM["Targeted edits"]
+  CL -->|idea or greenfield| DG["Direction gate: Blueprint approval"]
+  CL -->|approved spec| TA["Task Analysis"]
+  DG -->|approved| TA
+  TA --> SA["Solution Architect when needed"]
+  SA --> PL["Coder Leader: decompose and assign"]
+  PL --> CO["Service and built-in coders"]
+  CO --> DV["Dev Verification"]
+  DV --> QC["QC Runner: full test cases"]
+  QC -->|bug| BR["Bug Router"]
+  BR --> CO
+  QC -->|pass| MEM["Memory Update"]
+  MEM --> DONE["DONE"]
+  C -.reads.-> KB[("Knowledge, Registry, Rules")]
 ```
 
-## 2. Bootstrap: onboarding and coder-agent creation
+## 2. Bootstrap: onboarding and coder creation
 
-![Bootstrap flow](diagrams/02-bootstrap-flow.svg)
-
-Purpose: show how the system prevents generic coders from being created before project analysis.
-
-```text
-No Project Brain or stale Project Brain
--> Onboarding Agent scans the project
--> Project Brain and Component Registry are created
--> Coordinator asks user approval
--> Agent Factory generates scoped coder agents
--> Agent Registry becomes active
+```mermaid
+flowchart TD
+  S["Request"] --> Q{"Project Brain fresh?"}
+  Q -->|no or stale| ON["Onboarding: scan project"]
+  ON --> AF["Agent Factory: propose coders"]
+  AF -->|user approval R-011-01| RC["Coders ready"]
+  Q -->|yes| RC
+  Q -->|framework| FM["Skip onboarding"]
 ```
 
-## 3. Task execution: analysis, coding, dev verification
+## 3. Task execution: full pipeline
 
-![Task execution flow](diagrams/03-task-execution-flow.svg)
-
-Purpose: show the dev side of the workflow before QC.
-Includes the optional Figma MCP box connected to Task Analysis for UI-related tasks.
-
-```text
-Task input
--> Task Analysis Agent
--> Normalized Task Spec
--> User Approval (user reviews task-analysis.yaml)
--> Solution Architect (only when architecture_review.required)
--> Coder Leader
--> Service Coder Agents
--> Dev Verification Gate
--> Code Done or back to dev
+```mermaid
+flowchart TD
+  I["Idea or task"] --> DG{"Idea or greenfield?"}
+  DG -->|yes| BP["Blueprint gate: scope, architecture, stack, UI-UX. User approves. R-019-0a"]
+  DG -->|approved spec| TA
+  BP -->|approved| TA["Task Analysis: AC plus decompose. R-022"]
+  TA --> PR{"Prerequisites ok? R-021"}
+  PR -->|missing| ASK["Refuse: report missing docs. No guessing"]
+  PR -->|ok| ARC["Architecture review when required"]
+  ARC --> PLAN["Coder Leader: small tasks plus context_bundle"]
+  PLAN --> CODE["Coders build per Code Layout"]
+  CODE --> DV{"Dev Verification: min 80 percent plus critical checks"}
+  DV -->|fail| CODE
+  DV -->|Code Done| HO["QC Handoff"]
+  HO --> QC["QC Runner: full test cases"]
+  QC -->|bug| BUG["Bug Router"]
+  BUG --> CODE
+  QC -->|pass and zero bugs| MEM["Memory Update"]
+  MEM --> DONE["DONE local"]
 ```
 
 ## 4. QC and bug routing
 
-![QC and bug routing](diagrams/04-qc-bug-routing.svg)
-
-Purpose: show blocker and non-blocker behavior.
-
-```text
-QC Handoff
--> QC Runner
--> Blocking bug: stop QC → fix (via dev-verification) → QC_RETESTING → QC Runner
--> Non-blocking bug: create task and continue QC
--> Pass: QC Delivery Report to user, then memory update
+```mermaid
+flowchart TD
+  HO["QC Handoff"] --> QC["QC Runner: derive full test cases. R-022-08"]
+  QC --> R{"Result"}
+  R -->|blocker bug| SB["Stop immediately"]
+  SB --> BR["Bug Router"]
+  R -->|non blocker bug| BR
+  BR --> FIX["Dev fix"]
+  FIX --> RT["Re-QC: bug scope plus regression"]
+  RT --> R
+  R -->|all pass and zero open bugs| QD["QC_DONE"]
 ```
 
 ## 5. State machine
 
-![State machine](diagrams/05-state-machine.svg)
-
-Purpose: show valid task states and transitions.
-
-## 6. Folder structure
-
-![Folder structure](diagrams/06-folder-structure.svg)
-
-Purpose: show how `.claude` is organized into definitions, memory, service control, state, task artifacts, and bug tracking.
-
-```text
-Definitions: agents, skills, rules, templates, commands, docs
-Runtime: .maestro/knowledge/index.yaml, project-brain, component-registry, agent-registry, test-policy, workflow-state, feedback
-Task artifacts: task-input through memory-updates per task
-Bug tracking: blockers and non-blockers
-Root files: CLAUDE.md, AGENTS.md, README.md, COMMAND.md, CHANGELOG.md
+```mermaid
+stateDiagram-v2
+  [*] --> NEW
+  NEW --> ANALYZED
+  ANALYZED --> ARCHITECTURE_REVIEWING
+  ARCHITECTURE_REVIEWING --> PLANNED
+  ANALYZED --> PLANNED
+  PLANNED --> IN_DEV
+  IN_DEV --> DEV_VERIFYING
+  DEV_VERIFYING --> DEV_BLOCKED
+  DEV_BLOCKED --> IN_DEV
+  DEV_VERIFYING --> DEV_DONE
+  DEV_DONE --> QC_TESTING
+  QC_TESTING --> BLOCKED_BY_BUG
+  BLOCKED_BY_BUG --> FIXING
+  FIXING --> QC_RETESTING
+  QC_RETESTING --> QC_TESTING
+  QC_TESTING --> QC_DONE
+  QC_DONE --> MEMORY_SYNCING
+  MEMORY_SYNCING --> DONE
+  DONE --> [*]
 ```
 
-See also: [folder-guide.md](folder-guide.md)
+## 6. Deep onboarding
 
-## 7. Deep onboarding
-
-![Deep onboarding](diagrams/07-deep-onboarding.svg)
-
-Purpose: show how onboarding extracts reusable knowledge before coder agents are generated.
-
-```text
-Scan categories: Reusable Assets, Coding Flow, Business Flows, Conventions, Evidence Standard
-Structured outputs: project.yaml, services/*.yaml, task-analysis.yaml, dev-verification.yaml, memory-updates.yaml
-Human-readable outputs: generics.md, conventions.md, architecture.md
-Enforcement gate: coders must check assets and conventions before coding
-Verification gate: block if reusable ignored, duplicated, or conventions violated
+```mermaid
+flowchart TD
+  ST["Onboarding start"] --> SC["Scan: stacks, components, conventions"]
+  SC --> KB["Write knowledge plus test-policy"]
+  KB --> IDX["Build memory index"]
+  IDX --> CAND["Propose coder candidates"]
+  CAND --> AP{"User approval"}
+  AP -->|yes| GEN["Agent Factory generates scoped coders"]
+  AP -->|no| HOLD["Hold: no generic coders"]
 ```
 
-See also: [deep-onboarding.md](deep-onboarding.md)
+## 7. Skill composition
 
-## 8. Skill composition
-
-![Skill composition](diagrams/08-skill-composition.svg)
-
-Purpose: show how skills are selected, composed, and attached to agents.
-
-```text
-Skill types: Required (always loaded), Optional (by task need), Contextual (from project stack), Artifact (for outputs)
-Selection flow: Task Analysis -> Coder Leader -> Select Coders -> Load Skills -> Record Used
-Example: coder-payment-service combines workflow, language, framework, database, security, and artifact skills
+```mermaid
+flowchart LR
+  A["Agent"] --> RS["required_skills"]
+  A --> CS["contextual_skills by stack"]
+  A --> OS["optional_skills on trigger"]
+  RS --> B["Skill budget plus selection policy"]
+  CS --> B
+  OS --> B
+  B --> EXEC["Agent executes. Skills are knowledge, not agents. R-014"]
 ```
 
-See also: [skill-composition.md](skill-composition.md)
+## 8. Principle flow: evidence and refusal
 
-## 9. Principle flow
-
-![Principle flow](diagrams/09-principle-flow.svg)
-
-Purpose: show non-negotiable governance rules that must hold across all workflow phases.
-
-```text
-User Request
--> Coordinator only entrypoint
--> Project Brain first
--> Task analysis before coding
--> If uncertain: ask user, do not guess or fabricate facts
--> Approval gates enforced
--> Scoped coding + dev verification
--> Blocker stops QC and returns through fix cycle
--> Evidence before done
--> Memory update
--> DONE
+```mermaid
+flowchart TD
+  REQ["Request"] --> K{"Enough info and prerequisites? R-021"}
+  K -->|missing critical| ASK["Ask or refuse: report the gap. Never invent"]
+  K -->|ok| ACT["Act with evidence"]
+  ACT --> EV{"Verifiable evidence?"}
+  EV -->|no| NOCLAIM["Do NOT claim done"]
+  EV -->|yes| OK["Report done with evidence. Karpathy 4"]
 ```
 
-## Visual conventions
+## 9. Direction gate: idea to approved blueprint
 
-```text
-Blue: agent or active execution
-Green: memory, registry, artifact, successful completion
-Orange: approval or decision gate
-Red: blocker or stop condition
-Gray: external input or neutral artifact
-Purple (Figma): external MCP service, optional integration
-Purple dashed edge: external MCP call (tier-aware)
+```mermaid
+flowchart TD
+  IDEA["User idea: chat or ship"] --> DISC["Discovery plus architecture proposal"]
+  DISC --> BP["product-blueprint.yaml: scope, architecture, stack, features to AC"]
+  BP --> UX{"Has UI?"}
+  UX -->|yes| PROTO["UI-UX HTML CSS prototype in docs experience wireframes"]
+  UX -->|no| REV{"User reviews and approves?"}
+  PROTO --> REV
+  REV -->|changes requested| BP
+  REV -->|approved| BUILD["Build. Normal chat stops at gates. Ship auto-runs to done"]
 ```
 
-## Design rule
+## 10. Git-flow
 
-The diagrams are deliberately split by concern:
-
-```text
-System overview: who exists
-Bootstrap flow: how project brain and coder agents are created
-Task execution: how dev work is performed
-QC and bug routing: how testing and defects are handled
-State machine: what transitions are legal
-Folder structure: how .claude is organized
-Deep onboarding: how project knowledge is extracted
-Skill composition: how skills are selected and attached to agents
-Principle flow: non-negotiable operating rules across the pipeline
+```mermaid
+flowchart TD
+  T["Task"] --> FB["feature branch off develop"]
+  FB --> CM["Milestone commits: Conventional, local"]
+  CM --> GATE{"Outward action? push, PR, merge, tag"}
+  GATE -->|needs user approval R-020-10| OK["User approves"]
+  OK --> PR["PR then squash merge to develop"]
+  PR --> REL["release branch to main and develop plus tag"]
+  REL --> HOT["hotfix off main when needed"]
 ```
 
-## Command layer
-
-```text
-/coord
-  Main entrypoint. Checks brain, state, registry, and routes to the correct command.
-
-/onboard
-  Builds Project Brain, Component Registry, Test Policy, Component Knowledge files, and agent candidates.
-
-/create-coders
-  Generates scoped coder agents after user approval.
-
-/analyze-task -> /plan-dev -> /dev -> /verify-dev
-  Development pipeline before QC.
-
-/handoff-qc -> /qc -> /bug
-  QC and defect handling pipeline.
-
-/sync-memory
-  Updates reusable memory after durable changes.
-```
-
-## Legacy diagram
-
-![Legacy full flow](diagrams/legacy-full-flow.svg)
-
-The original single-canvas workflow diagram before the split into 9 focused diagrams. Kept for historical reference.
-
-## Related documents
-
-- [architecture-guide.md](architecture-guide.md) — System architecture
-- [workflow-reference.md](workflow-reference.md) — Workflow states and commands
-- [agent-catalog.md](agent-catalog.md) — Agent descriptions
-- [skill-guide.md](skill-guide.md) — Skill system and composition
+> Folder layout is documented as a text tree in `folder-guide.md` and the workspace layout section of
+> `CLAUDE.md` (a tree is clearer than a diagram for directories).

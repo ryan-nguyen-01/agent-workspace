@@ -39,9 +39,7 @@
 
 ## Checklist
 
-- [ ] Conventional commits, attribution line present (R-020-05/07)
+- [ ] Conventional commits (attribution trailer per `git.commit_attribution`, R-020-05/07)
 - [ ] No secrets / .env / large logs committed (R-020-08)
 - [ ] Merge target correct (develop for features; main+develop for release/hotfix)
 - [ ] Acceptance criteria from the approved blueprint are met
-
-Co-Authored-By: Claude Opus 4.8 <noreply@anthropic.com>

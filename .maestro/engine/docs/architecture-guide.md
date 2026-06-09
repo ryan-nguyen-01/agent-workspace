@@ -1,6 +1,6 @@
 # Architecture Guide
 
-![System overview](diagrams/01-system-overview.svg)
+> Diagram: see **[System overview](visual-flow.md#1-system-overview)** in visual-flow.md (Mermaid).
 
 This document describes the system architecture of the coordinator-driven multi-agent workflow.
 
@@ -83,7 +83,7 @@ See also: [agent-catalog.md](agent-catalog.md) for detailed agent descriptions.
 
 ## Knowledge architecture
 
-![Bootstrap flow](diagrams/02-bootstrap-flow.svg)
+> Diagram: see **[Bootstrap](visual-flow.md#2-bootstrap-onboarding-and-coder-creation)** in visual-flow.md (Mermaid).
 
 The **project brain** is the central knowledge store. It is created by onboarding and maintained by memory update.
 
@@ -129,7 +129,7 @@ Fresh → proceed to task routing
 
 ## Execution architecture
 
-![Task execution flow](diagrams/03-task-execution-flow.svg)
+> Diagram: see **[Task execution pipeline](visual-flow.md#3-task-execution-full-pipeline)** in visual-flow.md (Mermaid).
 
 ### Task lifecycle
 
@@ -172,7 +172,7 @@ Package contracts  → shared library interfaces
 
 ## QC architecture
 
-![QC and bug routing](diagrams/04-qc-bug-routing.svg)
+> Diagram: see **[QC and bug routing](visual-flow.md#4-qc-and-bug-routing)** in visual-flow.md (Mermaid).
 
 ### Blocker vs non-blocker
 
@@ -197,7 +197,7 @@ QC_DONE requires:
 
 ## State machine
 
-![State machine](diagrams/05-state-machine.svg)
+> Diagram: see **[State machine](visual-flow.md#5-state-machine)** in visual-flow.md (Mermaid).
 
 Valid task states and their transitions:
 
@@ -231,7 +231,7 @@ Sensitive values redacted before writing artifacts
 
 ## File system architecture
 
-![Folder structure](diagrams/06-folder-structure.svg)
+> Folder layout is a text tree — see the workspace layout in `folder-guide.md` / `CLAUDE.md` (clearer than a diagram for directories).
 
 See also: [folder-guide.md](folder-guide.md) for detailed folder descriptions.
 
