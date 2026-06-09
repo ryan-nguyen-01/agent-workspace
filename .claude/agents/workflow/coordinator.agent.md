@@ -111,10 +111,13 @@ If onboarding found services but coder agents are not created:
 ## Routing rules
 
 ```text
+Idea-level / greenfield product build (raw idea in natural language, no approved spec/blueprint)
+  -> Direction gate (Blueprint) FIRST (workflow.md §6.0, R-019-0a): discovery + architecture + stack +
+     UI/UX proposal, get user approval BEFORE coding. Applies in normal chat too, not only /ship.
 Project setup or stale project knowledge for product-component work -> onboarding
 Framework maintenance -> targeted file reads + lightweight evidence when eligible
 Create coder agents -> agent-factory
-HLD, LLD, ticket, task text -> task-analysis
+HLD, LLD, ticket, approved spec/task text -> task-analysis
 Analyzed implementation task -> coder-leader
 Code Done decision -> dev-verification
 Dev to QC artifact -> qc-handoff

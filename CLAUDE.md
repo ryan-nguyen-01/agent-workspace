@@ -106,6 +106,7 @@ Natural-language text (e.g. "analyze this project", "add a login feature") still
   - An irreversible action is imminent (deleting data, deploying to production)
 
 ❌ ASK OR HONOR THE RECORDED APPROVAL when governed work is active:
+  - Before building an idea/greenfield product — run the Direction gate (Blueprint) and get user approval first, even in normal chat without a command (R-019-0a, workflow.md §6.0). Do not jump from a raw idea to coding.
   - Before governed implementation starts (task-analysis.yaml and required approval must exist)
   - Before creating coder agents (user approval required)
   - Before proceeding from Task Analysis → Coder Leader when R-011-10 applies
@@ -242,6 +243,17 @@ IF .maestro/knowledge/index.yaml and .maestro/knowledge/project.yaml ALREADY exi
   → Use project_profile/component profile/context hints to pick the smallest context
   → Read only the relevant project/component memory and source evidence
   → Continue the workflow
+```
+
+### Step 0.5: Direction gate (Blueprint) — idea/greenfield, normal chat included
+
+```text
+If the user describes an idea / greenfield product to build (in natural language, with no approved
+spec/blueprint) — even without typing a command — run the Direction gate BEFORE coding (workflow.md
+§6.0, R-019-0a): propose scope (MVP vs production), architecture (monolith vs microservices), tech
+stack, features → acceptance criteria, and a UI/UX prototype for UI products; get the user's approval.
+Build only when the blueprint is approved. A precise, already-approved spec/ticket skips this and goes
+straight to task-analysis; a raw idea may NOT jump straight to coding.
 ```
 
 ### Step 1: Task Analysis

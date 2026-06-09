@@ -34,7 +34,10 @@ Skip QC Runner entirely for framework-maintenance fast-track unless the task exp
 ## QC flow
 
 ```text
-1. Build test cases from acceptance criteria and handoff risks.
+1. Build test cases from acceptance criteria and handoff risks — systematically and completely
+   (R-022-08 / R-008-13), in every flow (not only autopilot): every AC -> positive + negative/edge;
+   every endpoint -> success/validation/auth/error (Error Catalog codes); every screen -> each state +
+   interactions. The case count scales with ACs/endpoints/screens; a small handful is not enough.
 2. Test local first unless handoff says otherwise.
 3. Move to dev/SIT only when prior environment is usable.
 4. On blocker: stop testing immediately and call bug-router.
