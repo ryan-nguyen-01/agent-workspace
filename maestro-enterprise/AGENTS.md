@@ -175,11 +175,7 @@ Run `/policy-check snapshot --root .` before trusting migrated workspace state o
 | Coordinator behavior | [.claude/agents/workflow/coordinator.agent.md](.claude/agents/workflow/coordinator.agent.md) |
 | Template for new artifacts | [.maestro/engine/templates/](.maestro/engine/templates/) |
 | Claude Code-specific instructions | [CLAUDE.md](CLAUDE.md) |
-| Setup and install | [SETUP.md](SETUP.md) |
-| Quickstart | [QUICKSTART.md](QUICKSTART.md) |
-| Quick semantics | [GUIDELINES.md](GUIDELINES.md) |
 | Visual flow diagrams | [.maestro/engine/docs/visual-flow.md](.maestro/engine/docs/visual-flow.md) |
-| Changelog | [CHANGELOG.md](CHANGELOG.md) |
 
 ## Folder semantics
 

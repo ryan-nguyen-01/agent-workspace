@@ -14,7 +14,6 @@ Tool-specific entrypoints:
 name stays stable while `.maestro/project.yaml` defines the product identity and naming namespace. It defines:
 
 - 12 workflow agents (see [.claude/agents/workflow/](.claude/agents/workflow/))
-- 19 specialist advisors (advisor-only, in-pipeline) at [.claude/agents/specialists/](.claude/agents/specialists/) — see [R-016](.maestro/engine/rules/16-specialist-advisory-rules.md)
 - 39 skills (12 workflow + 27 technical) at [.claude/skills/](.claude/skills/); discovery layer: [.maestro/engine/docs/skill-catalog.md](.maestro/engine/docs/skill-catalog.md)
 - 23 workflow rules at [.maestro/engine/rules/](.maestro/engine/rules/)
 - 59 templates at [.maestro/engine/templates/](.maestro/engine/templates/)
@@ -175,11 +174,7 @@ Run `/policy-check snapshot --root .` before trusting migrated workspace state o
 | Coordinator behavior | [.claude/agents/workflow/coordinator.agent.md](.claude/agents/workflow/coordinator.agent.md) |
 | Template for new artifacts | [.maestro/engine/templates/](.maestro/engine/templates/) |
 | Claude Code-specific instructions | [CLAUDE.md](CLAUDE.md) |
-| Setup and install | [SETUP.md](SETUP.md) |
-| Quickstart | [QUICKSTART.md](QUICKSTART.md) |
-| Quick semantics | [GUIDELINES.md](GUIDELINES.md) |
 | Visual flow diagrams | [.maestro/engine/docs/visual-flow.md](.maestro/engine/docs/visual-flow.md) |
-| Changelog | [CHANGELOG.md](CHANGELOG.md) |
 
 ## Folder semantics
 

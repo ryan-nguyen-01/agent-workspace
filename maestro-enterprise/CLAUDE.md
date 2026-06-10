@@ -221,7 +221,6 @@ Runtime controls (no code edits): `MAESTRO_HOOK_PROFILE=minimal|standard|strict`
 ## Plugin
 
 The Claude tool layer is packaged as a Claude Code plugin at `.claude-plugin/`. Install it to use Maestro's agents, skills, commands, and hooks in any project. To adopt a full
-workflow template, copy one from `templates/` (see [variants/README.md](variants/README.md)). Details: [PLUGIN.md](PLUGIN.md).
 
 ## Commands (19 commands)
 

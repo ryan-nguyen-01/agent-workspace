@@ -1042,7 +1042,6 @@ def run_checks() -> dict[str, Any]:
     check_skill_taxonomy(findings)
     check_codex_plugin(findings)
     check_codex_prompts(findings)
-    check_plugin_wrapper(findings)
     return build_report(findings, counts)
 
 

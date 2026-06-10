@@ -5,6 +5,6 @@ methodology_default: risk-based-routing
 skills: 231
 structure: ['component-roots', 'inputs']
 pruned_groups: ['design-decision', 'docs-delivery', 'docs-enterprise', 'docs-experience', 'docs-operations', 'governance', 'observability', 'work-program']
-generated_at: "2026-06-10T15:32:16.830909+00:00"
+generated_at: "2026-06-10T15:38:46.709518+00:00"
 source: maestro platform (variants/brownfield.yaml)
 note: GENERATED bundle - do not edit by hand; rebuild with scripts/build-variant.py

@@ -1,24 +1,14 @@
-# >>> maestro local runtime >>>
-.maestro/runtime/*
-!.maestro/runtime/README.md
-.maestro/memory/sessions/*
-!.maestro/memory/sessions/README.md
-# <<< maestro local runtime <<<
-# Codex plugin: skills copied from .claude/skills by scripts/build-codex-plugin.py (single source = .claude/skills)
-.codex/marketplace/plugins/maestro/skills/
-
-# Generated templates (maestro-*): local-only state + codex skill copies inside each template
+# Templates (maestro-*): local-only state + codex skill copies
 maestro-*/.maestro/runtime/*
 !maestro-*/.maestro/runtime/README.md
 maestro-*/.maestro/memory/sessions/*
 !maestro-*/.maestro/memory/sessions/README.md
 maestro-*/.codex/marketplace/plugins/*/skills/
+
 # Recreated by external tooling; not part of the framework
 .agent/
 
-# macOS
+# macOS / Python junk
 .DS_Store
-
-# Python
 __pycache__/
 *.pyc

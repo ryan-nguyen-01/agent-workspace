@@ -1,6 +1,6 @@
 name: maestro-brownfield
 display_name: "Maestro Brownfield"
-output: "maestro-brownfield"
+output: "../maestro-brownfield"
 purpose: "Maintain an EXISTING, running project: deep onboarding first, execute assigned tasks precisely, ask when unclear — never infer."
 structure: [component-roots, inputs]
 methodology_default: "risk-based-routing"

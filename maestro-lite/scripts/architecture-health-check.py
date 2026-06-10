@@ -30,7 +30,7 @@ REPORT_JSON = RUNTIME / "reports" / "architecture-health-report.json"
 REPORT_MD = RUNTIME / "reports" / "architecture-health-report.md"
 
 EXPECTED_COUNTS = {
-    "agents": 34,
+    "agents": 15,
     "skills": 39,
     "rules": 23,
     "templates": 59,
@@ -41,7 +41,7 @@ EXPECTED_COUNTS = {
 # Generated service coders (coders/coder-<svc>.agent.md) are intentionally excluded so
 # this count stays stable in applied workspaces.
 BUILT_IN_CODERS = {"coder-infra", "coder-database", "coder-data"}
-EXPECTED_SPECIALIST_COUNT = 19
+EXPECTED_SPECIALIST_COUNT = 0
 SPECIALIST_CATEGORIES = {
     "architecture",
     "quality-security",
@@ -1042,7 +1042,6 @@ def run_checks() -> dict[str, Any]:
     check_skill_taxonomy(findings)
     check_codex_plugin(findings)
     check_codex_prompts(findings)
-    check_plugin_wrapper(findings)
     return build_report(findings, counts)
 
 

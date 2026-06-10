@@ -82,6 +82,7 @@ def parse_manifest(path: Path) -> dict:
             if lm:
                 data["skills"][lk] = [c.strip() for c in lm.group(1).split(",") if c.strip()]
 
+    data["specialists_none"] = bool(re.search(r"(?m)^agents:\n  specialists: none", text))
     st_m = re.search(r"structure:\s*(\[[^\]]*\]|full)", text)
     if st_m:
         raw = st_m.group(1)
@@ -250,6 +251,74 @@ def build(manifest_path: Path) -> None:
         instr_file.write_text(itxt, encoding="utf-8")
         print(f"   structure pruned: {', '.join(pruned_groups)}")
 
+
+    # ---- standardize template contents: drop framework-maintenance machinery ----
+    for rel in (".claude-plugin", ".vscode", "scripts/build-plugin.py",
+                "CHANGELOG.md", "PLUGIN.md", "SETUP.md", "QUICKSTART.md", "GUIDELINES.md"):
+        target = out / rel
+        if target.is_dir():
+            shutil.rmtree(target)
+        elif target.is_file():
+            target.unlink()
+    hc_file = out / "scripts" / "architecture-health-check.py"
+    patch(hc_file, [("    check_plugin_wrapper(findings)\n", "")])
+    # entry docs: drop links/rows to removed files; plugin section now points upstream
+    for doc in ("AGENTS.md", "CLAUDE.md"):
+        dp = out / doc
+        dt = dp.read_text(encoding="utf-8")
+        dt = re.sub(r"(?m)^.*\((?:QUICKSTART|SETUP|PLUGIN|CHANGELOG|GUIDELINES)\.md\).*\n", "", dt)
+        dt = re.sub(r"(?m)^.*\b(?:QUICKSTART|SETUP|GUIDELINES)\.md\b.*\n", "", dt)
+        dp.write_text(dt, encoding="utf-8")
+    patch(out / "CLAUDE.md", [(
+        "The Claude tool layer is packaged as a Claude Code plugin at `.claude-plugin/`. Install it to use Maestro's agents, skills, commands, and hooks in any project. To adopt a full\nworkflow template, copy one of the root `maestro-*` folders (see [variants/README.md](variants/README.md)). Details: [PLUGIN.md](PLUGIN.md).",
+        "This workspace reads `.claude/` natively (agents, skills, commands, hooks) — no plugin install needed here. Plugin packaging lives upstream in the maestro repo.")])
+    # skills-lock: keep only shipped skills
+    if keep is not None:
+        lock = out / "skills-lock.json"
+        if lock.is_file():
+            import json
+            data_lock = json.loads(lock.read_text(encoding="utf-8"))
+            sk_map = data_lock.get("skills", {})
+            data_lock["skills"] = {k: v for k, v in sk_map.items() if k in keep}
+            lock.write_text(json.dumps(data_lock, indent=2, sort_keys=True) + "\n", encoding="utf-8")
+    # agents: optionally drop the specialist advisors (e.g. lite)
+    if m.get("specialists_none"):
+        spec_dir = out / ".claude" / "agents" / "specialists"
+        if spec_dir.is_dir():
+            shutil.rmtree(spec_dir)
+        spec_dir.mkdir(parents=True, exist_ok=True)
+        (spec_dir / "README.md").write_text(
+            "# Specialist Advisors\n\nNot included in this template (see the maestro platform for the full advisor set).\n",
+            encoding="utf-8")
+        patch(hc_file, [
+            ("EXPECTED_SPECIALIST_COUNT = 19", "EXPECTED_SPECIALIST_COUNT = 0"),
+            ('    "agents": 34,', '    "agents": 15,'),
+        ])
+        for mr in (out / ".maestro" / "config" / "model-routing.yaml",
+                   out / ".maestro" / "engine" / "templates" / "model-routing.template.yaml"):
+            mt = mr.read_text(encoding="utf-8")
+            mt = re.sub(r"(?ms)^  specialist_advisors:\n(?:    .*\n)+", "  specialist_advisors: {}\n", mt)
+            mr.write_text(mt, encoding="utf-8")
+        ct = (out / "CLAUDE.md").read_text(encoding="utf-8")
+        ct = re.sub(r"(?ms)^## Specialist Advisors \(19 advisors\)\n.*?(?=^## )",
+                    "## Specialist Advisors\n\nNot included in this template.\n\n", ct)
+        (out / "CLAUDE.md").write_text(ct, encoding="utf-8")
+        at = (out / "AGENTS.md").read_text(encoding="utf-8")
+        at = re.sub(r"(?m)^- 19 specialist advisors.*\n", "", at)
+        (out / "AGENTS.md").write_text(at, encoding="utf-8")
+
+    # generated per-template README
+    (out / "README.md").write_text(
+        f"# {m['display_name']}\n\n{m['purpose']}\n\n"
+        "A self-contained Maestro workspace. Copy this folder anywhere, put your source code inside\n"
+        "(`services/`, `apps/` — or register existing paths in `.maestro/registry/components.yaml`),\n"
+        "then run `claude` (or `codex`) in this folder. Start with `/coord` (or `/ship` for autonomous\n"
+        "build-to-done); `/overview` prints the full project briefing.\n\n"
+        "Entry points: `CLAUDE.md` (Claude) - `AGENTS.md` (Codex) - `COMMAND.md` (commands)\n"
+        "- `.maestro/INSTRUCTIONS.md` (workflow brain).\n\n"
+        "Generated from the maestro platform - do not edit framework files by hand (see VARIANT.yaml).\n",
+        encoding="utf-8")
+
     # identity + defaults
     patch(out / ".maestro" / "project.yaml", [
         (r'(?m)^  id: "maestro"$', f'  id: "{m["name"]}"'),
@@ -296,7 +365,6 @@ def build(manifest_path: Path) -> None:
 
     # regenerate derived artifacts inside the bundle
     run([sys.executable, "scripts/build-skill-catalog.py"], out)   # taxonomy + catalog doc
-    run([sys.executable, "scripts/build-plugin.py", "--force"], out)   # plugin wrapper jsons (counts)
     run([sys.executable, "scripts/build-codex-plugin.py"], out)    # codex marketplace (skills copy)
     run([sys.executable, "scripts/build-codex-prompts.py"], out)   # codex prompts
 
