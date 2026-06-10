@@ -1,0 +1,25 @@
+task_id: "{{TASK_ID}}"
+updated_at: "{{UPDATED_AT}}"
+updated_by: "{{AGENT_ID}}"
+event_type: "state_change|artifact_created|artifact_updated|decision|approval|blocker|resume|note"
+
+state:
+  from: "{{FROM_STATE}}"
+  to: "{{TO_STATE}}"
+
+artifact:
+  path: "{{ARTIFACT_PATH}}"
+  action: "created|updated|validated|skipped|none"
+
+summary: "{{SUMMARY}}"
+reason: "{{REASON}}"
+
+evidence:
+  - type: "file|command|test|user-approval|manual-check|unknown"
+    ref: "{{EVIDENCE_REF}}"
+
+next:
+  command: "{{NEXT_COMMAND}}"
+  responsible_agent: "{{NEXT_AGENT}}"
+  blocked: false
+  blocker_reason: ""

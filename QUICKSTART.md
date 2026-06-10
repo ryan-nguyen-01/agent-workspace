@@ -5,19 +5,25 @@ identity and component naming come from `.maestro/project.yaml`.
 
 ## 1. Create The Workspace
 
-Clone the distribution or run `/maestro-init` in an existing project after installing the plugin:
+Pick the template that matches your purpose (`templates/` — sdlc, adlc, enterprise, lite, brownfield;
+see [variants/README.md](variants/README.md)):
 
 ```bash
 git clone <repo-url> maestro
-cd maestro
 
-# Existing project alternative:
-python3 <maestro>/scripts/maestro-init.py --from <maestro> --to . \
-  --project-key nova --project-name "Nova"
+# Greenfield — start a project FROM a template:
+cp -R maestro/templates/sdlc my-app && cd my-app
+
+# Existing project — apply the brownfield template INTO your repo:
+cd my-existing-app
+cp -R /path/to/maestro/templates/brownfield/.maestro .
+cp -R /path/to/maestro/templates/brownfield/.claude .   # skip if you keep your own .claude
+cp    /path/to/maestro/templates/brownfield/CLAUDE.md . # or add one line to your CLAUDE.md:
+                                                        #   @.maestro/INSTRUCTIONS.md
 ```
 
-Initialization preserves existing `CLAUDE.md`, `AGENTS.md`, `.claude/`, and source files. It appends a
-managed instruction block and keeps runtime/session state local.
+Applying a template never requires deleting your existing files; runtime/session state stays local
+(gitignored).
 
 ## 2. Configure Product Identity
 

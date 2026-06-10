@@ -1,0 +1,18 @@
+schema_version: "1.0"
+epic_id: "{{EPIC_ID}}"
+title: "{{TITLE}}"
+status: "proposed"
+initiative_id: null
+owner: "{{OWNER}}"
+
+objective: ""
+scope: []
+out_of_scope: []
+success_metrics: []
+requirement_refs: []
+design_refs: []
+decision_refs: []
+
+tasks: []
+dependency_graph: []
+risks: []

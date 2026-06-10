@@ -1,0 +1,17 @@
+{
+  "name": "maestro",
+  "owner": {
+    "name": "maestro"
+  },
+  "metadata": {
+    "description": "maestro framework — Claude tool layer.",
+    "version": "1.8.0"
+  },
+  "plugins": [
+    {
+      "name": "maestro",
+      "source": "./",
+      "description": "Agents, skills, commands, and enforcement hooks for the maestro workflow."
+    }
+  ]
+}

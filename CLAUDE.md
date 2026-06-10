@@ -88,7 +88,7 @@ Aliases like `sa:`, `ba:`, `qa:`, `pm:`, `sec:`, `sre:`, `dev:` from the global 
 /git              Git-flow workflow: branch/commit/sync/PR (R-020)
 /overview         Full project briefing (identity, status, structure, git)
 /onboard /analyze-task /create-coders /plan-dev /dev /verify-dev
-/handoff-qc /qc /bug /sync-memory /skills /policy-check /status /resume-task /maestro-init /access
+/handoff-qc /qc /bug /sync-memory /skills /policy-check /status /resume-task /access
 ```
 
 Natural-language text (e.g. "analyze this project", "add a login feature") still routes through `coordinator` as described in §"Task processing flow".
@@ -202,11 +202,10 @@ Runtime controls (no code edits): `MAESTRO_HOOK_PROFILE=minimal|standard|strict`
 
 ## Plugin
 
-The Claude tool layer is packaged as a Claude Code plugin at `.claude-plugin/`. Install it, then run
-`/maestro-init` to create the target project's `.maestro/` control plane and managed instruction block without
-replacing existing project configuration. Details: [PLUGIN.md](PLUGIN.md).
+The Claude tool layer is packaged as a Claude Code plugin at `.claude-plugin/`. Install it to use Maestro's agents, skills, commands, and hooks in any project. To adopt a full
+workflow template, copy one from `templates/` (see [variants/README.md](variants/README.md)). Details: [PLUGIN.md](PLUGIN.md).
 
-## Commands (20 commands)
+## Commands (19 commands)
 
 Commands at `.claude/commands/`:
 
@@ -230,7 +229,6 @@ Commands at `.claude/commands/`:
 | /status        | Check workflow status + activity dashboard |
 | /overview      | Full project briefing: identity, status, requirements/design, structure, git |
 | /resume-task   | Resume interrupted task    |
-| /maestro-init       | Install the `.maestro/` control plane and managed instruction block into a target project |
 | /access        | Switch tool-permission posture: full (bypassPermissions) / guarded. Does NOT change workflow gates/hooks (R-011-14) |
 
 CLI mirror: `python3 scripts/status-dashboard.py --mode <compact|concise|dashboard|models|json>` prints the same status/model dashboard when a client does not expose project slash commands. Add `--write` to generate `.maestro/runtime/reports/status.md` and `.maestro/runtime/reports/status.html`. Adapters may update telemetry with `python3 scripts/agent-activity.py`; maintainers may run `python3 scripts/architecture-health-check.py --strict --write-report` as an optional deterministic drift check.

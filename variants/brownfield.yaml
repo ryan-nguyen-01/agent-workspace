@@ -1,7 +1,8 @@
 name: maestro-brownfield
 display_name: "Maestro Brownfield"
-output: "../maestro-brownfield"
+output: "templates/brownfield"
 purpose: "Maintain an EXISTING, running project: deep onboarding first, execute assigned tasks precisely, ask when unclear — never infer."
+structure: []
 methodology_default: "risk-based-routing"
 
 skills:

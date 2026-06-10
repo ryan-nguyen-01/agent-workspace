@@ -1,0 +1,25 @@
+schema_version: "1.0"
+id: "{{PROJECT_KEY}}-AGENT-AUDIT-{{AGENT_ID}}"
+agent_id: "{{AGENT_ID}}"
+mode: "append-only"
+
+entries:
+  - at: "{{CREATED_AT}}"
+    actor: "{{ACTOR}}"
+    event: "audit_log.created"
+    refs: []
+    evidence: []
+    notes: ""
+
+event_types:
+  - "mission.ratified"
+  - "contract.signed"
+  - "autonomy.changed"
+  - "agent_definition.changed"
+  - "eval.run"
+  - "deployment.changed"
+  - "incident.opened"
+  - "incident.closed"
+  - "drift.detected"
+  - "agent.evolved"
+  - "agent.retired"

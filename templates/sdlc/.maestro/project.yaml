@@ -1,0 +1,48 @@
+schema_version: "1.0"
+
+workspace:
+  id: "maestro-sdlc"
+  name: "maestro-sdlc"
+  type: "product-development-workspace"
+  rename_with_product: false
+
+product:
+  id: null
+  key: null
+  display_name: null
+  lifecycle: "greenfield"
+  status: "not-configured"
+
+naming:
+  filesystem_case: "kebab-case"
+  component_namespace: null
+  patterns:
+    application: "{project}-{channel}-app"
+    service: "{project}-{capability}-service"
+    worker: "{project}-{capability}-worker"
+    gateway: "{project}-{scope}-gateway"
+    package: "{project}-{capability}"
+    design_system: "{project}-design-system"
+  rules:
+    - "Use business capabilities or bounded contexts, not implementation technologies."
+    - "Use singular capability names unless the domain term is conventionally plural."
+    - "Do not use generic names such as backend, common, utils, core-service, or service-1."
+    - "Keep component ids stable when display names or repository locations change."
+
+component_roots:
+  applications: "apps"
+  services: "services"
+  packages: "packages"
+  infrastructure: "infra"
+  tests: "tests"
+
+documentation:
+  root: "docs"
+  registry: ".maestro/registry/artifacts.yaml"
+
+git:
+  branching_model: "git-flow"     # git-flow | trunk-based | feature-branch
+  commit_convention: "conventional"
+  default_merge: "squash"         # into develop, unless release/hotfix
+  commit_attribution: false       # false = plain commits (NO Co-Authored-By trailer). true = append agent attribution.
+  attribution_trailer: ""         # used only when commit_attribution: true

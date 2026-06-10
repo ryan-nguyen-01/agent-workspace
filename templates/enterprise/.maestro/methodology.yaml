@@ -1,0 +1,157 @@
+schema_version: "1.0"
+methodology: "enterprise-agent-governance"
+
+catalog:
+  risk-based-routing:
+    name: "Risk-Based Workflow Routing"
+    legacy_aliases:
+      - "adaptive"
+    document: "docs/governance/methodologies/risk-based-routing.md"
+  spec-driven-development:
+    name: "Spec-Driven Development"
+    abbreviation: "SDD"
+    legacy_aliases:
+      - "adlc"
+    document: "docs/governance/methodologies/spec-driven-development.md"
+  enterprise-agent-governance:
+    name: "Enterprise Agent Governance"
+    legacy_aliases:
+      - "agentic-enterprise"
+      - "ae"
+    document: "docs/governance/methodologies/enterprise-agent-governance.md"
+    operating_model:
+      accountable_owner_required: true
+      governance_policy_required_for_production_agents: true
+      agent_artifacts:
+        - "governance-policy"
+        - "mission"
+        - "behavior-contract"
+        - "autonomy-policy"
+        - "agent-definition"
+        - "eval-suite"
+        - "audit-log"
+        - "interaction-protocol"
+      lifecycle_stages:
+        - "DEFINE"
+        - "CONTRACT"
+        - "COMPOSE"
+        - "EVALUATE"
+        - "HARDEN"
+        - "APPROVE"
+        - "DEPLOY"
+        - "OPERATE"
+        - "CHANGE_OR_RETIRE"
+  eval-driven-ai:
+    name: "Eval-Driven AI Development"
+    legacy_aliases:
+      - "ai-native"
+    document: "docs/governance/methodologies/eval-driven-ai.md"
+
+selection_matrix: "docs/governance/methodologies/selection-matrix.md"
+industry_alignment: "docs/governance/methodologies/industry-alignment.md"
+
+defaults:
+  execution_mode: "assisted"
+  verification_owner: "shared"
+
+industry_patterns:
+  durable-workflow:
+    maps_to:
+      - ".maestro/work/"
+      - ".maestro/memory/tasks/"
+      - ".maestro/runtime/"
+    use_when:
+      - "long_running_task"
+      - "resume_required"
+      - "human_in_the_loop"
+  artifact-management:
+    maps_to:
+      - ".maestro/registry/artifacts.yaml"
+      - ".maestro/design/"
+      - ".maestro/decision/"
+      - "docs/"
+    use_when:
+      - "prd_or_design_required"
+      - "architecture_decision_required"
+      - "official_deliverable_required"
+  eval-driven-ai:
+    maps_to:
+      - "docs/governance/methodologies/eval-driven-ai.md"
+      - "docs/governance/enterprise-agent-governance/eval-suites/"
+      - ".maestro/runtime/agent-activity.yaml"
+    use_when:
+      - "model_behavior_change"
+      - "rag_or_prompt_change"
+      - "agent_quality_claim"
+  enterprise-governance:
+    maps_to:
+      - "docs/governance/enterprise-agent-governance/"
+      - ".maestro/history/"
+      - "docs/operations/"
+    use_when:
+      - "production_autonomy"
+      - "named_steward_required"
+      - "audit_or_compliance_required"
+
+execution_modes:
+  direct:
+    purpose: "Fast implementation with explicit user-owned or shared verification."
+    required_artifacts: []
+    workflow_state_machine: false
+  assisted:
+    purpose: "Bounded analysis, implementation, and evidence without the full governed pipeline."
+    required_artifacts:
+      - "task.yaml"
+      - "progress.yaml"
+      - "verification.yaml"
+    workflow_state_machine: false
+  governed:
+    purpose: "Auditable multi-agent delivery for high-risk, cross-component, or regulated work."
+    required_artifacts:
+      - "task.yaml"
+      - "task-analysis.yaml"
+      - "implementation-plan.yaml"
+      - "progress.yaml"
+      - "verification.yaml"
+    workflow_state_machine: true
+  autonomous:
+    purpose: "Build to a finished product without stopping at soft gates: run the governed pipeline under a one-time autonomy grant, self-heal build/test/runtime errors, and deliver a runnable product. Started with /ship."
+    based_on: "governed"
+    workflow_state_machine: true
+    required_artifacts:
+      - "task.yaml"
+      - "task-analysis.yaml"
+      - "implementation-plan.yaml"
+      - "progress.yaml"
+      - "verification.yaml"
+    autopilot:
+      rule: "19-autonomous-delivery-rules.md"
+      command: "/ship"
+      blueprint_gate: "Required for idea/greenfield input: propose scope (MVP vs production), architecture style (monolith vs microservices), tech stack, and features; get explicit user approval before building (R-019-0a)."
+      blueprint_template: "product-blueprint.template.yaml"
+      max_attempts_per_stage: 5
+      pre_authorized_gates: ["R-011-01", "R-011-03", "R-011-06", "R-011-10"]
+      hard_stops: ["R-011-07", "R-013", "R-011-02", "R-011-09", "R-011-08", "R-011-13", "R-011-04", "R-011-05", "scope_expansion", "attempts_exhausted"]
+      self_heal: "build -> run -> test -> capture error -> fix -> re-verify, bounded by max_attempts_per_stage"
+      done_definition: "build clean, tests pass, app smoke-runs, acceptance criteria met, zero open blockers"
+
+methodology_triggers:
+  enterprise-agent-governance:
+    - "production_agent_operation"
+    - "named_owner_required"
+    - "behavior_contract_required"
+    - "autonomy_policy_change"
+    - "agent_fleet_or_marketplace"
+    - "audit_log_required"
+    - "cross_agent_or_agent_human_protocol"
+
+escalation:
+  allow_automatic_upgrade: true
+  allow_automatic_downgrade: false
+  governed_triggers:
+    - "security_or_privacy"
+    - "data_migration"
+    - "public_contract_change"
+    - "cross_component_change"
+    - "production_or_infrastructure_change"
+    - "multiple_parallel_workstreams"

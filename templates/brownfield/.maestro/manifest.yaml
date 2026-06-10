@@ -1,0 +1,43 @@
+schema_version: "1.0"
+layout_version: "2.0"
+
+ownership:
+  framework:
+    - ".maestro/engine/**"
+    - ".claude/**"
+    - "scripts/**"
+  project_shared:
+    - ".maestro/INSTRUCTIONS.md"
+    - ".maestro/project.yaml"
+    - ".maestro/methodology.yaml"
+    - ".maestro/config/**"
+    - ".maestro/registry/**"
+    - ".maestro/governance/**"
+    - ".maestro/knowledge/**"
+    - ".maestro/work/**"
+    - ".maestro/design/**"
+    - ".maestro/decision/**"
+    - ".maestro/observability/**"
+    - ".maestro/memory/project/**"
+    - ".maestro/memory/tasks/**"
+    - ".maestro/history/**"
+    - ".maestro/runtime/README.md"
+    - "docs/**"
+  local_runtime:
+    - ".maestro/runtime/**"
+    - ".maestro/memory/sessions/**"
+
+compatibility:
+  phase: "consolidated-aw-layout"
+  canonical_domains:
+    control_plane: ".maestro/engine"
+    observability: ".maestro/observability"
+    governance: ".maestro/governance"
+    runs: ".maestro/work/runs"
+  legacy_paths:
+    supported: false
+    paths:
+      - ".agent"
+      - ".runtime"
+      - ".maestro/control-plane"
+  notes: ".maestro/engine is the single canonical control plane (workflow, rules, templates, docs)."

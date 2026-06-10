@@ -1,0 +1,22 @@
+schema_version: "1.0"
+role: "observability-index"
+
+domains:
+  traces:
+    root: ".maestro/observability/traces"
+    purpose: "Agent run traces, tool-call summaries, handoff evidence, and replay notes."
+  evals:
+    root: ".maestro/observability/evals"
+    purpose: "Eval suites, eval runs, regression cases, and quality gates."
+  reports:
+    root: ".maestro/observability/reports"
+    purpose: "Human-readable status, verification, QC, and release reports."
+  audit:
+    root: ".maestro/observability/audit"
+    purpose: "Audit views derived from work, governance, and history artifacts."
+
+compatibility_sources:
+  activity: ".maestro/runtime/agent-activity.yaml"
+  generated_reports: ".maestro/runtime/reports/"
+  timeline: ".maestro/history/timeline.md"
+  event_log: ".maestro/history/events.jsonl"

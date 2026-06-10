@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Build a standalone Maestro variant bundle from a variants/<name>.yaml manifest.
 
-Each bundle is a self-contained framework folder (own CLAUDE.md, .claude/, .maestro/) with a
+Each template is a self-contained framework folder under maestro/templates/<name>/ (own CLAUDE.md, .claude/, .maestro/) with a
 purpose-specific behavior profile, default methodology, and skill subset. Bundles are GENERATED —
 never edit them by hand; change the platform or the manifest and rebuild.
 
@@ -23,10 +23,35 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 VARIANTS = ROOT / "variants"
 
-COPY_IGNORE = shutil.ignore_patterns(
-    ".git", "__pycache__", ".DS_Store", "*.pyc",
-    "variants",            # manifests stay in the platform only
-)
+def COPY_IGNORE(dir_: str, names: list[str]) -> set[str]:
+    """copytree ignore: junk everywhere; platform-only items ONLY at the repo root (so e.g.
+    .maestro/engine/templates is never confused with the top-level templates/ output dir)."""
+    ignored = {n for n in names if n in {".git", "__pycache__", ".DS_Store"} or n.endswith(".pyc")}
+    d = Path(dir_)
+    if d == ROOT:
+        ignored |= {n for n in names if n in {"templates", "variants"}}
+    if d == ROOT / "scripts":
+        ignored |= {n for n in names if n == "build-variant.py"}
+    return ignored
+
+# Structure groups: folders a template carries only when its manifest selects them. Right-sizes each
+# template so e.g. lite/brownfield do not ship enterprise scaffolding (R-018 single source: the
+# platform keeps everything; templates prune).
+STRUCTURE_GROUPS: dict[str, dict] = {
+    "component-roots": {
+        "dirs": ["apps", "services", "packages", "infra", "tests"],
+        "hc": ["apps/README.md", "services/README.md", "packages/README.md", "infra/README.md", "tests/README.md"],
+    },
+    "inputs": {"dirs": ["inputs"], "hc": []},
+    "docs-delivery": {"dirs": ["docs/product", "docs/requirements", "docs/quality", "docs/delivery", "docs/architecture"], "hc": []},
+    "docs-experience": {"dirs": ["docs/experience"], "hc": []},
+    "docs-operations": {"dirs": ["docs/operations"], "hc": []},
+    "docs-enterprise": {"dirs": ["docs/governance/enterprise-agent-governance", "docs/governance/agentic-enterprise"], "hc": []},
+    "design-decision": {"dirs": [".maestro/design", ".maestro/decision"], "hc": [".maestro/design/index.yaml", ".maestro/decision/index.yaml"]},
+    "observability": {"dirs": [".maestro/observability"], "hc": [".maestro/observability/index.yaml"], "instr": "observability/index.yaml"},
+    "governance": {"dirs": [".maestro/governance"], "hc": [".maestro/governance/index.yaml"], "instr": "governance/index.yaml"},
+    "work-program": {"dirs": [".maestro/work/initiatives", ".maestro/work/epics"], "hc": []},
+}
 
 
 def parse_manifest(path: Path) -> dict:
@@ -56,6 +81,13 @@ def parse_manifest(path: Path) -> dict:
             lm = re.search(rf"{lk}:\s*\[([^\]]*)\]", body)
             if lm:
                 data["skills"][lk] = [c.strip() for c in lm.group(1).split(",") if c.strip()]
+
+    st_m = re.search(r"structure:\s*(\[[^\]]*\]|full)", text)
+    if st_m:
+        raw = st_m.group(1)
+        data["structure"] = "full" if raw == "full" else [c.strip() for c in raw.strip("[]").split(",") if c.strip()]
+    else:
+        data["structure"] = "full"
 
     prof_m = re.search(r"(?ms)^profile:\s*\|\n(.*)\Z", text)
     if prof_m:
@@ -162,6 +194,62 @@ def build(manifest_path: Path) -> None:
 
     n_skills = len(list((out / ".claude" / "skills").rglob("SKILL.md")))
 
+    # structure pruning: drop folder groups the manifest does not select (right-size per purpose)
+    pruned_groups: list[str] = []
+    if m["structure"] != "full":
+        selected = set(m["structure"])
+        unknown = selected - set(STRUCTURE_GROUPS)
+        if unknown:
+            sys.exit(f"ERROR: unknown structure group(s) {sorted(unknown)} (have: {sorted(STRUCTURE_GROUPS)})")
+        hc_drop: list[str] = []
+        instr_drop: list[str] = []
+        for group, spec in STRUCTURE_GROUPS.items():
+            if group in selected:
+                continue
+            pruned_groups.append(group)
+            for d in spec["dirs"]:
+                target = out / d
+                if target.is_dir():
+                    shutil.rmtree(target)
+            hc_drop.extend(spec.get("hc", []))
+            if spec.get("instr"):
+                instr_drop.append(spec["instr"])
+        # bundle health-check must not demand pruned paths
+        hc_file = out / "scripts" / "architecture-health-check.py"
+        hc_text = hc_file.read_text(encoding="utf-8")
+        for path_str in hc_drop:
+            hc_text = hc_text.replace(f'    "{path_str}",\n', "")
+        hc_file.write_text(hc_text, encoding="utf-8")
+        # INSTRUCTIONS read-order: drop pruned index lines, renumber the ordered list
+        instr_file = out / ".maestro" / "INSTRUCTIONS.md"
+        ilines = instr_file.read_text(encoding="utf-8").splitlines(keepends=True)
+        kept = [l for l in ilines if not any(d in l for d in instr_drop)]
+        n = 0
+        for i, l in enumerate(kept):
+            mm = re.match(r"^(\d+)\. ", l)
+            if mm:
+                n += 1
+                kept[i] = re.sub(r"^\d+\. ", f"{n}. ", l)
+        itxt = "".join(kept)
+        if "component-roots" not in selected:
+            itxt = itxt.replace(
+                "Product code belongs in `apps/`, `services/`, `packages/`, `infra/`, and `tests/`.",
+                "Product code stays where the project keeps it; register component paths in `.maestro/registry/components.yaml`.",
+            )
+            # roots are project-defined: empty scan_roots + registry-driven root check
+            comp = out / ".maestro" / "registry" / "components.yaml"
+            ctext = comp.read_text(encoding="utf-8")
+            ctext = re.sub(r"(?ms)^(\s*)scan_roots:\n(?:\s+- [^\n]*\n)+", r"\1scan_roots: []\n", ctext)
+            comp.write_text(ctext, encoding="utf-8")
+            hc_text2 = hc_file.read_text(encoding="utf-8")
+            hc_text2 = hc_text2.replace(
+                '    required_roots = {"apps", "services", "packages", "infra", "tests"}',
+                "    required_roots = registered_roots  # component roots are project-defined in this template",
+            )
+            hc_file.write_text(hc_text2, encoding="utf-8")
+        instr_file.write_text(itxt, encoding="utf-8")
+        print(f"   structure pruned: {', '.join(pruned_groups)}")
+
     # identity + defaults
     patch(out / ".maestro" / "project.yaml", [
         (r'(?m)^  id: "maestro"$', f'  id: "{m["name"]}"'),
@@ -186,8 +274,8 @@ def build(manifest_path: Path) -> None:
             break
     claude.write_text("".join(lines), encoding="utf-8")
 
-    # .maestro/INSTRUCTIONS.md: same banner + profile, so projects installed via maestro-init
-    # inherit the variant behavior + identity (INSTRUCTIONS.md is what the managed import loads).
+    # .maestro/INSTRUCTIONS.md: same banner + profile, so a project that copies this template
+    # inherits the variant behavior + identity.
     instr = out / ".maestro" / "INSTRUCTIONS.md"
     itext = instr.read_text(encoding="utf-8")
     marker = "Read in this order:"
@@ -215,7 +303,7 @@ def build(manifest_path: Path) -> None:
     (out / "VARIANT.yaml").write_text(
         f"name: {m['name']}\ndisplay_name: \"{m['display_name']}\"\n"
         f"purpose: \"{m['purpose']}\"\nmethodology_default: {m['methodology_default']}\n"
-        f"skills: {n_skills}\ngenerated_at: \"{datetime.now(timezone.utc).isoformat()}\"\n"
+        f"skills: {n_skills}\nstructure: {m['structure'] if m['structure']=='full' else sorted(set(m['structure']))}\npruned_groups: {sorted(pruned_groups)}\ngenerated_at: \"{datetime.now(timezone.utc).isoformat()}\"\n"
         f"source: maestro platform (variants/{manifest_path.stem}.yaml)\n"
         f"note: GENERATED bundle - do not edit by hand; rebuild with scripts/build-variant.py\n",
         encoding="utf-8",

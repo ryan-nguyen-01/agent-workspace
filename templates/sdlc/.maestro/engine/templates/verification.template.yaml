@@ -1,0 +1,17 @@
+schema_version: "1.0"
+task_id: "{{TASK_ID}}"
+implementation_status: "not_started|in_progress|complete"
+
+verification:
+  owner: "agent|user|shared"
+  agent:
+    status: "not_run|passed|failed|partial|unavailable"
+    evidence: []
+    unavailable_reasons: []
+  user:
+    status: "not_required|pending|confirmed|rejected"
+    required_checks: []
+    evidence: []
+
+completion:
+  status: "in_progress|implemented_pending_user_verification|verified|rejected"

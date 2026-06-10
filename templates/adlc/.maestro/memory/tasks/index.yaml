@@ -1,0 +1,12 @@
+schema_version: "1.0"
+role: "task-memory-index"
+tasks: []
+
+continuation:
+  token_format: "MAESTRO-CONTINUE:<task-id>:<checkpoint-id>"
+  read_order:
+    - ".maestro/work/tasks/<task-id>/task.yaml"
+    - ".maestro/memory/tasks/<task-id>/handoff.md"
+    - ".maestro/memory/tasks/<task-id>/checkpoints/<checkpoint-id>.yaml"
+    - "referenced designs and decisions"
+    - "bounded source evidence"

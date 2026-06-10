@@ -1,0 +1,115 @@
+version: 1
+component:
+  id: "{{COMPONENT_ID}}"
+  name: "{{COMPONENT_NAME}}"
+  type: "backend|frontend|worker|library|database|infrastructure|mobile|desktop|cli|data-pipeline|ml-model|analytics|embedded|docs|plugin|unknown"
+  path: "{{COMPONENT_PATH}}"          # relative path from workspace root (e.g. services/service-a)
+                                      # Resolve from .maestro/registry/components.yaml; do not assume services/.
+                                      # This is where the coder works; the component knowledge only describes it.
+  responsibilities: []
+  owners: []
+
+profile:
+  archetypes: []
+  confidence: "low|medium|high"
+  evidence: []
+  entrypoints: []
+  primary_runtime: ""
+  build_system: ""
+  deployment_surface: "server|browser|mobile-device|desktop|cli|batch|firmware|library|docs|unknown"
+  context_hints:
+    summary_files: []
+    manifests: []
+    route_or_api_files: []
+    schema_or_model_files: []
+    config_files: []
+    test_entrypoints: []
+    generated_or_vendor_roots: []
+
+stack:
+  languages: []
+  frameworks: []
+  databases: []
+  queues: []
+  package_manager: "{{PACKAGE_MANAGER}}"
+
+boundaries:
+    # allowed_write_paths_for_coder: relative path from workspace root (e.g. services/service-a/src).
+  allowed_write_paths_for_coder: []
+  shared_read_paths: []
+  forbidden_paths: []
+  public_apis: []
+  events: []
+  schemas: []
+  dependencies: []
+
+test_policy:
+  unit_tests_required: false
+  allow_new_test_files: false
+  manual_verification_required: true
+  test_commands: []
+  dev_done_threshold: 0.80
+  critical_checks: []
+
+risks: []
+known_patterns: []
+last_updated: "{{UPDATED_AT}}"
+memory_index_tags: []
+context_read_policy:
+  default_budget_files: 20
+  always_read_for_component_tasks:
+    - "profile.context_hints.summary_files"
+    - "profile.context_hints.manifests"
+    - "profile.entrypoints"
+    - "boundaries.allowed_write_paths_for_coder"
+    - "test_policy"
+  source_scan_rule: "Use concrete files from task-analysis.yaml.context_plan and profile.context_hints; never treat {{COMPONENT_PATH}} as a required full-root read."
+  prefer_before_source_scan:
+    - "profile.context_hints.manifests"
+    - "profile.entrypoints"
+    - "profile.context_hints.route_or_api_files"
+    - "profile.context_hints.schema_or_model_files"
+    - "boundaries.public_apis"
+    - "component_deep_intelligence.component_flows"
+  expand_when:
+    - "entrypoint ownership is unclear"
+    - "contract/schema/security/test policy risk is present"
+    - "requested files are outside allowed_write_paths_for_coder"
+
+# Component-level reusable knowledge populated by onboarding and memory updates.
+component_deep_intelligence:
+  status: "needs_onboarding|partial|complete"
+  reusable_assets:
+    owned_assets: []
+    consumed_shared_assets: []
+    test_helpers: []
+  coding_flow:
+    request_lifecycle: []
+    command_or_usecase_lifecycle: []
+    data_access_flow: []
+    transaction_flow: []
+    event_publish_flow: []
+    event_consume_flow: []
+    error_flow: []
+    logging_flow: []
+  conventions:
+    folder_structure: []
+    naming_rules: []
+    layering_rules: []
+    api_rules: []
+    validation_rules: []
+    error_handling_rules: []
+    test_rules: []
+  component_flows:
+    - id: ""
+      name: ""
+      trigger: ""
+      entrypoints: []
+      steps: []
+      dependencies: []
+      reusable_assets: []
+      critical_checks: []
+      evidence: []
+      confidence: "low|medium|high"
+  reuse_before_create_rules:
+    - "Check owned_assets and consumed_shared_assets before creating new helper, wrapper, mapper, validator, API client, repository, or test utility."

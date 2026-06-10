@@ -1,0 +1,86 @@
+task_id: "{{TASK_ID}}" # Format: TASK-YYYYMMDD-NNN-slug
+task_number: "{{TASK_NUMBER}}"
+slug: "{{TASK_SLUG}}"
+folder: ".maestro/work/tasks/{{TASK_ID}}"
+state: "NEW"
+execution_mode: "direct|assisted|governed"
+verification_owner: "agent|user|shared"
+run_required: false
+created_at: "{{CREATED_AT}}"
+updated_at: "{{UPDATED_AT}}"
+owner: "coordinator"
+
+methodology:
+  selected: "risk-based-routing|spec-driven-development|enterprise-agent-governance|eval-driven-ai"
+  overlays: []
+  industry_patterns: []
+  reason: ""
+  playbook: "docs/governance/methodologies/selection-matrix.md"
+  alignment: "docs/governance/methodologies/industry-alignment.md"
+
+hierarchy:
+  initiative_id: null
+  epic_id: null
+  parent_task_id: null
+  subtask_ids: []
+  run_ids: []
+
+source:
+  type: "HLD|LLD|ticket|text|bug-report|incident|other"
+  artifact: ".maestro/work/tasks/{{TASK_ID}}/task-input.md"
+
+traceability:
+  requirement_refs: []
+  design_refs: []
+  decision_refs: []
+  component_ids: []
+
+# Self-contained document bundle (R-022-13): the exact docs this task's coder works from.
+# Link by id/path — do NOT copy the doc bodies (R-022-14). Fill the entries the coder type needs (R-021).
+context_bundle:
+  requirement:                 # the user story + the SPECIFIC acceptance criteria this task implements
+    - { id: "<KEY>-US-NNN", acceptance_criteria: ["AC-NNN.1"], path: "docs/requirements/user-stories/..." }
+  design: []                   # HLD/LLD ids + paths (backend/infra) e.g. { id: "<KEY>-LLD-NNN", path: "..." }
+  api_contract: null           # path/id of the API contract this task uses
+  error_codes: []              # Error Catalog codes this task emits/handles (e.g. VALIDATION_FAILED)
+  ui_ux: []                    # frontend: screen/prototype paths under docs/experience/
+  business_rules: []           # <KEY>-BR-NNN ids that constrain this task
+  data_model: null             # backend/data: schema/LLD id or path
+  test_policy: ".maestro/knowledge/test-policy.yaml"
+  target_paths: []             # code-layout module paths this task may write (R-006 scope)
+
+artifacts:
+  task_manifest: ".maestro/work/tasks/{{TASK_ID}}/task.yaml"
+  task_updates: ".maestro/work/tasks/{{TASK_ID}}/task-updates.yaml"
+  task_analysis: ".maestro/work/tasks/{{TASK_ID}}/task-analysis.yaml"
+  architecture_review: ".maestro/work/tasks/{{TASK_ID}}/architecture-review.yaml"
+  implementation_plan: ".maestro/work/tasks/{{TASK_ID}}/implementation-plan.yaml"
+  service_assignments: ".maestro/work/tasks/{{TASK_ID}}/service-assignments.yaml"
+  coder_results: ".maestro/work/tasks/{{TASK_ID}}/coder-results.yaml"
+  dev_verification: ".maestro/work/tasks/{{TASK_ID}}/dev-verification.yaml"
+  qc_handoff: ".maestro/work/tasks/{{TASK_ID}}/qc-handoff.md"
+  qc_results: ".maestro/work/tasks/{{TASK_ID}}/qc-test-results.yaml"
+  qc_delivery_report: ".maestro/work/tasks/{{TASK_ID}}/qc-delivery-report.md"
+  bugs: ".maestro/work/tasks/{{TASK_ID}}/bugs.yaml" # task-local index; canonical details live under .maestro/work/bugs/
+  memory_updates: ".maestro/work/tasks/{{TASK_ID}}/memory-updates.yaml"
+  progress: ".maestro/work/tasks/{{TASK_ID}}/progress.yaml"
+  verification: ".maestro/work/tasks/{{TASK_ID}}/verification.yaml"
+  dependency_graph: ".maestro/work/tasks/{{TASK_ID}}/dependency-graph.yaml"
+  runs_index: ".maestro/work/runs/index.yaml"
+  continuation_handoff: ".maestro/memory/tasks/{{TASK_ID}}/handoff.md"
+  activity: ".maestro/runtime/agent-activity.yaml"
+  model_routing: ".maestro/config/model-routing.yaml"
+  response_ui: ".maestro/config/response-ui.yaml"
+
+history:
+  - at: "{{CREATED_AT}}"
+    by: "coordinator"
+    from: null
+    to: "NEW"
+    note: "Task created"
+
+update_policy:
+  append_updates_to: ".maestro/work/tasks/{{TASK_ID}}/task-updates.yaml"
+  do_not_create_external_qc_mirror: true
+  consolidate_coder_outputs_in: ".maestro/work/tasks/{{TASK_ID}}/coder-results.yaml"
+  append_workspace_events_to: ".maestro/history/events.jsonl"

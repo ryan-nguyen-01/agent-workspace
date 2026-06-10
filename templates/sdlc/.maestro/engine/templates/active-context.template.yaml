@@ -1,0 +1,8 @@
+schema_version: "1.0"
+active_task_id: null
+active_subtask_id: null
+active_session_id: null
+execution_mode: "assisted"
+verification_owner: "shared"
+checkpoint_id: null
+updated_at: null

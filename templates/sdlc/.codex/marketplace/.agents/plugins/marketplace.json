@@ -1,0 +1,13 @@
+{
+  "name": "maestro",
+  "plugins": [
+    {
+      "name": "maestro",
+      "source": {
+        "source": "local",
+        "path": "./plugins/maestro"
+      },
+      "category": "Developer Tools"
+    }
+  ]
+}

@@ -1,0 +1,33 @@
+schema_version: "1.0"
+id: "{{PROJECT_KEY}}-AGENT-EVAL-{{AGENT_ID}}"
+agent_id: "{{AGENT_ID}}"
+status: "draft|active|retired"
+owner: "{{OWNER}}"
+created_at: "{{CREATED_AT}}"
+updated_at: "{{UPDATED_AT}}"
+
+mission_ref: ""
+behavior_contract_ref: ""
+autonomy_policy_ref: ""
+
+thresholds:
+  golden_min_pass_rate: null
+  adversarial_min_pass_rate: null
+  regression_required: true
+  drift_alert_threshold: null
+
+evals:
+  golden: []
+  adversarial: []
+  regression: []
+  drift: []
+
+evidence:
+  latest_run: null
+  reports: []
+  known_gaps: []
+
+release_gate:
+  status: "blocked|ready|approved"
+  approved_by: null
+  approved_at: null

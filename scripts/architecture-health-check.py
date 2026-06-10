@@ -34,7 +34,7 @@ EXPECTED_COUNTS = {
     "skills": 231,
     "rules": 23,
     "templates": 59,
-    "commands": 20,
+    "commands": 19,
 }
 
 # Framework-owned agents: 12 workflow + 19 specialist advisors + 3 built-in coders.
@@ -271,7 +271,7 @@ def check_entrypoints(findings: list[dict[str, str]]) -> None:
 
 def iter_scan_files() -> list[Path]:
     suffixes = {".md", ".mdc", ".yaml", ".yml", ".json", ".toml", ".py", ".sh"}
-    ignored_dirs = {".git", "services", "__pycache__", "node_modules"}
+    ignored_dirs = {".git", "services", "__pycache__", "node_modules", "templates"}
     files: list[Path] = []
     for path in ROOT.rglob("*"):
         if any(part in ignored_dirs for part in path.parts):
@@ -924,7 +924,7 @@ def check_skill_taxonomy(findings: list[dict[str, str]]) -> None:
 
 # Commands excluded from the Codex prompt surface (Claude-plugin-specific). Keep in sync with
 # scripts/build-codex-prompts.py EXCLUDE.
-CODEX_PROMPT_EXCLUDE = {"maestro-init", "access"}
+CODEX_PROMPT_EXCLUDE = {"access"}
 
 
 def check_codex_plugin(findings: list[dict[str, str]]) -> None:

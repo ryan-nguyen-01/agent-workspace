@@ -1,0 +1,22 @@
+version: 1
+default_policy:
+  unit_tests_required: false
+  allow_new_test_files: false
+  manual_verification_required: true
+  dev_done_threshold: 0.80
+  rule: "Do not create test files unless onboarding detects project/component convention requiring them or user approves."
+  manual_verification_methods:
+    # Ordered by preference. Use the most appropriate method for the change.
+    - method: curl
+      description: "HTTP endpoint changed or added — run curl/http client, record command + response"
+    - method: ui_smoke
+      description: "Frontend feature changed — record step-by-step or screenshot path"
+    - method: log_inspection
+      description: "Background job / worker / CLI — run it, record log output"
+    - method: build
+      description: "Build-only or config-only change — record zero-error build output"
+    - method: unit_test_run
+      description: "Test files exist — run test suite, record pass/fail count"
+    - method: integration_test
+      description: "Cross-service interaction — record request/response trace"
+services: []

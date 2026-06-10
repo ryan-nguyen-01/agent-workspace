@@ -1,7 +1,8 @@
 name: maestro-adlc
 display_name: "Maestro ADLC"
-output: "../maestro-adlc"
+output: "templates/adlc"
 purpose: "AI development lifecycle: building AI products and agents (LLM features, RAG, agentic apps) with eval-driven quality gates."
+structure: [component-roots, inputs, docs-delivery, docs-experience, docs-operations, design-decision, observability, work-program]
 methodology_default: "eval-driven-ai"
 
 skills:

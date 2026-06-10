@@ -1,40 +1,60 @@
-# Variant Bundles
+# Variant Templates
 
-This folder defines the **purpose-specific template bundles** generated from the maestro platform.
-Each bundle is a standalone framework folder (own `CLAUDE.md`, `.claude/`, `.maestro/`) with a tighter
-behavior profile, a default methodology, and a purpose-fit skill subset — so opening a harness inside
-a bundle gives a focused context instead of one mega-config serving every purpose.
+Maestro ships **purpose-specific templates** in [`templates/`](../templates/). Each template is a
+self-contained framework folder (own `CLAUDE.md`, `.claude/`, `.codex/`, `.maestro/`) with a strict
+behavior profile, a default methodology, a purpose-fit skill subset, and a **right-sized folder
+structure** — no enterprise scaffolding in a small-tool template, no greenfield scaffolding in a
+maintenance template.
 
-## Bundles
+## Templates
 
-| Manifest | Output | Purpose | Methodology default | Skills |
-|----------|--------|---------|---------------------|--------|
-| `sdlc.yaml` | `../maestro-sdlc` | Classic software delivery (web/mobile/API), full BA → design → UI/UX → code → QC | spec-driven-development | all |
-| `adlc.yaml` | `../maestro-adlc` | AI development lifecycle: AI products/agents with an eval gate | eval-driven-ai | workflow + data-ai + backend + database + testing + meta + patches |
-| `enterprise.yaml` | `../maestro-enterprise` | Agentic Enterprise: governance, compliance, audit, production agents | enterprise-agent-governance | + security + devops-cloud |
-| `lite.yaml` | `../maestro-lite` | Small tools/prototypes: direct mode, mini-brief instead of full blueprint | risk-based-routing | minimal (~39) |
-| `brownfield.yaml` | `../maestro-brownfield` | EXISTING project maintenance: onboard deeply, execute tasks precisely, **ask-don't-infer** | risk-based-routing | all (stack unknown upfront) |
+| Template | Purpose | Methodology | Skills | Structure |
+|----------|---------|-------------|--------|-----------|
+| `templates/sdlc` | Classic software delivery (web/mobile/API): BA → design → UI/UX → code → QC | spec-driven-development | 231 | full delivery scaffolding (no enterprise governance) |
+| `templates/adlc` | AI products/agents with an eval gate before done | eval-driven-ai | 132 | delivery + observability/evals (no enterprise governance) |
+| `templates/enterprise` | Agentic Enterprise: governance, compliance, audit, production agents | enterprise-agent-governance | 166 | full, including governance + audit + enterprise docs |
+| `templates/lite` | Small tools/prototypes: direct mode, mini-brief instead of full blueprint | risk-based-routing | 39 | minimal core (no scaffolding) |
+| `templates/brownfield` | EXISTING project maintenance: onboard deeply, execute precisely, **ask-don't-infer** | risk-based-routing | 231 | minimal core — never stamps structure onto an existing repo |
 
-## Build
+## How to use a template
 
 ```bash
-python3 scripts/build-variant.py sdlc      # one bundle
-python3 scripts/build-variant.py --all     # all bundles
+# Option A — start a project FROM a template (greenfield):
+cp -R maestro/templates/sdlc my-app && cd my-app && claude     # or codex
+
+# Option B — apply a template INTO an existing project (brownfield):
+cd my-existing-app
+cp -R /path/to/maestro/templates/brownfield/.maestro .
+cp -R /path/to/maestro/templates/brownfield/.claude .          # skip if you keep your own .claude
+cp    /path/to/maestro/templates/brownfield/CLAUDE.md .        # if you already have CLAUDE.md, instead
+                                                               # add one line to it: @.maestro/INSTRUCTIONS.md
+claude   # then: /onboard
 ```
 
-The build copies the platform, prunes skills to the manifest's category/include/exclude selection,
-prunes the skill registry to match, patches identity (project.yaml), default methodology, and the
-variant profile into `CLAUDE.md`, regenerates derived artifacts (skill taxonomy/catalog, plugin
-wrappers, codex plugin + prompts), patches health-check counts, and runs the bundle's
-`architecture-health-check.py --strict`.
+The AI identity and the variant's strict behavior contract live in both `CLAUDE.md` and
+`.maestro/INSTRUCTIONS.md`, so either entry path loads them. Ask "who are you" — it must answer as
+that Maestro variant operating your project.
+
+## Build (regenerating templates)
+
+```bash
+python3 scripts/build-variant.py sdlc      # one template
+python3 scripts/build-variant.py --all     # all templates
+```
+
+The build copies the platform, prunes skills (manifest `skills:` categories/include/exclude) and the
+skill registry, prunes **structure groups** (manifest `structure:`; see `STRUCTURE_GROUPS` in
+`scripts/build-variant.py`), patches identity/methodology/health-check, injects the variant profile
+into `CLAUDE.md` + `.maestro/INSTRUCTIONS.md`, regenerates derived artifacts, and runs the template's
+own `architecture-health-check.py --strict`.
 
 ## Rules
 
 ```text
-- Bundles are GENERATED. Never edit a bundle by hand — change the platform or the manifest, rebuild.
-- Engine changes happen once in the platform; rebuild propagates them to every bundle (no drift).
-- A bundle is self-contained: open the harness in its folder, or run its scripts/maestro-init.py to
-  install that variant into a project.
-- The manifest's `profile:` block is inserted near the top of the bundle's CLAUDE.md — it is the
-  behavioral identity of the variant (e.g. brownfield's ask-don't-infer contract).
+- Templates are GENERATED (VARIANT.yaml marker). Never edit one by hand — change the platform or the
+  manifest in variants/<name>.yaml, then rebuild. Engine changes propagate by rebuild (no drift).
+- The platform root keeps the FULL structure; each template carries only the structure groups its
+  manifest selects (right-sized: lite/brownfield = core only).
+- The manifest's profile: block is the variant's behavioral identity (e.g. brownfield ask-don't-infer);
+  it is enforced via CLAUDE.md + INSTRUCTIONS.md in the template.
 ```
