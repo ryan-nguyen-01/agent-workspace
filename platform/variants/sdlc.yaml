@@ -1,6 +1,6 @@
 name: maestro-sdlc
 display_name: "Maestro SDLC"
-output: "templates/sdlc"
+output: "../templates/sdlc"
 purpose: "Classic software delivery: web, mobile, API products built greenfield through the full BA -> design -> UI/UX -> code -> QC pipeline."
 structure: [component-roots, inputs, docs-delivery, docs-experience, docs-operations, design-decision, observability, work-program]
 methodology_default: "spec-driven-development"

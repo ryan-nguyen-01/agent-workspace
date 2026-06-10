@@ -31,13 +31,14 @@ The root name stays stable as `maestro`. The actual product identity and namespa
 | Entry point for Codex | [.codex/AGENTS.md](.codex/AGENTS.md) |
 
 
-## Variant bundles
+## Templates (choose by purpose)
 
-The platform generates **purpose-specific template bundles** (own `CLAUDE.md` + `.claude/` + skill
-subset each) as sibling folders: `maestro-sdlc` (software delivery), `maestro-adlc` (AI development
-lifecycle, eval-driven), `maestro-enterprise` (agentic governance), `maestro-lite` (small/fast), and
-`maestro-brownfield` (existing-project maintenance, ask-don't-infer). See [variants/README.md](variants/README.md);
-build with `python3 scripts/build-variant.py --all`.
+Maestro contains **purpose-specific templates** in [`templates/`](templates/), each self-contained
+(own `CLAUDE.md` + `.claude/` + `.maestro/` + skill subset + right-sized folder structure):
+`sdlc` (software delivery) · `adlc` (AI products, eval-driven) · `enterprise` (agentic governance) ·
+`lite` (small/fast) · `brownfield` (existing-project maintenance, ask-don't-infer).
+Start a project by copying a template, or apply one into an existing repo — see
+[variants/README.md](variants/README.md). Rebuild with `python3 scripts/build-variant.py --all`.
 | Workflow source of truth | [.maestro/engine/workflow.md](.maestro/engine/workflow.md) |
 | Agent taxonomy | [.maestro/engine/docs/agent-taxonomy.md](.maestro/engine/docs/agent-taxonomy.md) |
 

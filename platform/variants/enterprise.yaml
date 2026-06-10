@@ -1,6 +1,6 @@
 name: maestro-enterprise
 display_name: "Maestro Enterprise"
-output: "templates/enterprise"
+output: "../templates/enterprise"
 purpose: "Agentic Enterprise: governed delivery and production agent operation with compliance, audit, and accountability."
 structure: full
 methodology_default: "enterprise-agent-governance"

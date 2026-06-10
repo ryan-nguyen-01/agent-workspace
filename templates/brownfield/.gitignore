@@ -7,12 +7,6 @@
 # Codex plugin: skills copied from .claude/skills by scripts/build-codex-plugin.py (single source = .claude/skills)
 .codex/marketplace/plugins/maestro/skills/
 
-# Generated templates: local-only state + codex skill copies inside each template
-templates/*/.maestro/runtime/*
-!templates/*/.maestro/runtime/README.md
-templates/*/.maestro/memory/sessions/*
-!templates/*/.maestro/memory/sessions/README.md
-templates/*/.codex/marketplace/plugins/*/skills/
 
 # macOS
 .DS_Store
