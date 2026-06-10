@@ -29,7 +29,7 @@ def COPY_IGNORE(dir_: str, names: list[str]) -> set[str]:
     ignored = {n for n in names if n in {".git", "__pycache__", ".DS_Store"} or n.endswith(".pyc")}
     d = Path(dir_)
     if d == ROOT:
-        ignored |= {n for n in names if n in {"templates", "variants"}}
+        ignored |= {n for n in names if n == "variants" or n.startswith("maestro-")}
     if d == ROOT / "scripts":
         ignored |= {n for n in names if n == "build-variant.py"}
     return ignored

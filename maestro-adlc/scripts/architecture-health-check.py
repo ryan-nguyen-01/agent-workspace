@@ -31,7 +31,7 @@ REPORT_MD = RUNTIME / "reports" / "architecture-health-report.md"
 
 EXPECTED_COUNTS = {
     "agents": 34,
-    "skills": 231,
+    "skills": 132,
     "rules": 23,
     "templates": 59,
     "commands": 19,
@@ -112,7 +112,6 @@ REQUIRED_PATHS = [
     ".maestro/methodology.yaml",
     ".maestro/manifest.yaml",
     ".maestro/observability/index.yaml",
-    ".maestro/governance/index.yaml",
     ".maestro/registry/components.yaml",
     ".maestro/registry/skills.yaml",
     ".maestro/registry/artifacts.yaml",

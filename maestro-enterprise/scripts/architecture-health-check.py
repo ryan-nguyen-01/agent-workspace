@@ -31,7 +31,7 @@ REPORT_MD = RUNTIME / "reports" / "architecture-health-report.md"
 
 EXPECTED_COUNTS = {
     "agents": 34,
-    "skills": 231,
+    "skills": 166,
     "rules": 23,
     "templates": 59,
     "commands": 19,

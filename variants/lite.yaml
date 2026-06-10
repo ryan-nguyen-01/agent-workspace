@@ -1,8 +1,8 @@
 name: maestro-lite
 display_name: "Maestro Lite"
-output: "templates/lite"
+output: "maestro-lite"
 purpose: "Lightweight bundle for small tools, scripts, and prototypes: fast, minimal ceremony, still safe."
-structure: []
+structure: [component-roots]
 methodology_default: "risk-based-routing"
 
 skills:

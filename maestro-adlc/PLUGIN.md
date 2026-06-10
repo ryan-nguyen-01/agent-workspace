@@ -48,7 +48,8 @@ python3 scripts/build-plugin.py --check   # CI/drift: fail if wrapper is out of 
 
 ## Scope & limits
 
-The plugin ships the Claude tool layer only. For the full workflow, copy one of the root `maestro-*` template folders (see `variants/README.md`):
+The plugin ships the Claude tool layer only. For the full workflow, copy a template from
+`templates/` (see `variants/README.md`):
 
 - ✅ Use maestro's agents, skills, commands, and hooks inside any Claude Code project.
 - ✅ Applying a template preserves existing `CLAUDE.md`, `AGENTS.md`, `.claude/`, and source roots

@@ -1,0 +1,10 @@
+name: maestro-lite
+display_name: "Maestro Lite"
+purpose: "Lightweight bundle for small tools, scripts, and prototypes: fast, minimal ceremony, still safe."
+methodology_default: risk-based-routing
+skills: 39
+structure: ['component-roots']
+pruned_groups: ['design-decision', 'docs-delivery', 'docs-enterprise', 'docs-experience', 'docs-operations', 'governance', 'inputs', 'observability', 'work-program']
+generated_at: "2026-06-10T15:32:18.885040+00:00"
+source: maestro platform (variants/lite.yaml)
+note: GENERATED bundle - do not edit by hand; rebuild with scripts/build-variant.py

@@ -112,7 +112,6 @@ REQUIRED_PATHS = [
     ".maestro/methodology.yaml",
     ".maestro/manifest.yaml",
     ".maestro/observability/index.yaml",
-    ".maestro/governance/index.yaml",
     ".maestro/registry/components.yaml",
     ".maestro/registry/skills.yaml",
     ".maestro/registry/artifacts.yaml",
