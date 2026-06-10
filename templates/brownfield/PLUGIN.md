@@ -48,10 +48,10 @@ python3 scripts/build-plugin.py --check   # CI/drift: fail if wrapper is out of 
 
 ## Scope & limits
 
-The plugin ships the Claude tool layer only. For the full workflow, copy a template from
-`templates/` (see `variants/README.md`):
+by copying framework-owned `.maestro/engine/` files, creating project-owned workspace domains, seeding
+ignored local runtime, and appending one managed import block:
 
 - ✅ Use maestro's agents, skills, commands, and hooks inside any Claude Code project.
-- ✅ Applying a template preserves existing `CLAUDE.md`, `AGENTS.md`, `.claude/`, and source roots
-  (copy `.maestro/` + add one `@.maestro/INSTRUCTIONS.md` line when you keep your own files).
-- ⚠️ Codex is served by its own adapter entrypoints in the repo, not by this Claude plugin.
+- ✅ Existing `CLAUDE.md`, `AGENTS.md`, `.claude/`, and source roots are preserved.
+- ⚠️ Codex is served by its own adapter entrypoints in the
+  repo, not by this Claude plugin.

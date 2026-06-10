@@ -5,6 +5,6 @@ methodology_default: risk-based-routing
 skills: 39
 structure: []
 pruned_groups: ['component-roots', 'design-decision', 'docs-delivery', 'docs-enterprise', 'docs-experience', 'docs-operations', 'governance', 'inputs', 'observability', 'work-program']
-generated_at: "2026-06-10T15:17:22.014762+00:00"
+generated_at: "2026-06-10T15:03:16.559054+00:00"
 source: maestro platform (variants/lite.yaml)
 note: GENERATED bundle - do not edit by hand; rebuild with scripts/build-variant.py
