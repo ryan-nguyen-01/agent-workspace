@@ -165,30 +165,6 @@ ENTRYPOINT_REQUIREMENTS = {
         ".maestro/config/response-ui.yaml",
         "scripts/status-dashboard.py",
     ],
-    ".cursor/rules/maestro.mdc": [
-        ".maestro/config/model-routing.yaml",
-        ".maestro/runtime/agent-activity.yaml",
-        ".maestro/config/response-ui.yaml",
-        "scripts/status-dashboard.py",
-    ],
-    ".github/copilot-instructions.md": [
-        ".maestro/config/model-routing.yaml",
-        ".maestro/runtime/agent-activity.yaml",
-        ".maestro/config/response-ui.yaml",
-        "scripts/status-dashboard.py",
-    ],
-    ".gemini/GEMINI.md": [
-        ".maestro/config/model-routing.yaml",
-        ".maestro/runtime/agent-activity.yaml",
-        ".maestro/config/response-ui.yaml",
-        "scripts/status-dashboard.py",
-    ],
-    ".kiro/steering/maestro.md": [
-        ".maestro/config/model-routing.yaml",
-        ".maestro/runtime/agent-activity.yaml",
-        ".maestro/config/response-ui.yaml",
-        "scripts/status-dashboard.py",
-    ],
 }
 
 STALE_TEXT_PATTERNS = [
@@ -794,21 +770,6 @@ def check_agent_activity(findings: list[dict[str, str]]) -> None:
             add(findings, "error", "activity-secret-risk", "agent-activity.yaml appears to contain secret-like text", "agent-activity.yaml")
 
 
-def check_cursor_hooks(findings: list[dict[str, str]]) -> None:
-    hooks_path = ROOT / ".cursor" / "hooks.json"
-    try:
-        hooks = json.loads(hooks_path.read_text(encoding="utf-8"))
-    except Exception as exc:  # noqa: BLE001
-        add(findings, "error", "cursor-hooks-invalid", f"Cannot parse .cursor/hooks.json: {exc}", ".cursor/hooks.json")
-        return
-    hooks_map = hooks.get("hooks", {})
-    pre = hooks_map.get("preToolUse", []) if isinstance(hooks_map, dict) else []
-    before_shell = hooks_map.get("beforeShellExecution", []) if isinstance(hooks_map, dict) else []
-    if not any(item.get("command") == "./.cursor/hooks/check-task-analysis.sh" and item.get("failClosed") is True for item in pre if isinstance(item, dict)):
-        add(findings, "error", "cursor-source-hook-missing", "Cursor preToolUse source gate must fail closed", ".cursor/hooks.json")
-    if not any(item.get("command") == "./.cursor/hooks/block-destructive.sh" and item.get("failClosed") is True for item in before_shell if isinstance(item, dict)):
-        add(findings, "error", "cursor-shell-hook-missing", "Cursor destructive command gate must fail closed", ".cursor/hooks.json")
-
 
 def check_specialists(findings: list[dict[str, str]]) -> None:
     spec_dir = ROOT / ".claude" / "agents" / "specialists"
@@ -1080,7 +1041,6 @@ def run_checks() -> dict[str, Any]:
     check_bug_artifact_integrity(findings)
     check_feedback_loop_contract(findings)
     check_agent_activity(findings)
-    check_cursor_hooks(findings)
     check_specialists(findings)
     check_claude_hooks(findings)
     check_skill_taxonomy(findings)

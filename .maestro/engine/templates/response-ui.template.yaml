@@ -3,7 +3,7 @@ generated_at: "{{GENERATED_AT}}"
 generated_by: "maestro"
 status: "active"
 
-purpose: "Tool-agnostic response presentation contract for Claude, Codex, Cursor, Gemini, and GitHub Copilot."
+purpose: "Tool-agnostic response presentation contract for Claude and Codex."
 
 source_of_truth: ".maestro/config/response-ui.yaml"
 rule_file: ".maestro/engine/rules/15-model-routing-observability-rules.md"
@@ -82,15 +82,6 @@ tool_overrides:
   codex:
     instruction_file: ".codex/AGENTS.md"
     support_level: "strong"
-  cursor:
-    instruction_file: ".cursor/rules/maestro.mdc"
-    support_level: "strong-with-hooks"
-  copilot:
-    instruction_file: ".github/copilot-instructions.md"
-    support_level: "best-effort"
-  gemini:
-    instruction_file: ".gemini/GEMINI.md"
-    support_level: "best-effort"
 
 customization:
   safe_to_edit:

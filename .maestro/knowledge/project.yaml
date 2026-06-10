@@ -31,8 +31,6 @@ project_profile:
       - ".maestro/engine"
       - ".claude"
       - ".codex"
-      - ".cursor"
-      - ".gemini"
       - ".github"
     infra_roots: []
     data_roots: []

@@ -14,7 +14,7 @@
 
 ## Requirements
 
-- An AI coding tool that can read instruction files: Claude Code, Codex, Cursor, Gemini, GitHub Copilot, Aider, Continue, Cody, or an equivalent tool.
+- An AI coding tool that can read instruction files: Claude Code or Codex.
 - Git.
 - Python 3 for validation and local helper scripts.
 
@@ -31,9 +31,6 @@ maestro/
 ├── .maestro/                           Product-development control plane
 ├── .claude/                       Claude adapter: agents, skills, commands, hooks
 ├── .codex/                        Codex instructions and generated prompts
-├── .cursor/                       Cursor rules and hooks
-├── .gemini/                       Gemini instructions
-├── .kiro/                         Kiro adapter: steering, specs, hooks, settings
 ├── docs/                          Official product documentation
 ├── apps/                          Product applications
 ├── services/                      Deployable services
@@ -218,26 +215,9 @@ Notes:
 - The Codex plugin ships skills only. The full workflow still needs `.maestro/`, routing, and workspace
   documents.
 
-### Cursor
-
-Cursor discovers:
-
-- `.cursor/rules/*.mdc`: glob-targeted rule files.
-- `.cursor/hooks.json`: lifecycle hooks for edit and shell-command gates.
-
-Hook scripts use `bash` plus portable `grep`/`sed`. `jq` is optional; if present, scripts use it for
-more robust JSON parsing.
-
-Cursor hooks run only in Cursor IDE. Claude Code, Codex, Gemini, and Copilot do not respect
-`.cursor/hooks.json`; those tools enforce workflow through their entrypoint documents.
-
 ### Gemini Code Assist
 
 `.gemini/GEMINI.md` is read automatically. No additional setup is required.
-
-### GitHub Copilot
-
-`.github/copilot-instructions.md` is read automatically by Copilot Chat. No additional setup is required.
 
 ## Upgrade
 

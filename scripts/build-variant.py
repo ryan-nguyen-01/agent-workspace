@@ -186,6 +186,15 @@ def build(manifest_path: Path) -> None:
             break
     claude.write_text("".join(lines), encoding="utf-8")
 
+    # .maestro/INSTRUCTIONS.md: same banner + profile, so projects installed via maestro-init
+    # inherit the variant behavior + identity (INSTRUCTIONS.md is what the managed import loads).
+    instr = out / ".maestro" / "INSTRUCTIONS.md"
+    itext = instr.read_text(encoding="utf-8")
+    marker = "Read in this order:"
+    if marker in itext:
+        itext = itext.replace(marker, banner.lstrip("\n") + "\n" + marker, 1)
+        instr.write_text(itext, encoding="utf-8")
+
     # counts in docs + health-check
     tech = n_skills - 12
     for doc in ("CLAUDE.md", "AGENTS.md", "README.md", "GUIDELINES.md"):

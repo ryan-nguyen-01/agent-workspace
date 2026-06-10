@@ -107,8 +107,6 @@ forbidden_paths:
   - ".claude/**"
   - ".maestro/**"
   - ".codex/**"
-  - ".cursor/**"
-  - ".gemini/**"
   - "inputs/**"
 
 requires_leader_approval:

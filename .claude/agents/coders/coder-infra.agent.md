@@ -100,9 +100,6 @@ forbidden_paths:
   - ".maestro/engine/**"
   - ".maestro/**"
   - ".codex/**"
-  - ".cursor/**"
-  - ".gemini/**"
-  - ".github/copilot-instructions.md"
   - "inputs/**"
 
 requires_leader_approval:

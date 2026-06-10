@@ -6,11 +6,10 @@ The tool-adapter hook layer that turns prompt-level rules into hard guardrails. 
 implementations must stay in sync:
 
 ```text
-Cursor       : .cursor/hooks.json + .cursor/hooks/*.sh
 Claude Code  : .claude/settings.json (hooks.PreToolUse) + scripts/hooks/*.py
 ```
 
-Other adapters (Codex, Copilot, Gemini) rely on the prompt-level rules until they ship a hook runtime.
+Codex relies on the prompt-level rules until it ships a hook runtime.
 
 ## Core principle
 
@@ -38,9 +37,9 @@ R-017-07: Execution profiles are controlled by env, not by editing hook code:
           minimal disables scope-guard + secret-guard (destructive-guard stays on).
           strict additionally blocks generic secret-style assignments.
 R-017-08: Disabling scope-guard or destructive-guard in a real workspace is a user-approved exception; record it where the approval lives, do not silently ship minimal as default.
-R-017-09: Claude and Cursor hooks must enforce equivalent semantics. Changing one adapter's gate requires updating the other (and the architecture-health-check checks for both).
+R-017-09: The Claude hooks are the deterministic enforcement layer; keep their semantics in sync with the prompt-level rules in the entrypoint docs.
 R-017-10: Hooks must never weaken approval gates (R-011) or security rules (R-013); they only ADD enforcement. A passing hook is necessary, not sufficient — agents still follow the full rule set.
-R-017-11: Hook changes must keep scripts/architecture-health-check.py green (check_claude_hooks + check_cursor_hooks).
+R-017-11: Hook changes must keep scripts/architecture-health-check.py green (check_claude_hooks).
 R-017-12: A hook must be safe to fail-open on internal/parse errors of its OWN payload (exit non-2), but must fail-closed on the policy conditions in R-017-03/04. Never let a malformed payload bypass a known-destructive command match.
 ```
 
@@ -55,7 +54,6 @@ strict   : standard + secret-guard also blocks generic password/secret/token ass
 ## Parity matrix
 
 ```text
-Concern                  Cursor                              Claude Code
 source-edit scope gate   .cursor/hooks/check-task-analysis.sh scripts/hooks/scope-guard.py
 secret write block       (covered in check-task-analysis)    scripts/hooks/secret-guard.py
 destructive command      .cursor/hooks/block-destructive.sh  scripts/hooks/destructive-guard.py

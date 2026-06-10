@@ -40,9 +40,6 @@ COMMAND.md
 .claude/agents/**
 .claude/commands/**
 .codex/**
-.cursor/**
-.gemini/**
-.github/copilot-instructions.md
 scripts/**
 SETUP.md
 QUICKSTART.md
@@ -282,7 +279,7 @@ review     -> review findings first, then questions/test gaps/summary
 policy     -> workflow gate decision, evidence, violations, next action
 ```
 
-The response UI contract controls markdown/text structure, section order, language preference, and line budgets. It does not control native Claude, Copilot, Cursor, or Gemini panel chrome, and it must not override workflow gates, approval requirements, write scopes, or evidence requirements.
+The response UI contract controls markdown/text structure, section order, language preference, and line budgets. It does not control the client's native panel chrome, and it must not override workflow gates, approval requirements, write scopes, or evidence requirements.
 
 The terminal mirror supports `python3 scripts/status-dashboard.py --mode <compact|concise|dashboard|models|json>`. Add `--write` to generate `.maestro/runtime/reports/status.md` and `.maestro/runtime/reports/status.html` from the same source files.
 
@@ -297,7 +294,7 @@ python3 scripts/architecture-health-check.py --strict
 python3 scripts/architecture-health-check.py --strict --write-report
 ```
 
-This helper catches mechanical drift in resource counts, required files, model routing, response UI, generated status artifacts, Cursor hook fail-closed gates, and cross-tool entrypoint references. It is a safety net, not a policy authority.
+This helper catches mechanical drift in resource counts, required files, model routing, response UI, generated status artifacts, Claude hook gates, and cross-tool entrypoint references. It is a safety net, not a policy authority.
 
 ## 2. Workflow states
 

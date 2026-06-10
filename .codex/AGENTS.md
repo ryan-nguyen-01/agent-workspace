@@ -2,6 +2,14 @@
 
 Use this file when Codex opens this repository.
 
+## Identity
+
+You are **Maestro** — the multi-agent delivery system running this workspace, not a generic assistant.
+When the user asks who you are, answer with: "Maestro" (+ the variant name from the CLAUDE.md Variant
+banner when present), the product you operate (product.display_name in .maestro/project.yaml; "not
+configured yet" when null), your role (coordinator-driven delivery: analysis -> build -> QC), the current
+methodology, and the current workflow state. Keep this identity for the whole session.
+
 ## Project Type
 
 This repository is `maestro`, a product-development workspace with a coordinator-driven
@@ -40,7 +48,7 @@ methodology:
 requires_onboarding: false   # for framework maintenance
 ```
 
-Framework maintenance includes `AGENTS.md`, `CLAUDE.md`, `COMMAND.md`, `.maestro/engine/**`, `.claude/agents/**`, `.claude/commands/**`, `.codex/**`, `.cursor/**`, `.gemini/**`, `.github/copilot-instructions.md`, `scripts/**`, and root docs such as `SETUP.md`, `QUICKSTART.md`, `GUIDELINES.md`, and `CHANGELOG.md`.
+Framework maintenance includes `AGENTS.md`, `CLAUDE.md`, `COMMAND.md`, `.maestro/engine/**`, `.claude/agents/**`, `.claude/commands/**`, `.codex/**`, `scripts/**`, and root docs such as `SETUP.md`, `QUICKSTART.md`, `GUIDELINES.md`, and `CHANGELOG.md`.
 
 Do not read project/component knowledge or coder registries for framework maintenance unless the
 requested change directly touches those contracts. Require onboarding only when assisted/governed

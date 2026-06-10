@@ -1,6 +1,6 @@
 # `.maestro/engine` Workflow Source
 
-This folder is the tool-neutral source layer for `maestro`. It contains the workflow spec, rules, templates, and documentation shared by Claude, Codex, Cursor, Gemini, Copilot, and other coding agents.
+This folder is the tool-neutral source layer for `maestro`. It contains the workflow spec, rules, templates, and documentation shared by Claude, Codex, and compatible coding agents.
 
 Project state does not live here. Shared knowledge, registries, work, and local runtime each have
 their own `.maestro/` domain.

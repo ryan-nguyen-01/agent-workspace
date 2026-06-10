@@ -19,12 +19,12 @@ R-015-09: Activity records must not include secrets, raw prompts, raw cookies, p
 R-015-10: Long-running phases should update `agent-activity.yaml` when the current action changes, when the phase blocks, and when the phase completes.
 R-015-11: Coordinator is responsible for initializing activity records at phase start and closing them at phase end. A delegated agent may update its own heartbeat when the adapter supports it.
 R-015-12: Model escalation is allowed when a configured trigger fires (for example architecture conflict, security risk, state dispute, destructive operation, or cross-service contract ambiguity). Record the escalation reason.
-R-015-13: `.maestro/config/response-ui.yaml` is the source of truth for text response layout modes across Claude, Codex, Cursor, Gemini, and GitHub Copilot.
+R-015-13: `.maestro/config/response-ui.yaml` is the source of truth for text response layout modes across Claude and Codex.
 R-015-14: Tool entrypoints must reference response-ui when they define answer format, status layout, or completion/report structure.
 R-015-15: User-requested output format overrides response-ui for the current response unless it would hide required evidence, safety warnings, or policy decisions.
 R-015-16: Response UI modes may change presentation order and verbosity, but must not change workflow gates, approval requirements, model routing, write scopes, or evidence requirements.
-R-015-17: Native chat UI chrome is client-owned. The framework controls markdown/text structure and terminal/dashboard artifacts, not Claude/Copilot/Cursor native panel layout.
-R-015-18: Copilot/Gemini support for response-ui is best-effort; do not claim hard UI enforcement where the tool exposes no hook or plugin surface.
+R-015-17: Native chat UI chrome is client-owned. The framework controls markdown/text structure and terminal/dashboard artifacts, not the client's native panel layout.
+R-015-18: Do not claim hard UI enforcement where a tool exposes no hook or plugin surface.
 R-015-19: Generated status artifacts (`.maestro/runtime/reports/status.md`, `.maestro/runtime/reports/status.html`) must be derived from model-routing, agent-activity, response-ui, and workflow state. They must not include secrets, raw prompts, raw cookies, credentials, private keys, or long logs.
 R-015-20: Tool adapters may use `scripts/agent-activity.py` to update activity telemetry at phase start, heartbeat, block, and completion. Values written by this helper are still governed by R-015-08 and R-015-09.
 R-015-21: `scripts/architecture-health-check.py` is an optional deterministic drift checker for CI/local maintenance. It does not replace the agent-native `/policy-check` contract and must not become a required runtime dependency for workflow-policy.

@@ -154,7 +154,7 @@ Coordinator also owns response-mode selection:
 1. Read `.maestro/config/response-ui.yaml`.
 2. Use compact for short status, dashboard for /status, dev for implementation completion, review for reviews, and policy for gate decisions.
 3. Honor a user-requested output format unless it hides required evidence or safety warnings.
-4. Do not claim native Claude/Copilot panel customization; response-ui controls markdown/text structure and terminal artifacts only.
+4. Do not claim native client panel customization; response-ui controls markdown/text structure and terminal artifacts only.
 ```
 
 ## DEV_BLOCKED recovery

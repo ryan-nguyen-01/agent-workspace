@@ -30,7 +30,7 @@ If a rule conflicts with workflow.md, workflow.md defines the state machine and 
 14-skill-composition-rules.md    Skill composition and multi-skill agents
 15-model-routing-observability-rules.md  Model profiles, activity dashboard, response UI
 16-specialist-advisory-rules.md  Specialist advisors: advisor-only contract, advisory artifacts, invocation
-17-hook-enforcement-rules.md     Tool-adapter hooks: scope/secret/destructive guards, profiles, Cursor/Claude parity
+17-hook-enforcement-rules.md     Tool-adapter hooks: scope/secret/destructive guards, profiles
 18-doc-precedence-rules.md       Document tier model (T0–T3): one source per decision, higher tier wins
 19-autonomous-delivery-rules.md  Autopilot: one-time grant, soft-gate auto-approve, self-heal loop, hard-stops, done = finished product
 20-git-workflow-rules.md         Git-flow: branch per task, milestone commits, outward git gated, autopilot local-only

@@ -56,5 +56,5 @@ ignored local runtime, and appending one managed import block:
 - ✅ Use maestro's agents, skills, commands, and hooks inside any Claude Code project.
 - ✅ Run `/maestro-init` for the complete risk-based workflow in an existing or greenfield project.
 - ✅ Existing `CLAUDE.md`, `AGENTS.md`, `.claude/`, and source roots are preserved.
-- ⚠️ Other tools (Codex, Cursor, Gemini, Copilot) are served by their own adapter entrypoints in the
+- ⚠️ Codex is served by its own adapter entrypoints in the
   repo, not by this Claude plugin.

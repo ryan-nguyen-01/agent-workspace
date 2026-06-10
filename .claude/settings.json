@@ -34,7 +34,7 @@
     "bug_id_format": "BUG-{number}",
     "commit_format": "conventional"
   },
-  "_comment_hooks": "SCOPE: Claude Code only. Mirrors .cursor/hooks/* for the Claude adapter. Runtime controls via env: MAESTRO_HOOK_PROFILE=minimal|standard|strict (default standard), MAESTRO_DISABLED_HOOKS=comma,ids. scope-guard + secret-guard gate Write/Edit; destructive-guard gates Bash. See .maestro/engine/rules/17-hook-enforcement-rules.md and SETUP.md.",
+  "_comment_hooks": "SCOPE: Claude Code only. Runtime controls via env: MAESTRO_HOOK_PROFILE=minimal|standard|strict (default standard), MAESTRO_DISABLED_HOOKS=comma,ids. scope-guard + secret-guard gate Write/Edit; destructive-guard gates Bash. See .maestro/engine/rules/17-hook-enforcement-rules.md and SETUP.md.",
   "hooks": {
     "PreToolUse": [
       {

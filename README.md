@@ -29,9 +29,6 @@ The root name stays stable as `maestro`. The actual product identity and namespa
 | Entry point for non-Claude AI agents | [AGENTS.md](AGENTS.md) |
 | Entry point for Claude Code | [CLAUDE.md](CLAUDE.md) |
 | Entry point for Codex | [.codex/AGENTS.md](.codex/AGENTS.md) |
-| Entry point for Cursor | [.cursor/rules/maestro.mdc](.cursor/rules/maestro.mdc) |
-| Entry point for Gemini | [.gemini/GEMINI.md](.gemini/GEMINI.md) |
-| Entry point for Kiro | [.kiro/steering/maestro.md](.kiro/steering/maestro.md) |
 
 
 ## Variant bundles
@@ -126,7 +123,7 @@ maestro/
 │   ├── history/                 Compatibility timeline and event log
 │   └── runtime/                 Local-only active state, cache, reports
 ├── .claude/                     Native Claude agents, skills, commands, hooks
-├── .codex/ .cursor/ .gemini/ .kiro/  Other tool adapters
+├── .codex/                      Codex adapter
 ├── docs/                        Official product documentation
 ├── apps/                        Product applications, for example `<project>-web-app`
 ├── services/                    Deployable services, for example `<project>-auth-service`
@@ -358,10 +355,6 @@ Each task has a folder under `.maestro/work/tasks/`:
 | --- | --- |
 | Claude Code | Reads `CLAUDE.md` and `.claude/` |
 | Codex | Reads `.codex/AGENTS.md` and `AGENTS.md` |
-| Cursor | Reads `.cursor/rules/maestro.mdc` and Cursor rules |
-| Gemini | Reads `.gemini/GEMINI.md` |
-| GitHub Copilot | Reads `.github/copilot-instructions.md` |
-| Kiro | Reads `.kiro/steering/*.md` steering docs |
 | Other agents | Read `AGENTS.md` |
 
 No package or server is required. The framework is a set of Markdown, YAML, and script contracts that

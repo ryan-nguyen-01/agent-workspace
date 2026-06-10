@@ -1,16 +1,12 @@
 # AGENTS.md
 
-> Entry point for AI coding agents (Codex, Cursor, Aider, Sourcegraph Cody, Continue, etc.).
+> Entry point for AI coding agents (Codex and compatible AGENTS.md readers).
 > Project docs are primarily in Vietnamese, but this file is in English so any agent can parse it.
 > Claude Code reads [CLAUDE.md](CLAUDE.md) first; other agents should read this file.
 
 Tool-specific entrypoints:
 
 - Codex: [.codex/AGENTS.md](.codex/AGENTS.md)
-- Cursor: [.cursor/rules/maestro.mdc](.cursor/rules/maestro.mdc)
-- Gemini: [.gemini/GEMINI.md](.gemini/GEMINI.md)
-- GitHub Copilot: [.github/copilot-instructions.md](.github/copilot-instructions.md)
-- Kiro: [.kiro/steering/maestro.md](.kiro/steering/maestro.md)
 
 ## What this repo is
 
@@ -208,9 +204,7 @@ Different AI tools enforce the same workflow policy through different mechanisms
 | --- | --- | --- | --- |
 | Claude Code | `.claude/agents/`, `.claude/skills/`, `.claude/commands/`, `CLAUDE.md` | No | Coordinator routing + agent contracts |
 | Codex CLI | `.codex/AGENTS.md`; `.codex/config.toml` (when project trusted) | No | AGENTS.md instructions + sandbox as policy aid; service write scope still comes from `workflow-state.yaml.active_task_id` + `agents.yaml` |
-| Cursor | `.cursor/rules/*.mdc` (glob-targeted), `.cursor/hooks.json` | **Yes** — `preToolUse`, `beforeShellExecution`, `afterFileEdit`, etc. | Rules + hooks (real runtime enforcement) |
 | Gemini Code Assist | `.gemini/GEMINI.md` | No | GEMINI.md instructions |
-| GitHub Copilot | `.github/copilot-instructions.md` | No | Instructions file |
 
 **Important:** `.cursor/hooks.json` and the scripts in `.cursor/hooks/` are **Cursor-only**. They do not fire under Claude Code, Codex, Gemini, or Copilot. When you add a workflow gate, mirror the rule into the other tools' entrypoint files if it should apply universally.
 

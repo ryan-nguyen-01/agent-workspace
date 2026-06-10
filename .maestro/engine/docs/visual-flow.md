@@ -4,7 +4,7 @@ Flow diagrams for Maestro, written in **Mermaid** (text) so both humans and AI a
 update them. They reflect the current architecture: Direction gate, prerequisites, decomposition,
 real-user QC, Git-flow.
 
-> Rendering: GitHub, Kiro, and most viewers render Mermaid natively. **VS Code's built-in Markdown
+> Rendering: GitHub and most viewers render Mermaid natively. **VS Code's built-in Markdown
 > preview does NOT** — install the "Markdown Preview Mermaid Support" extension, or view the file on
 > GitHub.
 

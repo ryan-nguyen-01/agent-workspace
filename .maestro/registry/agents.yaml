@@ -69,9 +69,6 @@ agents:
         - ".maestro/engine/**"
         - ".maestro/**"
         - ".codex/**"
-        - ".cursor/**"
-        - ".gemini/**"
-        - ".github/copilot-instructions.md"
         - "inputs/**"
       requires_leader_approval:
         - "production environment changes"
@@ -162,9 +159,6 @@ agents:
         - ".maestro/engine/**"
         - ".maestro/**"
         - ".codex/**"
-        - ".cursor/**"
-        - ".gemini/**"
-        - ".github/copilot-instructions.md"
         - "inputs/**"
       requires_leader_approval:
         - "destructive migration (drop table, drop column, truncate, irreversible data rewrite)"
@@ -241,8 +235,6 @@ agents:
         - ".claude/**"
         - ".maestro/**"
         - ".codex/**"
-        - ".cursor/**"
-        - ".gemini/**"
         - "inputs/**"
       requires_leader_approval:
         - "loading data into a shared/remote/production database (local only by default)"

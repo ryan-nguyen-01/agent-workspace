@@ -3,7 +3,7 @@ generated_at: "2026-05-20"
 generated_by: "maestro"
 status: "active"
 
-purpose: "Tool-agnostic response presentation contract for Claude, Codex, Cursor, Gemini, and GitHub Copilot."
+purpose: "Tool-agnostic response presentation contract for Claude and Codex."
 
 source_of_truth: ".maestro/config/response-ui.yaml"
 rule_file: ".maestro/engine/rules/15-model-routing-observability-rules.md"
@@ -122,20 +122,6 @@ tool_overrides:
     instruction_file: ".codex/AGENTS.md"
     support_level: "strong"
     note: "Codex should read response-ui and can render terminal status through scripts/status-dashboard.py."
-  cursor:
-    instruction_file: ".cursor/rules/maestro.mdc"
-    support_level: "strong-with-hooks"
-    note: "Cursor rules/hooks can enforce parts of the workflow, but chat UI layout remains client-owned."
-  copilot:
-    instruction_file: ".github/copilot-instructions.md"
-    support_level: "best-effort"
-    note: "Copilot may follow markdown structure but does not expose native UI customization hooks."
-  gemini:
-    instruction_file: ".gemini/GEMINI.md"
-    support_level: "best-effort"
-  kiro:
-    instruction_file: ".kiro/steering/maestro.md"
-    support_level: "best-effort-with-hooks"
 
 customization:
   safe_to_edit:
