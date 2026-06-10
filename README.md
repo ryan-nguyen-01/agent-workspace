@@ -32,6 +32,15 @@ The root name stays stable as `maestro`. The actual product identity and namespa
 | Entry point for Cursor | [.cursor/rules/maestro.mdc](.cursor/rules/maestro.mdc) |
 | Entry point for Gemini | [.gemini/GEMINI.md](.gemini/GEMINI.md) |
 | Entry point for Kiro | [.kiro/steering/maestro.md](.kiro/steering/maestro.md) |
+
+
+## Variant bundles
+
+The platform generates **purpose-specific template bundles** (own `CLAUDE.md` + `.claude/` + skill
+subset each) as sibling folders: `maestro-sdlc` (software delivery), `maestro-adlc` (AI development
+lifecycle, eval-driven), `maestro-enterprise` (agentic governance), `maestro-lite` (small/fast), and
+`maestro-brownfield` (existing-project maintenance, ask-don't-infer). See [variants/README.md](variants/README.md);
+build with `python3 scripts/build-variant.py --all`.
 | Workflow source of truth | [.maestro/engine/workflow.md](.maestro/engine/workflow.md) |
 | Agent taxonomy | [.maestro/engine/docs/agent-taxonomy.md](.maestro/engine/docs/agent-taxonomy.md) |
 

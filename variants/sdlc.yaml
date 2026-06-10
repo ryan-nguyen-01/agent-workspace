@@ -1,0 +1,23 @@
+name: maestro-sdlc
+display_name: "Maestro SDLC"
+output: "../maestro-sdlc"
+purpose: "Classic software delivery: web, mobile, API products built greenfield through the full BA -> design -> UI/UX -> code -> QC pipeline."
+methodology_default: "spec-driven-development"
+
+skills:
+  categories: all          # full technical breadth — SDLC is the complete software bundle
+  include: []
+  exclude: []
+
+profile: |
+  ## Variant Profile: SDLC (Software Delivery)
+
+  This bundle builds software products end-to-end (web, mobile, API). Defaults:
+
+  ```text
+  - Methodology: spec-driven-development (requirements -> design -> build with traceability).
+  - Full Direction gate for greenfield ideas (R-019-0a): blueprint + UI/UX prototype approved before code.
+  - Full BA Documentation Standard (BRD/PRD/US/UC/BR/NFR/RTM) and HLD + per-feature LLD (R-022).
+  - Real-user QC with complete coverage (R-019-QC, R-008-13); done = local, zero open bugs.
+  - Git-flow per R-020.
+  ```

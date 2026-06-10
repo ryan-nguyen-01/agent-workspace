@@ -1,0 +1,26 @@
+name: maestro-lite
+display_name: "Maestro Lite"
+output: "../maestro-lite"
+purpose: "Lightweight bundle for small tools, scripts, and prototypes: fast, minimal ceremony, still safe."
+methodology_default: "risk-based-routing"
+
+skills:
+  categories: [workflow, testing, meta-process]
+  include: [react, fastapi-python, python-uv, docker]
+  exclude: []
+
+profile: |
+  ## Variant Profile: Lite (fast, minimal ceremony)
+
+  This bundle is for small tools, scripts, prototypes, and quick experiments. Defaults:
+
+  ```text
+  - Default execution mode: direct (assisted when work spans sessions). Fast-track lanes preferred.
+  - NO full Direction gate: for a small build, confirm a 5-line mini-brief (what, stack, done-when)
+    instead of a full blueprint. Escalate to the full gate only if scope grows into a real product.
+  - BA docs/HLD/LLD optional; a task list with clear acceptance criteria is enough (R-021-06 applies:
+    the user is the source of missing non-critical facts, recorded as assumptions).
+  - QC right-sized: verify the acceptance criteria + smoke run; full multi-dimension QC only on request.
+  - Safety never relaxes: secrets (R-013), destructive actions (R-011-07), and outward git (R-020-10)
+    stay gated. Small does not mean unsafe.
+  ```
