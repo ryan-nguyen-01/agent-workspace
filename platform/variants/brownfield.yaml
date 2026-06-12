@@ -5,14 +5,17 @@ purpose: "Maintain an EXISTING, running project: deep onboarding first, execute 
 structure: []
 roots: [services, docs]
 agents:
-  specialists_exclude: [discovery-analyst, product-strategist]   # greenfield ideation — not maintenance
+  specialists_exclude: [discovery-analyst, product-strategist, ml-ai-architect]   # greenfield ideation + AI-product design (use maestro-adlc) — not maintenance
 commands_exclude: [ship]                                          # autopilot contradicts ask-don't-infer
 methodology_default: "risk-based-routing"
 
 skills:
-  categories: all          # the existing project's stack is unknown upfront — keep full breadth
+  categories: all          # stack unknown upfront — keep technical breadth
   include: []
-  exclude: []
+  # ops-workflow + greenfield-scaffold/deploy skills: not maintenance work
+  exclude: [email-ops, messages-ops, customer-billing-ops, finance-billing-ops, unified-notifications-ops,
+            deploy-to-vercel, convex-quickstart, expo-dev-client, expo-deployment, firebase-hosting-basics,
+            firebase-app-hosting-basics, payment-platform]
 
 profile: |
   ## Variant Profile: Brownfield (existing project — precise, ask-don't-infer)

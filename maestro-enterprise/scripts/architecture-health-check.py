@@ -31,10 +31,10 @@ REPORT_MD = RUNTIME / "reports" / "architecture-health-report.md"
 
 EXPECTED_COUNTS = {
     "agents": 34,
-    "skills": 166,
+    "skills": 168,
     "rules": 26,
     "templates": 62,
-    "commands": 20,
+    "commands": 21,
 }
 
 # Framework-owned agents: 12 workflow + 19 specialist advisors + 3 built-in coders.

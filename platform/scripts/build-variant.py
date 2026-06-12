@@ -493,11 +493,11 @@ def build(manifest_path: Path) -> None:
     for doc in ("CLAUDE.md", "AGENTS.md", "README.md", "GUIDELINES.md"):
         p = out / doc
         if p.is_file():
-            patch(p, [("231 skills", f"{n_skills} skills"), ("219 technical", f"{tech} technical"),
-                      ("all 231 skills", f"all {n_skills} skills")])
+            patch(p, [("233 skills", f"{n_skills} skills"), ("221 technical", f"{tech} technical"),
+                      ("all 233 skills", f"all {n_skills} skills")])
     patch(out / "scripts" / "architecture-health-check.py", [
-        ('    "skills": 231,', f'    "skills": {n_skills},'),
-    ])
+        (r'(?m)^    "skills": \d+,$', f'    "skills": {n_skills},'),
+    ], regex=True)
 
     # regenerate derived artifacts inside the bundle
     run([sys.executable, "scripts/build-skill-catalog.py"], out)   # taxonomy + catalog doc

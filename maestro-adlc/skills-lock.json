@@ -260,6 +260,11 @@
       "source": "mindrally/skills",
       "sourceType": "github"
     },
+    "incident-rca": {
+      "installed_at": "2026-06-12",
+      "source": "maestro-local",
+      "sourceType": "local"
+    },
     "java-spring-development": {
       "computedHash": "d2f82b82003dcd350cf6ad9622e787c658a2d161958a75d0e44a8de2c71f9175",
       "source": "mindrally/skills",
@@ -304,6 +309,11 @@
       "computedHash": "0e23645defdc43d1ab3337818673889a13e0904f8ab534a0057f5a61219e87fa",
       "source": "medusajs/medusa-agent-skills",
       "sourceType": "github"
+    },
+    "legacy-code-comprehension": {
+      "installed_at": "2026-06-12",
+      "source": "maestro-local",
+      "sourceType": "local"
     },
     "medusajs-developer": {
       "computedHash": "a7baaff5b3e178ccc1ec0940a8d7bae4d750b3e0e85ba56d008802364067efbc",

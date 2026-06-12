@@ -30,6 +30,7 @@ Use natural-language intents such as `coord: framework <request>` when you want 
 | `/onboard` | Onboarding | Build or refresh Project Knowledge, component registry, test policy, and coder candidates. |
 | `/intake` | Onboarding | Triage user-dropped files (docs/, inputs/): classify, flag secret-risk/misplaced-source/stale docs, write docs/INDEX.md — non-destructive. |
 | `/create-coders` | Agent Factory | Generate scoped component coder agents after user approval. |
+| `/investigate` | Task Analysis | Read-only findings: current state (cited), options + tradeoffs, impact, unknowns. No edits, no task unless requested. |
 | `/analyze-task` | Task Analysis | Normalize HLD/LLD/ticket/text into `task-analysis.yaml`. |
 | `/plan-dev` | Coder Leader | Build implementation plan and service assignments. |
 | `/dev` | Coder Leader | Run implementation through assigned coders. |

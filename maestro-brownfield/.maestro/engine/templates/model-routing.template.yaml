@@ -196,9 +196,6 @@ agent_model_map:
     data-engineer:
       model_profile: "coding"
       category: "data-ai"
-    ml-ai-architect:
-      model_profile: "deep_reasoning"
-      category: "data-ai"
     sre-observability:
       model_profile: "coding"
       category: "ops-devex"

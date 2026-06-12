@@ -30,18 +30,18 @@ REPORT_JSON = RUNTIME / "reports" / "architecture-health-report.json"
 REPORT_MD = RUNTIME / "reports" / "architecture-health-report.md"
 
 EXPECTED_COUNTS = {
-    "agents": 32,
-    "skills": 231,
+    "agents": 31,
+    "skills": 221,
     "rules": 26,
     "templates": 62,
-    "commands": 19,
+    "commands": 20,
 }
 
 # Framework-owned agents: 12 workflow + 19 specialist advisors + 3 built-in coders.
 # Generated service coders (coders/coder-<svc>.agent.md) are intentionally excluded so
 # this count stays stable in applied workspaces.
 BUILT_IN_CODERS = {"coder-infra", "coder-database", "coder-data"}
-EXPECTED_SPECIALIST_COUNT = 17
+EXPECTED_SPECIALIST_COUNT = 16
 SPECIALIST_CATEGORIES = {
     "architecture",
     "quality-security",

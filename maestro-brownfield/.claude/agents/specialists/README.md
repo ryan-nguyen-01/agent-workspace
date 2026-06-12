@@ -1,6 +1,6 @@
 # Specialist Advisors
 
-17 domain experts operating as **in-pipeline advisors**: invoked by a workflow agent,
+16 domain experts operating as **in-pipeline advisors**: invoked by a workflow agent,
 producing an evidence-backed advisory artifact at `.maestro/work/tasks/<task-id>/advisories/<id>.yaml`, they do **not**
 write application code, do **not** assign coders, and do **not** mark Code Done/QC Done.
 
@@ -22,7 +22,6 @@ Template: [`.maestro/engine/templates/agent-specialist.template.md`](../../../.m
 | Deep code review (augments coder-leader) | `code-reviewer` | quality-security | opus | coder-leader, dev-verification |
 | User stories, acceptance criteria (augments task-analysis) | `business-analyst` | product | sonnet | coordinator, task-analysis |
 | Data pipeline, ETL, streaming, analytics schema | `data-engineer` | data-ai | sonnet | task-analysis, solution-architect |
-| AI/LLM architecture, RAG, eval, model selection | `ml-ai-architect` | data-ai | opus | solution-architect, task-analysis |
 | Monitoring, SLO, tracing, incident runbook | `sre-observability` | ops-devex | sonnet | dev-verification, coder-leader |
 | Docs, API docs, README, changelog, ADR | `technical-writer` | ops-devex | haiku | memory-update, coder-leader |
 | Migration/upgrade/refactor planning, tech-debt | `migration-strategist` | ops-devex | opus | task-analysis, coder-leader |

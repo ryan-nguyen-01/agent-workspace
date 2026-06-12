@@ -39,7 +39,7 @@ Format: `## [version] - YYYY-MM-DD`
 - **Hook guardrails** - Added deterministic scope, secret, and destructive-command hooks for Claude and
   Cursor-style enforcement paths.
 - **Skill discovery layer** - Added `scripts/build-skill-catalog.py`, category frontmatter, machine
-  indexes, and human-readable skill catalogs for 231 skills.
+  indexes, and human-readable skill catalogs for 233 skills.
 - **Model routing and activity dashboard** - Added `.maestro/config/model-routing.yaml`,
   `.maestro/runtime/agent-activity.yaml`, `.maestro/config/response-ui.yaml`, `scripts/status-dashboard.py`,
   and `scripts/agent-activity.py`.
@@ -56,8 +56,8 @@ Format: `## [version] - YYYY-MM-DD`
 
 ### Fixed
 
-- **Current count drift** - Synchronized docs and health-check expectations to 33 agents, 231 skills,
-  26 rules, 62 templates, and 20 commands.
+- **Current count drift** - Synchronized docs and health-check expectations to 33 agents, 233 skills,
+  26 rules, 62 templates, and 21 commands.
 - **Runtime semantics** - Reframed `.maestro/runtime/` as local-only active state, telemetry, cache, and
   reports. Durable knowledge now lives under `.maestro/knowledge/`, and work artifacts live under `.maestro/work/`.
 - **Component-root semantics** - Clarified that `apps/`, `services/`, `packages/`, `infra/`, and

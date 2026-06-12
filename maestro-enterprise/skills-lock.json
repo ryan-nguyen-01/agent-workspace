@@ -385,6 +385,11 @@
       "source": "itsmostafa/aws-agent-skills",
       "sourceType": "github"
     },
+    "incident-rca": {
+      "installed_at": "2026-06-12",
+      "source": "maestro-local",
+      "sourceType": "local"
+    },
     "java-architect": {
       "computedHash": "5f56e132a3df4603c7d8ef71cc5e25bc1ae822d2d8c4045ef356485699add169",
       "source": "jeffallan/claude-skills",
@@ -434,6 +439,11 @@
       "computedHash": "0e23645defdc43d1ab3337818673889a13e0904f8ab534a0057f5a61219e87fa",
       "source": "medusajs/medusa-agent-skills",
       "sourceType": "github"
+    },
+    "legacy-code-comprehension": {
+      "installed_at": "2026-06-12",
+      "source": "maestro-local",
+      "sourceType": "local"
     },
     "loom-event-driven": {
       "computedHash": "62a670297395c5b94d80573bbb71a83cba35dadbdfef56bcf18ea524ca5e3d5f",

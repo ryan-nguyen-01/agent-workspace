@@ -55,6 +55,16 @@
       "source": "cxuu/golang-skills",
       "sourceType": "github"
     },
+    "incident-rca": {
+      "installed_at": "2026-06-12",
+      "source": "maestro-local",
+      "sourceType": "local"
+    },
+    "legacy-code-comprehension": {
+      "installed_at": "2026-06-12",
+      "source": "maestro-local",
+      "sourceType": "local"
+    },
     "nestjs-clean-typescript": {
       "computedHash": "830a608ac0d15d5f93e2fcdc65c4c1fb3fdba3b687e837a01191b0714d9c25f2",
       "source": "mindrally/skills",
