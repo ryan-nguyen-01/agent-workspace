@@ -24,6 +24,10 @@ If uncertain about current state or missing evidence, block and ask clarificatio
 Run this at the start of every new conversation, before processing any user request:
 
 ```text
+Step 0. If project knowledge EXISTS but .maestro/project.yaml.product.display_name is null:
+        propose the inferred name (with evidence) and ask the user to confirm/rename/defer — once per
+        session, before other work (R-002-D09). A configured identity is what makes "who are you"
+        answer with the real project name.
 Step 1. Read .maestro/engine/workflow.md
 Step 2. Read .maestro/runtime/workflow-state.yaml
 Step 3. Read .maestro/methodology.yaml             (skip if file absent — use adaptive defaults and note missing)

@@ -52,6 +52,11 @@ R-002-D02: Onboarding must identify project-specific coding conventions from rep
 R-002-D03: Onboarding must record business and technical flows when entrypoints and service interactions provide enough evidence.
 R-002-D04: Every reusable asset, convention, flow, and anti-pattern must include evidence paths and confidence.
 R-002-D05: Onboarding must write deep intelligence to project.yaml, component knowledge files, common/generics.md, conventions.md, and architecture.md where relevant.
+R-002-D09: PRODUCT IDENTITY CLOSES THE LOOP. Onboarding must end with product identity configured or
+  an explicit user deferral: infer candidates from evidence (repo/package/README/service names),
+  PROPOSE with evidence, and ask ONE short question. Only the user's confirmation writes
+  project.yaml.product (official designation — never self-assigned silently, never left null without
+  asking). The coordinator re-asks once per session while unconfigured.
 R-002-D07: INTAKE TRIAGE precedes learning: classify every dropped file; secret-risk files are flagged
   and their contents never quoted into artifacts (R-013); source code found in docs/ requires user
   confirmation before being treated as a component; docs conflicting with code are stale-candidates
@@ -60,4 +65,9 @@ R-002-D08: BASELINES: record a git baseline (clean commit) before the first code
   baseline (existing suite pass/fail) during onboarding, so every later diff and regression is
   attributable.
 R-002-D06: Onboarding must not paste large source files, secrets, env values, tokens, or noisy logs into memory.
+R-002-D09: PRODUCT IDENTITY CLOSES THE LOOP. Onboarding must end with product identity configured or
+  an explicit user deferral: infer candidates from evidence (repo/package/README/service names),
+  PROPOSE with evidence, and ask ONE short question. Only the user's confirmation writes
+  project.yaml.product (official designation — never self-assigned silently, never left null without
+  asking). The coordinator re-asks once per session while unconfigured.
 R-002-D07: If deep scan is incomplete, project.yaml must mark deep_project_intelligence.status as partial, not complete.

@@ -152,6 +152,22 @@ If `inputs/` and source code disagree (e.g. inputs says service uses Postgres, c
 - Record the conflict in project.yaml.conflicts[] with both sources cited, so user can resolve.
 ```
 
+## Product identity (mandatory — close the loop)
+
+Onboarding is NOT complete while `.maestro/project.yaml.product` is unconfigured. Never finish silently
+with `display_name: null`:
+
+```text
+1. INFER candidates from evidence: repo/folder name, package.json/pyproject name, README title,
+   dominant service prefix. Rank them, keep the evidence per candidate.
+2. PROPOSE to the user: "Tôi suy ra tên dự án là '<best>' (từ <evidence>). Dùng tên này, chọn tên khác,
+   hay để sau?" — one short question, options included.
+3. On confirmation: write product.id/key/display_name (+ component_namespace), status: "configured".
+   NEVER write identity without the user's answer (it is the official designation — R-002-D09).
+4. If the user defers: record the deferral in the journal; the coordinator will re-ask next session
+   (not every message).
+```
+
 ## Outputs
 
 Write or update:

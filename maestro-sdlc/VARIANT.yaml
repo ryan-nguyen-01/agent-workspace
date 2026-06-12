@@ -5,6 +5,6 @@ methodology_default: spec-driven-development
 skills: 237
 structure: ['component-roots', 'deliverables', 'design-decision', 'docs-delivery', 'docs-experience', 'docs-operations', 'inputs', 'observability', 'work-program']
 pruned_groups: ['docs-enterprise', 'governance']
-generated_at: "2026-06-12T07:05:21.747529+00:00"
+generated_at: "2026-06-12T07:10:50.359495+00:00"
 source: maestro platform (variants/sdlc.yaml)
 note: GENERATED bundle - do not edit by hand; rebuild with scripts/build-variant.py
