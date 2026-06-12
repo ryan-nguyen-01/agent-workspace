@@ -1,0 +1,150 @@
+{
+  "skills": {
+    "convex-quickstart": {
+      "computedHash": "8ae9e1b02f526ea65e7895fac82af74142cd8e70e364d9dae9dbf79a296fb5ef",
+      "source": "get-convex/agent-skills",
+      "sourceType": "github"
+    },
+    "discover-networking": {
+      "computedHash": "7350680a19804c72e6fd2bdbdd3e71c91f3131cd3cb892e89dbf19971d59e0fa",
+      "source": "rand/cc-polymath",
+      "sourceType": "github"
+    },
+    "dispatching-parallel-agents": {
+      "computedHash": "e21044ae7496fc285f1df9ff3fb518a3a20bea6f5216c1f59f4987e12c769a0a",
+      "source": "obra/superpowers",
+      "sourceType": "github"
+    },
+    "docker": {
+      "computedHash": "b2f646b339642b2597a244b0f508b4712ce0fa7bb3c7ad982e0bd11fddcc5630",
+      "source": "mindrally/skills",
+      "sourceType": "github"
+    },
+    "executing-plans": {
+      "computedHash": "2f709d1a2c7564f8ce6a9bb707e7f5451117ba80f8e8e2302662c29bc61246a6",
+      "source": "obra/superpowers",
+      "sourceType": "github"
+    },
+    "fastapi-python": {
+      "computedHash": "1d7346210a6690d2faeb089f074c0dc20a7056c2c83ac1062a11c1b73158be72",
+      "source": "mindrally/skills",
+      "sourceType": "github"
+    },
+    "fastify-typescript": {
+      "computedHash": "37205646b49c0f8221fd6c9c9ff8fb8073c964c0e330a00ee87c17d3496a99af",
+      "source": "mindrally/skills",
+      "sourceType": "github"
+    },
+    "finishing-a-development-branch": {
+      "computedHash": "9edba9a38684c060fdc38290f640e1dc0c37de286723ac9be73bacacf7cd6f3d",
+      "source": "obra/superpowers",
+      "sourceType": "github"
+    },
+    "go-interfaces": {
+      "computedHash": "527ee6262c368af9a7834a74814ab21f88a01f990761f06fb2777e9ac40a2df4",
+      "source": "cxuu/golang-skills",
+      "sourceType": "github"
+    },
+    "go-style-core": {
+      "computedHash": "45d2ed9df5c1f59b0a9cd9c5ae8547ef402b58274e8d973c1cdc77d37a061a39",
+      "source": "cxuu/golang-skills",
+      "sourceType": "github"
+    },
+    "go-testing": {
+      "computedHash": "60e31ba80bea4d68dc50552a80c4ed111fa338a2fb486b2e4cef153fce63a0ca",
+      "source": "cxuu/golang-skills",
+      "sourceType": "github"
+    },
+    "incident-rca": {
+      "installed_at": "2026-06-12",
+      "source": "maestro-local",
+      "sourceType": "local"
+    },
+    "legacy-code-comprehension": {
+      "installed_at": "2026-06-12",
+      "source": "maestro-local",
+      "sourceType": "local"
+    },
+    "nestjs-clean-typescript": {
+      "computedHash": "830a608ac0d15d5f93e2fcdc65c4c1fb3fdba3b687e837a01191b0714d9c25f2",
+      "source": "mindrally/skills",
+      "sourceType": "github"
+    },
+    "python-testing": {
+      "computedHash": "cfbc14bb9f2a95abdd54a464c2fdd066dc01628efcc931b863ed60b5316002f5",
+      "source": "mindrally/skills",
+      "sourceType": "github"
+    },
+    "python-uv": {
+      "computedHash": "753766e163676337f22528d7b3c5b64a767d0753972b4ab06c9578cd38db6f0b",
+      "source": "mindrally/skills",
+      "sourceType": "github"
+    },
+    "react": {
+      "computedHash": "463b2de9fe87acf9bc3cb692a91d8628ee1502aee2c77745d2dd1f6bfe206779",
+      "source": "mindrally/skills",
+      "sourceType": "github"
+    },
+    "react-modernization": {
+      "computedHash": "11facc88acf2a1920b9b77d88e7efa109a00577dbf37d1adefca549eb3244d6c",
+      "source": "wshobson/agents",
+      "sourceType": "github"
+    },
+    "receiving-code-review": {
+      "computedHash": "2760c85d4f4117b0006e7ba755f4bbd61f8f4c185f347999763c97f507274e30",
+      "source": "obra/superpowers",
+      "sourceType": "github"
+    },
+    "requesting-code-review": {
+      "computedHash": "246e65cd72a7e360987d94e6c61564ce6d71c6361d1784d529d70e4cbbe8522d",
+      "source": "obra/superpowers",
+      "sourceType": "github"
+    },
+    "rspec": {
+      "computedHash": "4275d92422b1c4636fd4c1e9b3e91db63a7ec67d0cae576d50ee6b6a2b869281",
+      "source": "mindrally/skills",
+      "sourceType": "github"
+    },
+    "ruby": {
+      "computedHash": "5f182d7742391faf823a3fb94da62288c9d3663eda302b4321ab7d017a3e2e1d",
+      "source": "mindrally/skills",
+      "sourceType": "github"
+    },
+    "subagent-driven-development": {
+      "computedHash": "a197f8e5fba5ea59013e1adbaa90dd42db35de8f074feca200c8038de584a83b",
+      "source": "obra/superpowers",
+      "sourceType": "github"
+    },
+    "systematic-debugging": {
+      "computedHash": "72e9ab72627e4fd8ed26a582e82309a98ecdc4f6e1c99418430ac05682c9e91d",
+      "source": "obra/superpowers",
+      "sourceType": "github"
+    },
+    "test-driven-development": {
+      "computedHash": "126f1ebf6ccd414f42544f6e83d8cc5adb089e1108eaffb7c400701e37eecd9f",
+      "source": "obra/superpowers",
+      "sourceType": "github"
+    },
+    "using-git-worktrees": {
+      "computedHash": "52bbb4b6e80918e83e92a1514f3b3757712154c2a8a42de24919e48a794c54fc",
+      "source": "obra/superpowers",
+      "sourceType": "github"
+    },
+    "verification-before-completion": {
+      "computedHash": "9b446f0c7fe1cfb560b1d34439523b1a76d5f177290007b2c053a1c749a4a8ba",
+      "source": "obra/superpowers",
+      "sourceType": "github"
+    },
+    "webapp-testing": {
+      "computedHash": "cf8e5916d474886bd67b09691247f43f331523008b7d366064bc607ab42d6302",
+      "source": "anthropics/skills",
+      "sourceType": "github"
+    },
+    "writing-plans": {
+      "computedHash": "bfaed11054ad8021c66860244e2d2e0d1eca483ae9f5fbfcb956e99c61f5c3d7",
+      "source": "obra/superpowers",
+      "sourceType": "github"
+    }
+  },
+  "version": 1
+}

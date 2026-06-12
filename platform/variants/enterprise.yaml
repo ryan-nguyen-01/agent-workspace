@@ -1,0 +1,27 @@
+name: maestro-enterprise
+display_name: "Maestro Enterprise"
+output: "../maestro-enterprise"
+purpose: "Agentic Enterprise: governed delivery and production agent operation with compliance, audit, and accountability."
+structure: full
+methodology_default: "enterprise-agent-governance"
+
+skills:
+  categories: [workflow, security, devops-cloud, database, backend, testing, meta-process, knowledge-patch]
+  include: []
+  exclude: []
+
+profile: |
+  ## Variant Profile: Enterprise (Agentic Enterprise Governance)
+
+  This bundle is for governed, auditable delivery and production agent operation. Defaults:
+
+  ```text
+  - Methodology: enterprise-agent-governance (lifecycle DEFINE -> CONTRACT -> COMPOSE -> EVALUATE ->
+    HARDEN -> APPROVE -> DEPLOY -> OPERATE -> CHANGE_OR_RETIRE; methodology.yaml operating_model).
+  - Every production agent needs: accountable owner, governance policy, mission, behavior contract,
+    autonomy policy, eval suite, audit log, interaction protocol (docs/governance/...).
+  - Default execution mode: governed. Automatic escalation triggers always on; audit trail in
+    .maestro/history/ + .maestro/observability/audit/.
+  - Security/compliance advisories (security-auditor) are mandatory for externally exposed work.
+  - Outward actions (deploy, data, identity) always user-approved; nothing silent.
+  ```

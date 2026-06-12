@@ -1,0 +1,40 @@
+schema_version: "1.0"
+run_id: "{{RUN_ID}}"
+task_id: "{{TASK_ID_OR_NULL}}"
+status: "new|running|waiting-for-human|blocked|verifying|completed|failed|cancelled"
+execution_mode: "direct|assisted|governed"
+verification_owner: "agent|user|shared"
+created_at: "{{CREATED_AT}}"
+updated_at: "{{UPDATED_AT}}"
+created_by: "{{AGENT_ID}}"
+updated_by: "{{AGENT_ID}}"
+
+summary: "{{SUMMARY}}"
+objective: "{{OBJECTIVE}}"
+
+artifacts:
+  checkpoints: ".maestro/work/runs/{{RUN_ID}}/checkpoints"
+  traces: ".maestro/work/runs/{{RUN_ID}}/traces"
+  evals: ".maestro/work/runs/{{RUN_ID}}/evals"
+  approvals: ".maestro/work/runs/{{RUN_ID}}/approvals"
+  report: ".maestro/work/runs/{{RUN_ID}}/report.md"
+
+links:
+  task: "{{TASK_PATH_OR_NULL}}"
+  trace_refs: []
+  eval_refs: []
+  approval_refs: []
+  report_refs: []
+
+current:
+  checkpoint_id: null
+  phase: null
+  action: null
+  blocker: null
+  next_action: null
+
+history:
+  - at: "{{CREATED_AT}}"
+    actor: "{{AGENT_ID}}"
+    event: "run.created"
+    summary: "{{SUMMARY}}"

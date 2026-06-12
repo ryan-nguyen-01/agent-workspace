@@ -1,0 +1,22 @@
+schema_version: "1.0"
+eval_run_id: "{{EVAL_RUN_ID}}"
+run_id: "{{RUN_ID}}"
+task_id: "{{TASK_ID_OR_NULL}}"
+created_at: "{{CREATED_AT}}"
+created_by: "{{AGENT_ID}}"
+
+scope: "model|rag|prompt|tool|agent|workflow|other"
+status: "planned|running|passed|failed|blocked|skipped"
+dataset_refs: []
+case_refs: []
+
+results:
+  total: 0
+  passed: 0
+  failed: 0
+  blocked: 0
+  skipped: 0
+
+quality_gates: []
+known_gaps: []
+evidence: []

@@ -1,0 +1,10 @@
+name: maestro-adlc
+display_name: "Maestro ADLC"
+purpose: "AI development lifecycle: building AI products and agents (LLM features, RAG, agentic apps) with eval-driven quality gates."
+methodology_default: eval-driven-ai
+skills: 134
+structure: ['deliverables', 'design-decision', 'docs-delivery', 'docs-experience', 'observability', 'work-program']
+pruned_groups: ['component-roots', 'docs-enterprise', 'docs-operations', 'governance', 'inputs']
+generated_at: "2026-06-12T06:50:34.358067+00:00"
+source: maestro platform (variants/adlc.yaml)
+note: GENERATED bundle - do not edit by hand; rebuild with scripts/build-variant.py

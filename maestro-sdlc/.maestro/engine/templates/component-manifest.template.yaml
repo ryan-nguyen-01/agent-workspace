@@ -1,0 +1,24 @@
+schema_version: "1.0"
+
+component:
+  id: "{{COMPONENT_ID}}"
+  name: "{{COMPONENT_NAME}}"
+  kind: "application|service|worker|gateway|package|design-system|infrastructure|test-suite"
+  path: "{{COMPONENT_PATH}}"
+  bounded_context: "{{BOUNDED_CONTEXT}}"
+  deployable: false
+
+ownership:
+  capabilities: []
+  data: []
+  team: null
+
+contracts:
+  provides: []
+  consumes: []
+
+dependencies: []
+
+repository:
+  mode: "embedded|external"
+  url: null

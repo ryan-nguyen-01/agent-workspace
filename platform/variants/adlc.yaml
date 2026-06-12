@@ -1,0 +1,33 @@
+name: maestro-adlc
+display_name: "Maestro ADLC"
+output: "../maestro-adlc"
+purpose: "AI development lifecycle: building AI products and agents (LLM features, RAG, agentic apps) with eval-driven quality gates."
+structure: [deliverables, docs-delivery, docs-experience, design-decision, observability, work-program]
+roots: [apps, services, tests, ai]
+methodology_default: "eval-driven-ai"
+
+skills:
+  categories: [workflow, data-ai, backend, database, testing, meta-process, knowledge-patch]
+  include: []
+  exclude: []
+
+profile: |
+  ## Variant Profile: ADLC (AI Development Lifecycle)
+
+  This bundle builds AI products and agents. Defaults:
+
+  ```text
+  - FULL COMPLIANCE: all 26 engine rules apply with no exemptions. Fast-track NEVER skips the eval
+    gate. Identity must be answered exactly per the Identity section.
+  - LAYOUT (AI-product specific): apps/ + services/ (the product shell), tests/, and ai/ —
+    ai/prompts (versioned prompts), ai/evals (datasets + graders for the EVAL GATE),
+    ai/datasets (RAG/training sources; synthetic or licensed only, R-013).
+  - Methodology: eval-driven-ai. Quality claims about model/agent behavior require eval evidence,
+    not demos (eval-run/eval-suite templates; .maestro/observability/evals/ + ai/evals/).
+  - Extra blueprint sections for AI scope: AI feasibility (is an LLM the right tool?), data/RAG plan
+    (sources, chunking, freshness), eval plan (datasets, graders, thresholds), and cost/latency targets.
+  - EVAL GATE before done: the eval suite must pass thresholds in addition to standard QC. Prompt or
+    model changes re-run evals (regression for AI behavior).
+  - Specialists to lean on: ml-ai-architect, data-engineer; api/database specialists for the app shell.
+  - Never fabricate eval numbers; record dataset + grader + score with evidence (R-015/R-019-10).
+  ```

@@ -1,0 +1,18 @@
+schema_version: "1.0"
+hierarchy:
+  levels: ["initiative", "epic", "task", "subtask"]
+  max_depth: 4
+  rule: "A subtask that still requires decomposition becomes a task; do not nest subtasks."
+decomposition:
+  required_when:
+    - "more_than_one_session"
+    - "multiple_independent_acceptance_criteria"
+    - "design_and_implementation"
+    - "multiple_components"
+    - "parallel_workstreams"
+    - "migration_or_rollout"
+    - "multiple_specialists"
+active:
+  initiative_ids: []
+  epic_ids: []
+  task_ids: []

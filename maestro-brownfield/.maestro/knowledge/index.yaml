@@ -1,0 +1,263 @@
+version: 1
+generated_at: "2026-05-17"
+generated_by: "memory-structure-migration"
+memory_epoch: 1
+memory_root: ".maestro/knowledge"
+
+purpose: "Small routing index so agents can decide which knowledge files to open without rereading the whole project knowledge base."
+
+read_policy:
+  startup:
+    - ".maestro/engine/workflow.md"
+    - ".maestro/runtime/workflow-state.yaml"
+    - ".maestro/knowledge/index.yaml"
+  then_read_only_if_relevant:
+    - ".maestro/knowledge/project.yaml"
+    - ".maestro/knowledge/summary.md"
+    - ".maestro/knowledge/architecture.md"
+    - ".maestro/knowledge/conventions.md"
+    - ".maestro/memory/project/common/generics.md"
+    - ".maestro/knowledge/components/<component-id>.yaml"
+    - ".maestro/memory/project/feedback/*.md"
+    - ".maestro/registry/inputs.yaml"
+  component_control_files:
+    - ".maestro/registry/components.yaml"
+    - ".maestro/registry/agents.yaml"
+    - ".maestro/knowledge/test-policy.yaml"
+    - ".maestro/registry/skills.yaml"
+    - ".maestro/config/model-routing.yaml"
+    - ".maestro/runtime/agent-activity.yaml"
+    - ".maestro/config/response-ui.yaml"
+  skills_policy:
+    registry: ".maestro/registry/skills.yaml"
+    rule: "Do not scan or read all of .claude/skills/**. Select candidates from the registry first, then open only selected SKILL.md files and direct references."
+  user_inputs_root: "inputs"
+  user_inputs_index: ".maestro/registry/inputs.yaml"
+  rule: "Do not open every knowledge or memory file by default. Use task intent, impacted components, and this index first. For user-provided reference docs, open .maestro/registry/inputs.yaml first, then read only relevant files under inputs/."
+
+context_economy:
+  project_profile_source: ".maestro/knowledge/project.yaml.project_profile"
+  default_budget_files:
+    coordinator: 4
+    task_analysis: 12
+    coder_leader: 16
+    service_coder: 20
+    verification: 12
+  universal_project_archetypes:
+    - backend-api
+    - frontend-web
+    - mobile-app
+    - desktop-app
+    - cli-tool
+    - library-sdk
+    - data-pipeline
+    - ml-model
+    - infra-iac
+    - embedded-firmware
+    - docs-site
+    - docs-and-templates
+    - plugin-extension
+    - monorepo-platform
+    - workflow-framework
+  signature_scan_first:
+    rule: "Before broad source reads, inspect file tree, manifests, lockfiles, build/test config, route/API/schema files, and registered component paths."
+    skip_by_default:
+      - "node_modules"
+      - "vendor"
+      - "dist"
+      - "build"
+      - ".next"
+      - "coverage"
+      - ".git"
+      - "large generated files"
+  task_context_plan:
+    artifact: ".maestro/work/tasks/<task-id>/task-analysis.yaml.context_plan"
+    rule: "Coder Leader and service coders read the context_plan first, then expand only when listed triggers fire."
+
+commands:
+  initial_fetch: "/onboard <component-path-or-repo-root>"
+  refresh_by_rescan: "/sync-memory --scan --components <component-ids>"
+  refresh_by_files: "/sync-memory --files <paths> --components <component-ids>"
+  refresh_index_only: "/sync-memory --refresh-index"
+  partial_component_refresh: "/onboard --refresh <component-id-or-path>"
+  skill_maintenance: "/skills status|audit|update|refresh-registry"
+  policy_snapshot_check: "/policy-check snapshot --root <workspace-or-snapshot>"
+  run_create_cli: "python3 scripts/agent-run.py create --summary <summary>"
+  run_checkpoint_cli: "python3 scripts/agent-run.py checkpoint --run-id <run-id> --summary <summary> --next-action <next>"
+  run_complete_cli: "python3 scripts/agent-run.py complete --run-id <run-id> --summary <summary>"
+  activity_status: "/status"
+  activity_status_cli: "python3 scripts/status-dashboard.py --mode models"
+  activity_start_cli: "python3 scripts/agent-activity.py start --agent-id <agent> --phase <phase> --current-action <summary>"
+  activity_heartbeat_cli: "python3 scripts/agent-activity.py heartbeat --agent-id <agent> --current-action <summary>"
+  activity_complete_cli: "python3 scripts/agent-activity.py complete --agent-id <agent> --summary <summary>"
+  response_ui_cli: "python3 scripts/status-dashboard.py --mode <compact|concise|dashboard|models|json>"
+  status_artifacts_cli: "python3 scripts/status-dashboard.py --mode dashboard --write"
+  architecture_health_cli: "python3 scripts/architecture-health-check.py --strict"
+  architecture_health_report_cli: "python3 scripts/architecture-health-check.py --strict --write-report"
+
+policy_context:
+  owner: "workflow-policy"
+  goal: "Fast, deterministic policy checks without external runtimes."
+  optional_deterministic_helper: "scripts/architecture-health-check.py is allowed for CI/local drift checks, but workflow-policy must not depend on it."
+  no_runtime_dependencies:
+    - "python"
+    - "node"
+    - "jq"
+    - "shell helper scripts"
+  check_types:
+    transition:
+      read:
+        - ".maestro/runtime/workflow-state.yaml"
+        - ".maestro/engine/workflow.md"
+        - ".maestro/engine/rules/11-approval-gates.md"
+        - ".maestro/engine/rules/12-artifact-contracts.md"
+    workspace:
+      read:
+        - ".maestro/runtime/workflow-state.yaml"
+        - ".maestro/knowledge/project.yaml"
+        - ".maestro/registry/components.yaml"
+        - ".maestro/registry/agents.yaml"
+        - ".maestro/config/model-routing.yaml"
+        - ".maestro/runtime/agent-activity.yaml"
+        - ".maestro/config/response-ui.yaml"
+    snapshot:
+      read:
+        - "<root>/.maestro/runtime/workflow-state.yaml"
+        - "<root>/.maestro/knowledge/project.yaml"
+        - "<root>/.maestro/registry/components.yaml"
+        - "<root>/.maestro/registry/agents.yaml"
+        - "<root>/.maestro/config/model-routing.yaml"
+        - "<root>/.maestro/runtime/agent-activity.yaml"
+        - "<root>/.maestro/config/response-ui.yaml"
+        - "<root>/.maestro/work/tasks/<active-or-parallel-task-id>/task.yaml"
+        - "<root>/.maestro/work/tasks/<active-or-parallel-task-id>/task-updates.yaml"
+        - "<root>/.maestro/work/tasks/<active-or-parallel-task-id>/task-analysis.yaml"
+      rule: "If <root>/services is absent or empty, set services_available=false and validate recorded artifacts only."
+    task:
+      read:
+        - ".maestro/work/tasks/<task-id>/task.yaml"
+        - ".maestro/work/tasks/<task-id>/task-updates.yaml"
+        - ".maestro/work/tasks/<task-id>/task-analysis.yaml"
+        - ".maestro/work/tasks/<task-id>/service-assignments.yaml"
+        - ".maestro/work/tasks/<task-id>/coder-results.yaml"
+        - ".maestro/work/tasks/<task-id>/dev-verification.yaml"
+        - ".maestro/work/tasks/<task-id>/qc-test-results.yaml"
+      rule: "Open only artifacts required by task state and task.yaml manifest."
+  output_template: ".maestro/engine/templates/policy-check-report.template.yaml"
+
+documents:
+  - path: ".maestro/knowledge/project.yaml"
+    role: "project_brain"
+    scope: "project"
+    tags: ["architecture", "policies", "memory-rules", "workflow"]
+    service_ids: []
+    read_when: ["routing", "onboarding", "planning", "memory-update"]
+  - path: ".maestro/knowledge/summary.md"
+    role: "human_summary"
+    scope: "project"
+    tags: ["summary"]
+    service_ids: []
+    read_when: ["quick-orientation", "status"]
+  - path: ".maestro/config/model-routing.yaml"
+    role: "model_routing_policy"
+    scope: "project"
+    tags: ["models", "routing", "cost", "observability"]
+    service_ids: []
+    read_when: ["routing", "status", "agent-dispatch", "policy-check"]
+  - path: ".maestro/runtime/agent-activity.yaml"
+    role: "agent_activity_dashboard"
+    scope: "project"
+    tags: ["status", "telemetry", "activity"]
+    service_ids: []
+    read_when: ["status", "routing", "handoff", "long-running-work"]
+  - path: ".maestro/config/response-ui.yaml"
+    role: "response_ui_contract"
+    scope: "project"
+    tags: ["status", "responses", "ui", "format", "tool-entrypoints"]
+    service_ids: []
+    read_when: ["status", "final-response", "review", "tool-entrypoint-sync"]
+  - path: ".maestro/runtime/reports/status.md"
+    role: "generated_status_artifact"
+    scope: "project"
+    tags: ["status", "dashboard", "generated"]
+    service_ids: []
+    read_when: ["status", "human-dashboard"]
+  - path: ".maestro/runtime/reports/status.html"
+    role: "generated_status_dashboard"
+    scope: "project"
+    tags: ["status", "dashboard", "generated", "html"]
+    service_ids: []
+    read_when: ["status", "human-dashboard"]
+  - path: ".maestro/runtime/reports/architecture-health-report.json"
+    role: "generated_architecture_health_report"
+    scope: "project"
+    tags: ["health", "drift", "generated", "ci"]
+    service_ids: []
+    read_when: ["policy-check", "framework-maintenance", "release-readiness"]
+  - path: ".maestro/runtime/reports/architecture-health-report.md"
+    role: "generated_architecture_health_summary"
+    scope: "project"
+    tags: ["health", "drift", "generated", "human-summary"]
+    service_ids: []
+    read_when: ["policy-check", "framework-maintenance", "release-readiness"]
+  - path: ".maestro/knowledge/architecture.md"
+    role: "architecture_notes"
+    scope: "project"
+    tags: ["architecture", "flows"]
+    service_ids: []
+    read_when: ["task-analysis", "architecture-review", "planning", "cross-service-impact"]
+  - path: ".maestro/knowledge/conventions.md"
+    role: "coding_conventions"
+    scope: "project"
+    tags: ["conventions", "style", "reuse"]
+    service_ids: []
+    read_when: ["planning", "coding", "review"]
+  - path: ".maestro/memory/project/common/generics.md"
+    role: "reusable_asset_index"
+    scope: "project"
+    tags: ["reuse", "shared-assets"]
+    service_ids: []
+    read_when: ["before-creating-helper", "coding", "review"]
+  - path: ".maestro/knowledge/environments.md"
+    role: "environment_notes"
+    scope: "project"
+    tags: ["environment", "verification", "qc"]
+    service_ids: []
+    read_when: ["dev-verification", "qc"]
+  - path: ".maestro/memory/project/feedback/patterns.md"
+    role: "positive_feedback_patterns"
+    scope: "project"
+    tags: ["feedback", "patterns", "docs", "language", "style-guide"]
+    service_ids: []
+    read_when: ["task-analysis", "planning", "coding", "dev-verification", "bug-routing", "memory-update", "docs-update", "response-writing"]
+  - path: ".maestro/memory/project/feedback/anti-patterns.md"
+    role: "negative_feedback_patterns"
+    scope: "project"
+    tags: ["feedback", "anti-patterns", "docs", "language"]
+    service_ids: []
+    read_when: ["task-analysis", "planning", "coding", "dev-verification", "bug-routing", "memory-update", "docs-update", "response-writing"]
+
+component_knowledge:
+  directory: ".maestro/knowledge/components"
+  pattern: ".maestro/knowledge/components/<component-id>.yaml"
+  read_when:
+    - "A task impacts that component."
+    - "Coder Leader assigns that component."
+    - "Agent Factory creates or updates that component coder."
+
+component_control:
+  registry: ".maestro/registry/components.yaml"
+  agent_registry: ".maestro/registry/agents.yaml"
+  test_policy: ".maestro/knowledge/test-policy.yaml"
+  skill_registry: ".maestro/registry/skills.yaml"
+  rule: "Use these files to find where coding is allowed; do not treat them as durable project brain."
+
+staleness:
+  stale_if:
+    - "project.yaml freshness.stale is true."
+    - "memory_epoch differs between index.yaml and project.yaml."
+    - "A component path changed but .maestro/registry/components.yaml was not updated."
+    - "A durable decision was made but /sync-memory was not run."
+  recovery:
+    - "Run /sync-memory --changed <paths> for known changes."
+    - "Run /onboard --refresh <component-id> when component boundaries, stack, or tests changed."

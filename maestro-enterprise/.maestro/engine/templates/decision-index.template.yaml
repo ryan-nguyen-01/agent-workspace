@@ -1,0 +1,6 @@
+schema_version: "1.0"
+role: "decision-index"
+records_root: "docs/architecture/decisions"
+decisions: []
+statuses: ["proposed", "accepted", "rejected", "deprecated", "superseded"]
+rule: "Accepted decisions are not reopened unless new evidence is recorded or the user requests reconsideration."

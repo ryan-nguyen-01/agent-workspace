@@ -1,0 +1,1686 @@
+version: 1
+updated_at: "2026-04-17"
+purpose: "Canonical skill address, capability, selection, and risk registry for all agents."
+status: "manual_registry_ready"
+docs_reference: ".maestro/engine/docs/external-skills.md"
+# NOTE: Read catalog first to locate a skill, then merge any hand-maintained policy in skills.<id>.
+# This file is the canonical source for runtime skill selection.
+# For install history, sources, and security audit → see docs_reference above.
+
+selection_policy:
+  default_attach_all_installed_skills: false
+  prefer_minimum_useful_set: true
+  project_evidence_required: true
+  task_evidence_required_for_contextual_skills: true
+  risky_skill_requires_approval: true
+  unavailable_skill_must_not_be_attached: true
+  docs_reference: ".maestro/engine/docs/external-skills.md"
+
+risk_levels:
+  low:
+    attach_policy: "May attach when project/task evidence matches."
+  medium:
+    attach_policy: "Attach only when evidence is clear; record reason in generated coder."
+  high:
+    attach_policy: "Do not attach by default; require explicit reason and Coordinator approval for sensitive work."
+  critical:
+    attach_policy: "Restricted reference only unless user explicitly approves."
+
+core_workflow_skills:
+  required_for_every_generated_coder:
+    - skill-project-brain
+    - skill-service-coder
+    - skill-dev-verification
+    - skill-memory-update
+    - skill-workflow-policy
+  coordination_when_needed:
+    - skill-coder-leader
+    - skill-task-analysis
+    - skill-qc-handoff
+    - skill-bug-routing
+
+skills:
+  payment-platform:
+    installed: true
+    source: local
+    category: payment
+    risk: low
+    default_attach: false
+    requires_user_approval: false
+    use_when:
+      - payment
+      - billing
+      - checkout
+      - subscription
+      - refund
+      - dispute
+      - invoice
+      - PCI
+      - payment webhook
+    pair_with:
+      - notification-delivery
+      - stripe-best-practices
+      - stripe-integration
+      - paypal-integration
+      - payment-integration
+
+  stripe-best-practices:
+    installed: true
+    source: skills.sh
+    category: payment
+    risk: medium
+    default_attach: false
+    requires_user_approval: false
+    use_when:
+      - Stripe API selection
+      - Stripe Checkout
+      - Stripe Billing
+      - Stripe Connect
+      - Stripe launch checklist
+
+  stripe-integration:
+    installed: true
+    source: skills.sh
+    category: payment
+    risk: high
+    default_attach: false
+    requires_user_approval: true
+    approval_reason: "Installer marked Snyk High Risk; use only when Stripe implementation detail is required."
+    use_when:
+      - Stripe implementation
+      - Stripe webhook
+      - Stripe subscription
+      - Stripe refund
+
+  upgrade-stripe:
+    installed: true
+    source: skills.sh
+    category: payment
+    risk: high
+    default_attach: false
+    requires_user_approval: true
+    approval_reason: "Installer marked Snyk High Risk; API upgrades can change payment behavior."
+    use_when:
+      - Stripe API version upgrade
+      - Stripe SDK upgrade
+
+  paypal-integration:
+    installed: true
+    source: skills.sh
+    category: payment
+    risk: medium
+    default_attach: false
+    requires_user_approval: false
+    use_when:
+      - PayPal checkout
+      - PayPal subscription
+      - PayPal IPN
+      - PayPal refund
+
+  payment-integration:
+    installed: true
+    source: skills.sh
+    category: payment
+    risk: medium
+    default_attach: false
+    requires_user_approval: false
+    use_when:
+      - generic payment gateway
+      - multi-provider payment
+      - PCI design
+
+  notification-delivery:
+    installed: true
+    source: local
+    category: notification
+    risk: low
+    default_attach: false
+    requires_user_approval: false
+    use_when:
+      - notification
+      - email
+      - SMS
+      - push
+      - in-app message
+      - webhook alert
+      - delivery status
+      - retry
+      - outbox
+
+  resend:
+    installed: true
+    source: skills.sh
+    category: notification
+    risk: medium
+    default_attach: false
+    requires_user_approval: false
+    use_when:
+      - Resend
+      - transactional email
+      - email delivery
+
+  email-ops:
+    installed: true
+    source: skills.sh
+    category: notification
+    risk: low
+    default_attach: false
+    requires_user_approval: false
+    use_when:
+      - email operations
+      - delivery workflow
+
+  messages-ops:
+    installed: true
+    source: skills.sh
+    category: notification
+    risk: high
+    default_attach: false
+    requires_user_approval: true
+    approval_reason: "Installer marked Snyk High Risk; attach only for message-center/SMS-like workflows."
+    use_when:
+      - message operations
+      - message center
+      - SMS-like workflow
+
+  unified-notifications-ops:
+    installed: true
+    source: skills.sh
+    category: notification
+    risk: low
+    default_attach: false
+    requires_user_approval: false
+    use_when:
+      - cross-channel notification
+      - notification orchestration
+
+  capacitor-push-notifications:
+    installed: true
+    source: skills.sh
+    category: notification
+    risk: medium
+    default_attach: false
+    requires_user_approval: false
+    use_when:
+      - Capacitor push notification
+      - Firebase Cloud Messaging
+      - APNs
+
+  cloud-platform-routing:
+    installed: true
+    source: local
+    category: cloud
+    risk: low
+    default_attach: false
+    requires_user_approval: false
+    use_when:
+      - AWS
+      - Azure
+      - cloud architecture
+      - serverless
+      - queue
+      - event bus
+      - cloud cost
+      - IAM
+      - RBAC
+      - infrastructure-as-code
+
+  aws-cloud-services:
+    installed: true
+    source: skills.sh
+    category: aws
+    risk: critical
+    default_attach: false
+    requires_user_approval: true
+    approval_reason: "Installer marked Gen Critical Risk and Snyk High Risk; use only as restricted reference when service-level AWS skills are insufficient."
+    use_when:
+      - broad AWS architecture
+      - AWS service not covered by safer service-level skills
+
+  lambda:
+    installed: true
+    source: skills.sh
+    category: aws
+    risk: medium
+    default_attach: false
+    requires_user_approval: false
+    use_when:
+      - AWS Lambda
+      - serverless compute
+
+  sqs:
+    installed: true
+    source: skills.sh
+    category: aws
+    risk: low
+    default_attach: false
+    requires_user_approval: false
+    use_when:
+      - AWS SQS
+      - queue
+      - DLQ
+
+  eventbridge:
+    installed: true
+    source: skills.sh
+    category: aws
+    risk: low
+    default_attach: false
+    requires_user_approval: false
+    use_when:
+      - AWS EventBridge
+      - event bus
+      - scheduler
+
+  iam:
+    installed: true
+    source: skills.sh
+    category: aws
+    risk: low
+    default_attach: false
+    requires_user_approval: false
+    use_when:
+      - AWS IAM
+      - permission
+      - policy
+      - role
+
+  cognito:
+    installed: true
+    source: skills.sh
+    category: aws
+    risk: high
+    default_attach: false
+    requires_user_approval: true
+    approval_reason: "Installer marked Snyk High Risk and auth behavior is security-sensitive."
+    use_when:
+      - AWS Cognito
+      - AWS user authentication
+
+  s3:
+    installed: true
+    source: skills.sh
+    category: aws
+    risk: low
+    default_attach: false
+    requires_user_approval: false
+    use_when:
+      - AWS S3
+      - object storage
+
+  dynamodb:
+    installed: true
+    source: skills.sh
+    category: aws
+    risk: low
+    default_attach: false
+    requires_user_approval: false
+    use_when:
+      - AWS DynamoDB
+      - NoSQL
+
+  cloudwatch:
+    installed: true
+    source: skills.sh
+    category: aws
+    risk: low
+    default_attach: false
+    requires_user_approval: false
+    use_when:
+      - AWS CloudWatch
+      - logs
+      - alarms
+      - metrics
+
+  cloudformation:
+    installed: true
+    source: skills.sh
+    category: aws
+    risk: medium
+    default_attach: false
+    requires_user_approval: false
+    use_when:
+      - AWS CloudFormation
+      - AWS IaC
+
+  azure-functions:
+    installed: true
+    source: skills.sh
+    category: azure
+    risk: low
+    default_attach: false
+    requires_user_approval: false
+    use_when:
+      - Azure Functions
+      - Azure serverless
+
+  cloud-solution-architect:
+    installed: true
+    source: skills.sh
+    category: azure
+    risk: low
+    default_attach: false
+    requires_user_approval: false
+    use_when:
+      - Azure architecture
+      - Microsoft cloud architecture
+
+  microsoft-docs:
+    installed: true
+    source: skills.sh
+    category: azure
+    risk: low
+    default_attach: false
+    requires_user_approval: false
+    use_when:
+      - Microsoft documentation
+      - Azure documentation lookup
+
+  kql:
+    installed: true
+    source: skills.sh
+    category: azure
+    risk: medium
+    default_attach: false
+    requires_user_approval: false
+    use_when:
+      - KQL
+      - Log Analytics
+      - Azure Monitor query
+      - Application Insights query
+
+  azure-cost:
+    installed: true
+    source: skills.sh
+    category: azure
+    risk: low
+    default_attach: false
+    requires_user_approval: false
+    use_when:
+      - Azure cost
+      - budget
+      - cost optimization
+
+  oracle-database:
+    installed: true
+    source: local
+    category: database
+    risk: low
+    default_attach: false
+    requires_user_approval: false
+    use_when:
+      - Oracle Database
+      - Oracle SQL
+      - PL/SQL
+      - Oracle migration
+      - Oracle query tuning
+
+  query-expert:
+    installed: true
+    source: skills.sh
+    category: database
+    risk: low
+    default_attach: false
+    requires_user_approval: false
+    use_when:
+      - SQL correctness
+      - query analysis
+
+  database-architect:
+    installed: true
+    source: skills.sh
+    category: database
+    risk: low
+    default_attach: false
+    requires_user_approval: false
+    use_when:
+      - schema design
+      - data model
+
+  database-optimizer:
+    installed: true
+    source: skills.sh
+    category: database
+    risk: low
+    default_attach: false
+    requires_user_approval: false
+    use_when:
+      - query tuning
+      - index optimization
+      - database performance
+
+  react:
+    installed: true
+    source: skills.sh
+    category: frontend
+    risk: low
+    default_attach: false
+    requires_user_approval: false
+    use_when:
+      - React
+      - React component
+      - React hook
+
+  react-query:
+    installed: true
+    source: skills.sh
+    category: frontend
+    risk: low
+    default_attach: false
+    requires_user_approval: false
+    use_when:
+      - React Query
+      - TanStack Query
+      - server state
+
+  redux-toolkit:
+    installed: true
+    source: skills.sh
+    category: frontend
+    risk: low
+    default_attach: false
+    requires_user_approval: false
+    use_when:
+      - Redux Toolkit
+      - Redux state
+
+  zustand-state-management:
+    installed: true
+    source: skills.sh
+    category: frontend
+    risk: low
+    default_attach: false
+    requires_user_approval: false
+    use_when:
+      - Zustand
+      - lightweight state store
+
+  react-modernization:
+    installed: true
+    source: skills.sh
+    category: frontend
+    risk: medium
+    default_attach: false
+    requires_user_approval: false
+    use_when:
+      - React modernization
+      - legacy React refactor
+
+skill_groups:
+  frontend_react:
+    selection_rule: "Attach when service evidence shows React, JSX/TSX, React Router, Next.js, Vite React, or React Native/web React patterns."
+    default_skills:
+      - react
+      - typescript-advanced-types
+    conditional_skills:
+      - react-query
+      - redux-toolkit
+      - zustand-state-management
+      - react-modernization
+      - next-best-practices
+      - vite
+      - tailwindcss
+      - tailwind-design-system
+      - shadcn
+      - mui
+      - accessibility-a11y
+      - framer-motion
+      - gsap
+      - scss-best-practices
+      - styled-components-best-practices
+
+  frontend_other:
+    selection_rule: "Attach only the framework proven by dependency/config evidence."
+    conditional_skills:
+      - angular
+      - angular-development
+      - angular-knowledge-patch
+      - vue
+      - vue-best-practices
+      - vite
+      - svelte
+      - sveltekit
+      - svelte-knowledge-patch
+      - astro
+      - astro-knowledge-patch
+
+  node_backend:
+    selection_rule: "Attach when service evidence shows Node.js backend, TypeScript server, API framework, or server runtime ownership."
+    conditional_skills:
+      - nodejs-backend-patterns
+      - nestjs-clean-typescript
+      - fastify-typescript
+      - koa-typescript
+      - graphql
+      - better-auth-best-practices
+      - api-design-principles
+
+  java_spring:
+    selection_rule: "Attach when service evidence shows Java, Spring, Spring Boot, Maven, Gradle, or JVM service ownership."
+    default_skills:
+      - java-architect
+    conditional_skills:
+      - spring-boot-engineer
+      - spring-framework
+      - java-spring-development
+
+  go:
+    selection_rule: "Attach Go base skills for Go services; add micro-skills only by task need."
+    default_skills:
+      - golang-pro
+      - go-style-core
+    conditional_skills:
+      - go-context
+      - go-concurrency
+      - go-error-handling
+      - go-testing
+      - go-performance
+      - go-linting
+      - go-interfaces
+      - go-generics
+      - go-packages
+
+  rust:
+    selection_rule: "Attach Rust base skills for Rust service code; add framework/crate skills only when detected."
+    default_skills:
+      - rust
+      - rust-knowledge-patch
+    conditional_skills:
+      - tokio-knowledge-patch
+      - axum-knowledge-patch
+      - serde-knowledge-patch
+      - sqlx-knowledge-patch
+      - tauri-knowledge-patch
+
+  dotnet:
+    selection_rule: "Attach when .sln, .csproj, ASP.NET Core, Blazor, or C# service evidence exists."
+    conditional_skills:
+      - aspnet-core
+      - blazor
+      - csharp-developer
+      - modern-csharp-coding-standards
+
+  php_laravel:
+    selection_rule: "Attach when composer.json, Laravel, Artisan, Eloquent, Blade, or PHP service evidence exists."
+    conditional_skills:
+      - php-development
+      - laravel-development
+      - laravel-upgrade
+
+  ruby_rails:
+    selection_rule: "Attach when Gemfile, Rails, ActiveRecord, RSpec, or Ruby service evidence exists."
+    conditional_skills:
+      - ruby
+      - ruby-rails
+      - rspec
+      - rails-knowledge-patch
+
+  python_backend:
+    selection_rule: "Attach framework-specific Python skills only when dependency/config evidence identifies the framework."
+    conditional_skills:
+      - fastapi-python
+      - fastapi-microservices-serverless
+      - rest-api-django
+      - python-testing
+      - python-uv
+      - python-performance-optimization
+      - django-knowledge-patch
+      - fastapi-knowledge-patch
+
+  mobile_native:
+    selection_rule: "Attach only when native/mobile project files prove the stack."
+    conditional_skills:
+      - building-native-ui
+      - native-data-fetching
+      - expo-tailwind-setup
+      - expo-cicd-workflows
+      - expo-api-routes
+      - expo-deployment
+      - expo-dev-client
+      - upgrading-expo
+      - flutter
+      - flutter-knowledge-patch
+      - android-development
+      - kotlin-development
+      - kotlin-knowledge-patch
+      - swift-knowledge-patch
+
+  databases_and_orm:
+    selection_rule: "Attach database/ORM skills by dependency, migration, connection, and task evidence."
+    conditional_skills:
+      - oracle-database
+      - oracle-cloud
+      - query-expert
+      - database-architect
+      - database-optimizer
+      - discover-database
+      - postgresql-best-practices
+      - postgresql-knowledge-patch
+      - mysql-best-practices
+      - supabase
+      - supabase-postgres-best-practices
+      - neon-postgres
+      - prisma
+      - prisma-development
+      - prisma-knowledge-patch
+      - drizzle-orm
+      - drizzle-knowledge-patch
+      - typeorm
+      - sqlx-knowledge-patch
+
+  messaging_cache_infra:
+    selection_rule: "Attach broker/cache/container/infra skills only when evidence exists in Project Knowledge, Component Knowledge, or task scope."
+    conditional_skills:
+      - kafka-development
+      - loom-event-driven
+      - microservices
+      - serverless
+      - websocket-development
+      - celery-expert
+      - django-celery-expert
+      - redis-development
+      - redis-best-practices
+      - redis-js
+      - upstash-redis-kv
+      - docker
+      - docker-knowledge-patch
+      - kubernetes-knowledge-patch
+      - terraform-knowledge-patch
+      - nginx-knowledge-patch
+      - traefik-knowledge-patch
+    risky_skills:
+      - celery-expert
+      - redis-best-practices
+      - upstash-redis-kv
+
+  medusa:
+    selection_rule: "Attach layer-specific Medusa skills; do not attach tutorial/high-risk skills by default."
+    backend_skills:
+      - building-with-medusa
+      - nodejs-backend-patterns
+      - typescript-advanced-types
+    admin_skills:
+      - building-admin-dashboard-customizations
+      - react
+      - typescript-advanced-types
+    storefront_skills:
+      - building-storefronts
+      - storefront-best-practices
+    restricted_skills:
+      - learning-medusa
+      - medusajs-developer
+
+  firebase_supabase_convex:
+    selection_rule: "Attach platform skills only when platform config/dependencies are detected."
+    conditional_skills:
+      - firebase-basics
+      - firebase-auth-basics
+      - firebase-hosting-basics
+      - firebase-app-hosting-basics
+      - firebase-firestore-standard
+      - firebase-firestore-enterprise-native-mode
+      - firebase-data-connect
+      - firebase-ai-logic
+      - developing-genkit-js
+      - developing-genkit-dart
+      - supabase
+      - supabase-postgres-best-practices
+      - convex-quickstart
+      - convex-setup-auth
+      - convex-migration-helper
+      - convex-create-component
+      - convex-performance-audit
+
+  quality_and_process:
+    selection_rule: "Attach for quality, review, debugging, planning, testing, and branch-flow tasks."
+    conditional_skills:
+      - systematic-debugging
+      - test-driven-development
+      - verification-before-completion
+      - webapp-testing
+      - playwright-best-practices
+      - requesting-code-review
+      - receiving-code-review
+      - executing-plans
+      - writing-plans
+      - finishing-a-development-branch
+      - dispatching-parallel-agents
+      - subagent-driven-development
+      - using-git-worktrees
+
+unavailable_or_failed_skills:
+  send-email:
+    installed: false
+    reason: "skills.sh search result existed but live resend/resend-skills install selected only resend."
+  twilio-phone:
+    installed: false
+    reason: "GitHub repo required authentication or was inaccessible."
+  aws-solution-architect:
+    installed: false
+    reason: "skills.sh search result existed but live repo no longer contained this skill name."
+  azure-ai:
+    installed: false
+    reason: "microsoft/github-copilot-for-azure clone timed out."
+  azure-observability:
+    installed: false
+    reason: "microsoft/github-copilot-for-azure clone timed out."
+  azure-compute:
+    installed: false
+    reason: "microsoft/github-copilot-for-azure clone timed out."
+  azure-messaging:
+    installed: false
+    reason: "microsoft/github-copilot-for-azure clone timed out."
+  azure-cost-optimization:
+    installed: false
+    reason: "microsoft/github-copilot-for-azure clone timed out or live install did not select it."
+  azure-cloud-migrate:
+    installed: false
+    reason: "microsoft/github-copilot-for-azure clone timed out."
+  azure-hosted-copilot-sdk:
+    installed: false
+    reason: "microsoft/github-copilot-for-azure clone timed out."
+  azure-servicebus-dotnet:
+    installed: false
+    reason: "skills.sh search result existed but live Microsoft repo did not contain this skill name."
+  azure-keyvault-py:
+    installed: false
+    reason: "skills.sh search result existed but live Microsoft repo did not contain this skill name."
+  azure-ai-voicelive-py:
+    installed: false
+    reason: "skills.sh search result existed but live Microsoft repo did not contain this skill name."
+  azure-ai-document-intelligence-dotnet:
+    installed: false
+    reason: "skills.sh search result existed but live Microsoft repo did not contain this skill name."
+  azure-infra-engineer:
+    installed: false
+    reason: "GitHub repo required authentication or was inaccessible."
+
+# >>> generated skill catalog >>>
+# Generated by scripts/build-skill-catalog.py; policy overrides above remain hand-maintained.
+catalog_total: 221
+catalog:
+  accessibility-a11y:
+    path: ".claude/skills/accessibility-a11y/SKILL.md"
+    category: "frontend"
+    capability: "Implement web accessibility (a11y) best practices following WCAG guidelines to create inclusive, accessible user interfaces."
+  android-development:
+    path: ".claude/skills/android-development/SKILL.md"
+    category: "mobile"
+    capability: "Android development guidelines for Kotlin with clean architecture, MVI pattern, Material Design, and best practices for building robust mobile applications"
+  angular:
+    path: ".claude/skills/angular/SKILL.md"
+    category: "frontend"
+    capability: "Expert in Angular TypeScript development with scalable, high-performance patterns"
+  angular-development:
+    path: ".claude/skills/angular-development/SKILL.md"
+    category: "frontend"
+    capability: "Expert guidance for Angular and TypeScript development focused on scalable, high-performance web applications"
+  angular-knowledge-patch:
+    path: ".claude/skills/angular-knowledge-patch/SKILL.md"
+    category: "knowledge-patch"
+    capability: "Angular v19-v21 features: linkedSignal, resource/httpResource, signal forms, route-level SSR render modes, incremental hydration, zoneless change detection, Vitest migration, and Angular Aria components."
+  api-design-principles:
+    path: ".claude/skills/api-design-principles/SKILL.md"
+    category: "backend"
+    capability: "Master REST and GraphQL API design principles to build intuitive, scalable, and maintainable APIs that delight developers. Use when designing new APIs, reviewing API specifications, or establishing API design standards."
+  aspnet-core:
+    path: ".claude/skills/aspnet-core/SKILL.md"
+    category: "security"
+    capability: "Guidelines for ASP.NET Core web development covering API design, authentication, caching, and best practices"
+  astro:
+    path: ".claude/skills/astro/SKILL.md"
+    category: "frontend"
+    capability: "Expert in Astro framework with static generation and partial hydration patterns"
+  astro-knowledge-patch:
+    path: ".claude/skills/astro-knowledge-patch/SKILL.md"
+    category: "knowledge-patch"
+    capability: "Astro changes since training cutoff (latest: 6.0) \u2014 Fonts API, live collections, CSP, route caching, ClientRouter, Zod 4/Vite 7/Shiki 4. Load before working with Astro."
+  aws-cloud-services:
+    path: ".claude/skills/aws-cloud-services/SKILL.md"
+    category: "security"
+    capability: "Comprehensive AWS cloud services skill covering S3, Lambda, DynamoDB, EC2, RDS, IAM, CloudFormation, and enterprise cloud architecture patterns with AWS SDK"
+  axum-knowledge-patch:
+    path: ".claude/skills/axum-knowledge-patch/SKILL.md"
+    category: "knowledge-patch"
+    capability: "Axum changes since training cutoff (latest: 0.8.5) \u2014 {param} path syntax, no async_trait, OptionalFromRequestParts, Utf8Bytes WS, HTTP/2 WebSockets, NoContent. Load before working with Axum."
+  azure-cost:
+    path: ".claude/skills/azure-cost/SKILL.md"
+    category: "security"
+    capability: "Unified Azure cost management: query historical costs, forecast future spending, and optimize to reduce waste. WHEN: \\\"Azure costs\\\", \\\"Azure spending\\\", \\\"Azure bill\\\", \\\"cost breakdown\\\", \\\"cost by service\\\", \\\"cost by resource\\\", \\\"how much am I spending\\\", \\\"show my bill\\\", \\\"monthly cost summary\\\", \\\"cost trends\\\", \\\"top cost drivers\\\", \\\"actual cost\\\", \\\"amortized cost\\\", \\\"forecast spending\\\", \\\"projected costs\\\", \\\"estimate bill\\\", \\\"future costs\\\", \\\"budget forecast\\\", \\\"end of month costs\\\", \\\"how much will I spend\\\", \\\"optimize costs\\\", \\\"reduce spending\\\", \\\"find cost savings\\\", \\\"orphaned resources\\\", \\\"rightsize VMs\\\", \\\"cost analysis\\\", \\\"reduce waste\\\", \\\"unused resources\\\", \\\"optimize Redis costs\\\", \\\"cost by tag\\\", \\\"cost by resource group\\\", \\\"AKS cost analysis add-on\\\", \\\"namespace cost\\\", \\\"cost spike\\\", \\\"anomaly\\\", \\\"budget alert\\\", \\\"AKS cost visibility\\\". DO NOT USE FOR: deploying resources, provisioning infrastructure, diagnostics, security audits, or estimating costs for new resources not yet deployed."
+  azure-enterprise-infra-planner:
+    path: ".claude/skills/azure-enterprise-infra-planner/SKILL.md"
+    category: "security"
+    capability: "Architect and provision enterprise Azure infrastructure from workload descriptions. For cloud architects and platform engineers planning networking, identity, security, compliance, and multi-resource topologies with WAF alignment. Generates Bicep or Terraform directly (no azd). WHEN: 'plan Azure infrastructure', 'architect Azure landing zone', 'design hub-spoke network', 'plan multi-region DR topology', 'set up VNets firewalls and private endpoints', 'subscription-scope Bicep deployment', 'Azure Backup for VM workloads'. PREFER azure-prepare FOR app-centric workflows."
+  azure-functions:
+    path: ".claude/skills/azure-functions/SKILL.md"
+    category: "devops-cloud"
+    capability: "Expert patterns for Azure Functions development including isolated worker model, Durable Functions orchestration, cold start optimization, and production patterns. Covers .NET, Python, and Node.js programming models. Use when: azure function, azure functions, durable functions, azure serverless, function app."
+  azure-kubernetes:
+    path: ".claude/skills/azure-kubernetes/SKILL.md"
+    category: "security"
+    capability: "Plan, create, and configure production-ready Azure Kubernetes Service (AKS) clusters. Covers Day-0 checklist, SKU selection (Automatic vs Standard), networking options (private API server, Azure CNI Overlay, egress configuration), security, and operations (autoscaling, upgrade strategy, cost analysis). WHEN: create AKS environment, provision AKS environment, enable AKS observability, design AKS networking, choose AKS SKU, secure AKS, optimize AKS, rightsize AKS pod, AKS spot nodes, AKS cluster-autoscaler."
+  azure-quotas:
+    path: ".claude/skills/azure-quotas/SKILL.md"
+    category: "devops-cloud"
+    capability: "Check/manage Azure quotas and usage across providers. For deployment planning, capacity validation, region selection. WHEN: \\\"check quotas\\\", \\\"service limits\\\", \\\"current usage\\\", \\\"request quota increase\\\", \\\"quota exceeded\\\", \\\"validate capacity\\\", \\\"regional availability\\\", \\\"provisioning limits\\\", \\\"vCPU limit\\\", \\\"how many vCPUs available in my subscription\\\"."
+  azure-upgrade:
+    path: ".claude/skills/azure-upgrade/SKILL.md"
+    category: "devops-cloud"
+    capability: "Assess and upgrade Azure workloads between plans, tiers, or SKUs within Azure. Generates assessment reports and automates upgrade steps. WHEN: upgrade Consumption to Flex Consumption, upgrade Azure Functions plan, migrate hosting plan, upgrade Functions SKU, move to Flex Consumption, upgrade Azure service tier, change hosting plan, upgrade function app plan, migrate App Service to Container Apps."
+  better-auth-best-practices:
+    path: ".claude/skills/better-auth-best-practices/SKILL.md"
+    category: "security"
+    capability: "Configure Better Auth server and client, set up database adapters, manage sessions, add plugins, and handle environment variables. Use when users mention Better Auth, betterauth, auth.ts, or need to set up TypeScript authentication with email/password, OAuth, or plugin configuration."
+  blazor:
+    path: ".claude/skills/blazor/SKILL.md"
+    category: "backend"
+    capability: "Guidelines for Blazor development including component lifecycle, state management, and performance optimization"
+  building-admin-dashboard-customizations:
+    path: ".claude/skills/building-admin-dashboard-customizations/SKILL.md"
+    category: "frontend"
+    capability: "Load automatically when planning, researching, or implementing Medusa Admin dashboard UI (widgets, custom pages, forms, tables, data loading, navigation). REQUIRED for all admin UI work in ALL modes (planning, implementation, exploration). Contains design patterns, component usage, and data loading patterns that MCP servers don't provide."
+  building-native-ui:
+    path: ".claude/skills/building-native-ui/SKILL.md"
+    category: "mobile"
+    capability: "Complete guide for building beautiful apps with Expo Router. Covers fundamentals, styling, components, navigation, animations, patterns, and native tabs."
+  building-storefronts:
+    path: ".claude/skills/building-storefronts/SKILL.md"
+    category: "frontend"
+    capability: "Load automatically when planning, researching, or implementing Medusa storefront features (calling custom API routes, SDK integration, React Query patterns, data fetching). REQUIRED for all storefront development in ALL modes (planning, implementation, exploration). Contains SDK usage patterns, frontend integration, and critical rules for calling Medusa APIs."
+  building-with-medusa:
+    path: ".claude/skills/building-with-medusa/SKILL.md"
+    category: "backend"
+    capability: "Load automatically when planning, researching, or implementing ANY Medusa backend features (custom modules, API routes, workflows, data models, module links, business logic). REQUIRED for all Medusa backend work in ALL modes (planning, implementation, exploration). Contains architectural patterns, best practices, and critical rules that MCP servers don't provide."
+  capacitor-push-notifications:
+    path: ".claude/skills/capacitor-push-notifications/SKILL.md"
+    category: "mobile"
+    capability: "Complete guide to implementing push notifications in Capacitor apps using Firebase Cloud Messaging (FCM) and Apple Push Notification Service (APNs). Covers setup, handling, and best practices. Use this skill when users need to add push notifications."
+  capacity:
+    path: ".claude/skills/microsoft-foundry/models/deploy-model/capacity/SKILL.md"
+    category: "devops-cloud"
+    capability: "Discovers available Azure OpenAI model capacity across regions and projects. Analyzes quota limits, compares availability, and recommends optimal deployment locations based on capacity requirements. USE FOR: find capacity, check quota, where can I deploy, capacity discovery, best region for capacity, multi-project capacity search, quota analysis, model availability, region comparison, check TPM availability. DO NOT USE FOR: actual deployment (hand off to preset or customize after discovery), quota increase requests (direct user to Azure Portal), listing existing deployments."
+  celery-expert:
+    path: ".claude/skills/celery-expert/SKILL.md"
+    category: "security"
+    capability: "Expert Celery distributed task queue engineer specializing in async task processing, workflow orchestration, broker configuration (Redis/RabbitMQ), Celery Beat scheduling, and production monitoring. Deep expertise in task patterns (chains, groups, chords), retries, rate limiting, Flower monitoring, and security best practices. Use when designing distributed task systems, implementing background job processing, building workflow orchestration, or optimizing task queue performance."
+  cloud-platform-routing:
+    path: ".claude/skills/cloud-platform-routing/SKILL.md"
+    category: "security"
+    capability: "Use when a task touches AWS, Azure, cloud architecture, IAM/RBAC, serverless, queues, event buses, object storage, cloud databases, observability, cloud cost, infrastructure-as-code, cloud migration, cloud deployment, or multi-cloud service ownership."
+  cloud-solution-architect:
+    path: ".claude/skills/cloud-solution-architect/SKILL.md"
+    category: "devops-cloud"
+    capability: ">-"
+  cloudformation:
+    path: ".claude/skills/cloudformation/SKILL.md"
+    category: "devops-cloud"
+    capability: "AWS CloudFormation infrastructure as code for stack management. Use when writing templates, deploying stacks, managing drift, troubleshooting deployments, or organizing infrastructure with nested stacks."
+  cloudwatch:
+    path: ".claude/skills/cloudwatch/SKILL.md"
+    category: "devops-cloud"
+    capability: "AWS CloudWatch monitoring for logs, metrics, alarms, and dashboards. Use when setting up monitoring, creating alarms, querying logs with Insights, configuring metric filters, building dashboards, or troubleshooting application issues."
+  cognito:
+    path: ".claude/skills/cognito/SKILL.md"
+    category: "security"
+    capability: "AWS Cognito user authentication and authorization service. Use when setting up user pools, configuring identity pools, implementing OAuth flows, managing user attributes, or integrating with social identity providers."
+  convex-create-component:
+    path: ".claude/skills/convex-create-component/SKILL.md"
+    category: "database"
+    capability: "Designs and builds Convex components with isolated tables, clear boundaries, and app-facing wrappers. Use this skill when creating a new Convex component, extracting reusable backend logic into a component, building a third-party integration that owns its own tables, packaging Convex functionality for reuse, or when the user mentions defineComponent, app.use, ComponentApi, ctx.runQuery/runMutation across component boundaries, or wants to separate concerns into isolated Convex modules."
+  convex-migration-helper:
+    path: ".claude/skills/convex-migration-helper/SKILL.md"
+    category: "database"
+    capability: "Plans and executes safe Convex schema and data migrations using the widen-migrate-narrow workflow and the @convex-dev/migrations component. Use this skill when a deployment fails schema validation, existing documents need backfilling, fields need adding or removing or changing type, tables need splitting or merging, or a zero-downtime migration strategy is needed. Also use when the user mentions breaking schema changes, multi-deploy rollouts, or data transformations on existing Convex tables."
+  convex-performance-audit:
+    path: ".claude/skills/convex-performance-audit/SKILL.md"
+    category: "database"
+    capability: "Audits and optimizes Convex application performance across hot-path reads, write contention, subscription cost, and function limits. Use this skill when a Convex feature is slow or expensive, npx convex insights shows high bytes or documents read, OCC conflict errors or mutation retries appear, subscriptions or UI updates are costly, functions hit execution or transaction limits, or the user mentions performance, latency, read amplification, or invalidation problems in a Convex app."
+  convex-setup-auth:
+    path: ".claude/skills/convex-setup-auth/SKILL.md"
+    category: "security"
+    capability: "Sets up Convex authentication with user management, identity mapping, and access control. Use this skill when adding login or signup to a Convex app, configuring Convex Auth, Clerk, WorkOS AuthKit, Auth0, or custom JWT providers, wiring auth.config.ts, protecting queries and mutations with ctx.auth.getUserIdentity(), creating a users table with identity mapping, or setting up role-based access control, even if the user just says \"add auth\" or \"make it require login."
+  cost-optimization:
+    path: ".claude/skills/cost-optimization/SKILL.md"
+    category: "devops-cloud"
+    capability: "Optimize cloud costs through resource rightsizing, tagging strategies, reserved instances, and spending analysis. Use when reducing cloud expenses, analyzing infrastructure costs, or implementing cost governance policies."
+  csharp-developer:
+    path: ".claude/skills/csharp-developer/SKILL.md"
+    category: "database"
+    capability: "Use when building C# applications with .NET 8+, ASP.NET Core APIs, or Blazor web apps. Builds REST APIs using minimal or controller-based routing, configures database access with Entity Framework Core, implements async patterns and cancellation, structures applications with CQRS via MediatR, and scaffolds Blazor components with state management. Invoke for C#, .NET, ASP.NET Core, Blazor, Entity Framework, EF Core, Minimal API, MAUI, SignalR."
+  customize:
+    path: ".claude/skills/microsoft-foundry/models/deploy-model/customize/SKILL.md"
+    category: "devops-cloud"
+    capability: "Interactive guided deployment flow for Azure OpenAI models with full customization control. Step-by-step selection of model version, SKU (GlobalStandard/Standard/ProvisionedManaged), capacity, RAI policy (content filter), and advanced options (dynamic quota, priority processing, spillover). USE FOR: custom deployment, customize model deployment, choose version, select SKU, set capacity, configure content filter, RAI policy, deployment options, detailed deployment, advanced deployment, PTU deployment, provisioned throughput. DO NOT USE FOR: quick deployment to optimal region (use preset)."
+  database-architect:
+    path: ".claude/skills/database-architect/SKILL.md"
+    category: "database"
+    capability: "Expert database architect specializing in data layer design from"
+  database-optimizer:
+    path: ".claude/skills/database-optimizer/SKILL.md"
+    category: "database"
+    capability: "Expert database optimizer specializing in modern performance"
+  deploy-model:
+    path: ".claude/skills/microsoft-foundry/models/deploy-model/SKILL.md"
+    category: "data-ai"
+    capability: "Unified Azure OpenAI model deployment skill with intelligent intent-based routing. Handles quick preset deployments, fully customized deployments (version/SKU/capacity/RAI policy), and capacity discovery across regions and projects. USE FOR: deploy model, deploy gpt, create deployment, model deployment, deploy openai model, set up model, provision model, find capacity, check model availability, where can I deploy, best region for model, capacity analysis. DO NOT USE FOR: listing existing deployments (use foundry_models_deployments_list MCP tool), deleting deployments, agent creation (use agent/create), project creation (use project/create)."
+  developing-genkit-dart:
+    path: ".claude/skills/developing-genkit-dart/SKILL.md"
+    category: "mobile"
+    capability: "Generates code and provides documentation for the Genkit Dart SDK. Use when the user asks to build AI agents in Dart, use Genkit flows, or integrate LLMs into Dart/Flutter applications."
+  developing-genkit-js:
+    path: ".claude/skills/developing-genkit-js/SKILL.md"
+    category: "data-ai"
+    capability: "Develop AI-powered applications using Genkit in Node.js/TypeScript. Use when the user asks about Genkit, AI agents, flows, or tools in JavaScript/TypeScript, or when encountering Genkit errors, validation issues, type errors, or API problems."
+  discover-database:
+    path: ".claude/skills/discover-database/SKILL.md"
+    category: "database"
+    capability: "Automatically discover database skills when working with SQL, PostgreSQL, MongoDB, Redis, database schema design, query optimization, migrations, connection pooling, ORMs, or database selection. Activates for database design, optimization, and implementation tasks."
+  discover-networking:
+    path: ".claude/skills/discover-networking/SKILL.md"
+    category: "meta-process"
+    capability: "Automatically discover networking and connectivity skills when working with TCP, UDP, DNS, mTLS, NAT traversal, SSH, Mosh, Tailscale, or network resilience. Activates for networking development tasks."
+  dispatching-parallel-agents:
+    path: ".claude/skills/dispatching-parallel-agents/SKILL.md"
+    category: "meta-process"
+    capability: "Use when facing 2+ independent tasks that can be worked on without shared state or sequential dependencies"
+  django-celery-expert:
+    path: ".claude/skills/django-celery-expert/SKILL.md"
+    category: "data-ai"
+    capability: "Expert Django Celery guidance for asynchronous task processing. Use when designing background tasks, configuring Celery workers, handling task retries and errors, optimizing Celery performance, implementing periodic tasks with Celery Beat, or setting up production monitoring for Celery. Do not use for general Django questions unrelated to Celery, non-Celery task systems (Django Q, Huey, RQ), ML/data pipeline orchestration (Airflow, Prefect), or frontend and API-only concerns. Follows Vinta's Django Celery best practices."
+  django-knowledge-patch:
+    path: ".claude/skills/django-knowledge-patch/SKILL.md"
+    category: "knowledge-patch"
+    capability: "Django changes since training cutoff (latest: 6.0) \u2014 composite primary keys, CSP middleware, template partials, background tasks, async paginator. Load before working with Django."
+  docker:
+    path: ".claude/skills/docker/SKILL.md"
+    category: "devops-cloud"
+    capability: "Docker containerization best practices for building, securing, and deploying containers."
+  docker-knowledge-patch:
+    path: ".claude/skills/docker-knowledge-patch/SKILL.md"
+    category: "knowledge-patch"
+    capability: "Docker changes since training cutoff (latest: 0.31.0) \u2014 Rego source policies, bake --var flag, semvercmp function, env lookup disable. Load before working with Docker."
+  drizzle-knowledge-patch:
+    path: ".claude/skills/drizzle-knowledge-patch/SKILL.md"
+    category: "knowledge-patch"
+    capability: "Drizzle ORM changes since training cutoff (latest: 1.0.0-beta.19) \u2014 consolidated validator imports, Effect Schema support, node-sqlite driver, .comment() query tagging. Load before working with Drizzle."
+  drizzle-orm:
+    path: ".claude/skills/drizzle-orm/SKILL.md"
+    category: "database"
+    capability: "Guidelines for developing with Drizzle ORM, a lightweight type-safe TypeScript ORM with SQL-like syntax"
+  dynamodb:
+    path: ".claude/skills/dynamodb/SKILL.md"
+    category: "database"
+    capability: "AWS DynamoDB NoSQL database for scalable data storage. Use when designing table schemas, writing queries, configuring indexes, managing capacity, implementing single-table design, or troubleshooting performance issues."
+  eventbridge:
+    path: ".claude/skills/eventbridge/SKILL.md"
+    category: "devops-cloud"
+    capability: "AWS EventBridge serverless event bus for event-driven architectures. Use when creating rules, configuring event patterns, setting up scheduled events, integrating with SaaS, or building cross-account event routing."
+  executing-plans:
+    path: ".claude/skills/executing-plans/SKILL.md"
+    category: "meta-process"
+    capability: "Use when you have a written implementation plan to execute in a separate session with review checkpoints"
+  expo-api-routes:
+    path: ".claude/skills/expo-api-routes/SKILL.md"
+    category: "mobile"
+    capability: "Guidelines for creating API routes in Expo Router with EAS Hosting"
+  expo-cicd-workflows:
+    path: ".claude/skills/expo-cicd-workflows/SKILL.md"
+    category: "mobile"
+    capability: "Helps understand and write EAS workflow YAML files for Expo projects. Use this skill when the user asks about CI/CD or workflows in an Expo or EAS context, mentions .eas/workflows/, or wants help with EAS build pipelines or deployment automation."
+  expo-tailwind-setup:
+    path: ".claude/skills/expo-tailwind-setup/SKILL.md"
+    category: "mobile"
+    capability: "Set up Tailwind CSS v4 in Expo with react-native-css and NativeWind v5 for universal styling"
+  fastapi-knowledge-patch:
+    path: ".claude/skills/fastapi-knowledge-patch/SKILL.md"
+    category: "knowledge-patch"
+    capability: "FastAPI changes since training cutoff (0.112-0.135.3) -- native SSE, yield streaming, strict_content_type, dependency scopes, Pydantic v1 dropped, Starlette 1.0, Pydantic 2.12 MISSING sentinel/exclude_if, security 401 fix. Load before working with FastAPI."
+  fastapi-microservices-serverless:
+    path: ".claude/skills/fastapi-microservices-serverless/SKILL.md"
+    category: "devops-cloud"
+    capability: "Expert in FastAPI microservices for serverless and cloud-native environments"
+  fastapi-python:
+    path: ".claude/skills/fastapi-python/SKILL.md"
+    category: "backend"
+    capability: "Expert in FastAPI Python development with best practices for APIs and async operations"
+  fastify-typescript:
+    path: ".claude/skills/fastify-typescript/SKILL.md"
+    category: "testing"
+    capability: "Guidelines for building high-performance APIs with Fastify and TypeScript, covering validation, Prisma integration, and testing best practices"
+  find-skills:
+    path: ".claude/skills/find-skills/SKILL.md"
+    category: "backend"
+    capability: "Helps users discover and install agent skills when they ask questions like \"how do I do X\", \"find a skill for X\", \"is there a skill that can...\", or express interest in extending capabilities. This skill should be used when the user is looking for functionality that might exist as an installable skill."
+  finishing-a-development-branch:
+    path: ".claude/skills/finishing-a-development-branch/SKILL.md"
+    category: "testing"
+    capability: "Use when implementation is complete, all tests pass, and you need to decide how to integrate the work - guides completion of development work by presenting structured options for merge, PR, or cleanup"
+  firebase-ai-logic:
+    path: ".claude/skills/firebase-ai-logic/SKILL.md"
+    category: "data-ai"
+    capability: "Official skill for integrating Firebase AI Logic (Gemini API) into web applications. Covers setup, multimodal inference, structured output, and security."
+  firebase-auth-basics:
+    path: ".claude/skills/firebase-auth-basics/SKILL.md"
+    category: "security"
+    capability: "Guide for setting up and using Firebase Authentication. Use this skill when the user's app requires user sign-in, user management, or secure data access using auth rules."
+  firebase-basics:
+    path: ".claude/skills/firebase-basics/SKILL.md"
+    category: "devops-cloud"
+    capability: ">-"
+  firebase-data-connect:
+    path: ".claude/skills/firebase-data-connect/SKILL.md"
+    category: "mobile"
+    capability: "Build and deploy Firebase SQL Connect (aka Firebase Data Connect) backends with PostgreSQL. Use for schema design, GraphQL queries/mutations, authorization, and SDK generation for web, Android, iOS, and Flutter apps."
+  firebase-firestore-enterprise-native-mode:
+    path: ".claude/skills/firebase-firestore-enterprise-native-mode/SKILL.md"
+    category: "security"
+    capability: "Comprehensive guide for Firestore enterprise native including provisioning, data model, security rules, and SDK usage. Use this skill when the user needs help setting up Firestore Enterprise with the Native mode, writing security rules, or using the Firestore SDK in their application."
+  firebase-firestore-standard:
+    path: ".claude/skills/firebase-firestore-standard/SKILL.md"
+    category: "security"
+    capability: "Comprehensive guide for Firestore Standard Edition, including provisioning, security rules, and SDK usage. Use this skill when the user needs help setting up Firestore, writing security rules, or using the Firestore SDK in their application."
+  flutter:
+    path: ".claude/skills/flutter/SKILL.md"
+    category: "mobile"
+    capability: "Expert in Flutter and Dart development with clean architecture and state management"
+  flutter-knowledge-patch:
+    path: ".claude/skills/flutter-knowledge-patch/SKILL.md"
+    category: "knowledge-patch"
+    capability: "Flutter 3.29-3.41 + Dart 3.7-3.11 changes since training cutoff \u2014 dot shorthands, squircles, null-aware elements, predictive back, platform assets. Load before working with Flutter/Dart."
+  framer-motion:
+    path: ".claude/skills/framer-motion/SKILL.md"
+    category: "frontend"
+    capability: "Expert guidelines for building performant animations with Framer Motion/Motion library in React applications"
+  github-actions-docs:
+    path: ".claude/skills/github-actions-docs/SKILL.md"
+    category: "devops-cloud"
+    capability: "Use when users ask how to write, explain, customize, migrate, secure, or troubleshoot GitHub Actions workflows, workflow syntax, triggers, matrices, runners, reusable workflows, artifacts, caching, secrets, OIDC, deployments, custom actions, or Actions Runner Controller, especially when they need official GitHub documentation, exact links, or docs-grounded YAML guidance."
+  go-code-review:
+    path: ".claude/skills/go-code-review/SKILL.md"
+    category: "backend"
+    capability: "Use when reviewing Go code or checking code against community style standards. Also use proactively before submitting a Go PR or when reviewing any Go code changes, even if the user doesn't explicitly request a style review. Does not cover language-specific syntax \u2014 delegates to specialized skills."
+  go-concurrency:
+    path: ".claude/skills/go-concurrency/SKILL.md"
+    category: "backend"
+    capability: "Use when writing concurrent Go code \u2014 goroutines, channels, mutexes, or thread-safety guarantees. Also use when parallelizing work, fixing data races, or protecting shared state, even if the user doesn't explicitly mention concurrency primitives. Does not cover context.Context patterns (see go-context)."
+  go-context:
+    path: ".claude/skills/go-context/SKILL.md"
+    category: "backend"
+    capability: "Use when working with context.Context in Go \u2014 placement in signatures, propagating cancellation and deadlines, and storing values in context vs parameters. Also use when cancelling long-running operations, setting timeouts, or passing request-scoped data, even if they don't mention context.Context directly. Does not cover goroutine lifecycle or sync primitives (see go-concurrency)."
+  go-control-flow:
+    path: ".claude/skills/go-control-flow/SKILL.md"
+    category: "backend"
+    capability: "Use when writing conditionals, loops, or switch statements in Go \u2014 including if with initialization, early returns, for loop forms, range, switch, type switches, and blank identifier patterns. Also use when writing a simple if/else or for loop, even if the user doesn't mention guard clauses or variable scoping. Does not cover error flow patterns (see go-error-handling)."
+  go-data-structures:
+    path: ".claude/skills/go-data-structures/SKILL.md"
+    category: "backend"
+    capability: "Use when working with Go slices, maps, or arrays \u2014 choosing between new and make, using append, declaring empty slices (nil vs literal for JSON), implementing sets with maps, and copying data at boundaries. Also use when building or manipulating collections, even if the user doesn't ask about allocation idioms. Does not cover concurrent data structure safety (see go-concurrency)."
+  go-declarations:
+    path: ".claude/skills/go-declarations/SKILL.md"
+    category: "backend"
+    capability: "Use when declaring or initializing Go variables, constants, structs, or maps \u2014 including var vs :=, reducing scope with if-init, formatting composite literals, designing iota enums, and using any instead of interface{}. Also use when writing a new struct or const block, even if the user doesn't ask about declaration style. Does not cover naming conventions (see go-naming)."
+  go-defensive:
+    path: ".claude/skills/go-defensive/SKILL.md"
+    category: "backend"
+    capability: "Use when hardening Go code at API boundaries \u2014 copying slices/maps, verifying interface compliance, using defer for cleanup, time.Time/time.Duration, or avoiding mutable globals. Also use when reviewing for robustness concerns like missing cleanup or unsafe crypto usage, even if the user doesn't mention \"defensive programming.\" Does not cover error handling strategy (see go-error-handling)."
+  go-documentation:
+    path: ".claude/skills/go-documentation/SKILL.md"
+    category: "mobile"
+    capability: "Use when writing or reviewing documentation for Go packages, types, functions, or methods. Also use proactively when creating new exported types, functions, or packages, even if the user doesn't explicitly ask about documentation. Does not cover code comments for non-exported symbols (see go-style-core)."
+  go-error-handling:
+    path: ".claude/skills/go-error-handling/SKILL.md"
+    category: "backend"
+    capability: "Use when writing Go code that returns, wraps, or handles errors \u2014 choosing between sentinel errors, custom types, and fmt.Errorf (%w vs %v), structuring error flow, or deciding whether to log or return. Also use when propagating errors across package boundaries or using errors.Is/As, even if the user doesn't ask about error strategy. Does not cover panic/recover patterns (see go-defensive)."
+  go-functional-options:
+    path: ".claude/skills/go-functional-options/SKILL.md"
+    category: "backend"
+    capability: "Use when designing a Go constructor or factory function with optional configuration \u2014 especially with 3+ optional parameters or extensible APIs. Also use when building a New* function that takes many settings, even if they don't mention \"functional options\" by name. Does not cover general function design (see go-functions)."
+  go-functions:
+    path: ".claude/skills/go-functions/SKILL.md"
+    category: "backend"
+    capability: "Use when organizing functions within a Go file, formatting function signatures, designing return values, or following Printf-style naming conventions. Also use when a user is adding or refactoring any Go function, even if they don't mention function design or signature formatting. Does not cover functional options constructors (see go-functional-options)."
+  go-generics:
+    path: ".claude/skills/go-generics/SKILL.md"
+    category: "backend"
+    capability: "Use when deciding whether to use Go generics, writing generic functions or types, choosing constraints, or picking between type aliases and type definitions. Also use when a user is writing a utility function that could work with multiple types, even if they don't mention generics explicitly. Does not cover interface design without generics (see go-interfaces)."
+  go-interfaces:
+    path: ".claude/skills/go-interfaces/SKILL.md"
+    category: "testing"
+    capability: "Use when defining or implementing Go interfaces, designing abstractions, creating mockable boundaries for testing, or composing types through embedding. Also use when deciding whether to accept an interface or return a concrete type, or using type assertions or type switches, even if the user doesn't explicitly mention interfaces. Does not cover generics-based polymorphism (see go-generics)."
+  go-linting:
+    path: ".claude/skills/go-linting/SKILL.md"
+    category: "backend"
+    capability: "Use when setting up linting for a Go project, configuring golangci-lint, or adding Go checks to a CI/CD pipeline. Also use when starting a new Go project and deciding which linters to enable, even if the user only asks about \"code quality\" or \"static analysis\" without mentioning specific linter names. Does not cover code review process (see go-code-review)."
+  go-logging:
+    path: ".claude/skills/go-logging/SKILL.md"
+    category: "backend"
+    capability: "Use when choosing a logging approach, configuring slog, writing structured log statements, or deciding log levels in Go. Also use when setting up production logging, adding request-scoped context to logs, or migrating from log to slog, even if the user doesn't explicitly mention logging. Does not cover error handling strategy (see go-error-handling)."
+  go-naming:
+    path: ".claude/skills/go-naming/SKILL.md"
+    category: "mobile"
+    capability: "Use when naming any Go identifier \u2014 packages, types, functions, methods, variables, constants, or receivers \u2014 to ensure idiomatic, clear names. Also use when a user is creating new types, packages, or exported APIs, even if they don't explicitly ask about naming conventions. Does not cover package organization (see go-packages)."
+  go-packages:
+    path: ".claude/skills/go-packages/SKILL.md"
+    category: "backend"
+    capability: "Use when creating Go packages, organizing imports, managing dependencies, or deciding how to structure Go code into packages. Also use when starting a new Go project or splitting a growing codebase into packages, even if the user doesn't explicitly ask about package organization. Does not cover naming individual identifiers (see go-naming)."
+  go-performance:
+    path: ".claude/skills/go-performance/SKILL.md"
+    category: "backend"
+    capability: "Use when optimizing Go code, investigating slow performance, or writing performance-critical sections. Also use when a user mentions slow Go code, string concatenation in loops, or asks about benchmarking, even if the user doesn't explicitly mention performance patterns. Does not cover concurrent performance patterns (see go-concurrency)."
+  go-style-core:
+    path: ".claude/skills/go-style-core/SKILL.md"
+    category: "testing"
+    capability: "Use when working with Go formatting, line length, nesting, naked returns, semicolons, or core style principles. Also use when a style question isn't covered by a more specific skill, even if the user doesn't reference a specific style rule. Does not cover domain-specific patterns like error handling, naming, or testing (see specialized skills). Acts as fallback when no more specific style skill applies."
+  go-testing:
+    path: ".claude/skills/go-testing/SKILL.md"
+    category: "testing"
+    capability: "Use when writing, reviewing, or improving Go test code \u2014 including table-driven tests, subtests, parallel tests, test helpers, test doubles, and assertions with cmp.Diff. Also use when a user asks to write a test for a Go function, even if they don't mention specific patterns like table-driven tests or subtests. Does not cover benchmark performance testing (see go-performance)."
+  golang-pro:
+    path: ".claude/skills/golang-pro/SKILL.md"
+    category: "backend"
+    capability: "Master Go 1.21+ with modern patterns, advanced concurrency,"
+  graphql:
+    path: ".claude/skills/graphql/SKILL.md"
+    category: "backend"
+    capability: "Expert in GraphQL API development with type-safe patterns and optimization"
+  gsap:
+    path: ".claude/skills/gsap/SKILL.md"
+    category: "frontend"
+    capability: "Expert guidelines for building high-performance animations with GSAP (GreenSock Animation Platform)"
+  iam:
+    path: ".claude/skills/iam/SKILL.md"
+    category: "security"
+    capability: "AWS Identity and Access Management for users, roles, policies, and permissions. Use when creating IAM policies, configuring cross-account access, setting up service roles, troubleshooting permission errors, or managing access control."
+  incident-rca:
+    path: ".claude/skills/incident-rca/SKILL.md"
+    category: "meta-process"
+    capability: "Root-cause analysis for bugs, incidents, and regressions \u2014 timeline, hypothesis testing with evidence, 5-whys, prevention rules feeding the memory loop. Use when investigating a production bug, an error log the user dropped in, or a recurring defect."
+  java-architect:
+    path: ".claude/skills/java-architect/SKILL.md"
+    category: "security"
+    capability: "Use when building, configuring, or debugging enterprise Java applications with Spring Boot 3.x, microservices, or reactive programming. Invoke to implement WebFlux endpoints, optimize JPA queries and database performance, configure Spring Security with OAuth2/JWT, or resolve authentication issues and async processing challenges in cloud-native Spring applications."
+  java-spring-development:
+    path: ".claude/skills/java-spring-development/SKILL.md"
+    category: "backend"
+    capability: "Java Spring Boot development guidelines with best practices for building robust, secure, and maintainable enterprise applications"
+  kafka-development:
+    path: ".claude/skills/kafka-development/SKILL.md"
+    category: "backend"
+    capability: "Best practices and guidelines for Apache Kafka event streaming and distributed messaging"
+  koa-typescript:
+    path: ".claude/skills/koa-typescript/SKILL.md"
+    category: "backend"
+    capability: "Guidelines for building modern APIs with Koa.js and TypeScript, featuring the onion middleware model and async/await patterns"
+  kotlin-development:
+    path: ".claude/skills/kotlin-development/SKILL.md"
+    category: "mobile"
+    capability: "Kotlin development guidelines with best practices for clean code, naming conventions, function design, and data handling"
+  kotlin-knowledge-patch:
+    path: ".claude/skills/kotlin-knowledge-patch/SKILL.md"
+    category: "knowledge-patch"
+    capability: "Kotlin ecosystem changes since training cutoff (latest: 2.3.0) \u2014 guard conditions, explicit backing fields, multi-dollar interpolation, Compose compiler plugin, Ktor 3.0, Coroutines 1.10, Serialization 1.10, Compose Multiplatform 1.10. Load before working with Kotlin."
+  kql:
+    path: ".claude/skills/kql/SKILL.md"
+    category: "data-ai"
+    capability: "KQL language expertise for writing correct, efficient Kusto Query Language queries. Covers syntax gotchas, join patterns, dynamic types, datetime pitfalls, regex patterns, serialization, memory management, result-size discipline, and advanced functions (geo, vector, graph). USE THIS SKILL whenever writing, debugging, or reviewing KQL queries \u2014 even simple ones \u2014 because the gotchas section prevents the most common errors that waste tool calls and cause expensive retry cascades. Trigger on: KQL, Kusto, ADX, Azure Data Explorer, Fabric Real-Time Intelligence, EventHouse, Log Analytics, log analysis, data exploration, time series, anomaly detection, summarize, where clause, join, extend, project, let statement, parse operator, extract function, any mention of pipe-forward query syntax."
+  kubernetes-knowledge-patch:
+    path: ".claude/skills/kubernetes-knowledge-patch/SKILL.md"
+    category: "knowledge-patch"
+    capability: "Kubernetes features from v1.33-1.35 including In-Place Pod Resize GA, Dynamic Resource Allocation GA, MutatingAdmissionPolicy, Pod-Level Resources, Image Volumes, Gateway API v1.3-1.4, and key deprecations. Use when writing Kubernetes manifests, Helm charts, or controller code targeting recent cluster versions."
+  lambda:
+    path: ".claude/skills/lambda/SKILL.md"
+    category: "devops-cloud"
+    capability: "AWS Lambda serverless functions for event-driven compute. Use when creating functions, configuring triggers, debugging invocations, optimizing cold starts, setting up event source mappings, or managing layers."
+  laravel-development:
+    path: ".claude/skills/laravel-development/SKILL.md"
+    category: "backend"
+    capability: "Expert guidance for Laravel PHP development following best practices, SOLID principles, and Laravel conventions"
+  laravel-upgrade:
+    path: ".claude/skills/laravel-upgrade/SKILL.md"
+    category: "backend"
+    capability: "Upgrade Laravel applications one major version at a time (9\u219210, 10\u219211, 11\u219212). Use when user wants to upgrade their Laravel framework version. Auto-detects current version from composer.json, identifies breaking changes, and applies necessary code fixes."
+  learning-medusa:
+    path: ".claude/skills/learning-medusa/SKILL.md"
+    category: "backend"
+    capability: "Load automatically when user asks to learn Medusa development (e.g., \"teach me how to build with medusa\", \"guide me through medusa\", \"I want to learn medusa\"). Interactive guided tutorial where Claude acts as a coding bootcamp instructor, teaching step-by-step with checkpoints and verification."
+  legacy-code-comprehension:
+    path: ".claude/skills/legacy-code-comprehension/SKILL.md"
+    category: "meta-process"
+    capability: "Read and understand an unfamiliar/legacy codebase safely before changing it \u2014 entry points, dependency tracing, behavior mapping, characterization tests, seams. Use during onboarding of an existing project or before any change in code you did not write."
+  loom-event-driven:
+    path: ".claude/skills/loom-event-driven/SKILL.md"
+    category: "devops-cloud"
+    capability: "Event-driven architecture patterns including message queues, pub/sub, event sourcing, CQRS, and sagas. Use when implementing async messaging, distributed transactions, event stores, command query separation, domain events, integration events, data streaming, choreography, orchestration, or integrating with RabbitMQ, Kafka, Apache Pulsar, AWS SQS, AWS SNS, NATS, event buses, or message brokers."
+  medusajs-developer:
+    path: ".claude/skills/medusajs-developer/SKILL.md"
+    category: "backend"
+    capability: "Specialized agent for MedusaJS development including custom modules, API routes, data models, workflows, scheduled jobs, and third-party integrations. Provides expert guidance on commerce platform architecture and plugin development."
+  microservices:
+    path: ".claude/skills/microservices/SKILL.md"
+    category: "devops-cloud"
+    capability: "Guidelines for building production-grade microservices with FastAPI/Python and Go, covering serverless patterns, clean architecture, observability, and resilience."
+  microsoft-docs:
+    path: ".claude/skills/microsoft-docs/SKILL.md"
+    category: "devops-cloud"
+    capability: "Understand Microsoft technologies by querying official documentation. Use whenever the user asks how something works, wants tutorials, needs configuration options, limits, quotas, or best practices for any Microsoft technology (Azure, .NET, M365, Windows, Power Platform, etc.)\u2014even if they don't mention \"docs.\" If the question is about understanding a concept rather than writing code, this is the right skill."
+  microsoft-foundry:
+    path: ".claude/skills/microsoft-foundry/SKILL.md"
+    category: "data-ai"
+    capability: "Deploy, evaluate, and manage Foundry agents end-to-end: Docker build, ACR push, hosted/prompt agent create, container start, batch eval, prompt optimization, prompt optimizer workflows, agent.yaml, dataset curation from traces. USE FOR: deploy agent to Foundry, hosted agent, create agent, invoke agent, evaluate agent, run batch eval, optimize prompt, improve prompt, prompt optimization, prompt optimizer, improve agent instructions, optimize agent instructions, optimize system prompt, deploy model, Foundry project, RBAC, role assignment, permissions, quota, capacity, region, troubleshoot agent, deployment failure, create dataset from traces, dataset versioning, eval trending, create AI Services, Cognitive Services, create Foundry resource, provision resource, knowledge index, agent monitoring, customize deployment, onboard, availability. DO NOT USE FOR: Azure Functions, App Service, general Azure deploy (use azure-deploy), general Azure prep (use azure-prepare)."
+  modern-csharp-coding-standards:
+    path: ".claude/skills/modern-csharp-coding-standards/SKILL.md"
+    category: "backend"
+    capability: "Write modern, high-performance C# code using records, pattern matching, value objects, async/await, Span<T>/Memory<T>, and best-practice API design patterns. Emphasizes functional-style programming with C# 12+ features."
+  mui:
+    path: ".claude/skills/mui/SKILL.md"
+    category: "frontend"
+    capability: "Material-UI v7 component library patterns including sx prop styling, theme integration, responsive design, and MUI-specific hooks. Use when working with MUI components, styling with sx prop, theme customization, or MUI utilities."
+  mysql-best-practices:
+    path: ".claude/skills/mysql-best-practices/SKILL.md"
+    category: "database"
+    capability: "MySQL development best practices for schema design, query optimization, and database administration"
+  native-data-fetching:
+    path: ".claude/skills/native-data-fetching/SKILL.md"
+    category: "mobile"
+    capability: "Use when implementing or debugging ANY network request, API call, or data fetching. Covers fetch API, React Query, SWR, error handling, caching, offline support, and Expo Router data loaders (`useLoaderData`)."
+  neon-postgres:
+    path: ".claude/skills/neon-postgres/SKILL.md"
+    category: "security"
+    capability: "Guides and best practices for working with Neon Serverless Postgres. Covers getting started, local development with Neon, choosing a connection method, Neon features, authentication (@neondatabase/auth), PostgREST-style data API (@neondatabase/neon-js), Neon CLI, and Neon's Platform API/SDKs. Use for any Neon-related questions."
+  nestjs-clean-typescript:
+    path: ".claude/skills/nestjs-clean-typescript/SKILL.md"
+    category: "testing"
+    capability: "Clean NestJS API development with TypeScript following SOLID principles, modular architecture, and comprehensive testing practices."
+  next-best-practices:
+    path: ".claude/skills/next-best-practices/SKILL.md"
+    category: "frontend"
+    capability: "Next.js best practices - file conventions, RSC boundaries, data patterns, async APIs, metadata, error handling, route handlers, image/font optimization, bundling"
+  next-cache-components:
+    path: ".claude/skills/next-cache-components/SKILL.md"
+    category: "frontend"
+    capability: "Next.js 16 Cache Components - PPR, use cache directive, cacheLife, cacheTag, updateTag"
+  nginx-knowledge-patch:
+    path: ".claude/skills/nginx-knowledge-patch/SKILL.md"
+    category: "knowledge-patch"
+    capability: "Nginx changes since training cutoff (latest: 1.29.7) \u2014 upstream keepalive defaults, sticky directive, DNS resolve, HTTP/2 proxying, TLS defaults. Load before working with Nginx."
+  nodejs-backend-patterns:
+    path: ".claude/skills/nodejs-backend-patterns/SKILL.md"
+    category: "security"
+    capability: "Build production-ready Node.js backend services with Express/Fastify, implementing middleware patterns, error handling, authentication, database integration, and API design best practices. Use when creating Node.js servers, REST APIs, GraphQL backends, or microservices architectures."
+  notification-delivery:
+    path: ".claude/skills/notification-delivery/SKILL.md"
+    category: "backend"
+    capability: "Use when designing or modifying notification systems across email, SMS, push, in-app, webhook, message center, billing alerts, operational alerts, retries, templates, preferences, suppression lists, delivery status, or notification event pipelines."
+  oracle-cloud:
+    path: ".claude/skills/oracle-cloud/SKILL.md"
+    category: "security"
+    capability: "Provides comprehensive Oracle Cloud Infrastructure (OCI) guidance including compute instances, networking (VCN, load balancers, VPN), storage (block, object, file), database services (Autonomous Database, MySQL, NoSQL), container orchestration (OKE), identity and access management (IAM), resource management, cost optimization, and infrastructure as code (Terraform OCI provider, Resource Manager). Produces infrastructure code, deployment scripts, configuration guides, and architectural diagrams. Use when designing OCI architecture, provisioning cloud resources, migrating to Oracle Cloud, implementing OCI security, setting up OCI databases, deploying containerized applications on OKE, managing OCI resources, or when users mention \"Oracle Cloud\", \"OCI\", \"Autonomous Database\", \"VCN\", \"OKE\", \"OCI Terraform\", \"Resource Manager\", \"Oracle Cloud Infrastructure\", or \"OCI migration\"."
+  oracle-database:
+    path: ".claude/skills/oracle-database/SKILL.md"
+    category: "database"
+    capability: "Use when working on Oracle Database, Oracle SQL, PL/SQL, schema migrations, packages, procedures, functions, triggers, indexes, partitions, sequences, locks, JDBC/ODP.NET/oracledb connectivity, or Oracle-specific query behavior."
+  payment-integration:
+    path: ".claude/skills/payment-integration/SKILL.md"
+    category: "payments"
+    capability: "Integrate Stripe, PayPal, and payment processors. Handles checkout"
+  paypal-integration:
+    path: ".claude/skills/paypal-integration/SKILL.md"
+    category: "payments"
+    capability: "Integrate PayPal payment processing with support for express checkout, subscriptions, and refund management. Use when implementing PayPal payments, processing online transactions, or building e-commerce checkout flows."
+  php-development:
+    path: ".claude/skills/php-development/SKILL.md"
+    category: "backend"
+    capability: "Expert guidance for PHP 8+ development with SOLID principles, PSR standards, and modern best practices"
+  playwright-best-practices:
+    path: ".claude/skills/playwright-best-practices/SKILL.md"
+    category: "payments"
+    capability: "Use when writing Playwright tests, fixing flaky tests, debugging failures, implementing Page Object Model, configuring CI/CD, optimizing performance, mocking APIs, handling authentication or OAuth, testing accessibility (axe-core), file uploads/downloads, date/time mocking, WebSockets, geolocation, permissions, multi-tab/popup flows, mobile/responsive layouts, touch gestures, GraphQL, error handling, offline mode, multi-user collaboration, third-party services (payments, email verification), console error monitoring, global setup/teardown, test annotations (skip, fixme, slow), test tags (@smoke, @fast, @critical, filtering with --grep), project dependencies, security testing (XSS, CSRF, auth), performance budgets (Web Vitals, Lighthouse), iframes, component testing, canvas/WebGL, service workers/PWA, test coverage, i18n/localization, Electron apps, or browser extension testing. Covers E2E, component, API, visual, accessibility, security, Electron, and extension testing."
+  postcss-best-practices:
+    path: ".claude/skills/postcss-best-practices/SKILL.md"
+    category: "frontend"
+    capability: "PostCSS best practices and configuration guidelines for modern CSS processing and optimization"
+  postgresql-best-practices:
+    path: ".claude/skills/postgresql-best-practices/SKILL.md"
+    category: "database"
+    capability: "PostgreSQL development best practices for schema design, query optimization, and database administration"
+  postgresql-knowledge-patch:
+    path: ".claude/skills/postgresql-knowledge-patch/SKILL.md"
+    category: "knowledge-patch"
+    capability: "PostgreSQL changes since training cutoff (latest: 18.1) \u2014 JSON_TABLE, SQL/JSON functions, MERGE RETURNING, virtual generated columns, UUIDv7, temporal PRIMARY KEY. Load before working with PostgreSQL."
+  preset:
+    path: ".claude/skills/microsoft-foundry/models/deploy-model/preset/SKILL.md"
+    category: "devops-cloud"
+    capability: "Intelligently deploys Azure OpenAI models to optimal regions by analyzing capacity across all available regions. Automatically checks current region first and shows alternatives if needed. USE FOR: quick deployment, optimal region, best region, automatic region selection, fast setup, multi-region capacity check, high availability deployment, deploy to best location. DO NOT USE FOR: custom SKU selection (use customize), specific version selection (use customize), custom capacity configuration (use customize), PTU deployments (use customize)."
+  prisma:
+    path: ".claude/skills/prisma/SKILL.md"
+    category: "database"
+    capability: "Expert in Prisma ORM with type-safe database operations and schema design"
+  prisma-development:
+    path: ".claude/skills/prisma-development/SKILL.md"
+    category: "database"
+    capability: "Comprehensive Prisma ORM development guidelines with TypeScript, schema design, migrations, and best practices."
+  prisma-knowledge-patch:
+    path: ".claude/skills/prisma-knowledge-patch/SKILL.md"
+    category: "knowledge-patch"
+    capability: "Prisma changes since training cutoff (latest: 7.3) \u2014 v7 ESM rewrite, prisma-client generator, driver adapters, prisma.config.ts, TypedSQL, SQL comments. Load before working with Prisma."
+  python-performance-optimization:
+    path: ".claude/skills/python-performance-optimization/SKILL.md"
+    category: "backend"
+    capability: "Profile and optimize Python code using cProfile, memory profilers, and performance best practices. Use when debugging slow Python code, optimizing bottlenecks, or improving application performance."
+  python-testing:
+    path: ".claude/skills/python-testing/SKILL.md"
+    category: "testing"
+    capability: "Expert in Python testing with pytest and test-driven development"
+  python-uv:
+    path: ".claude/skills/python-uv/SKILL.md"
+    category: "backend"
+    capability: "Guidelines for Python dependency management using uv, the fast Python package installer and resolver."
+  query-expert:
+    path: ".claude/skills/query-expert/SKILL.md"
+    category: "database"
+    capability: "Master SQL and database queries across multiple systems. Generate optimized queries, analyze performance, design indexes, and troubleshoot slow queries for PostgreSQL, MySQL, MongoDB, and more."
+  rails-knowledge-patch:
+    path: ".claude/skills/rails-knowledge-patch/SKILL.md"
+    category: "knowledge-patch"
+    capability: "Rails 8.0\u20138.1 changes \u2014 Solid Queue/Cache/Cable (no Redis), Kamal 2 deployment, Propshaft, authentication generator, Turbo 8 morphing, params.expect, job continuations, structured events. Load before working with Rails."
+  react:
+    path: ".claude/skills/react/SKILL.md"
+    category: "frontend"
+    capability: "Expert in React development with modern patterns, hooks, and performance optimization"
+  react-modernization:
+    path: ".claude/skills/react-modernization/SKILL.md"
+    category: "testing"
+    capability: "Upgrade React applications to latest versions, migrate from class components to hooks, and adopt concurrent features. Use when modernizing React codebases, migrating to React Hooks, or upgrading to latest React versions."
+  react-query:
+    path: ".claude/skills/react-query/SKILL.md"
+    category: "frontend"
+    capability: "Guidelines for using React Query for data fetching, caching, and server state synchronization in React applications"
+  receiving-code-review:
+    path: ".claude/skills/receiving-code-review/SKILL.md"
+    category: "meta-process"
+    capability: "Use when receiving code review feedback, before implementing suggestions, especially if feedback seems unclear or technically questionable - requires technical rigor and verification, not performative agreement or blind implementation"
+  redis-best-practices:
+    path: ".claude/skills/redis-best-practices/SKILL.md"
+    category: "database"
+    capability: "Redis development best practices for caching, data structures, and high-performance key-value operations"
+  redis-development:
+    path: ".claude/skills/redis-development/SKILL.md"
+    category: "database"
+    capability: "Redis performance optimization and best practices. Use this skill when working with Redis data structures, Redis Query Engine (RQE), vector search with RedisVL, semantic caching with LangCache, or optimizing Redis performance."
+  redis-js:
+    path: ".claude/skills/redis-js/SKILL.md"
+    category: "database"
+    capability: "Work with the Upstash Redis JavaScript/TypeScript SDK for serverless Redis operations. Use for caching, session storage, rate limiting, leaderboards, full-text search (querying, filtering, aggregating with @upstash/redis search extension), and all Redis data structures. Supports automatic serialization/deserialization of JavaScript types. Search also available via @upstash/search-redis and @upstash/search-ioredis adapters for TCP clients."
+  redux-toolkit:
+    path: ".claude/skills/redux-toolkit/SKILL.md"
+    category: "frontend"
+    capability: "Comprehensive Redux Toolkit best practices for React and Next.js applications with TypeScript."
+  requesting-code-review:
+    path: ".claude/skills/requesting-code-review/SKILL.md"
+    category: "meta-process"
+    capability: "Use when completing tasks, implementing major features, or before merging to verify work meets requirements"
+  resend:
+    path: ".claude/skills/resend/SKILL.md"
+    category: "backend"
+    capability: "Use when working with the Resend email API \u2014 sending transactional emails (single or batch), receiving inbound emails via webhooks, managing email templates, tracking delivery events, managing domains, contacts, broadcasts, webhooks, API keys, automations, events, viewing API request logs, or setting up the Resend SDK. Always use this skill when the user mentions Resend, even for simple tasks like \"send an email with Resend\" \u2014 the skill contains critical gotchas (idempotency keys, webhook verification, template variable syntax) that prevent common production issues."
+  rest-api-django:
+    path: ".claude/skills/rest-api-django/SKILL.md"
+    category: "security"
+    capability: "Comprehensive guidelines for Django REST API development covering project structure, views, models, serializers, authentication, performance, and error handling."
+  rspec:
+    path: ".claude/skills/rspec/SKILL.md"
+    category: "testing"
+    capability: "RSpec testing best practices for Ruby and Rails applications, covering test organization, data management, and isolation patterns."
+  ruby:
+    path: ".claude/skills/ruby/SKILL.md"
+    category: "testing"
+    capability: "Ruby development guidelines covering idiomatic code style, Ruby 3.x features, testing with RSpec, and best practices for building maintainable Ruby applications."
+  ruby-rails:
+    path: ".claude/skills/ruby-rails/SKILL.md"
+    category: "backend"
+    capability: "Expert in Ruby and Rails development with conventions and best practices"
+  rust:
+    path: ".claude/skills/rust/SKILL.md"
+    category: "backend"
+    capability: "Expert in Rust development with focus on safety, performance, and async programming"
+  rust-knowledge-patch:
+    path: ".claude/skills/rust-knowledge-patch/SKILL.md"
+    category: "knowledge-patch"
+    capability: "Rust changes since training cutoff (latest: 1.94.0) \\u2014 Rust 2024 Edition, async closures, trait upcasting, new std APIs, cargo resolver v3. Load before working with Rust."
+  s3:
+    path: ".claude/skills/s3/SKILL.md"
+    category: "devops-cloud"
+    capability: "AWS S3 object storage for bucket management, object operations, and access control. Use when creating buckets, uploading files, configuring lifecycle policies, setting up static websites, managing permissions, or implementing cross-region replication."
+  scss-best-practices:
+    path: ".claude/skills/scss-best-practices/SKILL.md"
+    category: "frontend"
+    capability: "SCSS/Sassy CSS best practices and coding guidelines for maintainable, scalable stylesheets"
+  serde-knowledge-patch:
+    path: ".claude/skills/serde-knowledge-patch/SKILL.md"
+    category: "knowledge-patch"
+    capability: "Serde/serde_json changes since training cutoff (latest: serde 1.0.228 / serde_json 1.0.149) \u2014 Map sorting, Map as Deserializer, RawValue constants, Map FromStr. Load before working with serde or serde_json."
+  serverless:
+    path: ".claude/skills/serverless/SKILL.md"
+    category: "devops-cloud"
+    capability: "Serverless and microservices development guidelines covering FastAPI, cloud-native patterns, API gateways, and best practices for scalable serverless architectures."
+  shadcn:
+    path: ".claude/skills/shadcn/SKILL.md"
+    category: "frontend"
+    capability: "Manages shadcn components and projects \u2014 adding, searching, fixing, debugging, styling, and composing UI. Provides project context, component docs, and usage examples. Applies when working with shadcn/ui, component registries, presets, --preset codes, or any project with a components.json file. Also triggers for \"shadcn init\", \"create an app with --preset\", or \"switch to --preset\"."
+  skill-agent-factory:
+    path: ".claude/skills/skill-agent-factory/SKILL.md"
+    category: "workflow"
+    capability: "Generate component-specific coder agents from project brain and approved component scopes."
+  skill-bug-routing:
+    path: ".claude/skills/skill-bug-routing/SKILL.md"
+    category: "workflow"
+    capability: "Classify QC defects as blocker or non-blocker and route fix work to the correct generated coder through Coder Leader."
+  skill-coder-leader:
+    path: ".claude/skills/skill-coder-leader/SKILL.md"
+    category: "workflow"
+    capability: "Coordinate generated service coder agents for single-service and multi-service implementation tasks."
+  skill-dev-verification:
+    path: ".claude/skills/skill-dev-verification/SKILL.md"
+    category: "workflow"
+    capability: "Decide Code Done using critical checks, component test policy, scope compliance, and >=80% dev verification score."
+  skill-memory-update:
+    path: ".claude/skills/skill-memory-update/SKILL.md"
+    category: "workflow"
+    capability: "Persist durable project, service, task, agent, and QC learnings after meaningful workflow events."
+  skill-project-brain:
+    path: ".claude/skills/skill-project-brain/SKILL.md"
+    category: "workflow"
+    capability: "Manage reusable project brain files so agents can resume work across conversations without rescanning the whole repository."
+  skill-project-onboarding:
+    path: ".claude/skills/skill-project-onboarding/SKILL.md"
+    category: "workflow"
+    capability: "Build the initial project brain by scanning architecture, services, stack, dependencies, environment, and test policy."
+  skill-qc-handoff:
+    path: ".claude/skills/skill-qc-handoff/SKILL.md"
+    category: "workflow"
+    capability: "Create the mandatory Dev-to-QC handoff document after Code Done."
+  skill-qc-runner:
+    path: ".claude/skills/skill-qc-runner/SKILL.md"
+    category: "workflow"
+    capability: "Run QC from the handoff document, record test results, and stop immediately on blocker bugs."
+  skill-service-coder:
+    path: ".claude/skills/skill-service-coder/SKILL.md"
+    category: "workflow"
+    capability: "Implement code inside a generated service coder's allowed scope while following component test policy and handoff obligations."
+  skill-task-analysis:
+    path: ".claude/skills/skill-task-analysis/SKILL.md"
+    category: "workflow"
+    capability: "Convert HLD, LLD, ticket text, bug reports, or direct user text into a normalized task spec before implementation."
+  skill-workflow-policy:
+    path: ".claude/skills/skill-workflow-policy/SKILL.md"
+    category: "workflow"
+    capability: "Validate workflow state transitions, required artifacts, approval gates, and agent permissions."
+  spring-boot-engineer:
+    path: ".claude/skills/spring-boot-engineer/SKILL.md"
+    category: "security"
+    capability: "Generates Spring Boot 3.x configurations, creates REST controllers, implements Spring Security 6 authentication flows, sets up Spring Data JPA repositories, and configures reactive WebFlux endpoints. Use when building Spring Boot 3.x applications, microservices, or reactive Java applications; invoke for Spring Data JPA, Spring Security 6, WebFlux, Spring Cloud integration, Java REST API design, or Microservices Java architecture."
+  spring-framework:
+    path: ".claude/skills/spring-framework/SKILL.md"
+    category: "backend"
+    capability: "Expert guidance for Spring Framework and Spring Boot development with Java best practices, dependency injection, and RESTful API design"
+  sqlx-knowledge-patch:
+    path: ".claude/skills/sqlx-knowledge-patch/SKILL.md"
+    category: "knowledge-patch"
+    capability: "SQLx changes since training cutoff (latest: 0.9.0-alpha.1) \u2014 SqlSafeStr, owned Arguments, sqlx.toml config, begin_with transactions, SQLite hooks, PgBindIter. Load before working with SQLx."
+  sqs:
+    path: ".claude/skills/sqs/SKILL.md"
+    category: "devops-cloud"
+    capability: "AWS SQS message queue service for decoupled architectures. Use when creating queues, configuring dead-letter queues, managing visibility timeouts, implementing FIFO ordering, or integrating with Lambda."
+  storefront-best-practices:
+    path: ".claude/skills/storefront-best-practices/SKILL.md"
+    category: "payments"
+    capability: "ALWAYS use this skill when working on ecommerce storefronts, online stores, shopping sites. Use for ANY storefront component including checkout pages, cart, payment flows, product pages, product listings, navigation, homepage, or ANY page/component in a storefront. CRITICAL for adding checkout, implementing cart, integrating Medusa backend, or building any ecommerce functionality. Framework-agnostic (Next.js, SvelteKit, TanStack Start, React, Vue). Provides patterns, decision frameworks, backend integration guidance."
+  stripe-best-practices:
+    path: ".claude/skills/stripe-best-practices/SKILL.md"
+    category: "payments"
+    capability: ">-"
+  stripe-integration:
+    path: ".claude/skills/stripe-integration/SKILL.md"
+    category: "payments"
+    capability: "Implement Stripe payment processing for robust, PCI-compliant payment flows including checkout, subscriptions, and webhooks. Use when integrating Stripe payments, building subscription systems, or implementing secure checkout flows."
+  styled-components-best-practices:
+    path: ".claude/skills/styled-components-best-practices/SKILL.md"
+    category: "frontend"
+    capability: "styled-components best practices for CSS-in-JS development in React applications"
+  subagent-driven-development:
+    path: ".claude/skills/subagent-driven-development/SKILL.md"
+    category: "meta-process"
+    capability: "Use when executing implementation plans with independent tasks in the current session"
+  supabase:
+    path: ".claude/skills/supabase/SKILL.md"
+    category: "security"
+    capability: "Use when doing ANY task involving Supabase. Triggers: Supabase products (Database, Auth, Edge Functions, Realtime, Storage, Vectors, Cron, Queues); client libraries and SSR integrations (supabase-js, @supabase/ssr) in Next.js, React, SvelteKit, Astro, Remix; auth issues (login, logout, sessions, JWT, cookies, getSession, getUser, getClaims, RLS); Supabase CLI or MCP server; schema changes, migrations, security audits, Postgres extensions (pg_graphql, pg_cron, pg_vector)."
+  supabase-postgres-best-practices:
+    path: ".claude/skills/supabase-postgres-best-practices/SKILL.md"
+    category: "database"
+    capability: "Postgres performance optimization and best practices from Supabase. Use this skill when writing, reviewing, or optimizing Postgres queries, schema designs, or database configurations."
+  svelte:
+    path: ".claude/skills/svelte/SKILL.md"
+    category: "frontend"
+    capability: "Expert in Svelte and SvelteKit development with modern patterns and SSR"
+  svelte-knowledge-patch:
+    path: ".claude/skills/svelte-knowledge-patch/SKILL.md"
+    category: "knowledge-patch"
+    capability: "Svelte changes since training cutoff (latest: 5.0.0) \u2014 runes ($state, $derived, $effect, $props), snippets replacing slots, callback props replacing events, mount/hydrate API. Load before working with Svelte."
+  sveltekit:
+    path: ".claude/skills/sveltekit/SKILL.md"
+    category: "frontend"
+    capability: "Expert guidance for SvelteKit development with TypeScript, Tailwind CSS, SSR/SSG, and performance optimization best practices"
+  swift-knowledge-patch:
+    path: ".claude/skills/swift-knowledge-patch/SKILL.md"
+    category: "knowledge-patch"
+    capability: "Swift changes since training cutoff (5.10\\u20136.3) \\u2014 approachable concurrency, InlineArray, @c interop, module selectors, Swift Testing updates. Load before working with Swift."
+  systematic-debugging:
+    path: ".claude/skills/systematic-debugging/SKILL.md"
+    category: "testing"
+    capability: "Use when encountering any bug, test failure, or unexpected behavior, before proposing fixes"
+  tailwind-design-system:
+    path: ".claude/skills/tailwind-design-system/SKILL.md"
+    category: "frontend"
+    capability: "Build scalable design systems with Tailwind CSS v4, design tokens, component libraries, and responsive patterns. Use when creating component libraries, implementing design systems, or standardizing UI patterns."
+  tailwind-knowledge-patch:
+    path: ".claude/skills/tailwind-knowledge-patch/SKILL.md"
+    category: "knowledge-patch"
+    capability: "Tailwind CSS changes since training cutoff (latest: 4.1) \u2014 text shadows, composable masks, overflow-wrap, safe alignment, @source directives, pointer/noscript variants. Load before working with Tailwind CSS."
+  tailwindcss:
+    path: ".claude/skills/tailwindcss/SKILL.md"
+    category: "frontend"
+    capability: "Expert in TailwindCSS utility-first styling with responsive design patterns"
+  tauri-knowledge-patch:
+    path: ".claude/skills/tauri-knowledge-patch/SKILL.md"
+    category: "knowledge-patch"
+    capability: "Tauri 2.0-2.5 changes since training cutoff \u2014 capabilities replacing allowlist, IPC channels, plugin system v2, mobile support, config v2 structure. Load before working with Tauri."
+  terraform-knowledge-patch:
+    path: ".claude/skills/terraform-knowledge-patch/SKILL.md"
+    category: "knowledge-patch"
+    capability: "Terraform/OpenTofu changes since training cutoff (latest: TF 1.15 / OT 1.12) \u2014 ephemeral values, write-only arguments, cross-object validation, Stacks, resource identity, OpenTofu divergences. Load before working with Terraform or OpenTofu."
+  test-driven-development:
+    path: ".claude/skills/test-driven-development/SKILL.md"
+    category: "testing"
+    capability: "Use when implementing any feature or bugfix, before writing implementation code"
+  tokio-knowledge-patch:
+    path: ".claude/skills/tokio-knowledge-patch/SKILL.md"
+    category: "knowledge-patch"
+    capability: "Tokio changes since training cutoff (latest: 1.50.0 / tokio-util 0.7.18) \u2014 SetOnce, JoinMap, JoinQueue, cooperative scheduling, biased join. Load before working with Tokio."
+  traefik-knowledge-patch:
+    path: ".claude/skills/traefik-knowledge-patch/SKILL.md"
+    category: "knowledge-patch"
+    capability: "Traefik changes since training cutoff (latest: 3.6.9) \u2014 multi-layer routing, Redis rate limiter, p2c/leasttime LB strategies, fast proxy, ForwardAuth body forwarding, OTLP logs, post-quantum TLS, Knative provider. Load before working with Traefik."
+  typeorm:
+    path: ".claude/skills/typeorm/SKILL.md"
+    category: "database"
+    capability: "Guidelines for developing with TypeORM, a full-featured ORM for TypeScript and JavaScript supporting multiple databases"
+  typescript-advanced-types:
+    path: ".claude/skills/typescript-advanced-types/SKILL.md"
+    category: "backend"
+    capability: "Master TypeScript's advanced type system including generics, conditional types, mapped types, template literals, and utility types for building type-safe applications. Use when implementing complex type logic, creating reusable type utilities, or ensuring compile-time type safety in TypeScript projects."
+  upgrade-stripe:
+    path: ".claude/skills/upgrade-stripe/SKILL.md"
+    category: "payments"
+    capability: "Guide for upgrading Stripe API versions and SDKs"
+  upgrading-expo:
+    path: ".claude/skills/upgrading-expo/SKILL.md"
+    category: "mobile"
+    capability: "Guidelines for upgrading Expo SDK versions and fixing dependency issues"
+  upstash-redis-kv:
+    path: ".claude/skills/upstash-redis-kv/SKILL.md"
+    category: "database"
+    capability: "Read and write to Upstash Redis-compatible key-value store via REST API. Use when there is a need to save or retrieve key-value data, use Redis features (caching, counters, lists, sets, hashes, sorted sets, etc.) for the current interaction, or when the user explicitly asks to use Upstash or Redis."
+  using-git-worktrees:
+    path: ".claude/skills/using-git-worktrees/SKILL.md"
+    category: "meta-process"
+    capability: "Use when starting feature work that needs isolation from current workspace or before executing implementation plans - creates isolated git worktrees with smart directory selection and safety verification"
+  vercel-composition-patterns:
+    path: ".claude/skills/vercel-composition-patterns/SKILL.md"
+    category: "frontend"
+    capability: "vercel-composition-patterns"
+  vercel-react-best-practices:
+    path: ".claude/skills/vercel-react-best-practices/SKILL.md"
+    category: "frontend"
+    capability: "React and Next.js performance optimization guidelines from Vercel Engineering. This skill should be used when writing, reviewing, or refactoring React/Next.js code to ensure optimal performance patterns. Triggers on tasks involving React components, Next.js pages, data fetching, bundle optimization, or performance improvements."
+  vercel-react-native-skills:
+    path: ".claude/skills/vercel-react-native-skills/SKILL.md"
+    category: "mobile"
+    capability: "vercel-react-native-skills"
+  verification-before-completion:
+    path: ".claude/skills/verification-before-completion/SKILL.md"
+    category: "testing"
+    capability: "Use when about to claim work is complete, fixed, or passing, before committing or creating PRs - requires running verification commands and confirming output before making any success claims; evidence before assertions always"
+  vite:
+    path: ".claude/skills/vite/SKILL.md"
+    category: "frontend"
+    capability: "Vite build tool configuration, plugin API, SSR, and Vite 8 Rolldown migration. Use when working with Vite projects, vite.config.ts, Vite plugins, or building libraries/SSR apps with Vite."
+  vue:
+    path: ".claude/skills/vue/SKILL.md"
+    category: "frontend"
+    capability: "Vue 3 Composition API, script setup macros, reactivity system, and built-in components. Use when writing Vue SFCs, defineProps/defineEmits/defineModel, watchers, or using Transition/Teleport/Suspense/KeepAlive."
+  vue-best-practices:
+    path: ".claude/skills/vue-best-practices/SKILL.md"
+    category: "frontend"
+    capability: "MUST be used for Vue.js tasks. Strongly recommends Composition API with `<script setup>` and TypeScript as the standard approach. Covers Vue 3, SSR, Volar, vue-tsc. Load for any Vue, .vue files, Vue Router, Pinia, or Vite with Vue work. ALWAYS use Composition API unless the project explicitly requires Options API."
+  web-design-guidelines:
+    path: ".claude/skills/web-design-guidelines/SKILL.md"
+    category: "frontend"
+    capability: "Review UI code for Web Interface Guidelines compliance. Use when asked to \"review my UI\", \"check accessibility\", \"audit design\", \"review UX\", or \"check my site against best practices\"."
+  webapp-testing:
+    path: ".claude/skills/webapp-testing/SKILL.md"
+    category: "testing"
+    capability: "Toolkit for interacting with and testing local web applications using Playwright. Supports verifying frontend functionality, debugging UI behavior, capturing browser screenshots, and viewing browser logs."
+  websocket-development:
+    path: ".claude/skills/websocket-development/SKILL.md"
+    category: "backend"
+    capability: "Best practices and guidelines for building real-time applications with WebSocket communication"
+  writing-plans:
+    path: ".claude/skills/writing-plans/SKILL.md"
+    category: "meta-process"
+    capability: "Use when you have a spec or requirements for a multi-step task, before touching code"
+  zustand-state-management:
+    path: ".claude/skills/zustand-state-management/SKILL.md"
+    category: "frontend"
+    capability: "Best practices for Zustand state management in React and Next.js applications with TypeScript."
+# <<< generated skill catalog <<<

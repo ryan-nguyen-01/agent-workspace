@@ -1,0 +1,15 @@
+schema_version: "1.0"
+checkpoint_id: "{{CHECKPOINT_ID}}"
+task_id: "{{TASK_ID}}"
+session_id: "{{SESSION_ID}}"
+created_at: "{{CREATED_AT}}"
+
+current_objective: ""
+completed: []
+decisions: []
+resolved_questions: []
+open_questions: []
+known_constraints: []
+next_action: ""
+do_not_reopen: []
+references: []

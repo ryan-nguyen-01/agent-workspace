@@ -1,0 +1,6 @@
+schema_version: "1.0"
+role: "design-index"
+content_root: "docs"
+designs: []
+design_domains: ["product", "experience", "architecture", "data", "integration", "operations"]
+rule: "Store official design content under docs/. This file indexes status, ownership, revisions, and related work."

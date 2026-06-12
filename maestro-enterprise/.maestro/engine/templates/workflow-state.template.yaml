@@ -1,0 +1,90 @@
+version: 1
+access_mode: "guarded"                       # guarded | fullaccess — tool-permission posture only (R-011-14), switch via /access
+default_execution_mode: "assisted"          # direct | assisted | governed | autonomous
+active_execution_mode: null
+verification_owner: "shared"                # agent | user | shared
+autopilot:                                   # set by /ship (R-019); per-run autonomy grant, null when off
+  enabled: false
+  granted_by: null
+  granted_at: null
+  task_id: null
+  max_attempts_per_stage: 5
+  pre_authorized_gates: []                   # e.g. [R-011-01, R-011-03, R-011-06, R-011-10]
+  current_stage: null
+  attempt: 0
+  last_error: null
+current_state: "NEW"
+active_task_id: null
+active_subtask_id: null
+active_run_id: null
+active_checkpoint_id: null
+updated_at: "{{UPDATED_AT}}"
+updated_by: "coordinator"
+reason: "{{STATE_REASON}}"
+notes: []
+
+allowed_transitions:
+  NEW:
+    - NEED_ONBOARDING
+    - READY_FOR_ANALYSIS
+  NEED_ONBOARDING:
+    - ONBOARDED
+  ONBOARDED:
+    - NEED_AGENT_CREATION_APPROVAL
+  NEED_AGENT_CREATION_APPROVAL:
+    - AGENTS_READY
+    - READY_FOR_ANALYSIS
+  AGENTS_READY:
+    - READY_FOR_ANALYSIS
+  READY_FOR_ANALYSIS:
+    - ANALYZED
+  ANALYZED:
+    - ARCHITECTURE_REVIEWING
+    - PLANNED
+  ARCHITECTURE_REVIEWING:
+    - ANALYZED
+    - PLANNED
+  PLANNED:
+    - IN_DEV
+  IN_DEV:
+    - DEV_VERIFYING
+    - DEV_BLOCKED
+  DEV_VERIFYING:
+    - DEV_DONE
+    - DEV_BLOCKED
+    - IN_DEV
+  DEV_BLOCKED:
+    - IN_DEV
+  DEV_DONE:
+    - QC_READY
+    - QC_RETESTING
+  QC_READY:
+    - QC_TESTING
+  QC_TESTING:
+    - BLOCKED_BY_BUG
+    - QC_DONE
+  BLOCKED_BY_BUG:
+    - FIXING
+  FIXING:
+    - DEV_VERIFYING
+  QC_RETESTING:
+    - BLOCKED_BY_BUG
+    - QC_DONE
+  QC_DONE:
+    - MEMORY_SYNCING
+  MEMORY_SYNCING:
+    - DONE
+
+approval_gates:
+  - create_generated_coder_agents
+  - skip_onboarding
+  - skip_qc
+  - skip_blocker_bug
+  - expand_coder_write_scope
+  - create_tests_when_policy_forbids
+  - run_destructive_environment_database_deployment_or_data_action
+  - change_workflow_policy_or_state_machine_rules
+  - touch_files_outside_coder_scope
+  - proceed_task_analysis_to_coder_leader
+  - disable_fast_track_through_test_policy
+  - update_installed_skills

@@ -1,0 +1,26 @@
+schema_version: "1.0"
+role: "run-index"
+
+run_id_format: "RUN-YYYYMMDD-NNN-slug"
+
+states:
+  - "new"
+  - "running"
+  - "waiting-for-human"
+  - "blocked"
+  - "verifying"
+  - "completed"
+  - "failed"
+  - "cancelled"
+
+relationships:
+  task_to_runs: "A task may have zero or more runs."
+  run_to_checkpoints: "A run may have many checkpoints."
+  run_to_traces: "A run may link to trace summaries."
+  run_to_evals: "A run may link to eval evidence."
+
+active:
+  run_ids: []
+
+completed:
+  run_ids: []

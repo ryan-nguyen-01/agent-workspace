@@ -1,0 +1,1015 @@
+{
+  "skills": {
+    "accessibility-a11y": {
+      "computedHash": "3117d5b0302f4fbb90cf7b3b65474aa0ea70eadaf91036ab9e20c912d68f9289",
+      "source": "mindrally/skills",
+      "sourceType": "github"
+    },
+    "android-development": {
+      "computedHash": "dc934d09dde5eea2fead11e689d8e410bdabc30b0c3be5506324efbde1d0eaaa",
+      "source": "mindrally/skills",
+      "sourceType": "github"
+    },
+    "angular": {
+      "computedHash": "3cb3ce921ec71179c0688d8e3836e6aa1a1060bbbd07ed4c4ac5f3b7c44bec67",
+      "source": "mindrally/skills",
+      "sourceType": "github"
+    },
+    "angular-development": {
+      "computedHash": "da4e48d7e04873ac6b0e3dc98f5a9984e3d45b81288cd866585920d56d26f454",
+      "source": "mindrally/skills",
+      "sourceType": "github"
+    },
+    "angular-knowledge-patch": {
+      "computedHash": "3bb093b45b5e6126ff5f9d5964e73a4eb3664b46b3e779b66b88571fb3c51c1a",
+      "source": "nevaberry/nevaberry-plugins",
+      "sourceType": "github"
+    },
+    "api-design-principles": {
+      "computedHash": "3316239df2bdcb41e992857b8142e0239e6964564dd5d7224e470c2ab350a03c",
+      "source": "wshobson/agents",
+      "sourceType": "github"
+    },
+    "aspnet-core": {
+      "computedHash": "ec5ce442bc31c03bf747015704b8a4097ba2bcd753664742454955bc6afa7ba0",
+      "source": "mindrally/skills",
+      "sourceType": "github"
+    },
+    "astro": {
+      "computedHash": "88e5967a26240b1ae697b466a51c7d5cb9eed45b06da50533b20971c8546363d",
+      "source": "mindrally/skills",
+      "sourceType": "github"
+    },
+    "astro-knowledge-patch": {
+      "computedHash": "3e54b3a57e719f40bb8b2c6652625b1b7204473d184e087ac70e7947fa55c2b2",
+      "source": "nevaberry/nevaberry-plugins",
+      "sourceType": "github"
+    },
+    "aws-cloud-services": {
+      "computedHash": "affc8bc3e8d9a80cb29833dfdc5691f6a85141e586244cbe82dabebaa1303829",
+      "source": "manutej/luxor-claude-marketplace",
+      "sourceType": "github"
+    },
+    "axum-knowledge-patch": {
+      "computedHash": "b176dfcead70a5a434258f1cc4cacc1d4f1e770e773202da64649b681a368631",
+      "source": "nevaberry/nevaberry-plugins",
+      "sourceType": "github"
+    },
+    "azure-cost": {
+      "computedHash": "3f3133402993e15c69d4aa5abe779a3e0110853a3770382b477e2a463fdf2f93",
+      "source": "microsoft/azure-skills",
+      "sourceType": "github"
+    },
+    "azure-enterprise-infra-planner": {
+      "computedHash": "4bac5160a9907907f47bcc14130d2751167d89201fa4f6765e0b021d38ca8db5",
+      "source": "microsoft/azure-skills",
+      "sourceType": "github"
+    },
+    "azure-functions": {
+      "computedHash": "b06bec91e3274dc3a1b8fb089e1abcb7062b2fbe9d719d4bea2375123fad6965",
+      "source": "sebas-aikon-intelligence/antigravity-awesome-skills",
+      "sourceType": "github"
+    },
+    "azure-kubernetes": {
+      "computedHash": "feb433980368a88814cc5ec7eb1d75a059c56a973ce96664026b03b230cc814b",
+      "source": "microsoft/azure-skills",
+      "sourceType": "github"
+    },
+    "azure-quotas": {
+      "computedHash": "b6e63951fe348954c908bd64461577cabec8beaf382a82feace9b7fcd318b2f0",
+      "source": "microsoft/azure-skills",
+      "sourceType": "github"
+    },
+    "azure-upgrade": {
+      "computedHash": "f5b763ea4338836606081f4db34c26afddfd2360d6fce816be9cfc2d8da9cc72",
+      "source": "microsoft/azure-skills",
+      "sourceType": "github"
+    },
+    "better-auth-best-practices": {
+      "computedHash": "a4c830509e85557b59339d8d93a4e243e9e59c686e7678854d39230e12c2a6dc",
+      "source": "better-auth/skills",
+      "sourceType": "github"
+    },
+    "blazor": {
+      "computedHash": "14b9ebe46c5e1de1d753d8c9c496d821b08c7681e669d59b717badd1731f6f5a",
+      "source": "mindrally/skills",
+      "sourceType": "github"
+    },
+    "building-admin-dashboard-customizations": {
+      "computedHash": "4cd60098a12fcfd682ae4f7668bd1cf0c5986c27e2ebfcf45166e3d69c4e5f1c",
+      "source": "medusajs/medusa-agent-skills",
+      "sourceType": "github"
+    },
+    "building-native-ui": {
+      "computedHash": "342df93f481a0dba919f372d6c7b40d2b4bf5b51dd24363aea2e5d0bae27a6fa",
+      "source": "expo/skills",
+      "sourceType": "github"
+    },
+    "building-storefronts": {
+      "computedHash": "288f645ffd2b29f925f5c70077b9e57af6b787843fc98b276e84150d253511a7",
+      "source": "medusajs/medusa-agent-skills",
+      "sourceType": "github"
+    },
+    "building-with-medusa": {
+      "computedHash": "fef62d911eba65523b679baea2ce9bf1c253211f18499115374dc9727c024e4f",
+      "source": "medusajs/medusa-agent-skills",
+      "sourceType": "github"
+    },
+    "capacitor-push-notifications": {
+      "computedHash": "91eae9eba9f37e6d62a64aecdcd55c0702af6dbdeaf8947d90bfabb2679d5aee",
+      "source": "cap-go/capacitor-skills",
+      "sourceType": "github"
+    },
+    "celery-expert": {
+      "computedHash": "a0bc038bb3a9c930024720a2f34eb5fa7aad2152171cc7f7943afdf8c98f7f60",
+      "source": "martinholovsky/claude-skills-generator",
+      "sourceType": "github"
+    },
+    "cloud-solution-architect": {
+      "computedHash": "a2ad72ed97eb04000edddb60bc2feae33f4fe4e14727663e32ebb616c2edfe21",
+      "source": "microsoft/agent-skills",
+      "sourceType": "github"
+    },
+    "cloudformation": {
+      "computedHash": "fdb507834628f99f969b2e6fdec31b6204acd1e515bbebf856154dd45392f3f9",
+      "source": "itsmostafa/aws-agent-skills",
+      "sourceType": "github"
+    },
+    "cloudwatch": {
+      "computedHash": "3afe26de329a3f53cd3a963b37ca1f9758721ab108c2141295aef0c57597dd70",
+      "source": "itsmostafa/aws-agent-skills",
+      "sourceType": "github"
+    },
+    "cognito": {
+      "computedHash": "ebff7841793fc1f639d32592e4b53f1786f0542e30f2f31f285eaf6f0933fc69",
+      "source": "itsmostafa/aws-agent-skills",
+      "sourceType": "github"
+    },
+    "convex-create-component": {
+      "computedHash": "d110fca7f65b4919367e6fc63a93bf54abea2cf5e4e097234c947559ffa6e527",
+      "source": "get-convex/agent-skills",
+      "sourceType": "github"
+    },
+    "convex-migration-helper": {
+      "computedHash": "46d1ac354eefbed05e1367d828e893816c13302276080bfaf6bcd828281be486",
+      "source": "get-convex/agent-skills",
+      "sourceType": "github"
+    },
+    "convex-performance-audit": {
+      "computedHash": "30ea0d3c259df011e44ea9b70502ab272f5ac3bd1fb3672ae18489ba99b2c4ae",
+      "source": "get-convex/agent-skills",
+      "sourceType": "github"
+    },
+    "convex-setup-auth": {
+      "computedHash": "e719d31d1ab0d19ca7b942d1154d3ff436b5c156900eea9866c2aaeb910a1388",
+      "source": "get-convex/agent-skills",
+      "sourceType": "github"
+    },
+    "cost-optimization": {
+      "computedHash": "09c06fe261ec4ae1732c17ca8c7d9390c4b15e2c38d58c4c95e7bd3031ce19a2",
+      "source": "rmyndharis/antigravity-skills",
+      "sourceType": "github"
+    },
+    "csharp-developer": {
+      "computedHash": "89c4bd1c2cae3b05100f45bc074a06933287b83a21bd2cadd928a8b768896c55",
+      "source": "jeffallan/claude-skills",
+      "sourceType": "github"
+    },
+    "database-architect": {
+      "computedHash": "e0759d04dd6420826e153211caa5be8982857a1589ce80d3d151fb05682287aa",
+      "source": "rmyndharis/antigravity-skills",
+      "sourceType": "github"
+    },
+    "database-optimizer": {
+      "computedHash": "a0e68bb2dfd20ac7da1fe8832f973f7054381f8f34c0fe7d2efb0791db69f9b1",
+      "source": "rmyndharis/antigravity-skills",
+      "sourceType": "github"
+    },
+    "developing-genkit-dart": {
+      "computedHash": "aa92490e4db5038730c629477ad968796f329040433625cf9b7bb13e26a859e3",
+      "source": "firebase/agent-skills",
+      "sourceType": "github"
+    },
+    "developing-genkit-js": {
+      "computedHash": "2fa9adb27f7cfc4635decebea65222cd56e36b5de34781f7862be888504c04f4",
+      "source": "firebase/agent-skills",
+      "sourceType": "github"
+    },
+    "discover-database": {
+      "computedHash": "d8d9c7b0a42d1d24808f5a8b4da443cb580fbf7b2d4e7a8db368765f7cd7c3e4",
+      "source": "rand/cc-polymath",
+      "sourceType": "github"
+    },
+    "discover-networking": {
+      "computedHash": "7350680a19804c72e6fd2bdbdd3e71c91f3131cd3cb892e89dbf19971d59e0fa",
+      "source": "rand/cc-polymath",
+      "sourceType": "github"
+    },
+    "dispatching-parallel-agents": {
+      "computedHash": "e21044ae7496fc285f1df9ff3fb518a3a20bea6f5216c1f59f4987e12c769a0a",
+      "source": "obra/superpowers",
+      "sourceType": "github"
+    },
+    "django-celery-expert": {
+      "computedHash": "31eb59e33c4251087afc81387abf26502814885921b93c9c9afa06090c3495ca",
+      "source": "vintasoftware/django-ai-plugins",
+      "sourceType": "github"
+    },
+    "django-knowledge-patch": {
+      "computedHash": "e1a631f59b9bde04f58254baf99e8c9fd39bbeec7ab0b99c2d210eafa869f17d",
+      "source": "nevaberry/nevaberry-plugins",
+      "sourceType": "github"
+    },
+    "docker": {
+      "computedHash": "b2f646b339642b2597a244b0f508b4712ce0fa7bb3c7ad982e0bd11fddcc5630",
+      "source": "mindrally/skills",
+      "sourceType": "github"
+    },
+    "docker-knowledge-patch": {
+      "computedHash": "18cd3636e188bb3b7e038ea9d286dfbe0e025d24681fb1be283059bd25e42b88",
+      "source": "nevaberry/nevaberry-plugins",
+      "sourceType": "github"
+    },
+    "drizzle-knowledge-patch": {
+      "computedHash": "4fa6e9f0c8b856d71e6ea2e9409ee9dfc942611caa57262f8898418f132efa22",
+      "source": "nevaberry/nevaberry-plugins",
+      "sourceType": "github"
+    },
+    "drizzle-orm": {
+      "computedHash": "8c96d6e1bbfaad8453371b4727f2bfa73febe9686c75997fd502e38981da211f",
+      "source": "mindrally/skills",
+      "sourceType": "github"
+    },
+    "dynamodb": {
+      "computedHash": "4c1843f4ec5d5d593599ee76cd12ac91ca1390b09685b9357d4ac37a4a6c9806",
+      "source": "itsmostafa/aws-agent-skills",
+      "sourceType": "github"
+    },
+    "eventbridge": {
+      "computedHash": "c1684ca7497dc073e177f93b7f4a34769214fbeccb6b53af4a1c06d367681c54",
+      "source": "itsmostafa/aws-agent-skills",
+      "sourceType": "github"
+    },
+    "executing-plans": {
+      "computedHash": "2f709d1a2c7564f8ce6a9bb707e7f5451117ba80f8e8e2302662c29bc61246a6",
+      "source": "obra/superpowers",
+      "sourceType": "github"
+    },
+    "expo-api-routes": {
+      "computedHash": "015c6b849507fda73fcc32d2448f033aaaaa21f5229085342b8421727a90cafb",
+      "source": "expo/skills",
+      "sourceType": "github"
+    },
+    "expo-cicd-workflows": {
+      "computedHash": "700b20b575fcbe75ad238b41a0bd57938abe495e62dc53e05400712ab01ee7c0",
+      "source": "expo/skills",
+      "sourceType": "github"
+    },
+    "expo-tailwind-setup": {
+      "computedHash": "d39e806942fe880347f161056729b588a3cb0f1796270eebf52633fe11cfdce1",
+      "source": "expo/skills",
+      "sourceType": "github"
+    },
+    "fastapi-knowledge-patch": {
+      "computedHash": "472896099b48545d04b4ba1b52ff8906d625587a8ce48cf6ce7be29d3a69e6b7",
+      "source": "nevaberry/nevaberry-plugins",
+      "sourceType": "github"
+    },
+    "fastapi-microservices-serverless": {
+      "computedHash": "10758a6656e52faf966cd1f4cbdc1a81c3688bf914d8e4912993bc053a077349",
+      "source": "mindrally/skills",
+      "sourceType": "github"
+    },
+    "fastapi-python": {
+      "computedHash": "1d7346210a6690d2faeb089f074c0dc20a7056c2c83ac1062a11c1b73158be72",
+      "source": "mindrally/skills",
+      "sourceType": "github"
+    },
+    "fastify-typescript": {
+      "computedHash": "37205646b49c0f8221fd6c9c9ff8fb8073c964c0e330a00ee87c17d3496a99af",
+      "source": "mindrally/skills",
+      "sourceType": "github"
+    },
+    "find-skills": {
+      "computedHash": "9e1c8b3103f92fa8092568a44fe64858de7c5c9dc65ce4bea8f168080e889cfd",
+      "source": "vercel-labs/skills",
+      "sourceType": "github"
+    },
+    "finishing-a-development-branch": {
+      "computedHash": "9edba9a38684c060fdc38290f640e1dc0c37de286723ac9be73bacacf7cd6f3d",
+      "source": "obra/superpowers",
+      "sourceType": "github"
+    },
+    "firebase-ai-logic": {
+      "computedHash": "3b3d8994f2ac2e747a1f203488844a7e17b8a25c38e636b221903ae90e3b7c32",
+      "source": "firebase/agent-skills",
+      "sourceType": "github"
+    },
+    "firebase-auth-basics": {
+      "computedHash": "ff79d278c0968f297d60f37532c32fd3b8bd9aad9c64b9f354585c701e80112a",
+      "source": "firebase/agent-skills",
+      "sourceType": "github"
+    },
+    "firebase-basics": {
+      "computedHash": "c22edefdc07886432f1361b0412f82ccd53f82d107005acd6dae326f1e106ea7",
+      "source": "firebase/agent-skills",
+      "sourceType": "github"
+    },
+    "firebase-data-connect": {
+      "computedHash": "bb2d5971a7b150a6144ad27b5823e4e0b325d072e8bc8fd8c85123f6c56632c2",
+      "source": "firebase/agent-skills",
+      "sourceType": "github"
+    },
+    "firebase-firestore-enterprise-native-mode": {
+      "computedHash": "528bd602aa93a4409842a4e6f9888b8438521953253b0a629aeaf10603823bf9",
+      "source": "firebase/agent-skills",
+      "sourceType": "github"
+    },
+    "firebase-firestore-standard": {
+      "computedHash": "ab2332607f40ae408e9c56e177b02fad55e071bfac4c2035a16ce0787768953e",
+      "source": "firebase/agent-skills",
+      "sourceType": "github"
+    },
+    "flutter": {
+      "computedHash": "44d29ef51ec11f874910a4dac2e840288ad9dbe074aa5280af32f0d9cb10babf",
+      "source": "mindrally/skills",
+      "sourceType": "github"
+    },
+    "flutter-knowledge-patch": {
+      "computedHash": "9890336a7692676e1f663c9c9aa7a5ad276d0523be44d018f72b932ee5f3fc2e",
+      "source": "nevaberry/nevaberry-plugins",
+      "sourceType": "github"
+    },
+    "framer-motion": {
+      "computedHash": "39a33b58952788812d305f7b676b86ee800d3d5be9752e10392435d7fae73d8a",
+      "source": "mindrally/skills",
+      "sourceType": "github"
+    },
+    "github-actions-docs": {
+      "computedHash": "e9ac24e79715ef3060bd4ae376052f8d863b830604e69cb513b39764bf47ee53",
+      "source": "xixu-me/skills",
+      "sourceType": "github"
+    },
+    "go-code-review": {
+      "computedHash": "4f1bff28380181bd0729d6e2ff8adb2cb2d892e4010be8b501f245a43f90e9aa",
+      "source": "cxuu/golang-skills",
+      "sourceType": "github"
+    },
+    "go-concurrency": {
+      "computedHash": "7896d0efa211420f1df369ff4a1247ccfc7bfd60136dbaf53715ab4221d9cb1e",
+      "source": "cxuu/golang-skills",
+      "sourceType": "github"
+    },
+    "go-context": {
+      "computedHash": "b16ad5bfcb8b6909261e23b8f1d7826777fbddfbe4eebfeeefd3b91b8003f112",
+      "source": "cxuu/golang-skills",
+      "sourceType": "github"
+    },
+    "go-control-flow": {
+      "computedHash": "24d38c8079c328991e10399809ba8784fc64ca9581b0188ffa24ecaaa6dc3664",
+      "source": "cxuu/golang-skills",
+      "sourceType": "github"
+    },
+    "go-data-structures": {
+      "computedHash": "009e4c1a94cc080d3d2c62a011bf9e3d3c88a9b5dad48c0c35c77d4b4a20564b",
+      "source": "cxuu/golang-skills",
+      "sourceType": "github"
+    },
+    "go-declarations": {
+      "computedHash": "adae782b9fdc6fd4db533527675935fea6f5e2bd37d7a8731f7eaef05077fd0c",
+      "source": "cxuu/golang-skills",
+      "sourceType": "github"
+    },
+    "go-defensive": {
+      "computedHash": "1cb01b26d2d40aeac3a3050818512605ac670ef932b8ec3d87ca4f7c01f33c5f",
+      "source": "cxuu/golang-skills",
+      "sourceType": "github"
+    },
+    "go-documentation": {
+      "computedHash": "1320b712bd7192c8cf11aa000de552c8751efd8cce35e538408835f2fb8207fa",
+      "source": "cxuu/golang-skills",
+      "sourceType": "github"
+    },
+    "go-error-handling": {
+      "computedHash": "36cf6f9a7d776f49de5f2da2490a25ef1414b13757de708ee175db191863b864",
+      "source": "cxuu/golang-skills",
+      "sourceType": "github"
+    },
+    "go-functional-options": {
+      "computedHash": "d5b6399a6e2c9764500a2c112f5371a85a6a1e529060401e45f35e0f4c1fe383",
+      "source": "cxuu/golang-skills",
+      "sourceType": "github"
+    },
+    "go-functions": {
+      "computedHash": "618888c381f4015205aef9811ca34a494834fd6b34351117f6ec610948662536",
+      "source": "cxuu/golang-skills",
+      "sourceType": "github"
+    },
+    "go-generics": {
+      "computedHash": "1a291f1fc6a0c5c10863716b0cbb47d854b3c07b528b401784236c3bcddbb28b",
+      "source": "cxuu/golang-skills",
+      "sourceType": "github"
+    },
+    "go-interfaces": {
+      "computedHash": "527ee6262c368af9a7834a74814ab21f88a01f990761f06fb2777e9ac40a2df4",
+      "source": "cxuu/golang-skills",
+      "sourceType": "github"
+    },
+    "go-linting": {
+      "computedHash": "7e37b54b52eb67b3628849907d22605a6fc55d5d7c5f2f78b1243be9430eb603",
+      "source": "cxuu/golang-skills",
+      "sourceType": "github"
+    },
+    "go-logging": {
+      "computedHash": "268a969b7ae3ce99100cf60eb0721880f6faa00c45d01db8be1c377adf61bebd",
+      "source": "cxuu/golang-skills",
+      "sourceType": "github"
+    },
+    "go-naming": {
+      "computedHash": "755889ec4a23ee496e26933c1fa444a6a788b005d3622080071ad65a8db65907",
+      "source": "cxuu/golang-skills",
+      "sourceType": "github"
+    },
+    "go-packages": {
+      "computedHash": "5695f74cac4eeb6d58c43e32d807361ea5bec2e89fb3ffa768e2f2955603422a",
+      "source": "cxuu/golang-skills",
+      "sourceType": "github"
+    },
+    "go-performance": {
+      "computedHash": "d1fe5658a411d45b099d1a7736b19e66d0f16931914135d2feb25b3b8fafc82a",
+      "source": "cxuu/golang-skills",
+      "sourceType": "github"
+    },
+    "go-style-core": {
+      "computedHash": "45d2ed9df5c1f59b0a9cd9c5ae8547ef402b58274e8d973c1cdc77d37a061a39",
+      "source": "cxuu/golang-skills",
+      "sourceType": "github"
+    },
+    "go-testing": {
+      "computedHash": "60e31ba80bea4d68dc50552a80c4ed111fa338a2fb486b2e4cef153fce63a0ca",
+      "source": "cxuu/golang-skills",
+      "sourceType": "github"
+    },
+    "golang-pro": {
+      "computedHash": "22d455a2f259e9010b5be681c97bf811118a018b9b0e73cd354233768930f013",
+      "source": "rmyndharis/antigravity-skills",
+      "sourceType": "github"
+    },
+    "graphql": {
+      "computedHash": "ee43b0c06038778eca95da8679ad1f47d397068b69967d206d8a1d793bb65468",
+      "source": "mindrally/skills",
+      "sourceType": "github"
+    },
+    "gsap": {
+      "computedHash": "2e8b1557817779caec2da7bd1ef8cb1ac84a39a37bea9d20c7997b8e8b644aff",
+      "source": "mindrally/skills",
+      "sourceType": "github"
+    },
+    "iam": {
+      "computedHash": "f56eecd125745280472d1b325f34bf3109d6c9faf410b2e08baa6c26b223acdc",
+      "source": "itsmostafa/aws-agent-skills",
+      "sourceType": "github"
+    },
+    "incident-rca": {
+      "installed_at": "2026-06-12",
+      "source": "maestro-local",
+      "sourceType": "local"
+    },
+    "java-architect": {
+      "computedHash": "5f56e132a3df4603c7d8ef71cc5e25bc1ae822d2d8c4045ef356485699add169",
+      "source": "jeffallan/claude-skills",
+      "sourceType": "github"
+    },
+    "java-spring-development": {
+      "computedHash": "d2f82b82003dcd350cf6ad9622e787c658a2d161958a75d0e44a8de2c71f9175",
+      "source": "mindrally/skills",
+      "sourceType": "github"
+    },
+    "kafka-development": {
+      "computedHash": "6ec77b8b4ac8624083b5f63e14cbaacdc682118ea0c61390b57bcaba159cfa69",
+      "source": "mindrally/skills",
+      "sourceType": "github"
+    },
+    "koa-typescript": {
+      "computedHash": "9aaf86093d344f66c0a57c92de68fd342953a786bd97258523a530db8a294060",
+      "source": "mindrally/skills",
+      "sourceType": "github"
+    },
+    "kotlin-development": {
+      "computedHash": "b7c8e68cb4088b91e2afe22d8eb56471c8353e35a58560f5097d942f200d9eb5",
+      "source": "mindrally/skills",
+      "sourceType": "github"
+    },
+    "kotlin-knowledge-patch": {
+      "computedHash": "4dcbb25a6a8903b44f62c095285fa1772fa3564c0cacd611cd883ac3e8dddb4d",
+      "source": "nevaberry/nevaberry-plugins",
+      "sourceType": "github"
+    },
+    "kql": {
+      "computedHash": "49cdf22f6185f2321a969557d19d9d61ac716d6b5ee1036dd067d135a66c4ccb",
+      "source": "microsoft/agent-skills",
+      "sourceType": "github"
+    },
+    "kubernetes-knowledge-patch": {
+      "computedHash": "47fa51b5d39f4aced23d10dbb05d8f500fee11885eb6ddf07f985b2a4621b6b4",
+      "source": "nevaberry/nevaberry-plugins",
+      "sourceType": "github"
+    },
+    "lambda": {
+      "computedHash": "1a51ad1673f0b8bac0cf5c3d625ea16e629aa083fa8b95151314a60a9106002d",
+      "source": "itsmostafa/aws-agent-skills",
+      "sourceType": "github"
+    },
+    "laravel-development": {
+      "computedHash": "a2c5901b20c07a500026fde489e13f33c1a0d06eb5201bbec2853eec86b55292",
+      "source": "mindrally/skills",
+      "sourceType": "github"
+    },
+    "laravel-upgrade": {
+      "computedHash": "6e6a2687c5eef0481c8bd614b244a2f3fd0c12a87b632fc69ccb0e0d1e80f7b2",
+      "source": "1weiho/laravel-upgrade-skill",
+      "sourceType": "github"
+    },
+    "learning-medusa": {
+      "computedHash": "0e23645defdc43d1ab3337818673889a13e0904f8ab534a0057f5a61219e87fa",
+      "source": "medusajs/medusa-agent-skills",
+      "sourceType": "github"
+    },
+    "legacy-code-comprehension": {
+      "installed_at": "2026-06-12",
+      "source": "maestro-local",
+      "sourceType": "local"
+    },
+    "loom-event-driven": {
+      "computedHash": "62a670297395c5b94d80573bbb71a83cba35dadbdfef56bcf18ea524ca5e3d5f",
+      "source": "cosmix/loom",
+      "sourceType": "github"
+    },
+    "medusajs-developer": {
+      "computedHash": "a7baaff5b3e178ccc1ec0940a8d7bae4d750b3e0e85ba56d008802364067efbc",
+      "source": "greedychipmunk/agent-skills",
+      "sourceType": "github"
+    },
+    "microservices": {
+      "computedHash": "2817792c141ea6a33838d6cbed021e65811953135b91d9f2967a1414ac68220d",
+      "source": "mindrally/skills",
+      "sourceType": "github"
+    },
+    "microsoft-docs": {
+      "computedHash": "0acd8d2629937e021d605fd1426e641295909e13bab47cad1153793f5564e85e",
+      "source": "microsoft/agent-skills",
+      "sourceType": "github"
+    },
+    "microsoft-foundry": {
+      "computedHash": "8bedf03e1211dfd3bfdd0f383c826ca98668b6cfc788e5cf5038c856ecd4350b",
+      "source": "microsoft/azure-skills",
+      "sourceType": "github"
+    },
+    "modern-csharp-coding-standards": {
+      "computedHash": "6cf16abbaf9440a0c22ba94feaebf2cbf00d6a18cfb25ae03f96e59521b0f4cd",
+      "source": "aaronontheweb/dotnet-skills",
+      "sourceType": "github"
+    },
+    "mui": {
+      "computedHash": "8a23268d1e7984b9874a0410c7f93699f3e83e30f3360036027c9a35d9904722",
+      "source": "blencorp/claude-code-kit",
+      "sourceType": "github"
+    },
+    "mysql-best-practices": {
+      "computedHash": "02283efa91864ce6f56f542415bd69d9855be1ea33847987b15040394e828c23",
+      "source": "mindrally/skills",
+      "sourceType": "github"
+    },
+    "native-data-fetching": {
+      "computedHash": "3cd0ba91f359f9f84cd40f36f356287994a0e952520fac6e03ef7952d0397879",
+      "source": "expo/skills",
+      "sourceType": "github"
+    },
+    "neon-postgres": {
+      "computedHash": "391693eee67001639ab65474df185da3ea5cf9ee4b99badecfd64561113edbb4",
+      "source": "neondatabase/agent-skills",
+      "sourceType": "github"
+    },
+    "nestjs-clean-typescript": {
+      "computedHash": "830a608ac0d15d5f93e2fcdc65c4c1fb3fdba3b687e837a01191b0714d9c25f2",
+      "source": "mindrally/skills",
+      "sourceType": "github"
+    },
+    "next-best-practices": {
+      "computedHash": "db85045827ebeb83ac8dbc992b69188755eeb74dcf01cbf5e694d58aa494a106",
+      "source": "vercel-labs/next-skills",
+      "sourceType": "github"
+    },
+    "next-cache-components": {
+      "computedHash": "f835d8226c28abf012cc013928e2627c8a7a046de61127ef229be1711bd1f255",
+      "source": "vercel-labs/next-skills",
+      "sourceType": "github"
+    },
+    "nginx-knowledge-patch": {
+      "computedHash": "73904f27bd68e2867b4aa3668d00f9acdb54b728e855ca3acce4974695342d17",
+      "source": "nevaberry/nevaberry-plugins",
+      "sourceType": "github"
+    },
+    "nodejs-backend-patterns": {
+      "computedHash": "c6a99966c2565acc388e574039127abc770bb9a3338be761e421e16f023f702b",
+      "source": "wshobson/agents",
+      "sourceType": "github"
+    },
+    "oracle-cloud": {
+      "computedHash": "a9e2631e3bfc2356fce79147791c644bd8a020eb781b74cd62f813a6bf78a8ae",
+      "source": "dauquangthanh/hanoi-rainbow",
+      "sourceType": "github"
+    },
+    "payment-integration": {
+      "computedHash": "c0a14a54838d336116737433e8cbe60cdb78084e00eb1f4596f701f1a27e2c0f",
+      "source": "rmyndharis/antigravity-skills",
+      "sourceType": "github"
+    },
+    "paypal-integration": {
+      "computedHash": "878a5bf72335496ec60ec1d24964bc9829b5a9d6ec9c97447c257704703b91ff",
+      "source": "wshobson/agents",
+      "sourceType": "github"
+    },
+    "php-development": {
+      "computedHash": "62e69469722669051b68ec3b9e0da18b7b2b77edd27ac293d173a748e319b3a0",
+      "source": "mindrally/skills",
+      "sourceType": "github"
+    },
+    "playwright-best-practices": {
+      "computedHash": "320eaf861e3a0a923bfaad0726cb311a3fe30093378f8d26c89b9c5ae5c42b35",
+      "source": "currents-dev/playwright-best-practices-skill",
+      "sourceType": "github"
+    },
+    "postcss-best-practices": {
+      "computedHash": "4a1fa78dd12fffe842a6dc423df25b3eb4bfb72d02d8b37db7db1bfbdd2d4805",
+      "source": "mindrally/skills",
+      "sourceType": "github"
+    },
+    "postgresql-best-practices": {
+      "computedHash": "6667a273249881de45d74185b090c5b581abbd2b10e7c10eee1ac6f087c0f73a",
+      "source": "mindrally/skills",
+      "sourceType": "github"
+    },
+    "postgresql-knowledge-patch": {
+      "computedHash": "d3c27b955e5f30a85396fedd6a0477b5621aac4e315df82173687561788ebd83",
+      "source": "nevaberry/nevaberry-plugins",
+      "sourceType": "github"
+    },
+    "prisma": {
+      "computedHash": "62fd7395b78276b51b8ed28da2884b44f890f560b1aa4241662190dbec31f4f4",
+      "source": "mindrally/skills",
+      "sourceType": "github"
+    },
+    "prisma-development": {
+      "computedHash": "fa6f4bfe1ab4b6e8c9dacefb0c4ff2a58873d37bc69f99348495b6a081012a04",
+      "source": "mindrally/skills",
+      "sourceType": "github"
+    },
+    "prisma-knowledge-patch": {
+      "computedHash": "e538bcf65e2632aeb100cb522b55ab41fbe57ea249f98c7bff7a5695911afd3d",
+      "source": "nevaberry/nevaberry-plugins",
+      "sourceType": "github"
+    },
+    "python-performance-optimization": {
+      "computedHash": "1a7009e7e16fd08c201f4a527a44d4f0d9d1d892b15b92ab3492624b23be22b8",
+      "source": "wshobson/agents",
+      "sourceType": "github"
+    },
+    "python-testing": {
+      "computedHash": "cfbc14bb9f2a95abdd54a464c2fdd066dc01628efcc931b863ed60b5316002f5",
+      "source": "mindrally/skills",
+      "sourceType": "github"
+    },
+    "python-uv": {
+      "computedHash": "753766e163676337f22528d7b3c5b64a767d0753972b4ab06c9578cd38db6f0b",
+      "source": "mindrally/skills",
+      "sourceType": "github"
+    },
+    "query-expert": {
+      "computedHash": "0a0a79aeb8904aa5d8ad107ac62c7b295ba141e51189d01d867133e0fc403979",
+      "source": "jamesrochabrun/skills",
+      "sourceType": "github"
+    },
+    "rails-knowledge-patch": {
+      "computedHash": "88b08514aa6ca3465eaac6dfd57607fa8c081d111fa2db5700104e206c06f172",
+      "source": "nevaberry/nevaberry-plugins",
+      "sourceType": "github"
+    },
+    "react": {
+      "computedHash": "463b2de9fe87acf9bc3cb692a91d8628ee1502aee2c77745d2dd1f6bfe206779",
+      "source": "mindrally/skills",
+      "sourceType": "github"
+    },
+    "react-modernization": {
+      "computedHash": "11facc88acf2a1920b9b77d88e7efa109a00577dbf37d1adefca549eb3244d6c",
+      "source": "wshobson/agents",
+      "sourceType": "github"
+    },
+    "react-query": {
+      "computedHash": "7e9543c800d45f1cd9efaeb9f6e5dcc91d3922b768ec41b06a98341840e0b8c7",
+      "source": "mindrally/skills",
+      "sourceType": "github"
+    },
+    "receiving-code-review": {
+      "computedHash": "2760c85d4f4117b0006e7ba755f4bbd61f8f4c185f347999763c97f507274e30",
+      "source": "obra/superpowers",
+      "sourceType": "github"
+    },
+    "redis-best-practices": {
+      "computedHash": "c362f644a6e3ed9b69a86fef4aa41ebcb4ff15552f03b7431f00642af5d3d5f1",
+      "source": "mindrally/skills",
+      "sourceType": "github"
+    },
+    "redis-development": {
+      "computedHash": "d27174128aebe583d5ca15747389c84e286daed589bfa2b99847392a012719b5",
+      "source": "redis/agent-skills",
+      "sourceType": "github"
+    },
+    "redis-js": {
+      "computedHash": "be22591eea552df1eeab7bb947049b06dee4fd8543588a45b6ca5d3603233fff",
+      "source": "upstash/redis-js",
+      "sourceType": "github"
+    },
+    "redux-toolkit": {
+      "computedHash": "327cbba7959a273fc04111e8f86a0be912491152d393b5dc9b55dbb8acc20a8b",
+      "source": "mindrally/skills",
+      "sourceType": "github"
+    },
+    "requesting-code-review": {
+      "computedHash": "246e65cd72a7e360987d94e6c61564ce6d71c6361d1784d529d70e4cbbe8522d",
+      "source": "obra/superpowers",
+      "sourceType": "github"
+    },
+    "resend": {
+      "computedHash": "936851c3e22e6de1d416134a9cd170d7540ddebe5a1c0113eef66537c843c6ed",
+      "source": "resend/resend-skills",
+      "sourceType": "github"
+    },
+    "rest-api-django": {
+      "computedHash": "4e3ec03bbe446194761cf6d7c738ff981d09e1fcda00e038176069700a1f645f",
+      "source": "mindrally/skills",
+      "sourceType": "github"
+    },
+    "rspec": {
+      "computedHash": "4275d92422b1c4636fd4c1e9b3e91db63a7ec67d0cae576d50ee6b6a2b869281",
+      "source": "mindrally/skills",
+      "sourceType": "github"
+    },
+    "ruby": {
+      "computedHash": "5f182d7742391faf823a3fb94da62288c9d3663eda302b4321ab7d017a3e2e1d",
+      "source": "mindrally/skills",
+      "sourceType": "github"
+    },
+    "ruby-rails": {
+      "computedHash": "1d91d6fefd317f97c2c48733e426670a44459085128a7557a9fcd8a1b34b9086",
+      "source": "mindrally/skills",
+      "sourceType": "github"
+    },
+    "rust": {
+      "computedHash": "d66647042598d8c308892dabfefbab38c14c6bcba3b55c8055be6eb22bf0b017",
+      "source": "mindrally/skills",
+      "sourceType": "github"
+    },
+    "rust-knowledge-patch": {
+      "computedHash": "1ede4cee51ae434c458638f9caba1a0fb9ca10874c3e7f9801e671e6ac633533",
+      "source": "nevaberry/nevaberry-plugins",
+      "sourceType": "github"
+    },
+    "s3": {
+      "computedHash": "a66fbce91eb15d47f6a125ff96147814f938a1a0753c30c398aef3e1517b672d",
+      "source": "itsmostafa/aws-agent-skills",
+      "sourceType": "github"
+    },
+    "scss-best-practices": {
+      "computedHash": "16ac9e8bf135304254a358776c5fac043799c1c3ac40221da1338ee972506de5",
+      "source": "mindrally/skills",
+      "sourceType": "github"
+    },
+    "serde-knowledge-patch": {
+      "computedHash": "399b9d2dde5521b5fe225f6ecf720e3b35a80973665f0975bc7eb70992bc2b8e",
+      "source": "nevaberry/nevaberry-plugins",
+      "sourceType": "github"
+    },
+    "serverless": {
+      "computedHash": "0a35edd0b1dee9ab51c9d31e5dc369bc9580cdaa1e175afe664a79ab09dc5eb3",
+      "source": "mindrally/skills",
+      "sourceType": "github"
+    },
+    "shadcn": {
+      "computedHash": "873c67922d80775a9fdf596db7964b579f0408c30ec6e3d11989f6055bbec89f",
+      "source": "shadcn/ui",
+      "sourceType": "github"
+    },
+    "spring-boot-engineer": {
+      "computedHash": "acb4f4fcfcd31ab523c463726a428a774c3eea8c33306f8a5e71790a62924c94",
+      "source": "jeffallan/claude-skills",
+      "sourceType": "github"
+    },
+    "spring-framework": {
+      "computedHash": "ef1fde61fc17d60b48caf9a13693e069a526dc7ed24bc06370a5462904ef36e4",
+      "source": "mindrally/skills",
+      "sourceType": "github"
+    },
+    "sqlx-knowledge-patch": {
+      "computedHash": "7414fd6528219b16b368094f41cb065940994693971876f7096bb843b9b1271c",
+      "source": "nevaberry/nevaberry-plugins",
+      "sourceType": "github"
+    },
+    "sqs": {
+      "computedHash": "ab9f70596178e8273de0258fb627f7e8887a7f3073084fdc3381b1e081e83beb",
+      "source": "itsmostafa/aws-agent-skills",
+      "sourceType": "github"
+    },
+    "storefront-best-practices": {
+      "computedHash": "633f757031071344075cce6450ff8c5bf209691a8d072bb6cc73be153faa4ba4",
+      "source": "medusajs/medusa-agent-skills",
+      "sourceType": "github"
+    },
+    "stripe-best-practices": {
+      "computedHash": "c89653e4f3a289ecdf1a51b3696ee7b18e172131c9803a981088c8d70536c85e",
+      "source": "stripe/ai",
+      "sourceType": "github"
+    },
+    "stripe-integration": {
+      "computedHash": "2ea87d17f71bbc8fb206af2e90d8345c9a978ee36c7874bcccdb0fdd8cdd745c",
+      "source": "wshobson/agents",
+      "sourceType": "github"
+    },
+    "styled-components-best-practices": {
+      "computedHash": "d31c4ec87dbf2990891cc7c12db1aa12fbd3e2542a474fcd64ac4327a5ebf8ac",
+      "source": "mindrally/skills",
+      "sourceType": "github"
+    },
+    "subagent-driven-development": {
+      "computedHash": "a197f8e5fba5ea59013e1adbaa90dd42db35de8f074feca200c8038de584a83b",
+      "source": "obra/superpowers",
+      "sourceType": "github"
+    },
+    "supabase": {
+      "computedHash": "cb675a889c60172febe84740e7c22b600c8241c390deaff3d368c408f10dffdf",
+      "source": "supabase/agent-skills",
+      "sourceType": "github"
+    },
+    "supabase-postgres-best-practices": {
+      "computedHash": "d606a1146be6d54fb9e73f718b5320b9acac5ff2ba2d7230a555df4b5a923b4a",
+      "source": "supabase/agent-skills",
+      "sourceType": "github"
+    },
+    "svelte": {
+      "computedHash": "3c0878402d5647e4c5f7ca1e7d1f4a36a11fe24fcd9b0bf213754fdc7381f69d",
+      "source": "mindrally/skills",
+      "sourceType": "github"
+    },
+    "svelte-knowledge-patch": {
+      "computedHash": "7bbf2be1cd80e6c34e67c58d1b7ee2bbc575412cb4ba1e5c4613b943edb8e3ca",
+      "source": "nevaberry/nevaberry-plugins",
+      "sourceType": "github"
+    },
+    "sveltekit": {
+      "computedHash": "b083f153fd518344dc971fa7f82d11dc67a3800a41ada91395798951bc7f2077",
+      "source": "mindrally/skills",
+      "sourceType": "github"
+    },
+    "swift-knowledge-patch": {
+      "computedHash": "4782e3d19d71c8ad0d2ceb47a0c8bb3cd68d6388a50c2d21fcb2f83d824c4a2e",
+      "source": "nevaberry/nevaberry-plugins",
+      "sourceType": "github"
+    },
+    "systematic-debugging": {
+      "computedHash": "72e9ab72627e4fd8ed26a582e82309a98ecdc4f6e1c99418430ac05682c9e91d",
+      "source": "obra/superpowers",
+      "sourceType": "github"
+    },
+    "tailwind-design-system": {
+      "computedHash": "988d80e52c67c3692d43cc963b6a048a239895e88b272b061de55370d0f8efc3",
+      "source": "wshobson/agents",
+      "sourceType": "github"
+    },
+    "tailwind-knowledge-patch": {
+      "computedHash": "a7af78dd847919743db2b10d85438c2aaf504bbc27291751f54607edef5d60d4",
+      "source": "nevaberry/nevaberry-plugins",
+      "sourceType": "github"
+    },
+    "tailwindcss": {
+      "computedHash": "b1d95ac9242e613966fb11ed413fd2ff61f04641e4e8c1418e0e8258573fcc68",
+      "source": "mindrally/skills",
+      "sourceType": "github"
+    },
+    "tauri-knowledge-patch": {
+      "computedHash": "1f192a8b66ce77f09a2d1cff81fdd37f0b3994bc9a8fcf32590236617e6cd48e",
+      "source": "nevaberry/nevaberry-plugins",
+      "sourceType": "github"
+    },
+    "terraform-knowledge-patch": {
+      "computedHash": "ec4bc1e0a0d61c5aafd14d09bb485830d6fdc600a91101251ee0055e3f143e37",
+      "source": "nevaberry/nevaberry-plugins",
+      "sourceType": "github"
+    },
+    "test-driven-development": {
+      "computedHash": "126f1ebf6ccd414f42544f6e83d8cc5adb089e1108eaffb7c400701e37eecd9f",
+      "source": "obra/superpowers",
+      "sourceType": "github"
+    },
+    "tokio-knowledge-patch": {
+      "computedHash": "d7fd2d33301e6abed959c26222536c6989f4268ec1a7099f29b6292445c11d50",
+      "source": "nevaberry/nevaberry-plugins",
+      "sourceType": "github"
+    },
+    "traefik-knowledge-patch": {
+      "computedHash": "54417a8b22568b6059f6cccb1c9d17b2386a5bf300c49634cd5e0ba72a8f7de8",
+      "source": "nevaberry/nevaberry-plugins",
+      "sourceType": "github"
+    },
+    "typeorm": {
+      "computedHash": "a78bf5815e02755d36eeda49e3e2e87b6e4e161cd90c6cbfb29dc447c4084b99",
+      "source": "mindrally/skills",
+      "sourceType": "github"
+    },
+    "typescript-advanced-types": {
+      "computedHash": "3a3be8c925f96ac4e1280db28a01677e7ca5197f3792de2bbf35ab3bb324b6dd",
+      "source": "wshobson/agents",
+      "sourceType": "github"
+    },
+    "upgrade-stripe": {
+      "computedHash": "06c5c3fd85657ff9aaadff65bd2d63f606da8e44802dc1f9aaf42c73263a11b7",
+      "source": "stripe/ai",
+      "sourceType": "github"
+    },
+    "upgrading-expo": {
+      "computedHash": "939a6820e0d6ead943bb4ad93cec647815e73fbc04043401773b2138e9e13b69",
+      "source": "expo/skills",
+      "sourceType": "github"
+    },
+    "upstash-redis-kv": {
+      "computedHash": "039971d77b5b1df7119ce450e4d6dbde8f9db5e5bb7aec526e6a8e95395707f1",
+      "source": "intellectronica/agent-skills",
+      "sourceType": "github"
+    },
+    "using-git-worktrees": {
+      "computedHash": "52bbb4b6e80918e83e92a1514f3b3757712154c2a8a42de24919e48a794c54fc",
+      "source": "obra/superpowers",
+      "sourceType": "github"
+    },
+    "vercel-composition-patterns": {
+      "computedHash": "575757e3e25761c8c562d6e395d29f0b76c98b1273c0bd72d88e6ab1bc9c7d42",
+      "source": "vercel-labs/agent-skills",
+      "sourceType": "github"
+    },
+    "vercel-react-best-practices": {
+      "computedHash": "ca7b0c0c6e5f2750043f7f0cd72d16ac4e2abc48f9b5500d047a4b77a2506212",
+      "source": "vercel-labs/agent-skills",
+      "sourceType": "github"
+    },
+    "vercel-react-native-skills": {
+      "computedHash": "41d24eafa7c3d82e270439808f7cfbc4d51aeb2d14f2809a2267c16275784d06",
+      "source": "vercel-labs/agent-skills",
+      "sourceType": "github"
+    },
+    "verification-before-completion": {
+      "computedHash": "9b446f0c7fe1cfb560b1d34439523b1a76d5f177290007b2c053a1c749a4a8ba",
+      "source": "obra/superpowers",
+      "sourceType": "github"
+    },
+    "vite": {
+      "computedHash": "867ff66238f3152e9c494339ad08dc432dd0df5bcf5cc7a00b61a72b580eb908",
+      "source": "antfu/skills",
+      "sourceType": "github"
+    },
+    "vue": {
+      "computedHash": "9c241141e07e836e4f0537c63e8f929fba3767c2997250be38e699f19b75e3f2",
+      "source": "antfu/skills",
+      "sourceType": "github"
+    },
+    "vue-best-practices": {
+      "computedHash": "3df585ad31aec78fe55c56c1411262737e6b231677a3153dec512a882fde80cd",
+      "source": "hyf0/vue-skills",
+      "sourceType": "github"
+    },
+    "web-design-guidelines": {
+      "computedHash": "f3bc47f890f42a44db1007ab390709ec368e4b8c089baee6b0007182236ac474",
+      "source": "vercel-labs/agent-skills",
+      "sourceType": "github"
+    },
+    "webapp-testing": {
+      "computedHash": "cf8e5916d474886bd67b09691247f43f331523008b7d366064bc607ab42d6302",
+      "source": "anthropics/skills",
+      "sourceType": "github"
+    },
+    "websocket-development": {
+      "computedHash": "4587db6d2e7a80f52620ef4ecc8c44d5e4a6a392ff5110b48e6bbe84732cfac0",
+      "source": "mindrally/skills",
+      "sourceType": "github"
+    },
+    "writing-plans": {
+      "computedHash": "bfaed11054ad8021c66860244e2d2e0d1eca483ae9f5fbfcb956e99c61f5c3d7",
+      "source": "obra/superpowers",
+      "sourceType": "github"
+    },
+    "zustand-state-management": {
+      "computedHash": "b63b116969df0dbf9af19249ceb16c9feab1f0f86a348faefc9354da7bfee262",
+      "source": "mindrally/skills",
+      "sourceType": "github"
+    }
+  },
+  "version": 1
+}

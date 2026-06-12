@@ -1,0 +1,23 @@
+# A2A handoff envelope instance (contracts/handoff.schema.yaml, R-023).
+# Store at: .maestro/work/tasks/<task-id>/handoffs/<seq>-<from>-to-<to>.yaml
+schema_version: "1.0"
+kind: "handoff"
+id: "H-{{TASK_ID}}-{{SEQ}}"
+task_id: "{{TASK_ID}}"
+from_agent: "{{SENDER}}"
+to_agent: "{{RECEIVER}}"
+intent: "{{ONE_ACTIONABLE_SENTENCE}}"
+purpose_ref: "{{AC_OR_STORY_OR_FEATURE_ID}}"     # orphan work is refused (R-024-02)
+work_type: "software|document|data|research|ops"
+inputs:                                           # what the receiver works FROM — link, don't paste
+  - { doc: "{{DOC_NAME}}", path: "{{PATH}}", version: null }
+expected_output:
+  artifact: "{{PATH_OR_ARTIFACT}}"
+  schema_or_template: "{{SCHEMA_OR_TEMPLATE}}"
+  target_state: "{{WORKFLOW_STATE_OR_NULL}}"
+acceptance:
+  - "{{TESTABLE_CONDITION}}"
+confidence: "high|medium|low"
+assumptions: []
+constraints: []                                   # scope limits, target paths
+on_block: "return_missing_prerequisites|escalate_coordinator"

@@ -1,0 +1,83 @@
+# Product Blueprint — the upfront direction proposal the user approves before autopilot builds.
+# Produced for idea-level / greenfield input (R-019-0a). Once approved, this is the build contract:
+# task-analysis derives acceptance criteria from it; building outside it is scope expansion (hard-stop).
+
+schema_version: "1.0"
+task_id: "{{TASK_ID}}"
+status: "proposed"            # proposed | changes_requested | approved
+approved_by: null
+approved_at: null
+
+product:
+  name: "{{PRODUCT_NAME}}"
+  problem: "{{WHAT_PROBLEM_IT_SOLVES}}"
+  goal: "{{PRIMARY_GOAL_ONE_LINE}}"
+  target_users: "{{WHO_USES_IT}}"
+
+scope_target: "mvp"          # mvp | production  — drives depth, testing, and non-functional targets
+scope_target_rationale: "{{WHY_THIS_TARGET}}"
+in_scope:
+  - "{{FEATURE_OR_CAPABILITY}}"
+out_of_scope:
+  - "deployment / infrastructure provisioning (separate post-DONE phase, R-019-00c)"
+  - "{{EXPLICITLY_EXCLUDED}}"
+
+architecture_style: "modular-monolith"   # monolith | modular-monolith | microservices
+architecture_rationale: "{{WHY_RECOMMENDED_FOR_THIS_SCOPE}}"
+architecture_alternatives:
+  - option: "{{ALT_STYLE}}"
+    when_better: "{{WHEN_TO_PREFER_IT}}"
+
+tech_stack:
+  language: "{{LANG}}"
+  frontend: "{{FRONTEND_FRAMEWORK_OR_NONE}}"
+  backend: "{{BACKEND_FRAMEWORK}}"
+  database: "{{DB}}"
+  key_libraries:
+    - "{{LIB_AND_PURPOSE}}"
+  rationale: "{{WHY_THIS_STACK_FITS_SCOPE_AND_TEAM}}"
+
+features:                     # become the acceptance criteria for this iteration
+  - id: "F1"
+    title: "{{FEATURE}}"
+    acceptance: "{{HOW_WE_KNOW_IT_WORKS}}"
+
+non_functional:              # right-sized to scope_target (mvp keeps these light)
+  performance: "{{TARGET_OR_NA}}"
+  security: "{{TARGET_OR_NA}}"
+  scale: "{{TARGET_OR_NA}}"
+
+ui_ux:                        # REQUIRED when the product has a UI — user approves BEFORE coding (R-019-0a-ui)
+  has_ui: true               # set false for API-only/CLI/library; then this section is N/A
+  prototype_index: "docs/experience/wireframes/index.html"   # the static HTML/CSS prototype to open in a browser
+  prototype_status: "proposed"   # proposed | changes_requested | approved
+  key_screens:               # one static HTML page each, real layout + states
+    - name: "{{SCREEN}}"
+      purpose: "{{WHAT_USER_DOES_HERE}}"
+      html: "docs/experience/wireframes/{{screen}}.html"
+      spec: "docs/experience/ui-specifications/{{screen}}.md"
+      states: "{{empty|loading|error|success_AS_RELEVANT}}"
+  ux_flows:                  # end-to-end user journeys (Mermaid)
+    - flow: "{{FLOW_NAME}}"
+      file: "docs/experience/user-flows/{{flow}}.md"
+      steps: "{{ENTRY -> ACTION -> RESULT}}"
+  design_direction:          # implemented in docs/experience/wireframes/styles.css and reused by the build
+    style: "{{LOOK_AND_FEEL}}"
+    color_tokens: "{{PALETTE}}"
+    typography: "{{FONTS_SCALE}}"
+    spacing: "{{SCALE}}"
+    component_library: "{{shadcn|MUI|custom|...}}"
+    tokens_file: "docs/experience/wireframes/styles.css"
+  responsive: "{{BREAKPOINTS_INTENT}}"
+  accessibility: "{{KEYBOARD/LABELS/CONTRAST_INTENT}}"
+
+assumptions:
+  - "{{ASSUMPTION}}"
+risks_and_tradeoffs:
+  - "{{RISK_OR_TRADEOFF}}"
+
+open_questions:             # must be resolved with the user before approval if they change scope/behavior
+  - "{{QUESTION_OR_NONE}}"
+
+# Approval (R-019-0a): the user reviews this blueprint and approves, or requests changes.
+# Only after status: approved does autopilot run to DONE. Local-only; deploy is a later phase.

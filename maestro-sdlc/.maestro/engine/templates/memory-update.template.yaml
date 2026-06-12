@@ -1,0 +1,42 @@
+task_id: "{{TASK_ID}}"
+updated_at: "{{UPDATED_AT}}"
+updated_by: "memory-update"
+
+updates:
+  - type: "project|service|agent|decision|bug-pattern|coding-error-feedback|feedback-pattern|feedback-anti-pattern|test-policy|workflow"
+    scope: "{{SCOPE}}"
+    title: "{{TITLE}}"
+    content: "{{CONTENT}}"
+    source_artifact: "{{SOURCE_ARTIFACT}}"
+    confidence: 0.95
+    tags: []
+    expires_at: null
+
+redactions:
+  secrets_removed: []
+  logs_summarized: []
+
+reuse_and_convention_memory_updates:
+  new_reusable_assets: []
+  changed_reuse_rules: []
+  changed_coding_conventions: []
+  new_business_flows: []
+  changed_business_flows: []
+  new_anti_patterns: []
+  component_deep_intelligence_updates: []
+
+feedback_updates:
+  inbox_entries_added: []
+  coding_errors_captured: []
+  promoted_to_patterns: []
+  promoted_to_anti_patterns: []
+  prevention_rules_added: []
+  regression_checks_added: []
+  closed_feedback_entries: []
+
+index_update:
+  required: true
+  index_path: ".maestro/knowledge/index.yaml"
+  changed_index_entries: []
+  skipped: false
+  skip_reason: null
