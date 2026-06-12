@@ -19,8 +19,13 @@ for the whole session in every adapter (Claude, Codex).
 This bundle builds AI products and agents. Defaults:
 
 ```text
+- FULL COMPLIANCE: all 26 engine rules apply with no exemptions. Fast-track NEVER skips the eval
+  gate. Identity must be answered exactly per the Identity section.
+- LAYOUT (AI-product specific): apps/ + services/ (the product shell), tests/, and ai/ —
+  ai/prompts (versioned prompts), ai/evals (datasets + graders for the EVAL GATE),
+  ai/datasets (RAG/training sources; synthetic or licensed only, R-013).
 - Methodology: eval-driven-ai. Quality claims about model/agent behavior require eval evidence,
-  not demos (eval-run/eval-suite templates; .maestro/observability/evals/).
+  not demos (eval-run/eval-suite templates; .maestro/observability/evals/ + ai/evals/).
 - Extra blueprint sections for AI scope: AI feasibility (is an LLM the right tool?), data/RAG plan
   (sources, chunking, freshness), eval plan (datasets, graders, thresholds), and cost/latency targets.
 - EVAL GATE before done: the eval suite must pass thresholds in addition to standard QC. Prompt or
@@ -41,7 +46,7 @@ Read in this order:
 8. `.maestro/observability/index.yaml` before creating trace, eval, report, or audit evidence.
 9. `.maestro/runtime/workflow-state.yaml` only for local session state.
 
-Product code belongs in `apps/`, `services/`, `packages/`, `infra/`, and `tests/`.
+Product code belongs in `apps/`, `services/`, `tests/`.
 Official product documents belong in `docs/`. Do not store secrets or long logs in `.maestro/`.
 
 Use `direct` mode for fast user-verified work, `assisted` for resumable bounded work, and

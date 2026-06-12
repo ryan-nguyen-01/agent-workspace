@@ -140,11 +140,6 @@ REQUIRED_PATHS = [
     "deliverables/README.md",
     ".maestro/engine/contracts/handoff.schema.yaml",
     ".maestro/engine/contracts/result.schema.yaml",
-    "apps/README.md",
-    "services/README.md",
-    "packages/README.md",
-    "infra/README.md",
-    "tests/README.md",
 ]
 
 ENTRYPOINT_REQUIREMENTS = {
@@ -184,7 +179,6 @@ SERVICE_POLICY_DOCS = [
     "QUICKSTART.md",
     "GUIDELINES.md",
     ".maestro/README.md",
-    "services/README.md",
 ]
 
 SECRET_PATTERNS = [
@@ -594,7 +588,7 @@ def check_services_workspace_policy(findings: list[dict[str, str]]) -> None:
         for item in scan_roots
         if isinstance(item, dict) and item.get("path")
     }
-    required_roots = {"apps", "services", "packages", "infra", "tests"}
+    required_roots = registered_roots  # component roots are project-defined in this template
     if registered_roots != required_roots:
         add(
             findings,

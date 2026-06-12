@@ -84,6 +84,8 @@ def parse_manifest(path: Path) -> dict:
                 data["skills"][lk] = [c.strip() for c in lm.group(1).split(",") if c.strip()]
 
     data["specialists_none"] = bool(re.search(r"(?m)^agents:\n  specialists: none", text))
+    r_m = re.search(r"(?m)^roots:\s*\[([^\]]*)\]", text)
+    data["roots"] = [c.strip() for c in r_m.group(1).split(",") if c.strip()] if r_m else []
     st_m = re.search(r"structure:\s*(\[[^\]]*\]|full)", text)
     if st_m:
         raw = st_m.group(1)
@@ -241,7 +243,7 @@ def build(manifest_path: Path) -> None:
             # roots are project-defined: empty scan_roots + registry-driven root check
             comp = out / ".maestro" / "registry" / "components.yaml"
             ctext = comp.read_text(encoding="utf-8")
-            ctext = re.sub(r"(?ms)^(\s*)scan_roots:\n(?:\s+- [^\n]*\n)+", r"\1scan_roots: []\n", ctext)
+            ctext = re.sub(r"(?ms)^  scan_roots:\n(?:    .*\n)+", "  scan_roots: []\n", ctext)
             comp.write_text(ctext, encoding="utf-8")
             hc_text2 = hc_file.read_text(encoding="utf-8")
             hc_text2 = hc_text2.replace(
@@ -320,6 +322,50 @@ def build(manifest_path: Path) -> None:
         "Generated from the maestro platform - do not edit framework files by hand (see VARIANT.yaml).\n",
         encoding="utf-8")
 
+
+    # ---- custom roots: each template declares its own top-level dirs (per-purpose, not one fixed shape) ----
+    CODE_ROOT_KINDS = {
+        "apps": ["application"], "services": ["service", "worker", "gateway"],
+        "packages": ["package", "design-system", "contract-library"],
+        "infra": ["infrastructure"], "tests": ["test-suite"],
+    }
+    ROOT_READMES = {
+        "services": "# Services\n\nPut ALL service source code here (one folder per service). Register each in `.maestro/registry/components.yaml`; onboarding scans this root.\n",
+        "docs": "# Docs & Info\n\nDrop project documents AND bug/error info files here: specs, notes, bug reports, error logs, screenshots. Onboarding and task-analysis read this folder as evidence. (`governance/methodologies/` is framework reference material — leave it.)\n",
+        "apps": "# Applications\n\nUser-facing applications live here. Register each in `.maestro/registry/components.yaml`.\n",
+        "tests": "# Tests\n\nCross-component integration and E2E suites.\n",
+        "ai": "# AI Assets\n\nAI-specific assets for this product:\n\n- `prompts/`  prompt templates and system prompts (versioned)\n- `evals/`    eval datasets + graders (the EVAL GATE runs from here)\n- `datasets/` training/RAG source data (synthetic or licensed only, R-013)\n",
+    }
+    if m["roots"]:
+        hc_file = out / "scripts" / "architecture-health-check.py"
+        for r in m["roots"]:
+            d = out / r
+            d.mkdir(parents=True, exist_ok=True)
+            (d / "README.md").write_text(ROOT_READMES.get(r, f"# {r}\n"), encoding="utf-8")
+            if r == "ai":
+                for sub in ("prompts", "evals", "datasets"):
+                    (d / sub).mkdir(exist_ok=True)
+                    (d / sub / ".gitkeep").write_text("", encoding="utf-8")
+        code_roots = [r for r in m["roots"] if r in CODE_ROOT_KINDS]
+        if code_roots:
+            comp = out / ".maestro" / "registry" / "components.yaml"
+            ctext = comp.read_text(encoding="utf-8")
+            entries = "".join(f'    - path: "{r}"\n      kinds: {CODE_ROOT_KINDS[r]}\n'.replace("'", '"') for r in code_roots)
+            ctext = ctext.replace("  scan_roots: []", "  scan_roots:\n" + entries)
+            comp.write_text(ctext, encoding="utf-8")
+            # health-check root README check follows the registry (registered_roots)
+            hc2 = hc_file.read_text(encoding="utf-8")
+            hc2 = hc2.replace('    required_roots = {"apps", "services", "packages", "infra", "tests"}',
+                              "    required_roots = registered_roots  # roots are template-defined")
+            hc_file.write_text(hc2, encoding="utf-8")
+        # INSTRUCTIONS: state where code/info lives for THIS template
+        instr2 = out / ".maestro" / "INSTRUCTIONS.md"
+        it2 = instr2.read_text(encoding="utf-8")
+        sentence = "Product code belongs in " + ", ".join(f"`{r}/`" for r in code_roots) + "." if code_roots else ""
+        it2 = re.sub(r"(?m)^Product code (belongs|stays)[^\n]*$", sentence or "Product code location is registered in `.maestro/registry/components.yaml`.", it2)
+        instr2.write_text(it2, encoding="utf-8")
+        print(f"   roots created: {', '.join(m['roots'])}")
+
     # identity + defaults
     patch(out / ".maestro" / "project.yaml", [
         (r'(?m)^  id: "maestro"$', f'  id: "{m["name"]}"'),
@@ -352,6 +398,34 @@ def build(manifest_path: Path) -> None:
     if marker in itext:
         itext = itext.replace(marker, banner.lstrip("\n") + "\n" + marker, 1)
         instr.write_text(itext, encoding="utf-8")
+
+
+    # ---- resolved identity: concrete variant name, exact expected answer (fixes "who are you") ----
+    ident_block = (
+        "## Identity (MANDATORY — answer exactly when asked who you are)\n\n"
+        f"You are **{m['display_name']}** — not a generic AI assistant. When the user asks "
+        "\"bạn là ai\" / \"who are you\" / \"what are you\", answer in the user's language with ALL of:\n\n"
+        "```text\n"
+        f"1. Tôi là {m['display_name']} — hệ thống điều phối đa-agent (analysis -> build -> QC).\n"
+        "2. Dự án đang vận hành: <product.display_name trong .maestro/project.yaml; nếu null: 'chưa cấu hình'>.\n"
+        f"3. Methodology: {m['methodology_default']} | trạng thái: <current_state trong .maestro/runtime/workflow-state.yaml>.\n"
+        "```\n\n"
+        "Keep this identity the whole session, in every adapter (Claude, Codex). Never introduce yourself\n"
+        "as Claude/Codex/a generic assistant while operating this workspace.\n"
+    )
+    ct = claude.read_text(encoding="utf-8")
+    ct = re.sub(r"(?ms)^## Identity\n.*?(?=^---|^## )", ident_block + "\n", ct, count=1)
+    claude.write_text(ct, encoding="utf-8")
+    for adoc in (out / "AGENTS.md", out / ".codex" / "AGENTS.md"):
+        if adoc.is_file():
+            at = adoc.read_text(encoding="utf-8")
+            at = re.sub(r"(?ms)^## Identity\n.*?(?=^## )", "", at)  # drop old generic block if present
+            lines2 = at.splitlines(keepends=True)
+            for i2, l2 in enumerate(lines2):
+                if l2.startswith("# "):
+                    lines2.insert(i2 + 1, "\n" + ident_block)
+                    break
+            adoc.write_text("".join(lines2), encoding="utf-8")
 
     # counts in docs + health-check
     tech = n_skills - 12

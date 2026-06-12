@@ -20,8 +20,11 @@ This bundle maintains a project that is ALREADY running. The contract: understan
 do exactly what the task says, and when anything is unclear — ASK. Never guess, never invent.
 
 ```text
-- APPLY: copy this folder somewhere, move the existing project's code into it (services/, apps/,
-  or keep its own layout and register paths in .maestro/registry/components.yaml), then run /onboard.
+- LAYOUT (deliberately minimal — exactly two working folders):
+    services/  ALL service source code (one folder per service)
+    docs/      documents + bug/error info files the user drops in (onboarding reads them as evidence)
+- APPLY: copy this folder somewhere -> move the project's code into services/ -> drop any docs,
+  bug reports, error logs into docs/ -> run claude (or codex) -> /onboard. Nothing else to set up.
 - ONBOARDING IS MANDATORY before any product task: scan the code, build the project brain,
   record the REAL conventions/layout/test policy. No Direction gate (the product already exists).
 - FOLLOW THE EXISTING PROJECT, not framework defaults: match the repo's current folder layout,
@@ -49,7 +52,7 @@ Read in this order:
 7. `.maestro/work/index.yaml`, `.maestro/work/runs/index.yaml`, and active task/run artifacts when work is tracked.
 8. `.maestro/runtime/workflow-state.yaml` only for local session state.
 
-Product code belongs in `apps/`, `services/`, `packages/`, `infra/`, and `tests/`.
+Product code belongs in `services/`.
 Official product documents belong in `docs/`. Do not store secrets or long logs in `.maestro/`.
 
 Use `direct` mode for fast user-verified work, `assisted` for resumable bounded work, and

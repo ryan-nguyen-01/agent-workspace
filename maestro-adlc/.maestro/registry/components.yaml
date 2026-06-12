@@ -11,20 +11,6 @@ discovery:
       kinds: ["application"]
     - path: "services"
       kinds: ["service", "worker", "gateway"]
-    - path: "packages"
-      kinds: ["package", "design-system", "contract-library"]
-    - path: "infra"
-      kinds: ["infrastructure"]
     - path: "tests"
       kinds: ["test-suite"]
-  fallback_rule: "Scan roots only during onboarding or registry repair. Runtime agents read this registry first."
 
-naming:
-  source: ".maestro/project.yaml"
-  service_pattern: "{project}-{capability}-service"
-  application_pattern: "{project}-{channel}-app"
-  package_pattern: "{project}-{capability}"
-  design_system_pattern: "{project}-design-system"
-
-components: []
-agent_candidates: []

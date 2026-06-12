@@ -3,8 +3,8 @@ display_name: "Maestro Brownfield"
 purpose: "Maintain an EXISTING, running project: deep onboarding first, execute assigned tasks precisely, ask when unclear — never infer."
 methodology_default: risk-based-routing
 skills: 231
-structure: ['component-roots', 'deliverables', 'inputs']
-pruned_groups: ['design-decision', 'docs-delivery', 'docs-enterprise', 'docs-experience', 'docs-operations', 'governance', 'observability', 'work-program']
-generated_at: "2026-06-12T06:03:57.962773+00:00"
+structure: []
+pruned_groups: ['component-roots', 'deliverables', 'design-decision', 'docs-delivery', 'docs-enterprise', 'docs-experience', 'docs-operations', 'governance', 'inputs', 'observability', 'work-program']
+generated_at: "2026-06-12T06:15:20.129248+00:00"
 source: maestro platform (variants/brownfield.yaml)
 note: GENERATED bundle - do not edit by hand; rebuild with scripts/build-variant.py
