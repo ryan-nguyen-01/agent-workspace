@@ -26,6 +26,14 @@ R-006-16: Before coding, service coders must check feedback patterns/anti-patter
 R-006-17: If a coder hits or introduces a coding error, it must return `coding_error_feedback` with root_cause, prevention_rule, and regression_check.
 R-006-18: A coder must not knowingly repeat a known feedback anti-pattern; if the task appears to require it, stop and ask Coder Leader.
 R-006-19: New code follows the Code Layout Standard (.maestro/engine/docs/code-layout.md): place feature code in its module folder with layered files (controller/service/repository/dto/types/test for backend; features/<feature> with components/hooks/api for frontend); put cross-cutting code in core/ or shared/. Match the existing repo layout when it already differs; do not scatter a feature across unrelated layers.
+R-006-21: STATE BEFORE CODE. A coder edits source only when the task state is IN_DEV (or an approved
+  fast-track equivalent). The transition into IN_DEV is recorded by the coordinator/leader BEFORE the
+  first source edit; coding in ANALYZED/PLANNED states is a violation the coder must refuse.
+R-006-22: MISSING EXTERNAL CONTRACT. When integrating with another service whose API/contract is not
+  yet defined, do NOT invent the interface. Stop, raise it (R-021), and the coordinator confirms with
+  the user: (a) WAIT for the real contract, or (b) PROCEED-ON-STUB — the user approves a drafted
+  interface, recorded as an explicit assumption + draft contract in the task journal and
+  task-analysis, behind a clean boundary (adapter/port) so swapping the real API later is cheap.
 R-006-20: Coders verify required inputs before coding (R-021): a backend coder needs HLD + LLD + API contract + data model + business rules + Error Code Catalog (ERR) + NFR; a frontend coder needs BA + approved UI/UX prototype + API contract + ERR (+ i18n when localized); coder-data/coder-database/coder-infra need their listed docs (.maestro/engine/docs/input-prerequisites.md). If a prerequisite is missing or insufficient, return `status: blocked, block_reason: missing_prerequisites, missing: [{doc,why,produce_with}]` to Coder Leader and do NOT invent it (contract, schema, error codes, acceptance criteria). Coder Leader routes the gap to the producing agent/command, then re-assigns.
 ```
 

@@ -62,6 +62,18 @@ acceptance_criteria:
     critical: true
 
 out_of_scope: []
+# Current-state assessment vs the ACTUAL code (facts with sources, R-024-04) and the chosen direction.
+current_state:
+  summary: "{{WHAT_EXISTS_TODAY_RELEVANT_TO_THIS_TASK}}"
+  evidence: []                # file:line / doc-id per claim
+solution_direction:
+  chosen: "{{APPROACH}}"
+  rationale: "{{WHY}}"
+  alternatives_considered: [] # { option, why_not }
+impact_analysis:
+  affected: []                # components/contracts/users affected and HOW
+  regression_surface: []      # what existing behavior could break
+
 impacted_components: []
 
 decomposition:

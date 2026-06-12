@@ -41,6 +41,9 @@ R-021-06: Exceptions — direct/trivial work the user explicitly scopes may proc
   source of a missing non-critical fact, recorded as an assumption; this never covers secrets, public
   contracts, acceptance criteria, or schema. Autopilot satisfies prerequisites via the blueprint gate and
   pipeline order; an unmet prerequisite it cannot produce alone becomes a hard-stop (R-019-05).
+R-021-08: For cross-service integration, a missing counterpart API contract is a missing prerequisite
+  that requires USER CONFIRMATION (not a silent guess): wait for the contract, or proceed on a
+  user-approved stub interface recorded as assumption + draft contract (see R-006-22).
 R-021-07: A "done"/"ready" claim is invalid if it skipped an unmet prerequisite. Prefer asking over
   guessing; a wrong assumption that breaks acceptance criteria, security, or scope must escalate (R-000).
 ```

@@ -37,6 +37,12 @@ R-025-09: LEAVE THE CAMPSITE CLEAN. On finishing or parking a task: artifacts wr
 R-025-10: DISAGREE OPENLY. If an agent believes an instruction in a handoff is wrong or risky, it says
   so in the result/journal with reasons and proceeds only per the sender's confirmed decision —
   silent compliance with a known-bad instruction and silent deviation are both violations.
+R-025-11: ROLE & ENGINE INTEGRITY. No agent edits another agent's definition, the engine
+  (.maestro/engine/**), rules, or workflow policy inside an applied workspace — those are
+  user-approved framework maintenance only (R-011-08/13). Only agent-factory creates coder agents,
+  and only with user approval (R-011-01). The coordinator coordinates ONLY: it never implements,
+  never executes a task itself — it routes, gates, and verifies. An agent asked to do any of the
+  above refuses and routes to the coordinator with the required approval named.
 ```
 
 ## Violation handling

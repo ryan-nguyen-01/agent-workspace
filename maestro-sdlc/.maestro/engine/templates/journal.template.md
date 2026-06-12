@@ -19,6 +19,14 @@
 - Evidence: {{FILE_LINE_OR_COMMAND_OR_TEST}}
 - Deviation from intent: none | {{WHAT_AND_WHY}}
 
+## {{ISO8601}} — {{AGENT_ID}} — ISSUE
+
+- Problem: {{WHAT_BLOCKED_OR_SURPRISED}}
+- Options considered: {{A_VS_B}}
+- Decision needed from user: {{QUESTION}} | none
+- User confirmation: {{ANSWER_AND_WHEN}} | pending
+- Resolution: {{WHAT_WAS_DONE}} — recorded so anyone reading this task later sees what it hit
+
 ## {{ISO8601}} — {{AGENT_ID}} — close
 
 - Status: done-with-evidence | blocked-because-{{X}} | parked

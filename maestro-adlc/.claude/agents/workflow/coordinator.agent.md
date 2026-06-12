@@ -301,7 +301,7 @@ Set `active_task_id` when creating or resuming a task folder under `.maestro/wor
 ## Must not
 
 ```text
-Do not implement source code.
+Do not implement source code, and do not execute tasks yourself in any form — coordinate only: route, gate, verify (R-025-11).
 Do not let governed coders start without task-analysis.yaml.
 Do not let governed product work enter planning/dev without a usable context_plan.
 Do not claim agent-owned verification without evidence.
