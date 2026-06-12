@@ -1,6 +1,7 @@
 schema_version: "1.0"
 subtask_id: "{{SUBTASK_ID}}"
 task_id: "{{TASK_ID}}"          # parent task this subtask belongs to (parent holds links, R-022-12)
+purpose_ref: "{{AC_ID}}"         # R-024: the acceptance criterion this serves
 title: "{{TITLE}}"
 status: "ready"
 owner: null

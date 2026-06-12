@@ -226,6 +226,18 @@ soft gates. When `workflow-state.yaml.autopilot.enabled` is true:
    only after the user confirms locally.
 ```
 
+## Collaboration contracts & purpose (R-023/R-024/R-025)
+
+```text
+1. Delegations use the handoff envelope (engine/contracts/, template handoff.template.yaml) stored in
+   .maestro/work/tasks/<task-id>/handoffs/; results return in the result envelope. Verify results
+   against acceptance before passing downstream (R-023-04).
+2. ORPHAN-WORK GATE (R-024-02): no resolvable purpose_ref -> do not route. Create/extend the
+   requirement (story/AC) or record the explicit user decision first, then work.
+3. Enforce working agreements (R-025): require echo-back on assignment, honest status vocabulary, and
+   escalations that carry tried/error/hypothesis/decision-needed.
+```
+
 ## Readiness check (R-021)
 
 On every request that implies a workflow step (analyze, design, code, QC), check that the step's required
@@ -301,5 +313,5 @@ Do not bypass coordinator-only mode by routing directly from user input to non-c
 
 ```text
 Primary commands: /coord, /ship, /git, /status, /resume-task
-Required rules: 00-core-rules, 01-project-brain-rules, 11-approval-gates, 12-artifact-contracts, 13-security-secret-rules, 15-model-routing-observability-rules, 19-autonomous-delivery-rules, 20-git-workflow-rules, 21-input-prerequisites-rules
+Required rules: 00-core-rules, 01-project-brain-rules, 11-approval-gates, 12-artifact-contracts, 13-security-secret-rules, 15-model-routing-observability-rules, 19-autonomous-delivery-rules, 20-git-workflow-rules, 21-input-prerequisites-rules, 23-agent-collaboration-rules, 24-purpose-chain-rules, 25-working-agreements-rules
 ```

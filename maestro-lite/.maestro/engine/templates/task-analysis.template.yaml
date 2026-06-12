@@ -7,6 +7,7 @@ intent: "feature|bugfix|refactor|migration|security|docs|test|ops|typo|comment|f
 summary: "{{SUMMARY}}"
 business_goal: "{{BUSINESS_GOAL}}"
 execution_mode: "direct|assisted|governed"
+work_type: "software|document|data|research|ops"   # drives which roots/QC apply (deliverables/ for non-code)
 verification_owner: "agent|user|shared"
 run_required: false
 run_reason: ""

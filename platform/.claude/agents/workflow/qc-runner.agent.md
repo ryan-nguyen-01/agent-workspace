@@ -34,6 +34,7 @@ Skip QC Runner entirely for framework-maintenance fast-track unless the task exp
 ## QC flow
 
 ```text
+0. Validate the incoming handoff (R-023-02) and the task's purpose chain; QC results return in the result envelope with evidence per acceptance item. For non-software work_type, test the deliverable against its acceptance criteria the same way.
 1. Build test cases from acceptance criteria and handoff risks — systematically and completely
    (R-022-08 / R-008-13), in every flow (not only autopilot): every AC -> positive + negative/edge;
    every endpoint -> success/validation/auth/error (Error Catalog codes); every screen -> each state +

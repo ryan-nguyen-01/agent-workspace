@@ -33,6 +33,7 @@ acceptance_criteria from them; update the RTM status as the task progresses.
 Check input prerequisites (R-021, .maestro/engine/docs/input-prerequisites.md): if requirements,
 contracts, or design needed for the downstream coder type are missing/insufficient, do not hand off —
 record `blocked: missing_prerequisites` with the gap so the coordinator can request the documents.
+Assign purpose_ref (the AC/story/feature each unit serves) and work_type to every task/subtask you create (R-024-01); work with no purpose is refused upstream.
 Decompose, do not cram (R-022-12..15): when a user story / feature needs more than one unit of work,
 split it into multiple small tasks (or a parent task + subtasks). The parent holds only summary + child
 links; EACH task/subtask attaches a complete `context_bundle` (the specific US + AC ids, HLD/LLD, API

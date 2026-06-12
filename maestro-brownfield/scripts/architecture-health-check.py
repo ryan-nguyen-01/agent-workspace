@@ -32,8 +32,8 @@ REPORT_MD = RUNTIME / "reports" / "architecture-health-report.md"
 EXPECTED_COUNTS = {
     "agents": 34,
     "skills": 231,
-    "rules": 23,
-    "templates": 59,
+    "rules": 26,
+    "templates": 62,
     "commands": 19,
 }
 
@@ -134,6 +134,9 @@ REQUIRED_PATHS = [
     "scripts/agent-run.py",
     "scripts/architecture-health-check.py",
     "docs/README.md",
+    "deliverables/README.md",
+    ".maestro/engine/contracts/handoff.schema.yaml",
+    ".maestro/engine/contracts/result.schema.yaml",
     "apps/README.md",
     "services/README.md",
     "packages/README.md",

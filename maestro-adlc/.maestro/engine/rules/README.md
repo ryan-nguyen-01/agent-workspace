@@ -36,4 +36,7 @@ If a rule conflicts with workflow.md, workflow.md defines the state machine and 
 20-git-workflow-rules.md         Git-flow: branch per task, milestone commits, outward git gated, autopilot local-only
 21-input-prerequisites-rules.md  Required inputs per phase/coder type; refuse on missing/insufficient, coordinator reports the gap
 22-artifact-granularity-rules.md Split docs per feature; complete Given/When/Then ACs; full QC test-case coverage (no sketchy/monolithic artifacts)
+23-agent-collaboration-rules.md  A2A envelopes: validate handoffs before working; results require evidence; deviations declared
+24-purpose-chain-rules.md        Orphan-work gate, intent ledger (journal), claims cite sources
+25-working-agreements-rules.md   Echo-back, WIP=1, DoR/DoD, honest status, escalation etiquette
 ```

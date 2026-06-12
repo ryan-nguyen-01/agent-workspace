@@ -1,0 +1,34 @@
+# A2A handoff envelope — the contract for EVERY agent-to-agent delegation (R-023).
+# Instances are created from engine/templates/handoff.template.yaml and stored under
+# .maestro/work/tasks/<task-id>/handoffs/. A receiver validates this BEFORE accepting work.
+
+schema_version: "1.0"
+kind: "handoff"
+
+fields:
+  id:              { type: string,  required: true,  doc: "H-<task>-<seq>" }
+  task_id:         { type: string,  required: true }
+  from_agent:      { type: string,  required: true }
+  to_agent:        { type: string,  required: true,  doc: "must match the receiver's role contract" }
+  intent:          { type: string,  required: true,  doc: "ONE sentence: what to do. No vague verbs." }
+  purpose_ref:     { type: string,  required: true,  doc: "why this exists: AC/story/feature id (R-024). Orphan work is refused." }
+  work_type:       { type: enum,    required: true,  values: [software, document, data, research, ops] }
+  inputs:
+    type: list
+    required: true
+    doc: "the documents the receiver works FROM (context_bundle refs). Link by id/path, never paste bodies."
+    item: { doc: string, path: string, version: string|null }
+  expected_output: { type: object,  required: true,  doc: "{ artifact, schema_or_template, target_state }" }
+  acceptance:      { type: list,    required: true,  doc: "testable conditions for accepting the result" }
+  confidence:      { type: enum,    required: true,  values: [high, medium, low] }
+  assumptions:     { type: list,    required: false, doc: "what the sender assumed; receiver must challenge if wrong" }
+  constraints:     { type: list,    required: false, doc: "scope limits, target paths, deadlines per state" }
+  on_block:        { type: enum,    required: true,  values: [return_missing_prerequisites, escalate_coordinator] }
+
+receiver_validation:   # R-023-02 — refuse instead of guessing
+  - "intent is one actionable sentence"
+  - "purpose_ref resolves to an existing AC/story/feature"
+  - "inputs satisfy the R-021 matrix for the receiver's role and are authoritative (not draft/stale)"
+  - "acceptance items are individually testable"
+  - "schema_version matches"
+refusal: 'status: blocked, block_reason: invalid_handoff, missing: [{field|doc, why}]'

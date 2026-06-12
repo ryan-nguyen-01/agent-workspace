@@ -345,7 +345,7 @@ After DONE or meaningful workflow changes:
 
 ---
 
-## Rules (23 workflow rules)
+## Rules (26 workflow rules)
 
 Rules at `.maestro/engine/rules/` define the constraints for the workflow:
 
@@ -373,6 +373,9 @@ Rules at `.maestro/engine/rules/` define the constraints for the workflow:
 20-git-workflow-rules.md      ← Git-flow: branch per task, milestone commits, outward git gated
 21-input-prerequisites-rules.md ← Required inputs per phase/coder type; refuse when missing, report the gap
 22-artifact-granularity-rules.md ← Split docs per feature; complete ACs; full QC test-case coverage
+23-agent-collaboration-rules.md ← A2A envelopes: validated handoffs, evidence-bearing results
+24-purpose-chain-rules.md     ← Orphan-work gate + intent ledger; claims cite sources
+25-working-agreements-rules.md ← Echo-back, WIP=1, DoR/DoD, honest status, escalation
 ```
 
 ---
@@ -398,7 +401,7 @@ Rules at `.maestro/engine/rules/` define the constraints for the workflow:
 
 ```text
 .maestro/                           ← Product control plane
-├── engine/                    ← Workflow, 23 rules, 59 templates
+├── engine/                    ← Workflow, 26 rules, 62 templates
 ├── registry/                  ← Components, agents, all 166 skills, inputs, artifacts
 ├── knowledge/                 ← Durable project and component knowledge
 ├── work/                      ← Initiative, epic, task, subtask, bug evidence

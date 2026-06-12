@@ -5,6 +5,8 @@ folder: ".maestro/work/tasks/{{TASK_ID}}"
 state: "NEW"
 execution_mode: "direct|assisted|governed"
 verification_owner: "agent|user|shared"
+purpose_ref: "{{AC_OR_STORY_OR_FEATURE_ID}}"   # R-024: orphan work is refused
+work_type: "software|document|data|research|ops"
 run_required: false
 created_at: "{{CREATED_AT}}"
 updated_at: "{{UPDATED_AT}}"
@@ -51,6 +53,8 @@ context_bundle:
 
 artifacts:
   task_manifest: ".maestro/work/tasks/{{TASK_ID}}/task.yaml"
+  journal: ".maestro/work/tasks/{{TASK_ID}}/journal.md"            # intent ledger (R-024)
+  handoffs: ".maestro/work/tasks/{{TASK_ID}}/handoffs/"             # A2A envelopes (R-023)
   task_updates: ".maestro/work/tasks/{{TASK_ID}}/task-updates.yaml"
   task_analysis: ".maestro/work/tasks/{{TASK_ID}}/task-analysis.yaml"
   architecture_review: ".maestro/work/tasks/{{TASK_ID}}/architecture-review.yaml"

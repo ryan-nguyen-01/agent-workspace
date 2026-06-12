@@ -43,6 +43,7 @@ STRUCTURE_GROUPS: dict[str, dict] = {
         "hc": ["apps/README.md", "services/README.md", "packages/README.md", "infra/README.md", "tests/README.md"],
     },
     "inputs": {"dirs": ["inputs"], "hc": []},
+    "deliverables": {"dirs": ["deliverables"], "hc": ["deliverables/README.md"]},
     "docs-delivery": {"dirs": ["docs/product", "docs/requirements", "docs/quality", "docs/delivery", "docs/architecture"], "hc": []},
     "docs-experience": {"dirs": ["docs/experience"], "hc": []},
     "docs-operations": {"dirs": ["docs/operations"], "hc": []},

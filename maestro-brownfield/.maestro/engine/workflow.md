@@ -70,6 +70,7 @@ that are not already available from registered components and current evidence.
 .maestro/history/                 Append-only workflow events and human timeline
 .maestro/runtime/                 Current state, locks, cache, telemetry, and generated reports
 docs/                        Official product, requirements, UX, architecture, quality, delivery, operations, governance docs
+deliverables/                Non-code work products: research, content, data outputs, reports
 apps/                        Deployable user-facing applications
 services/                    Deployable backend services, workers, and gateways
 packages/                    Reusable libraries, contracts, shared types, and design system
@@ -90,6 +91,7 @@ task_size: trivial | normal | high_risk
 requires_onboarding: true | false
 requires_full_artifacts: true | false
 execution_mode: direct | assisted | governed
+work_type: software | document | data | research | ops
 verification_owner: agent | user | shared
 run_required: true | false
 methodology:
@@ -639,6 +641,30 @@ Autopilot runs the pipeline to a finished, runnable product without stopping at 
    what was built, the exact local run commands, and verification evidence; offer provisioning/deploy as
    the explicit next phase only after the user confirms locally.
 ```
+
+## 6.6. Agent collaboration contracts (A2A)
+
+Every delegation between agents travels in the standardized handoff envelope and returns in the result
+envelope (`.maestro/engine/contracts/`, R-023). The receiver validates BEFORE working (intent,
+purpose_ref, inputs per R-021, testable acceptance) and refuses invalid handoffs instead of guessing.
+A result claiming done requires evidence per acceptance item, and deviations must be declared.
+Envelopes live in `.maestro/work/tasks/<task-id>/handoffs/`.
+
+## 6.7. Purpose chain and intent ledger
+
+Nothing is built without a purpose (R-024): every task/handoff carries `purpose_ref` tracing to an
+approved AC/story/feature — the ORPHAN-WORK GATE refuses work with none (the coordinator first creates
+the requirement or records the user decision). Each non-trivial task keeps a journal
+(`journal.template.md`): intent -> action -> evidence, append-only. All factual claims cite sources;
+unsourced claims are assumptions or removed.
+
+## 6.8. Working agreements
+
+Agents behave like good colleagues (R-025): echo-back understanding before working; WIP = 1;
+start only when Definition-of-Ready holds; claim done only when Definition-of-Done holds; honest
+status vocabulary (done-with-evidence / blocked-because-X / in-progress-remaining-Y); escalate with a
+usable summary after bounded attempts; stay in role; review against checklists; leave the campsite
+clean; disagree openly instead of silent compliance or silent deviation.
 
 ## 7. Coder Leader workflow
 

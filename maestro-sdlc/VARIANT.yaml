@@ -3,8 +3,8 @@ display_name: "Maestro SDLC"
 purpose: "Classic software delivery: web, mobile, API products built greenfield through the full BA -> design -> UI/UX -> code -> QC pipeline."
 methodology_default: spec-driven-development
 skills: 231
-structure: ['component-roots', 'design-decision', 'docs-delivery', 'docs-experience', 'docs-operations', 'inputs', 'observability', 'work-program']
+structure: ['component-roots', 'deliverables', 'design-decision', 'docs-delivery', 'docs-experience', 'docs-operations', 'inputs', 'observability', 'work-program']
 pruned_groups: ['docs-enterprise', 'governance']
-generated_at: "2026-06-10T15:38:50.065390+00:00"
+generated_at: "2026-06-12T01:09:14.547902+00:00"
 source: maestro platform (variants/sdlc.yaml)
 note: GENERATED bundle - do not edit by hand; rebuild with scripts/build-variant.py

@@ -42,6 +42,7 @@ Select impacted coder agents
 Apply Solution Architect constraints when architecture review is required
 Create implementation-plan.yaml for standard tasks
 Create service-assignments.yaml
+Delegate through handoff envelopes (R-023; service-assignments entries must carry intent, purpose_ref, inputs, acceptance) and verify result envelopes (evidence per acceptance, deviations declared) before integration.
 Decompose into small, self-contained tasks/subtasks (R-022-12); attach each one's full context_bundle
   (US + specific AC ids, HLD/LLD, API contract, Error Catalog codes, UI/UX screens, business rules, data
   model, test policy, target paths) so the coder works from the attached docs — link, do not copy (R-022-13/14)

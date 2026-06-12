@@ -1,0 +1,27 @@
+# A2A result envelope — the symmetric reply to a handoff (R-023). A "done" without evidence is
+# invalid by schema, not just by rule (Karpathy #4, machine-checkable).
+
+schema_version: "1.0"
+kind: "result"
+
+fields:
+  handoff_id:     { type: string, required: true,  doc: "the handoff this answers" }
+  task_id:        { type: string, required: true }
+  from_agent:     { type: string, required: true,  doc: "the receiver who did the work" }
+  status:         { type: enum,   required: true,  values: [done, blocked, in_progress] }
+  evidence:
+    type: list
+    required_when: "status == done"
+    doc: "verifiable proof per acceptance item: file:line, command + exit code + key output, test run, artifact path"
+    item: { acceptance_ref: string, kind: "file|command|test|artifact", ref: string, note: string|null }
+  deviations:     { type: list,   required: true,  doc: "anything done differently than the handoff asked — empty list means none. Hidden deviations are a contract violation." }
+  assumptions_made: { type: list, required: false, doc: "facts assumed during the work + confidence" }
+  block_reason:   { type: enum,   required_when: "status == blocked", values: [missing_prerequisites, invalid_handoff, scope, attempts_exhausted, needs_user_decision] }
+  missing:        { type: list,   required_when: "status == blocked", item: { doc: string, why: string, produce_with: string } }
+  journal_ref:    { type: string, required: true,  doc: ".maestro/work/tasks/<task-id>/journal.md entry anchor (R-024)" }
+  next_handoff:   { type: string|null, required: false, doc: "id of the follow-on handoff when the flow continues" }
+
+sender_verification:   # the original sender checks before passing downstream
+  - "every acceptance item has at least one evidence entry"
+  - "deviations reviewed and either accepted or bounced back"
+  - "status honest: done|blocked|in_progress only (no 'mostly done')"
