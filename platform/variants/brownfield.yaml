@@ -6,7 +6,7 @@ structure: []
 roots: [services, docs]
 agents:
   specialists_exclude: [discovery-analyst, product-strategist, ml-ai-architect]   # greenfield ideation + AI-product design (use maestro-adlc) — not maintenance
-commands_exclude: [ship]                                          # autopilot contradicts ask-don't-infer
+commands_exclude: [ship, evals]                                          # autopilot contradicts ask-don't-infer
 methodology_default: "risk-based-routing"
 
 skills:

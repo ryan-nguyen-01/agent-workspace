@@ -109,8 +109,8 @@ See [visual-flow.md](.maestro/engine/docs/visual-flow.md) for all workflow diagr
 
 | Area | Count |
 | --- | --- |
-| Framework agents | 34: 12 workflow agents, 3 built-in coders, 19 specialist advisors |
-| Skills | 233: 12 workflow skills plus 221 technical skills |
+| Framework agents | 35: 12 workflow agents, 3 built-in coders, 20 specialist advisors |
+| Skills | 237: 12 workflow skills plus 225 technical skills |
 | Rules | 19 |
 | Templates | 51 |
 | Commands | 17 |

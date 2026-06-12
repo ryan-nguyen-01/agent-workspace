@@ -25,7 +25,15 @@ This bundle builds AI products and agents. Defaults:
   ai/prompts (versioned prompts), ai/evals (datasets + graders for the EVAL GATE),
   ai/datasets (RAG/training sources; synthetic or licensed only, R-013).
 - Methodology: eval-driven-ai. Quality claims about model/agent behavior require eval evidence,
-  not demos (eval-run/eval-suite templates; .maestro/observability/evals/ + ai/evals/).
+  not demos (/evals; eval-engineer designs suites; results in .maestro/observability/evals/ + ai/evals/).
+- AI-SPECIFIC RISKS (each is a gate, not a hope):
+    PROMPTS ARE CODE: versioned in ai/prompts/ with paired eval suites; prompt/model/RAG changes
+      re-run affected suites before DONE.
+    NON-DETERMINISM: pin model+params for tests; otherwise n>=3 pass-rates, thresholds are rates.
+    DATA: datasets/RAG sources synthetic or licensed; PII redacted before providers (R-013).
+    LLM SECURITY: injection/exfiltration eval cases mandatory for exposed features (llm-security);
+      AI-triggered destructive tools still require human confirm (R-011-07).
+    COST: token/latency budget per feature recorded in the blueprint; loop caps on agentic flows.
 - Extra blueprint sections for AI scope: AI feasibility (is an LLM the right tool?), data/RAG plan
   (sources, chunking, freshness), eval plan (datasets, graders, thresholds), and cost/latency targets.
 - EVAL GATE before done: the eval suite must pass thresholds in addition to standard QC. Prompt or

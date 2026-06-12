@@ -38,6 +38,7 @@ Use natural-language intents such as `coord: framework <request>` when you want 
 | `/verify-dev` | Dev Verification | Evaluate Code Done, critical checks, scope, and test policy. |
 | `/handoff-qc` | QC Handoff | Create Dev-to-QC handoff after DEV_DONE. |
 | `/qc` | QC Runner | Run QC, record results, and classify blocker/non-blocker bugs. |
+| `/evals` | QC Runner | Run/inspect LLM eval suites; eval gate for AI behavior (run/status/gaps/add). |
 | `/bug` | Bug Router | Create or route blocker/non-blocker defects. |
 | `/sync-memory` | Memory Update | Persist durable project/component/workflow learnings. |
 | `/skills` | Coordinator | Maintain installed skills, `skills-lock.json`, and skill registry metadata. |

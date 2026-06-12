@@ -540,6 +540,16 @@
       "source": "maestro-local",
       "sourceType": "local"
     },
+    "llm-evals": {
+      "installed_at": "2026-06-12",
+      "source": "maestro-local",
+      "sourceType": "local"
+    },
+    "llm-security": {
+      "installed_at": "2026-06-12",
+      "source": "maestro-local",
+      "sourceType": "local"
+    },
     "loom-event-driven": {
       "computedHash": "62a670297395c5b94d80573bbb71a83cba35dadbdfef56bcf18ea524ca5e3d5f",
       "source": "cosmix/loom",
@@ -670,6 +680,11 @@
       "source": "nevaberry/nevaberry-plugins",
       "sourceType": "github"
     },
+    "prompt-engineering": {
+      "installed_at": "2026-06-12",
+      "source": "maestro-local",
+      "sourceType": "local"
+    },
     "python-performance-optimization": {
       "computedHash": "1a7009e7e16fd08c201f4a527a44d4f0d9d1d892b15b92ab3492624b23be22b8",
       "source": "wshobson/agents",
@@ -689,6 +704,11 @@
       "computedHash": "0a0a79aeb8904aa5d8ad107ac62c7b295ba141e51189d01d867133e0fc403979",
       "source": "jamesrochabrun/skills",
       "sourceType": "github"
+    },
+    "rag-patterns": {
+      "installed_at": "2026-06-12",
+      "source": "maestro-local",
+      "sourceType": "local"
     },
     "rails-knowledge-patch": {
       "computedHash": "88b08514aa6ca3465eaac6dfd57607fa8c081d111fa2db5700104e206c06f172",

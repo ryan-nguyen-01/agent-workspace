@@ -298,8 +298,8 @@ def build(manifest_path: Path) -> None:
             "# Specialist Advisors\n\nNot included in this template (see the maestro platform for the full advisor set).\n",
             encoding="utf-8")
         patch(hc_file, [
-            ("EXPECTED_SPECIALIST_COUNT = 19", "EXPECTED_SPECIALIST_COUNT = 0"),
-            ('    "agents": 34,', '    "agents": 15,'),
+            ("EXPECTED_SPECIALIST_COUNT = 20", "EXPECTED_SPECIALIST_COUNT = 0"),
+            ('    "agents": 35,', '    "agents": 15,'),
         ])
         for mr in (out / ".maestro" / "config" / "model-routing.yaml",
                    out / ".maestro" / "engine" / "templates" / "model-routing.template.yaml"):
@@ -326,8 +326,8 @@ def build(manifest_path: Path) -> None:
         n_sp = len(list((out / ".claude" / "agents" / "specialists").rglob("*.agent.md")))
         n_agents = 12 + 3 + n_sp
         ht = hcf.read_text(encoding="utf-8")
-        ht = ht.replace("EXPECTED_SPECIALIST_COUNT = 19", f"EXPECTED_SPECIALIST_COUNT = {n_sp}")
-        ht = ht.replace('    "agents": 34,', f'    "agents": {n_agents},')
+        ht = ht.replace("EXPECTED_SPECIALIST_COUNT = 20", f"EXPECTED_SPECIALIST_COUNT = {n_sp}")
+        ht = ht.replace('    "agents": 35,', f'    "agents": {n_agents},')
         hcf.write_text(ht, encoding="utf-8")
         for mr in (out / ".maestro" / "config" / "model-routing.yaml",
                    out / ".maestro" / "engine" / "templates" / "model-routing.template.yaml"):
@@ -340,12 +340,12 @@ def build(manifest_path: Path) -> None:
             ctext2 = cat.read_text(encoding="utf-8")
             for sp in m["specialists_exclude"]:
                 ctext2 = re.sub(rf"(?m)^.*`{re.escape(sp)}`.*\n", "", ctext2)
-            ctext2 = ctext2.replace("19 domain experts", f"{n_sp} domain experts")
+            ctext2 = ctext2.replace("20 domain experts", f"{n_sp} domain experts")
             cat.write_text(ctext2, encoding="utf-8")
         for doc in ("CLAUDE.md", "AGENTS.md"):
             dp = out / doc
             dt = dp.read_text(encoding="utf-8")
-            dt = dt.replace("19 specialist advisors", f"{n_sp} specialist advisors").replace("(19 advisors)", f"({n_sp} advisors)")
+            dt = dt.replace("20 specialist advisors", f"{n_sp} specialist advisors").replace("(20 advisors)", f"({n_sp} advisors)")
             dp.write_text(dt, encoding="utf-8")
         print(f"   specialists pruned: {', '.join(sorted(set(removed_sp)))} -> {n_sp} advisors, {n_agents} agents")
     if m["commands_exclude"]:
@@ -494,8 +494,8 @@ def build(manifest_path: Path) -> None:
     for doc in ("CLAUDE.md", "AGENTS.md", "README.md", "GUIDELINES.md"):
         p = out / doc
         if p.is_file():
-            patch(p, [("233 skills", f"{n_skills} skills"), ("221 technical", f"{tech} technical"),
-                      ("all 233 skills", f"all {n_skills} skills")])
+            patch(p, [("237 skills", f"{n_skills} skills"), ("225 technical", f"{tech} technical"),
+                      ("all 237 skills", f"all {n_skills} skills")])
     patch(out / "scripts" / "architecture-health-check.py", [
         (r'(?m)^    "skills": \d+,$', f'    "skills": {n_skills},'),
     ], regex=True)

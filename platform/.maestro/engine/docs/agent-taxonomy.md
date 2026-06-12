@@ -108,5 +108,5 @@ Framework-owned agent definition files: 12 + 2 + 19 = 33
 ```
 
 Do not collapse the classes. The correct distribution wording is:
-`12 workflow agents + 3 built-in cross-cutting coders + 19 specialist advisors` (34 framework-owned),
+`12 workflow agents + 3 built-in cross-cutting coders + 20 specialist advisors` (35 framework-owned),
 plus any generated service coders in an applied workspace.

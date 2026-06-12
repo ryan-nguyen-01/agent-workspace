@@ -1,5 +1,20 @@
 {
   "skills": {
+    "accessibility-a11y": {
+      "computedHash": "3117d5b0302f4fbb90cf7b3b65474aa0ea70eadaf91036ab9e20c912d68f9289",
+      "source": "mindrally/skills",
+      "sourceType": "github"
+    },
+    "angular": {
+      "computedHash": "3cb3ce921ec71179c0688d8e3836e6aa1a1060bbbd07ed4c4ac5f3b7c44bec67",
+      "source": "mindrally/skills",
+      "sourceType": "github"
+    },
+    "angular-development": {
+      "computedHash": "da4e48d7e04873ac6b0e3dc98f5a9984e3d45b81288cd866585920d56d26f454",
+      "source": "mindrally/skills",
+      "sourceType": "github"
+    },
     "angular-knowledge-patch": {
       "computedHash": "3bb093b45b5e6126ff5f9d5964e73a4eb3664b46b3e779b66b88571fb3c51c1a",
       "source": "nevaberry/nevaberry-plugins",
@@ -8,6 +23,11 @@
     "api-design-principles": {
       "computedHash": "3316239df2bdcb41e992857b8142e0239e6964564dd5d7224e470c2ab350a03c",
       "source": "wshobson/agents",
+      "sourceType": "github"
+    },
+    "astro": {
+      "computedHash": "88e5967a26240b1ae697b466a51c7d5cb9eed45b06da50533b20971c8546363d",
+      "source": "mindrally/skills",
       "sourceType": "github"
     },
     "astro-knowledge-patch": {
@@ -23,6 +43,16 @@
     "blazor": {
       "computedHash": "14b9ebe46c5e1de1d753d8c9c496d821b08c7681e669d59b717badd1731f6f5a",
       "source": "mindrally/skills",
+      "sourceType": "github"
+    },
+    "building-admin-dashboard-customizations": {
+      "computedHash": "4cd60098a12fcfd682ae4f7668bd1cf0c5986c27e2ebfcf45166e3d69c4e5f1c",
+      "source": "medusajs/medusa-agent-skills",
+      "sourceType": "github"
+    },
+    "building-storefronts": {
+      "computedHash": "288f645ffd2b29f925f5c70077b9e57af6b787843fc98b276e84150d253511a7",
+      "source": "medusajs/medusa-agent-skills",
       "sourceType": "github"
     },
     "building-with-medusa": {
@@ -115,11 +145,6 @@
       "source": "itsmostafa/aws-agent-skills",
       "sourceType": "github"
     },
-    "email-ops": {
-      "computedHash": "ba350b3fa13176e2fbc5b153add127a76740cad3f41466581094e8c85967cb2e",
-      "source": "affaan-m/everything-claude-code",
-      "sourceType": "github"
-    },
     "executing-plans": {
       "computedHash": "2f709d1a2c7564f8ce6a9bb707e7f5451117ba80f8e8e2302662c29bc61246a6",
       "source": "obra/superpowers",
@@ -158,6 +183,11 @@
     "flutter-knowledge-patch": {
       "computedHash": "9890336a7692676e1f663c9c9aa7a5ad276d0523be44d018f72b932ee5f3fc2e",
       "source": "nevaberry/nevaberry-plugins",
+      "sourceType": "github"
+    },
+    "framer-motion": {
+      "computedHash": "39a33b58952788812d305f7b676b86ee800d3d5be9752e10392435d7fae73d8a",
+      "source": "mindrally/skills",
       "sourceType": "github"
     },
     "go-code-review": {
@@ -260,6 +290,11 @@
       "source": "mindrally/skills",
       "sourceType": "github"
     },
+    "gsap": {
+      "computedHash": "2e8b1557817779caec2da7bd1ef8cb1ac84a39a37bea9d20c7997b8e8b644aff",
+      "source": "mindrally/skills",
+      "sourceType": "github"
+    },
     "incident-rca": {
       "installed_at": "2026-06-12",
       "source": "maestro-local",
@@ -315,14 +350,19 @@
       "source": "maestro-local",
       "sourceType": "local"
     },
+    "llm-evals": {
+      "installed_at": "2026-06-12",
+      "source": "maestro-local",
+      "sourceType": "local"
+    },
+    "llm-security": {
+      "installed_at": "2026-06-12",
+      "source": "maestro-local",
+      "sourceType": "local"
+    },
     "medusajs-developer": {
       "computedHash": "a7baaff5b3e178ccc1ec0940a8d7bae4d750b3e0e85ba56d008802364067efbc",
       "source": "greedychipmunk/agent-skills",
-      "sourceType": "github"
-    },
-    "messages-ops": {
-      "computedHash": "b3661fcd86ef7154016b55260579d73af9bb4197287294a5e5f7a43fabd8335a",
-      "source": "affaan-m/everything-claude-code",
       "sourceType": "github"
     },
     "microsoft-foundry": {
@@ -335,6 +375,11 @@
       "source": "aaronontheweb/dotnet-skills",
       "sourceType": "github"
     },
+    "mui": {
+      "computedHash": "8a23268d1e7984b9874a0410c7f93699f3e83e30f3360036027c9a35d9904722",
+      "source": "blencorp/claude-code-kit",
+      "sourceType": "github"
+    },
     "mysql-best-practices": {
       "computedHash": "02283efa91864ce6f56f542415bd69d9855be1ea33847987b15040394e828c23",
       "source": "mindrally/skills",
@@ -345,6 +390,16 @@
       "source": "mindrally/skills",
       "sourceType": "github"
     },
+    "next-best-practices": {
+      "computedHash": "db85045827ebeb83ac8dbc992b69188755eeb74dcf01cbf5e694d58aa494a106",
+      "source": "vercel-labs/next-skills",
+      "sourceType": "github"
+    },
+    "next-cache-components": {
+      "computedHash": "f835d8226c28abf012cc013928e2627c8a7a046de61127ef229be1711bd1f255",
+      "source": "vercel-labs/next-skills",
+      "sourceType": "github"
+    },
     "nginx-knowledge-patch": {
       "computedHash": "73904f27bd68e2867b4aa3668d00f9acdb54b728e855ca3acce4974695342d17",
       "source": "nevaberry/nevaberry-plugins",
@@ -352,6 +407,11 @@
     },
     "php-development": {
       "computedHash": "62e69469722669051b68ec3b9e0da18b7b2b77edd27ac293d173a748e319b3a0",
+      "source": "mindrally/skills",
+      "sourceType": "github"
+    },
+    "postcss-best-practices": {
+      "computedHash": "4a1fa78dd12fffe842a6dc423df25b3eb4bfb72d02d8b37db7db1bfbdd2d4805",
       "source": "mindrally/skills",
       "sourceType": "github"
     },
@@ -380,6 +440,11 @@
       "source": "nevaberry/nevaberry-plugins",
       "sourceType": "github"
     },
+    "prompt-engineering": {
+      "installed_at": "2026-06-12",
+      "source": "maestro-local",
+      "sourceType": "local"
+    },
     "python-performance-optimization": {
       "computedHash": "1a7009e7e16fd08c201f4a527a44d4f0d9d1d892b15b92ab3492624b23be22b8",
       "source": "wshobson/agents",
@@ -400,14 +465,29 @@
       "source": "jamesrochabrun/skills",
       "sourceType": "github"
     },
+    "rag-patterns": {
+      "installed_at": "2026-06-12",
+      "source": "maestro-local",
+      "sourceType": "local"
+    },
     "rails-knowledge-patch": {
       "computedHash": "88b08514aa6ca3465eaac6dfd57607fa8c081d111fa2db5700104e206c06f172",
       "source": "nevaberry/nevaberry-plugins",
       "sourceType": "github"
     },
+    "react": {
+      "computedHash": "463b2de9fe87acf9bc3cb692a91d8628ee1502aee2c77745d2dd1f6bfe206779",
+      "source": "mindrally/skills",
+      "sourceType": "github"
+    },
     "react-modernization": {
       "computedHash": "11facc88acf2a1920b9b77d88e7efa109a00577dbf37d1adefca549eb3244d6c",
       "source": "wshobson/agents",
+      "sourceType": "github"
+    },
+    "react-query": {
+      "computedHash": "7e9543c800d45f1cd9efaeb9f6e5dcc91d3922b768ec41b06a98341840e0b8c7",
+      "source": "mindrally/skills",
       "sourceType": "github"
     },
     "receiving-code-review": {
@@ -428,6 +508,11 @@
     "redis-js": {
       "computedHash": "be22591eea552df1eeab7bb947049b06dee4fd8543588a45b6ca5d3603233fff",
       "source": "upstash/redis-js",
+      "sourceType": "github"
+    },
+    "redux-toolkit": {
+      "computedHash": "327cbba7959a273fc04111e8f86a0be912491152d393b5dc9b55dbb8acc20a8b",
+      "source": "mindrally/skills",
       "sourceType": "github"
     },
     "requesting-code-review": {
@@ -465,9 +550,19 @@
       "source": "nevaberry/nevaberry-plugins",
       "sourceType": "github"
     },
+    "scss-best-practices": {
+      "computedHash": "16ac9e8bf135304254a358776c5fac043799c1c3ac40221da1338ee972506de5",
+      "source": "mindrally/skills",
+      "sourceType": "github"
+    },
     "serde-knowledge-patch": {
       "computedHash": "399b9d2dde5521b5fe225f6ecf720e3b35a80973665f0975bc7eb70992bc2b8e",
       "source": "nevaberry/nevaberry-plugins",
+      "sourceType": "github"
+    },
+    "shadcn": {
+      "computedHash": "873c67922d80775a9fdf596db7964b579f0408c30ec6e3d11989f6055bbec89f",
+      "source": "shadcn/ui",
       "sourceType": "github"
     },
     "spring-framework": {
@@ -480,6 +575,11 @@
       "source": "nevaberry/nevaberry-plugins",
       "sourceType": "github"
     },
+    "styled-components-best-practices": {
+      "computedHash": "d31c4ec87dbf2990891cc7c12db1aa12fbd3e2542a474fcd64ac4327a5ebf8ac",
+      "source": "mindrally/skills",
+      "sourceType": "github"
+    },
     "subagent-driven-development": {
       "computedHash": "a197f8e5fba5ea59013e1adbaa90dd42db35de8f074feca200c8038de584a83b",
       "source": "obra/superpowers",
@@ -490,9 +590,19 @@
       "source": "supabase/agent-skills",
       "sourceType": "github"
     },
+    "svelte": {
+      "computedHash": "3c0878402d5647e4c5f7ca1e7d1f4a36a11fe24fcd9b0bf213754fdc7381f69d",
+      "source": "mindrally/skills",
+      "sourceType": "github"
+    },
     "svelte-knowledge-patch": {
       "computedHash": "7bbf2be1cd80e6c34e67c58d1b7ee2bbc575412cb4ba1e5c4613b943edb8e3ca",
       "source": "nevaberry/nevaberry-plugins",
+      "sourceType": "github"
+    },
+    "sveltekit": {
+      "computedHash": "b083f153fd518344dc971fa7f82d11dc67a3800a41ada91395798951bc7f2077",
+      "source": "mindrally/skills",
       "sourceType": "github"
     },
     "swift-knowledge-patch": {
@@ -505,9 +615,19 @@
       "source": "obra/superpowers",
       "sourceType": "github"
     },
+    "tailwind-design-system": {
+      "computedHash": "988d80e52c67c3692d43cc963b6a048a239895e88b272b061de55370d0f8efc3",
+      "source": "wshobson/agents",
+      "sourceType": "github"
+    },
     "tailwind-knowledge-patch": {
       "computedHash": "a7af78dd847919743db2b10d85438c2aaf504bbc27291751f54607edef5d60d4",
       "source": "nevaberry/nevaberry-plugins",
+      "sourceType": "github"
+    },
+    "tailwindcss": {
+      "computedHash": "b1d95ac9242e613966fb11ed413fd2ff61f04641e4e8c1418e0e8258573fcc68",
+      "source": "mindrally/skills",
       "sourceType": "github"
     },
     "tauri-knowledge-patch": {
@@ -545,11 +665,6 @@
       "source": "wshobson/agents",
       "sourceType": "github"
     },
-    "unified-notifications-ops": {
-      "computedHash": "73fe4768effba64905af8171c4a7d450dda4dad984b07680ae2377321c3d9c75",
-      "source": "affaan-m/everything-claude-code",
-      "sourceType": "github"
-    },
     "upstash-redis-kv": {
       "computedHash": "039971d77b5b1df7119ce450e4d6dbde8f9db5e5bb7aec526e6a8e95395707f1",
       "source": "intellectronica/agent-skills",
@@ -560,9 +675,39 @@
       "source": "obra/superpowers",
       "sourceType": "github"
     },
+    "vercel-composition-patterns": {
+      "computedHash": "575757e3e25761c8c562d6e395d29f0b76c98b1273c0bd72d88e6ab1bc9c7d42",
+      "source": "vercel-labs/agent-skills",
+      "sourceType": "github"
+    },
+    "vercel-react-best-practices": {
+      "computedHash": "ca7b0c0c6e5f2750043f7f0cd72d16ac4e2abc48f9b5500d047a4b77a2506212",
+      "source": "vercel-labs/agent-skills",
+      "sourceType": "github"
+    },
     "verification-before-completion": {
       "computedHash": "9b446f0c7fe1cfb560b1d34439523b1a76d5f177290007b2c053a1c749a4a8ba",
       "source": "obra/superpowers",
+      "sourceType": "github"
+    },
+    "vite": {
+      "computedHash": "867ff66238f3152e9c494339ad08dc432dd0df5bcf5cc7a00b61a72b580eb908",
+      "source": "antfu/skills",
+      "sourceType": "github"
+    },
+    "vue": {
+      "computedHash": "9c241141e07e836e4f0537c63e8f929fba3767c2997250be38e699f19b75e3f2",
+      "source": "antfu/skills",
+      "sourceType": "github"
+    },
+    "vue-best-practices": {
+      "computedHash": "3df585ad31aec78fe55c56c1411262737e6b231677a3153dec512a882fde80cd",
+      "source": "hyf0/vue-skills",
+      "sourceType": "github"
+    },
+    "web-design-guidelines": {
+      "computedHash": "f3bc47f890f42a44db1007ab390709ec368e4b8c089baee6b0007182236ac474",
+      "source": "vercel-labs/agent-skills",
       "sourceType": "github"
     },
     "webapp-testing": {
@@ -578,6 +723,11 @@
     "writing-plans": {
       "computedHash": "bfaed11054ad8021c66860244e2d2e0d1eca483ae9f5fbfcb956e99c61f5c3d7",
       "source": "obra/superpowers",
+      "sourceType": "github"
+    },
+    "zustand-state-management": {
+      "computedHash": "b63b116969df0dbf9af19249ceb16c9feab1f0f86a348faefc9354da7bfee262",
+      "source": "mindrally/skills",
       "sourceType": "github"
     }
   },

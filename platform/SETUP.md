@@ -168,9 +168,9 @@ Maestro ships entry points for multiple AI coding tools. Each tool has its own d
 
 No extra setup is required. Claude Code discovers:
 
-- `.claude/agents/**/*.agent.md`: 12 workflow agents, 3 built-in coders, and 19 specialist advisors.
+- `.claude/agents/**/*.agent.md`: 12 workflow agents, 3 built-in coders, and 20 specialist advisors.
 - `.claude/skills/*/SKILL.md`: 231 skills.
-- `.claude/commands/*.md`: 21 slash commands.
+- `.claude/commands/*.md`: 22 slash commands.
 - `CLAUDE.md`: root system instructions.
 
 ### Codex CLI

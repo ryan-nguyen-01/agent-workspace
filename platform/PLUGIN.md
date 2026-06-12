@@ -13,9 +13,9 @@ enforcement hooks can be installed into other projects via the `/plugin` system 
 
 | Component | Source (single source of truth) |
 |-----------|----------------------------------|
-| 12 workflow agents + 3 built-in coders + 19 specialist advisors | `.claude/agents/**` |
+| 12 workflow agents + 3 built-in coders + 20 specialist advisors | `.claude/agents/**` |
 | 231 skills | `.claude/skills/**` |
-| 21 slash commands (incl. `/ship`, `/intake`, `/access`) | `.claude/commands/*.md` |
+| 22 slash commands (incl. `/ship`, `/intake`, `/access`) | `.claude/commands/*.md` |
 | scope / secret / destructive PreToolUse hooks | `scripts/hooks/*.py` via `.claude-plugin/hooks.json` |
 
 The wrapper does **not** duplicate content: `.claude-plugin/plugin.json` points its component paths

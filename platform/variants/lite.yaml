@@ -5,6 +5,7 @@ purpose: "Lightweight bundle for small tools, scripts, and prototypes: fast, min
 structure: [component-roots, deliverables]
 agents:
   specialists: none
+commands_exclude: [evals]
 methodology_default: "risk-based-routing"
 
 skills:
