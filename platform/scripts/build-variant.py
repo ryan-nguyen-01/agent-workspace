@@ -376,8 +376,9 @@ def build(manifest_path: Path) -> None:
         f"# {m['display_name']}\n\n{m['purpose']}\n\n"
         "A self-contained Maestro workspace. Copy this folder anywhere, put your source code inside\n"
         "(`services/`, `apps/` — or register existing paths in `.maestro/registry/components.yaml`),\n"
-        "then run `claude` (or `codex`) in this folder. Start with `/coord` (or `/ship` for autonomous\n"
-        "build-to-done); `/overview` prints the full project briefing.\n\n"
+        "then run `claude` (or `codex`) in this folder and JUST DESCRIBE what you want in plain language\n"
+        "(\"phân tích dự án này\", \"sửa bug X\", \"tình hình?\") — no commands needed; the coordinator maps\n"
+        "intent to the right flow. Power-user shortcuts exist in COMMAND.md if you want them.\n\n"
         "Entry points: `CLAUDE.md` (Claude) - `AGENTS.md` (Codex) - `COMMAND.md` (commands)\n"
         "- `.maestro/INSTRUCTIONS.md` (workflow brain).\n\n"
         "Generated from the maestro platform - do not edit framework files by hand (see VARIANT.yaml).\n",

@@ -108,6 +108,12 @@ If onboarding found services but coder agents are not created:
   if no, keep task in READY_FOR_ANALYSIS but do not implement
 ```
 
+## Natural-language first
+
+Users rarely type commands. Map the message's INTENT to the flow (status/investigate/intake/onboard/
+pipeline/direction-gate/resume/git — see CLAUDE.md "Just talk" table) and run it; never answer
+"please run /x". Ambiguous intent -> one short clarifying question, not a guess (R-025-01).
+
 ## Routing rules
 
 ```text

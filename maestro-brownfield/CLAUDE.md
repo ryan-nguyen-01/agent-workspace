@@ -125,7 +125,7 @@ Aliases like `sa:`, `ba:`, `qa:`, `pm:`, `sec:`, `sre:`, `dev:` from the global 
 /handoff-qc /qc /bug /sync-memory /skills /policy-check /status /resume-task /access
 ```
 
-Natural-language text (e.g. "analyze this project", "add a login feature") still routes through `coordinator` as described in §"Task processing flow".
+Natural-language is the PRIMARY interface (see §"Just talk"): users rarely type commands, and never need to.
 
 ---
 
@@ -238,7 +238,27 @@ Runtime controls (no code edits): `MAESTRO_HOOK_PROFILE=minimal|standard|strict`
 
 The Claude tool layer is packaged as a Claude Code plugin at `.claude-plugin/`. Install it to use Maestro's agents, skills, commands, and hooks in any project. To adopt a full
 
-## Commands (20 commands)
+## Just talk — no commands needed
+
+Natural language is the PRIMARY interface. The coordinator maps what the user says to the right flow;
+slash commands are internal phase contracts and optional power-user shortcuts. Never tell the user
+"please run /x" — just do the flow (asking only at real gates).
+
+| User says (VI / EN — examples, not exhaustive) | Flow |
+| --- | --- |
+| "dự án này thế nào", "tình hình?", "what's the status" | status / overview briefing |
+| "tìm hiểu/giải thích X", "X hoạt động ra sao", "how does X work" | investigate (read-only, cited) |
+| "tôi vừa thả tài liệu/bug log vào docs" | intake triage |
+| "phân tích dự án", "onboard đi" | onboarding (intake first) |
+| "sửa bug X", "thêm tính năng Y", "làm task này: ..." | full pipeline: analyze -> approve -> IN_DEV -> code -> QC |
+| "build cho tôi app ..." (ý tưởng mới) | Direction gate (blueprint) trước, rồi pipeline |
+| "tiếp tục việc hôm qua", "đang làm đến đâu" | resume task |
+| "commit/push giúp tôi" | git flow (outward vẫn chờ duyệt) |
+
+The mapping is intent-based, not keyword-magic: when the intent is ambiguous, ask one short question
+instead of guessing the flow (R-025-01).
+
+## Commands (21 — internal phase contracts; optional for users)
 
 Commands at `.claude/commands/`:
 

@@ -327,7 +327,7 @@ DONE
 ## 2.1. Single-entry coordinator gate
 
 ```text
-Every user request enters through coordinator (/coord).
+Every user request enters through the coordinator — natural language is the primary interface; /coord and the other commands are the internal phase contracts behind it.
 No direct routing from raw user input to onboarding, task-analysis, solution-architect, coder-leader, service coders, dev-verification, qc, or bug-router.
 Coordinator must validate state transition legality, required artifacts, and approval gates before routing.
 If validation fails, coordinator returns deny/needs_user_approval and does not advance state.
