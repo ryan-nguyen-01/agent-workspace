@@ -84,6 +84,10 @@ def parse_manifest(path: Path) -> dict:
                 data["skills"][lk] = [c.strip() for c in lm.group(1).split(",") if c.strip()]
 
     data["specialists_none"] = bool(re.search(r"(?m)^agents:\n  specialists: none", text))
+    se_m = re.search(r"(?m)^  specialists_exclude:\s*\[([^\]]*)\]", text)
+    data["specialists_exclude"] = [c.strip() for c in se_m.group(1).split(",") if c.strip()] if se_m else []
+    ce_m = re.search(r"(?m)^commands_exclude:\s*\[([^\]]*)\]", text)
+    data["commands_exclude"] = [c.strip() for c in ce_m.group(1).split(",") if c.strip()] if ce_m else []
     r_m = re.search(r"(?m)^roots:\s*\[([^\]]*)\]", text)
     data["roots"] = [c.strip() for c in r_m.group(1).split(",") if c.strip()] if r_m else []
     st_m = re.search(r"structure:\s*(\[[^\]]*\]|full)", text)
@@ -243,7 +247,7 @@ def build(manifest_path: Path) -> None:
             # roots are project-defined: empty scan_roots + registry-driven root check
             comp = out / ".maestro" / "registry" / "components.yaml"
             ctext = comp.read_text(encoding="utf-8")
-            ctext = re.sub(r"(?ms)^  scan_roots:\n(?:    .*\n)+", "  scan_roots: []\n", ctext)
+            ctext = re.sub(r"(?m)^  scan_roots:\n(?:    .*\n)+", "  scan_roots: []\n", ctext)
             comp.write_text(ctext, encoding="utf-8")
             hc_text2 = hc_file.read_text(encoding="utf-8")
             hc_text2 = hc_text2.replace(
@@ -300,7 +304,7 @@ def build(manifest_path: Path) -> None:
         for mr in (out / ".maestro" / "config" / "model-routing.yaml",
                    out / ".maestro" / "engine" / "templates" / "model-routing.template.yaml"):
             mt = mr.read_text(encoding="utf-8")
-            mt = re.sub(r"(?ms)^  specialist_advisors:\n(?:    .*\n)+", "  specialist_advisors: {}\n", mt)
+            mt = re.sub(r"(?m)^  specialist_advisors:\n(?:    .*\n)+", "  specialist_advisors: {}\n", mt)
             mr.write_text(mt, encoding="utf-8")
         ct = (out / "CLAUDE.md").read_text(encoding="utf-8")
         ct = re.sub(r"(?ms)^## Specialist Advisors \(19 advisors\)\n.*?(?=^## )",
@@ -309,6 +313,63 @@ def build(manifest_path: Path) -> None:
         at = (out / "AGENTS.md").read_text(encoding="utf-8")
         at = re.sub(r"(?m)^- 19 specialist advisors.*\n", "", at)
         (out / "AGENTS.md").write_text(at, encoding="utf-8")
+
+
+    # ---- per-variant agent/command pruning (each template keeps only what its purpose needs) ----
+    hcf = out / "scripts" / "architecture-health-check.py"
+    if m["specialists_exclude"]:
+        removed_sp = []
+        for sp in m["specialists_exclude"]:
+            hits = list((out / ".claude" / "agents" / "specialists").rglob(f"{sp}.agent.md"))
+            for h in hits:
+                h.unlink(); removed_sp.append(sp)
+        n_sp = len(list((out / ".claude" / "agents" / "specialists").rglob("*.agent.md")))
+        n_agents = 12 + 3 + n_sp
+        ht = hcf.read_text(encoding="utf-8")
+        ht = ht.replace("EXPECTED_SPECIALIST_COUNT = 19", f"EXPECTED_SPECIALIST_COUNT = {n_sp}")
+        ht = ht.replace('    "agents": 34,', f'    "agents": {n_agents},')
+        hcf.write_text(ht, encoding="utf-8")
+        for mr in (out / ".maestro" / "config" / "model-routing.yaml",
+                   out / ".maestro" / "engine" / "templates" / "model-routing.template.yaml"):
+            mt = mr.read_text(encoding="utf-8")
+            for sp in m["specialists_exclude"]:
+                mt = re.sub(rf"(?m)^    {re.escape(sp)}:\n(?:      .*\n)+", "", mt)
+            mr.write_text(mt, encoding="utf-8")
+        cat = out / ".claude" / "agents" / "specialists" / "README.md"
+        if cat.is_file():
+            ctext2 = cat.read_text(encoding="utf-8")
+            for sp in m["specialists_exclude"]:
+                ctext2 = re.sub(rf"(?m)^.*`{re.escape(sp)}`.*\n", "", ctext2)
+            ctext2 = ctext2.replace("19 domain experts", f"{n_sp} domain experts")
+            cat.write_text(ctext2, encoding="utf-8")
+        for doc in ("CLAUDE.md", "AGENTS.md"):
+            dp = out / doc
+            dt = dp.read_text(encoding="utf-8")
+            dt = dt.replace("19 specialist advisors", f"{n_sp} specialist advisors").replace("(19 advisors)", f"({n_sp} advisors)")
+            dp.write_text(dt, encoding="utf-8")
+        print(f"   specialists pruned: {', '.join(sorted(set(removed_sp)))} -> {n_sp} advisors, {n_agents} agents")
+    if m["commands_exclude"]:
+        for c in m["commands_exclude"]:
+            f = out / ".claude" / "commands" / f"{c}.md"
+            if f.is_file():
+                f.unlink()
+            pr = out / ".codex" / "prompts" / f"{c}.md"
+            if pr.is_file():
+                pr.unlink()
+        n_cmd = len([x for x in (out / ".claude" / "commands").glob("*.md") if x.name != "README.md"])
+        ht = hcf.read_text(encoding="utf-8")
+        ht = re.sub(r'(?m)^    "commands": \d+,$', f'    "commands": {n_cmd},', ht)
+        hcf.write_text(ht, encoding="utf-8")
+        for doc in ("CLAUDE.md", "COMMAND.md", "AGENTS.md", ".claude/commands/README.md", ".codex/AGENTS.md"):
+            dp = out / doc
+            if not dp.is_file():
+                continue
+            dt = dp.read_text(encoding="utf-8")
+            for c in m["commands_exclude"]:
+                dt = re.sub(rf"(?m)^.*[|/ ]{re.escape(c)}\b.*\n", "", dt)
+            dt = re.sub(r"(?m)^## Commands \(\d+ commands\)$", f"## Commands ({n_cmd} commands)", dt)
+            dp.write_text(dt, encoding="utf-8")
+        print(f"   commands pruned: {', '.join(m['commands_exclude'])} -> {n_cmd} commands")
 
     # generated per-template README
     (out / "README.md").write_text(
@@ -331,7 +392,7 @@ def build(manifest_path: Path) -> None:
     }
     ROOT_READMES = {
         "services": "# Services\n\nPut ALL service source code here (one folder per service). Register each in `.maestro/registry/components.yaml`; onboarding scans this root.\n",
-        "docs": "# Docs & Info\n\nDrop project documents AND bug/error info files here: specs, notes, bug reports, error logs, screenshots. Onboarding and task-analysis read this folder as evidence. (`governance/methodologies/` is framework reference material — leave it.)\n",
+        "docs": "# Docs & Info\n\nDrop ANY project material here: specs, notes, bug reports, error logs, screenshots, dumps.\nRun `/intake` (or `/onboard`, which triages first): every file is classified and indexed in\n`docs/INDEX.md` — nothing is moved or edited without your approval.\n\nWARNING: do NOT drop real secrets (.env, credentials, tokens, dumps with passwords). Intake flags\nthem and their contents are never quoted into any artifact (R-013) — but the safest secret is one\nthat never lands here.\n\n(`governance/methodologies/` is framework reference material — leave it.)\n",
         "apps": "# Applications\n\nUser-facing applications live here. Register each in `.maestro/registry/components.yaml`.\n",
         "tests": "# Tests\n\nCross-component integration and E2E suites.\n",
         "ai": "# AI Assets\n\nAI-specific assets for this product:\n\n- `prompts/`  prompt templates and system prompts (versioned)\n- `evals/`    eval datasets + graders (the EVAL GATE runs from here)\n- `datasets/` training/RAG source data (synthetic or licensed only, R-013)\n",

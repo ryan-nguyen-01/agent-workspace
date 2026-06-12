@@ -29,6 +29,24 @@ Use `model_profile=deep_reasoning` from `.maestro/config/model-routing.yaml`. On
 
 Onboarding has **two scan sources** — both must be processed:
 
+### Source 0 — Intake triage (ALWAYS first; see /intake)
+
+```text
+Triage everything in docs//inputs/ BEFORE learning from it: classify (spec/bug/log/data/source/unknown),
+flag secret-risk (warn, never quote contents — R-013), misplaced-source (code dumped into docs/ -> ask),
+and conflicting docs (code is runtime truth, R-018 -> mark stale-candidate, confirm). Non-destructive:
+never move/rename/edit user files without per-item approval. Output: docs/INDEX.md + registry/inputs.yaml.
+```
+
+### Baselines (brownfield safety)
+
+```text
+GIT BASELINE: before the first code task, services/ must be under git with a clean baseline commit —
+if not a repo, ask the user to init/commit (rollback path; R-020-09 applies).
+TEST BASELINE: run the existing test suite during onboarding and RECORD pass/fail per suite in
+test-policy/knowledge — later regressions are attributable to changes, not pre-existing failures.
+```
+
 ### Source A — `inputs/` (user-provided reference docs)
 
 User drops PRD, HLD, ADR, OpenAPI specs, domain glossary, runbooks into `inputs/<category>/`. Scan procedure:

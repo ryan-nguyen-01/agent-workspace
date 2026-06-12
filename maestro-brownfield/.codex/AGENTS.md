@@ -220,7 +220,6 @@ For status in Codex or any terminal, `python3 scripts/status-dashboard.py --mode
 
 ```text
 /coord
-/ship
 /git
 /onboard
 /create-coders

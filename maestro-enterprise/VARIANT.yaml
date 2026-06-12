@@ -5,6 +5,6 @@ methodology_default: enterprise-agent-governance
 skills: 166
 structure: full
 pruned_groups: []
-generated_at: "2026-06-12T06:15:21.117753+00:00"
+generated_at: "2026-06-12T06:26:24.994033+00:00"
 source: maestro platform (variants/enterprise.yaml)
 note: GENERATED bundle - do not edit by hand; rebuild with scripts/build-variant.py

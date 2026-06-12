@@ -190,14 +190,8 @@ agent_model_map:
     code-reviewer:
       model_profile: "deep_reasoning"
       category: "quality-security"
-    discovery-analyst:
-      model_profile: "deep_reasoning"
-      category: "product"
     business-analyst:
       model_profile: "coding"
-      category: "product"
-    product-strategist:
-      model_profile: "deep_reasoning"
       category: "product"
     data-engineer:
       model_profile: "coding"

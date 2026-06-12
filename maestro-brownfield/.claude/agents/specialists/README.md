@@ -1,6 +1,6 @@
 # Specialist Advisors
 
-19 domain experts operating as **in-pipeline advisors**: invoked by a workflow agent,
+17 domain experts operating as **in-pipeline advisors**: invoked by a workflow agent,
 producing an evidence-backed advisory artifact at `.maestro/work/tasks/<task-id>/advisories/<id>.yaml`, they do **not**
 write application code, do **not** assign coders, and do **not** mark Code Done/QC Done.
 
@@ -20,9 +20,7 @@ Template: [`.maestro/engine/templates/agent-specialist.template.md`](../../../.m
 | Latency, N+1, caching, bundle size, load test | `performance-engineer` | quality-security | opus | dev-verification, coder-leader |
 | WCAG, ARIA, keyboard nav, contrast | `accessibility-auditor` | quality-security | sonnet | dev-verification, coder-leader |
 | Deep code review (augments coder-leader) | `code-reviewer` | quality-security | opus | coder-leader, dev-verification |
-| Problem analysis, market, MVP, idea validation | `discovery-analyst` | product | opus | coordinator (pre-pipeline) |
 | User stories, acceptance criteria (augments task-analysis) | `business-analyst` | product | sonnet | coordinator, task-analysis |
-| Roadmap, prioritization, release scoping | `product-strategist` | product | opus | coordinator |
 | Data pipeline, ETL, streaming, analytics schema | `data-engineer` | data-ai | sonnet | task-analysis, solution-architect |
 | AI/LLM architecture, RAG, eval, model selection | `ml-ai-architect` | data-ai | opus | solution-architect, task-analysis |
 | Monitoring, SLO, tracing, incident runbook | `sre-observability` | ops-devex | sonnet | dev-verification, coder-leader |

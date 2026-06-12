@@ -164,3 +164,11 @@ agent_model_map:
   # Specialist advisors (class 4): advisor-only, triệu hồi trong pipeline. Không phải workflow agents.
   # Profiles tái dùng các profile chuẩn (không thêm profile mới).
   specialist_advisors: {}
+
+observability:
+  activity_file: ".maestro/runtime/agent-activity.yaml"
+  response_ui_file: ".maestro/config/response-ui.yaml"
+  status_command: "/status"
+  activity_update_cli: "python3 scripts/agent-activity.py <start|heartbeat|block|complete>"
+  architecture_health_cli: "python3 scripts/architecture-health-check.py --strict"
+  heartbeat_policy: "Record start/end for every workflow phase; update long-running work when the current action changes."

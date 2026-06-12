@@ -34,7 +34,7 @@ EXPECTED_COUNTS = {
     "skills": 166,
     "rules": 26,
     "templates": 62,
-    "commands": 19,
+    "commands": 20,
 }
 
 # Framework-owned agents: 12 workflow + 19 specialist advisors + 3 built-in coders.

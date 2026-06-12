@@ -225,7 +225,7 @@ Runtime controls (no code edits): `MAESTRO_HOOK_PROFILE=minimal|standard|strict`
 
 The Claude tool layer is packaged as a Claude Code plugin at `.claude-plugin/`. Install it to use Maestro's agents, skills, commands, and hooks in any project. To adopt a full
 
-## Commands (19 commands)
+## Commands (20 commands)
 
 Commands at `.claude/commands/`:
 
@@ -235,6 +235,7 @@ Commands at `.claude/commands/`:
 | /ship          | Autonomous build-to-done (Safe Autopilot): run the full pipeline, self-heal errors, deliver a finished product (R-019) |
 | /git           | Git-flow workflow: branch / commit / sync / PR; outward git is user-gated (R-020) |
 | /onboard       | Initial fetch/refresh memory + component contracts |
+| /intake        | Triage dropped files in docs//inputs/: classify, flag secrets/misplaced code, index — never moves files without approval |
 | /analyze-task  | Normalize a task into a spec |
 | /create-coders | Create service coder agents |
 | /plan-dev      | Plan the implementation    |

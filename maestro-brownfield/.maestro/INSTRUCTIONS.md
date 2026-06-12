@@ -37,6 +37,13 @@ do exactly what the task says, and when anything is unclear — ASK. Never guess
   the task scope, no dependency upgrades unless asked. Anything extra is scope expansion (hard-stop).
 - REGRESSION FIRST: every change runs the existing test suite; QC covers the changed scope plus
   regression on touching features. Do not break what already works.
+- INTAKE TRIAGE (/intake, R-002-D07): users may dump ANYTHING into docs/ — classify before learning;
+  secret-risk files are flagged and never quoted (R-013); source code dumped into docs/ needs user
+  confirmation before being treated as a component; docs that contradict code are stale-candidates
+  (code is runtime truth, R-018). Docs living inside a service folder are fine — indexed, never moved.
+- BASELINES (R-002-D08): git baseline commit before the first code task (rollback path) and a test
+  baseline during onboarding (pre-existing failures recorded, so regressions are attributable).
+- NO AUTOPILOT: /ship is removed in this template — every step confirms with the user.
 - Prerequisites (R-021) apply with the project's own docs: if the task needs a contract/spec the
   repo does not have, report the gap instead of inventing it.
 ```
